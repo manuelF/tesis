@@ -1,4 +1,5 @@
 F77 = g77
+CPP = c++
 
 OBJ =     config.o cvemot.o  cvemotn.o  cvemotnn.o \
 	   gamma.o lath.o   main.o  doda.o dado.o\
@@ -31,10 +32,10 @@ CPP     = /lib/cpp
 CPPFLAGS = -P
 DEFINE   = -Dpack
 
-.SUFFIXES: .f .o
+.SUFFIXES: .f .o .fpp
 
 posta:  $(OBJ)
-	g77 -o posta $(OBJ)  $(LINKFLG)
+	$(F77) -o posta $(OBJ) $(LINKFLG)
 
 clean:
 	@echo "Removing Object files.";rm -f *.o; 
@@ -148,11 +149,11 @@ clean:
 # func.o : func.f
 # 	g77 $(COMPFLG) func.f 
 
-int2.o    : int2.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) int2.f int2_cpp.f 
-	g77 $(COMPFLG) int2_cpp.f 
-	mv int2_cpp.o int2.o
-	rm -f int2_cpp.f
+# int2.o    : int2.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) int2.f int2_cpp.f 
+# 	g77 $(COMPFLG) int2_cpp.f 
+# 	mv int2_cpp.o int2.o
+# 	rm -f int2_cpp.f
 
 # int2G.o    : int2G.f param
 # 	g77 $(COMPFLG) int2G.f 
@@ -160,62 +161,62 @@ int2.o    : int2.f param
 # int3G.o    : int3G.f param
 # 	g77 $(COMPFLG) int3G.f 
 
-int3.o    : int3.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) int3.f int3_cpp.f
-	g77 $(COMPFLG) int3_cpp.f
-	mv int3_cpp.o int3.o
-	rm -f int3_cpp.f
+# int3.o    : int3.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) int3.f int3_cpp.f
+# 	g77 $(COMPFLG) int3_cpp.f
+# 	mv int3_cpp.o int3.o
+# 	rm -f int3_cpp.f
 
-int3N.o    : int3N.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) int3N.f int3N_cpp.f
-	g77 $(COMPFLG) int3N_cpp.f
-	mv int3N_cpp.o int3N.o
-	rm -f int3N_cpp.f
+# int3N.o    : int3N.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) int3N.f int3N_cpp.f
+# 	g77 $(COMPFLG) int3N_cpp.f
+# 	mv int3N_cpp.o int3N.o
+# 	rm -f int3N_cpp.f
 
-int3lu.o    : int3lu.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) int3lu.f int3lu_cpp.f
-	g77 $(COMPFLG) int3lu_cpp.f
-	mv int3lu_cpp.o int3lu.o
-	rm -f int3lu_cpp.f
+# int3lu.o    : int3lu.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) int3lu.f int3lu_cpp.f
+# 	g77 $(COMPFLG) int3lu_cpp.f
+# 	mv int3lu_cpp.o int3lu.o
+# 	rm -f int3lu_cpp.f
 
 # int3mem.o    : int3mem.f param
 # 	g77 $(COMPFLG) int3mem.f
 
-exch.o    : exch.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) exch.f exch_cpp.f
-	g77 $(COMPFLG) exch_cpp.f
-	mv exch_cpp.o exch.o
-	rm -f exch_cpp.f
+# exch.o    : exch.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) exch.f exch_cpp.f
+# 	g77 $(COMPFLG) exch_cpp.f
+# 	mv exch_cpp.o exch.o
+# 	rm -f exch_cpp.f
 
-exch2.o    : exch2.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) exch2.f exch2_cpp.f
-	g77 $(COMPFLG) exch2_cpp.f
-	mv exch2_cpp.o exch2.o
-	rm -f exch2_cpp.f
+# exch2.o    : exch2.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) exch2.f exch2_cpp.f
+# 	g77 $(COMPFLG) exch2_cpp.f
+# 	mv exch2_cpp.o exch2.o
+# 	rm -f exch2_cpp.f
 
 # pot.o    : pot.f 
 # 	g77 $(COMPFLG) pot.f 
 
-SCF.o    : SCF.f param 
-	$(CPP) $(CPPFLAGS) $(DEFINE) SCF.f SCF_cpp.f
-	g77 $(COMPFLG) SCF_cpp.f 
-	mv SCF_cpp.o SCF.o
-	rm -f SCF_cpp.f
+# SCF.o    : SCF.f param 
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) SCF.f SCF_cpp.f
+# 	g77 $(COMPFLG) SCF_cpp.f 
+# 	mv SCF_cpp.o SCF.o
+# 	rm -f SCF_cpp.f
 
-intSG.o     : intSG.f param
-	g77 $(COMPFLG) intSG.f 
+# intSG.o     : intSG.f param
+# 	g77 $(COMPFLG) intSG.f 
 
-write.o     : write.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) write.f write_cpp.f
-	g77 $(COMPFLG) write_cpp.f
-	mv write_cpp.o write.o
-	rm -f write_cpp.f
+# write.o     : write.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) write.f write_cpp.f
+# 	g77 $(COMPFLG) write_cpp.f
+# 	mv write_cpp.o write.o
+# 	rm -f write_cpp.f
 
-nwrite.o     : nwrite.f param
-	$(CPP) $(CPPFLAGS) $(DEFINE) nwrite.f nwrite_cpp.f
-	g77 $(COMPFLG) nwrite_cpp.f
-	mv nwrite_cpp.o nwrite.o
-	rm -f nwrite_cpp.f
+# nwrite.o     : nwrite.f param
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) nwrite.f nwrite_cpp.f
+# 	g77 $(COMPFLG) nwrite_cpp.f
+# 	mv nwrite_cpp.o nwrite.o
+# 	rm -f nwrite_cpp.f
 
 # dns.o     : dns.f param
 # 	g77 $(COMPFLG) dns.f 
@@ -253,11 +254,11 @@ nwrite.o     : nwrite.f param
 # exchfock.o     : exchfock.f param
 # 	g77 $(COMPFLG) exchfock.f 
 
-SCFop.o    : SCFop.f param COMM
-	$(CPP) $(CPPFLAGS) $(DEFINE) SCFop.f SCFop_cpp.f
-	g77 $(COMPFLG) SCFop_cpp.f
-	mv SCFop_cpp.o SCFop.o
-	rm -f SCFop_cpp.f
+# SCFop.o    : SCFop.f param COMM
+# 	$(CPP) $(CPPFLAGS) $(DEFINE) SCFop.f SCFop_cpp.f
+# 	g77 $(COMPFLG) SCFop_cpp.f
+# 	mv SCFop_cpp.o SCFop.o
+# 	rm -f SCFop_cpp.f
 
 # densgop.o     : densgop.f param
 # 	g77 $(COMPFLG) densgop.f
@@ -309,3 +310,8 @@ SCFop.o    : SCFop.f param COMM
 
 .f.o: COMM param
 	$(F77) $(COMPFLG) -c $<
+
+.fpp.f:
+	$(CPP) $(CPPFLAGS) $(DEFINE) $< $@
+# 	$(F77) $(COMPFLG) int2_cpp.f 
+# 	rm -f $@
