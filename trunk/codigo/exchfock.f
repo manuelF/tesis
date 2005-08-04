@@ -13,9 +13,20 @@ c
      >               M,M18,NCOa,NCOb,RMM,Ex)
     
 c
-      implicit real*8 (a-h,o-z)
-      integer igrid,igrid2
+c      implicit real*8 (a-h,o-z)
+      implicit none
+      integer igrid,igrid2,nshell,nang
       logical NORM,integ,dens1,OPEN
+      real*8 pi,pi2,a,c,r,rmm,w,rr,p
+      real*8 ss0,fc,tmpjb,tmpja,tmpb,tmpa,tmp,pf,s,p3,p2,p1
+      real*8 dz,dy,dx,dxib,dxia,bdxz,adxz,bdyz,adyz,bdxy,adxy,bdzz
+      real*8 aij,x1,u,rnc,rnb,pp,tmp0,yi,dxz,dyz,dxy,dzz,dyy,dxx
+      real*8 bdyy,adyy,bdxx,adxx,bdz,adz,bdy,ady,bdx,adx,dxi,dens,y2b
+      real*8 y2a,yiec,yiex,densb,densa,wrad,r1,w1,x,t1,t0,rm,wang0
+      real*8 wang3,e0,e3,wang2,e2,wang,e,xi,ds,f,ex,adzz
+      integer kk,nc,nb,i1,k,iang,n,na,m18b,m5,m3,m1,mm,m2,nd,np,ns
+      integer i,j,l,nr2,nr,ndens,nr0,ll,nuc,ncont,ncoa,ncob,ngd0
+      integer ngd,iexch,natom,m,m18,ntq,ntc,nss,ng,ng0,nl,nt,iz,nco
       INCLUDE 'param'
       parameter (pi=3.14159265358979312D0,pi2=6.28318530717958623D0)
       dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng)
@@ -31,6 +42,7 @@ c
       common /radii/ Rm(0:54)
 c
       dimension wang0(194),e0(194,3),Nr0(0:54)
+      
 c now we should evaluate all same loops as the ones used for
 c 1 electron matrix elements, but doing only products
 c then, the particular density functional wanted is calculated
