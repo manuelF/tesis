@@ -7,16 +7,28 @@ c
 c Dario Estrin, 1992
 c---------------------------------------------------
        subroutine SCFOP(MEMO,NORM,natom,Iz,r,Nuc,M,ncont,nshell,c,a,
-     >     Nucd,Md,ncontd,nshelld,cd,ad,RMM,X,XX,E,
-     > nopt,pc,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write1,
-     > FQQ,Q,IT,ITEL,NIN,IPR1,E1s,EAC,
+     > Nucd,Md,ncontd,nshelld,cd,ad,RMM,X,XX,E,
+     > nopt,pc,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,
+     > write1,FQQ,Q,IT,ITEL,NIN,IPR1,E1s,EAC,
      > ux,uy,uz,NPAS)
 c
-      implicit real*8 (a-h,o-z)
+c      implicit real*8 (a-h,o-z)
+      implicit none
       logical NORM,ATRHO,VCINP,DIRECT,EXTR,dens,write1
       logical OPEN,SVD,SHFT,GRAD,BSSE,integ,field,sol,free
       logical exter,MEMO
       integer nopt,iconst,igrid,igrid2
+      real*8 r,c,a,cd,ad,rmm,x,xx,e,pc,gold,told,fqq,q,e1s,eac,ux,uy
+      real*8 uz,q1,t0,u,exc,e0,del,tmp,shi,fac,g,ex,good,qc2,qc,damp
+      real*8 damp0,d2,d1,sq2,es,e2,en,e1,fz,fy,fx,a0,str,ef
+      real*8 xi,pci,rm,em,alpha,b,af,epsilon
+      integer natom,iz,nuc,m,ncont,nshell,nucd,md,ncontd,nshelld
+      integer nmax,nco,nunp,it,itel,nin,ipr1,npas,kkb,kka,kk1,idamp
+      integer kj,ki,k0,n,l,ii,kk2,kk,j,info,k,i,niter,m23,m22,m21,m20
+      integer m19,m18b,m18,m17,m15,m13,m11,m9,m7,m5,m3,m1,nel,ncob,ncoa
+      integer m2a,m2,md2,mmd,mm2,mm,icharge,ispin,ipop,idip,ngeo,ndens
+      integer iexch,nang,natsol,nsol,map,ighost,ngd,ngd0,nl,ng
+      integer ng0,nt,nss,ntc,ntq,index
       INCLUDE 'param'
       dimension r(nt,3),nshelld(0:3),nshell(0:3),q(ntq)
       dimension cd(ngd,nl),ad(ngd,nl),Nucd(ngd),ncontd(ngd)

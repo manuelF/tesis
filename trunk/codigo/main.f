@@ -21,7 +21,39 @@ c Ngrid : number of grid points (LS-SCF part)
 c norbit : number of MO
 c
 c Ngrid may be set to 0 , in the case of using Num. Integ.
-
+c      implicit none
+c      INCLUDE 'COMM'
+     
+c      integer fxt,fyt,fzt,berdk,qsek,qsep,qsekq,qsepq,tempsq,fqt2,fxt2
+c      integer fyt2,fzt2,emod,emodq,rt,ekin,ekinq,ek,eintqc,epot,epot1
+c      integer pot,etot1,te,dv1,dv2,dv3,fz5,fz1,fz2,nref,npr,nout,it
+c      integer vcerca,vlejos,fxh1,fyh1,fzh1,fxh11,fyh11,fzh11,fxh2,fyh2
+c      integer fzh2,xt,yt,zt,e1s,ux,uy,uz,escf,e1s0,eks,en,nn,n,j
+c      integer etotl,jvel,ndip,idipcor,pmax,pzmax,ipinput0,iterm,m,md
+c      integer e,nopt,nmax,nco,nunp,avnpu,delp,delpz,i,ii,ss
+c      integer ssq,ang,ii1,k,i1,i2,nu,nin,facteks,nucd,ncontd,nuc
+c      integer fi,histo,histo2
+c      integer nsol,natsol,ff12h,ff6o,ff6h,ff12oh,ff6oh,ee12oh,ee6oh
+c      integer alfa1,alfa2,temprsv,av,nshelld,nshell
+c      integer ad,f1,vcsso,vcssh,vcsst,iras,xmi,nwatc,x99,idum,ee12o
+c      integer ee12h,ee6o,ee6h,ff12o,nsave,irdf,new,izz,natom,iclstr
+c      integer bb,dd,dipt,ndft,npas,icon,xfax,nang,iunid,convf,ccq
+c      integer kg1,qk,rbuf,delr2,vself,ov,enoh,egp,ecself,stq,s0q,sdq
+c      integer sd0q,qsq,ffq,aa,enefur,ggrid,iggrid,gril,igril,ab,b,cb,uc
+c      integer fc,af,bf,cshift,eshift,sumfz,dix,diy,diz,pip,qa,qb,ksqmax
+c      integer axi,byi,czi,ifluc,kg,delr,iqmot,toll,vinc,maxi5,maxit
+c      integer temps,neigh,cosang,fl1,fl2,doh,sumf,sumfx,sumfy,f12,e6,f6
+c      integer az,ipr1,ip15,da,ncx,ncy,ncz,newv,newq,ipr,impr,icmot
+c      integer vlj,vcoo,voo,voh,vhh,vtot,vljqc,vcqc,totmas,weight,nnat
+c      integer nwat,npart,nspecq,e12,rm2,bxlgth,zzz,iewld,itel,ntime
+c      integer nscal,cc,etlr,vtlr,rho,e2,tempslv,tempslt,vct,temprqq
+c      integer totmasq,eps,sigma,wwm,wwq,vfq,rct,rctsq,rkappa,rkappa2
+c      integer tempa,tempav,temtrs,tepion,rrnit,ndgree,ac,lt,tempol
+c      integer factor,is0,is0q,redel,deltat,del,vf,fff,facta,factv
+c      integer fact2,temprq,write
+c      real*8 ad,f1,st,s0,sd,sd0,qs,rmm,r,a,c
+c      real*8 gdq,told,gold,xw,xxw
+      
       INCLUDE 'COMM'
       INCLUDE 'param'
       INTEGER SPC

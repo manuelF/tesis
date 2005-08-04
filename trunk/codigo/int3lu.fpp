@@ -29,7 +29,18 @@ c-----------------------------------------------------------------
      > nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write)
 c
 c
-      implicit real*8 (a-h,o-z)
+c      implicit real*8 (a-h,o-z)
+      implicit none
+      real*8 r,a,c,cd,ad,rmm,x,e2,ex,gold,told,aux,d,p,ff,rc,w,q
+      real*8 term,eb,ea,ss9,bda,r1,r0,t0,rcond,sq3,pi32,b,af
+      real*8 rmax,pi,pi52
+      integer natom,iz,nuc,m,mmem,ncont,nshell,nucd,md,ncontd,nshelld
+      integer nmax,nco,nunp,nel,l2,l1,nk,info,irank,md5,md3
+      integer m12,m10,i,j,k1,mmp,kk,k,l,mmem1,m23,m22,m21,m20
+      integer ncob,ncoa,m19,m18,m18b,m17,m15,m13,m11,m9,m7,m5,m3,m1
+      integer mmd,mm,md2,ndd,npd,nsd,m2,nd,np,ns,ncall,ndens,iexch
+      integer nang,ll,jx,ndim,ngda,nga,ngd,ngd0,nl,ng,ng0,nt,nss
+      integer ntc,ntq
       logical NORM,dens,OPEN,SVD,ATRHO,integ
       logical VCINP,DIRECT,EXTR,SHFT,write
       integer nopt,iconst,igrid,igrid2
