@@ -56,14 +56,7 @@ C-----DIMENSIONES DE TODO
       common /sol1/ Nsol,natsol,alpha,Em,Rm,sol,free,pcx
       common /dyn/Pm
       INTEGER ITAG,ISTAT,cnt
-      TEMPAV=ZERO
-      TEMPOL=ZERO
-      TEMPSLV=ZERO
-      TEMPSLT=ZERO
-      IFORT=70
-
-
-
+      
 C--------------------------------------------------------
 C--------------------------------------------------------
       CALL MPI_INIT(IERR)
@@ -71,6 +64,14 @@ C--------------------------------------------------------
 
 C--------------------------------------------------------
 C--------------------------------------------------------
+      TEMPAV=ZERO
+      TEMPOL=ZERO
+      TEMPSLV=ZERO
+      TEMPSLT=ZERO
+      IFORT=70
+
+      write(6, *) "NG2=", NG2
+
 
 C-----LLAMA A 'INICIO':LEE TODO SOBRE EL SISTEMA CLASICO
       CALL INICIO(NATSOL,NDIP,IDIPCOR,PMAX,PZMAX)
