@@ -2,7 +2,7 @@ C
 C   PROGRAMA PARA MOVER UN SISTEMA FORMADO POR 2 SUBSISTEMAS:
 C   SOLVENTE==> TIP4P o TIP4P-FQ-WATER CON Q-FLUCTUANTES
 C   SOLUTO  ==> SISTEMA QUANTICO (DFT)
-C   
+C
 C
 C
 C-----DIMENSIONA PARAMETROS SIST.QUANTICO:
@@ -21,50 +21,17 @@ c Ngrid : number of grid points (LS-SCF part)
 c norbit : number of MO
 c
 c Ngrid may be set to 0 , in the case of using Num. Integ.
-c      implicit none
-c      INCLUDE 'COMM'
-     
-c      integer fxt,fyt,fzt,berdk,qsek,qsep,qsekq,qsepq,tempsq,fqt2,fxt2
-c      integer fyt2,fzt2,emod,emodq,rt,ekin,ekinq,ek,eintqc,epot,epot1
-c      integer pot,etot1,te,dv1,dv2,dv3,fz5,fz1,fz2,nref,npr,nout,it
-c      integer vcerca,vlejos,fxh1,fyh1,fzh1,fxh11,fyh11,fzh11,fxh2,fyh2
-c      integer fzh2,xt,yt,zt,e1s,ux,uy,uz,escf,e1s0,eks,en,nn,n,j
-c      integer etotl,jvel,ndip,idipcor,pmax,pzmax,ipinput0,iterm,m,md
-c      integer e,nopt,nmax,nco,nunp,avnpu,delp,delpz,i,ii,ss
-c      integer ssq,ang,ii1,k,i1,i2,nu,nin,facteks,nucd,ncontd,nuc
-c      integer fi,histo,histo2
-c      integer nsol,natsol,ff12h,ff6o,ff6h,ff12oh,ff6oh,ee12oh,ee6oh
-c      integer alfa1,alfa2,temprsv,av,nshelld,nshell
-c      integer ad,f1,vcsso,vcssh,vcsst,iras,xmi,nwatc,x99,idum,ee12o
-c      integer ee12h,ee6o,ee6h,ff12o,nsave,irdf,new,izz,natom,iclstr
-c      integer bb,dd,dipt,ndft,npas,icon,xfax,nang,iunid,convf,ccq
-c      integer kg1,qk,rbuf,delr2,vself,ov,enoh,egp,ecself,stq,s0q,sdq
-c      integer sd0q,qsq,ffq,aa,enefur,ggrid,iggrid,gril,igril,ab,b,cb,uc
-c      integer fc,af,bf,cshift,eshift,sumfz,dix,diy,diz,pip,qa,qb,ksqmax
-c      integer axi,byi,czi,ifluc,kg,delr,iqmot,toll,vinc,maxi5,maxit
-c      integer temps,neigh,cosang,fl1,fl2,doh,sumf,sumfx,sumfy,f12,e6,f6
-c      integer az,ipr1,ip15,da,ncx,ncy,ncz,newv,newq,ipr,impr,icmot
-c      integer vlj,vcoo,voo,voh,vhh,vtot,vljqc,vcqc,totmas,weight,nnat
-c      integer nwat,npart,nspecq,e12,rm2,bxlgth,zzz,iewld,itel,ntime
-c      integer nscal,cc,etlr,vtlr,rho,e2,tempslv,tempslt,vct,temprqq
-c      integer totmasq,eps,sigma,wwm,wwq,vfq,rct,rctsq,rkappa,rkappa2
-c      integer tempa,tempav,temtrs,tepion,rrnit,ndgree,ac,lt,tempol
-c      integer factor,is0,is0q,redel,deltat,del,vf,fff,facta,factv
-c      integer fact2,temprq,write
-c      real*8 ad,f1,st,s0,sd,sd0,qs,rmm,r,a,c
-c      real*8 gdq,told,gold,xw,xxw
-      
+
       INCLUDE 'COMM'
       INCLUDE 'param'
-      INTEGER SPC
+      INCLUDE 'mpif.h'
+      INTEGER SPC, IERR, MYRANK
       COMMON /tipsol/SPC
       parameter (ngDyn=350)
       parameter (ngdDyn=380)
       parameter (norbit=250,Ngrid=8000)
 
       parameter (ng3=4*ngDyn)
-c     parameter (ng2=7*ngDyn*(ngDyn+1)/2+3*ngdDyn*(ngdDyn+1)/2+
-c    >           ngDyn+ngDyn*norbit+Ngrid)
 c---- para version en memoria
       parameter (ng2=5*ngDyn*(ngDyn+1)/2+3*ngdDyn*(ngdDyn+1)/2+
      >           ngDyn+ngDyn*norbit+Ngrid+ngDyn*(NgDyn+1)/2*NgdDyn)
@@ -81,18 +48,25 @@ C-----DIMENSIONES DE TODO
       dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng),Iz(nt)
       dimension Em(ntq+nss),Rm(ntq+nss),alpha(nss),pcx(nt)
       dimension xte(nat),yte(nat),zte(nat)
-      dimension fxte(nat),fyte(nat),fzte(nat) 
+      dimension fxte(nat),fyte(nat),fzte(nat)
       dimension f1(nt,3),Pm(nt),q(ntq)
       DIMENSION IZTE(NAT)
       DIMENSION HISTO(100,100),HISTO2(100)
       CHARACTER*4 date
       common /sol1/ Nsol,natsol,alpha,Em,Rm,sol,free,pcx
       common /dyn/Pm
+      INTEGER ITAG,ISTAT,cnt
       TEMPAV=ZERO
       TEMPOL=ZERO
       TEMPSLV=ZERO
       TEMPSLT=ZERO
       IFORT=70
+
+
+
+C--------------------------------------------------------
+C--------------------------------------------------------
+      CALL MPI_INIT(IERR)
 
 
 C--------------------------------------------------------
@@ -105,7 +79,7 @@ C-----LLAMA A 'INICIO':LEE TODO SOBRE EL SISTEMA CLASICO
       IPINPUT0 =  ITERM
 
 C-----LLAMA A 'DRIVE' :LEE TODO SOBRE EL SISTEMA QUANTICO
-C-----(AUNQUE ICON=1 O -1 LEE DE DRIVE, SI ICON.NE.0 LEE LAS 
+C-----(AUNQUE ICON=1 O -1 LEE DE DRIVE, SI ICON.NE.0 LEE LAS
 C-----POSICIONES PERO MAS ADELANTE LLAMA A CONFIG Y REESCRIBE 
 C-----LAS POSICIONES NUCLEARES.
       IF(NSPECQ.NE.0)THEN
@@ -1269,6 +1243,8 @@ c      ENDDO
 101   FORMAT(5X,A5,4F9.4)
 102   FORMAT(2X,A5,4F15.6)
 
+      WRITE(6,*)"Llegue al final"
+      CALL MPI_FINALIZE(IERR)
 
 
       END
