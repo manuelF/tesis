@@ -20,16 +20,16 @@ OBJ =     config.o cvemot.o  cvemotn.o  cvemotnn.o \
            dnsgop.o potgop.o  dip2.o \
            intsolG.o intsol.o grilla.o\
            lalg.o int3mem.o int3lu.o ungles.o \
-           cvemot1.o  proton.o dipcor.o  furim.o  
+           cvemot1.o  proton.o dipcor.o  furim.o savestate.o
 COMPFLG =  -O3 -pipe -fomit-frame-pointer -c\
            -falign-loops=2 -fno-strength-reduce \
-           -ffast-math  -falign-functions=2 
+           -ffast-math -falign-functions=2 -I/usr/include
 
-COMPFLG2 = -O     -c
+#COMPFLG2 = -O -I/usr/include
 #more or less general
 LINKFLG = -lm  -lfmpich -lmpich -lmpichfsup -lpmpich -lpmpich++ -lmpe -lpthread 
 CPP     = /lib/cpp
-CPPFLAGS = -P
+CPPFLAGS = -P 
 DEFINE   = -Dpack
 
 .SUFFIXES: .f .o .fpp
