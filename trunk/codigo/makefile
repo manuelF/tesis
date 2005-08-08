@@ -21,6 +21,10 @@ OBJ =     config.o cvemot.o  cvemotn.o  cvemotnn.o \
            intsolG.o intsol.o grilla.o\
            lalg.o int3mem.o int3lu.o ungles.o \
            cvemot1.o  proton.o dipcor.o  furim.o savestate.o
+OBJ_SER = exchfock.o
+
+OBJ_PAR = exchfockP.o
+
 COMPFLG =  -O3 -pipe -fomit-frame-pointer -c\
            -falign-loops=2 -fno-strength-reduce \
            -ffast-math -falign-functions=2 -I/usr/include
@@ -32,10 +36,15 @@ CPP     = /lib/cpp
 CPPFLAGS = -P 
 DEFINE   = -Dpack
 
+DEFAULT = posta_ser
+
 .SUFFIXES: .f .o .fpp
 
-posta:  $(OBJ)
-	$(F77) -o posta $(OBJ) $(LINKFLG)
+posta_ser:  $(OBJ) $(OBJ_SER)
+	$(F77) -o posta_ser $(OBJ) $(LINKFLG)
+
+posta_par:  $(OBJ) $(OBJ_PAR)
+	$(F77) -o posta_par $(OBJ) $(LINKFLG)
 
 clean:
 	@echo "Removing Object files.";rm -f *.o; 
