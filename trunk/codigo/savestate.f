@@ -5,8 +5,8 @@
       logical NORM, OPEN
       integer NATOM, IZ, NUC, NCONT, NSHELL, M, M18, NCOA, NCOB, NG2
       real*8  a, c, r, RMM(NG2), EX
-      
-      integer i
+C	Estas dos se usan para formate      
+      integer i, j
       
       open (unit=99, access='SEQUENTIAL', form='FORMATTED', 
      1     file='state.log')
@@ -34,13 +34,23 @@
       write(99, 20) C
       write(99, 25) R
       write(99, 10) Ex      
-      write(99, *) "---------------------------------------"      
+      write(99, *) "--------------------------------------------------"      
       
-      write(6, *) 'diego=', NG2, mod(NG2,10)
-C      do 8 i=1,(NG2 mod 10)
-C         write (6, *) 'diego=', i
-C8     continue
-      
+      write(6, *) 'diego=', NG2, mod(NG2,10), NG2/10, RMM(1), RMM(100)
+      do 8 i=1,NG2/5
+C      do 8 i=1,100
+         write (99, 30) RMM(i*5+1), RMM(i*5+2), RMM(i*5+3),
+     1    RMM(i*5+4), RMM(i*5+5)
+C     1    RMM(i*10+4), RMM(i*10+5), RMM(i*10+6), RMM(i*10+7), 
+C     2    RMM(i*10+8), RMM(i*10+9), RMM(i*10+10)
+8     continue
+  
+      do 9 i=1, mod(NG2, 5)
+         write (99, 30) RMM(NG2/10+i)
+9     continue
+
+
+
       close(99)
       STOP
 
@@ -50,4 +60,5 @@ C8     continue
 15    FORMAT(' a=',E25.15)
 20    FORMAT(' c=',E25.15)
 25    FORMAT(' r=',E25.15)
+30    FORMAT(5E25.15)
       END
