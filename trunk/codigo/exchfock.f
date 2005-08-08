@@ -11,7 +11,7 @@ c--------------------------------------------------------------
 c
       SUBROUTINE EXCHFOCK(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
      >               M,M18,NCOa,NCOb,RMM,Ex)
-
+    
 c
 c      implicit real*8 (a-h,o-z)
       implicit none
@@ -23,11 +23,10 @@ c      implicit real*8 (a-h,o-z)
       real*8 aij,x1,u,rnc,rnb,pp,tmp0,yi,dxz,dyz,dxy,dzz,dyy,dxx
       real*8 bdyy,adyy,bdxx,adxx,bdz,adz,bdy,ady,bdx,adx,dxi,dens,y2b
       real*8 y2a,yiec,yiex,densb,densa,wrad,r1,w1,x,t1,t0,rm,wang0
-      real*8 wang3,e0,e3,wang2,e2,wang,e,xi,ds,f,ex,adzz,exp
+      real*8 wang3,e0,e3,wang2,e2,wang,e,xi,ds,f,ex,adzz
       integer kk,nc,nb,i1,k,iang,n,na,m18b,m5,m3,m1,mm,m2,nd,np,ns
       integer i,j,l,nr2,nr,ndens,nr0,ll,nuc,ncont,ncoa,ncob,ngd0
       integer ngd,iexch,natom,m,m18,ntq,ntc,nss,ng,ng0,nl,nt,iz,nco
-      
       INCLUDE 'param'
       parameter (pi=3.14159265358979312D0,pi2=6.28318530717958623D0)
       dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng)
@@ -39,29 +38,17 @@ c
       common /Nc/ Ndens
       common /fit/ Nang,dens1,integ,Iexch,igrid,igrid2
       common /intg1/ e(50,3),wang(50),Nr(0:54)
-      common /intg2/ e3(194,3),e2(116,3),wang3(194),wang2(116),Nr2(0:54)
+      common /intg2/ e2(116,3),wang2(116),Nr2(0:54),e3(194,3),wang3(194)
       common /radii/ Rm(0:54)
 c
       dimension wang0(194),e0(194,3),Nr0(0:54)
-
-      DOUBLE PRECISION pnt(M),send(M)
-
-      INTEGER MYRANK, IPROC, ITAG,ITAG2, IERR,ISTAT
-      INTEGER init, ifin, iaux,ih
-
-c      WRITE(6,*) "checkpoint exchfock 1"
-      CALL MPI_COMM_RANK (91,MYRANK,IERR)
-
-      CALL MPI_COMM_SIZE (91,IPROC,IERR)
-      ITAG=730
-      ITAG2=731
+      
 c now we should evaluate all same loops as the ones used for
 c 1 electron matrix elements, but doing only products
 c then, the particular density functional wanted is calculated
 c
       NCO=NCOa
       Ex=0.0D0
-      ExP=0.0D0
       ss0=0.0D0
 c
       do 43 l=1,3
@@ -141,28 +128,7 @@ c
 c-------------------------------------------------------------
 c loop 12 , over all grid  -----------------------------
 c
-      if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-         init = ((natom*MYRANK)/IPROC)+1
-         iaux = MYRANK+1
-         if (IPROC.eq.iaux) then
-          ifin=natom
-         else
-          ifin=init+(natom/IPROC)-1
-         endif
-c	 WRITE(6,*) "exchfock: entre en el then"
-      else
-        init = 1
-        ifin = natom
-c	WRITE(6,*) "exchfock: entre en el else"
-      endif
-
-c      WRITE(6,*)"natom:",natom
-c      WRITE(6,*)"IPROC:",IPROC
-c      WRITE(6,*)"MYRANK:",MYRANK
-c      WRITE(6,*)"fin:",fin
-c      WRITE(6,*)"init:",init
-c
-      DO 12 na=init,ifin
+      DO 12 na=1,natom
 c
        do 16 n=1,Nr0(Iz(na))
 c
@@ -284,7 +250,7 @@ c
         PF=P(na)/PP
         tmp=tmp0*PF
 c
-        ExP=ExP+dens*yi*tmp
+        Ex=Ex+dens*yi*tmp
         ss0=ss0+dens*tmp
 c
         if (dens.eq.0.0D0) then
@@ -337,7 +303,7 @@ c
 c
         kk=kk+1
 c Fock matrix
-c M5 pointer
+c M5 pointer 
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
  202  continue
  201  continue
@@ -348,80 +314,11 @@ c
  16   continue
  12   continue
 c
-
-c      WRITE(6,*) "checkpoint exchfock 2"
-
-
-      if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-      CALL MPI_ALLReduce(ExP,Ex,1,27,102,91,
-     >                  IERR)
-
-        if(MYRANK.eq.0) then
-          do 203 i=1,IPROC-1
-	   CALL MPI_Recv(pnt,M,27,i,ITAG,91,
-     >                  ISTAT,IERR)
-	   do 204 ih=0,M-1
-             RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
- 204       continue
- 203      continue
-
-          do 205 i=1,IPROC-1
-	   CALL MPI_Recv(pnt,M,27,i,ITAG2,91,
-     >                  ISTAT,IERR)
-	   do 206 ih=0,M-1
-            RMM(M3+ih)=RMM(M3+ih)+pnt(ih+1)
- 206       continue
- 205      continue
-
-        else
-	  do ih=0,M-1
-	   send(ih+1)=RMM(M5+ih)
-          enddo
-	  CALL MPI_Send(send,M,27,0,ITAG,91,
-     >                  IERR)
-
-	  do ih=0,M-1
-	   send(ih+1)=RMM(M3+ih)
-          enddo
-	  CALL MPI_Send(send,M,27,0,ITAG2,91,
-     >                  IERR)
-        endif
-
-	if(MYRANK.eq.0) then
-	 do ih=0,M-1
-	   pnt(ih+1)=RMM(M5+ih)
-	 enddo
-	endif
-	CALL MPI_Bcast(pnt,M,27,0,91,
-     >	                IERR)
-	do ih=0,M-1
-	  RMM(M5+ih)=pnt(ih+1)
-	enddo
-
-	if(MYRANK.eq.0) then
-	 do ih=0,M-1
-	   pnt(ih+1)=RMM(M3+ih)
-	 enddo
-	endif
-	CALL MPI_Bcast(pnt,M,27,0,91,
-     >	                IERR)
-	do ih=0,M-1
-	  RMM(M3+ih)=pnt(ih+1)
-	enddo
-
-      else
-       Ex=ExP
-
-      endif
-
-
-
-
-
-
-
-c      WRITE(6,*) "checkpoint exchfock 3"
-
+C	Es para guardar todo lo que puede modificar esta rutina.      
+       CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+      
       return
-c
+
+
       end
