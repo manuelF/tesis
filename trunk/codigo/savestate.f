@@ -36,11 +36,13 @@ C	Estas dos se usan para formate
       write(99, 10) Ex      
       write(99, *) "--------------------------------------------------"      
       
-      write(6, *) 'diego=', NG2, mod(NG2,10), NG2/10, RMM(1), RMM(100)
+      write(6, *) 'Starting RMM save'
       do 8 i=1,NG2/5
 C      do 8 i=1,100
          write (99, 30) RMM(i*5+1), RMM(i*5+2), RMM(i*5+3),
      1    RMM(i*5+4), RMM(i*5+5)
+         if (mod(i, 50000).eq.0) write(6, *) i," elements", (i*100)/NG2, 
+     1	 	"%"
 C     1    RMM(i*10+4), RMM(i*10+5), RMM(i*10+6), RMM(i*10+7), 
 C     2    RMM(i*10+8), RMM(i*10+9), RMM(i*10+10)
 8     continue
