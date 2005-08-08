@@ -41,7 +41,7 @@ clean:
 	@echo "Removing Object files.";rm -f *.o; 
 
          
-# config.o    : config.f COMM
+# config.o    : config.f COMM puto puto
 # 	g77 $(COMPFLG) config.f 
 # 
 # cvemot.o    : cvemot.f COMM
