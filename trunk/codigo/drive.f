@@ -220,8 +220,9 @@ c
        call GRID
 c-----------------------------------------------------------------------
 c reads input file
-       write(*,*) ' Name of the input file ?'
-       read(*,*) name1
+c       write(*,*) ' Name of the input file ?'
+c       read(*,*) name1
+      name1='input'
       WRITE(*,*)'ARCHIVO DE ENTRADA: ',name1
 
       inquire(file=name1,exist=exists)
