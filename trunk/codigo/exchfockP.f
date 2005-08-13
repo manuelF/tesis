@@ -44,15 +44,15 @@ c
 c
       dimension wang0(194),e0(194,3),Nr0(0:54)
 
-      DOUBLE PRECISION pnt(M),send(M)
+      real*8 pnt(M),send(M)
 
       INTEGER MYRANK, IPROC, ITAG,ITAG2, IERR,ISTAT
       INTEGER init, ifin, iaux,ih
 
 c      WRITE(6,*) "checkpoint exchfock 1"
-      CALL MPI_COMM_RANK (91,MYRANK,IERR)
+      CALL MPI_COMM_RANK(91,MYRANK,IERR)
 
-      CALL MPI_COMM_SIZE (91,IPROC,IERR)
+      CALL MPI_COMM_SIZE(91,IPROC,IERR)
       ITAG=730
       ITAG2=731
 c now we should evaluate all same loops as the ones used for
@@ -163,6 +163,7 @@ c      WRITE(6,*)"fin:",fin
 c      WRITE(6,*)"init:",init
 c
       DO 12 na=init,ifin
+c       DO 12 na=1,natom
 c
        do 16 n=1,Nr0(Iz(na))
 c
@@ -353,66 +354,65 @@ c      WRITE(6,*) "checkpoint exchfock 2"
 
 
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-      CALL MPI_ALLReduce(ExP,Ex,1,27,102,91,
+       CALL MPI_ALLReduce(ExP,Ex,1,27,102,91,
      >                  IERR)
 
-        if(MYRANK.eq.0) then
-          do 203 i=1,IPROC-1
-	   CALL MPI_Recv(pnt,M,27,i,ITAG,91,
-     >                  ISTAT,IERR)
-	   do 204 ih=0,M-1
-             RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
- 204       continue
- 203      continue
+         if(MYRANK.eq.0) then
+           do 203 i=1,IPROC-1
+ 	    CALL MPI_Recv(pnt,M,27,i,ITAG,91,
+     >                   ISTAT,IERR)
+	    do 204 ih=0,M-1
+              RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
+ 204        continue
+ 203       continue
 
-          do 205 i=1,IPROC-1
-	   CALL MPI_Recv(pnt,M,27,i,ITAG2,91,
-     >                  ISTAT,IERR)
-	   do 206 ih=0,M-1
-            RMM(M3+ih)=RMM(M3+ih)+pnt(ih+1)
- 206       continue
- 205      continue
+           do 205 i=1,IPROC-1
+	    CALL MPI_Recv(pnt,M,27,i,ITAG2,91,
+     >                   ISTAT,IERR)
+	    do 206 ih=0,M-1
+             RMM(M3+ih)=RMM(M3+ih)+pnt(ih+1)
+ 206        continue
+ 205       continue
 
-        else
+         else
+	   do ih=0,M-1
+	    send(ih+1)=RMM(M5+ih)
+           enddo
+	   CALL MPI_Send(send,M,27,0,ITAG,91,
+     >                   IERR)
+
+	   do ih=0,M-1
+	    send(ih+1)=RMM(M3+ih)
+           enddo
+	   CALL MPI_Send(send,M,27,0,ITAG2,91,
+     >                   IERR)
+         endif
+
+	 if(MYRANK.eq.0) then
 	  do ih=0,M-1
-	   send(ih+1)=RMM(M5+ih)
-          enddo
-	  CALL MPI_Send(send,M,27,0,ITAG,91,
-     >                  IERR)
+	    pnt(ih+1)=RMM(M5+ih)
+	  enddo
+	 endif
+	 CALL MPI_Bcast(pnt,M,27,0,91,
+     >	                 IERR)
+	 do ih=0,M-1
+	   RMM(M5+ih)=pnt(ih+1)
+	 enddo
 
+	 if(MYRANK.eq.0) then
 	  do ih=0,M-1
-	   send(ih+1)=RMM(M3+ih)
-          enddo
-	  CALL MPI_Send(send,M,27,0,ITAG2,91,
-     >                  IERR)
-        endif
-
-	if(MYRANK.eq.0) then
+	    pnt(ih+1)=RMM(M3+ih)
+	  enddo
+	 endif
+	 CALL MPI_Bcast(pnt,M,27,0,91,
+     >	                 IERR)
 	 do ih=0,M-1
-	   pnt(ih+1)=RMM(M5+ih)
+	   RMM(M3+ih)=pnt(ih+1)
 	 enddo
-	endif
-	CALL MPI_Bcast(pnt,M,27,0,91,
-     >	                IERR)
-	do ih=0,M-1
-	  RMM(M5+ih)=pnt(ih+1)
-	enddo
-
-	if(MYRANK.eq.0) then
-	 do ih=0,M-1
-	   pnt(ih+1)=RMM(M3+ih)
-	 enddo
-	endif
-	CALL MPI_Bcast(pnt,M,27,0,91,
-     >	                IERR)
-	do ih=0,M-1
-	  RMM(M3+ih)=pnt(ih+1)
-	enddo
-
-      else
-       Ex=ExP
-
-      endif
+ 
+       else
+        Ex=ExP
+       endif
 
 
 
@@ -420,8 +420,13 @@ c      WRITE(6,*) "checkpoint exchfock 2"
 
 c      WRITE(6,*) "checkpoint exchfock 3"
 ! ojo se hard-codea el tamano de RMM=23961645. Hay que cambiar a recibirlo por parámetro.
-	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+c      if(MYRANK.eq.0)then
+c	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+c      else
+c       stop
+c      endif
+      
       return
 c
       end
