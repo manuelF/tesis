@@ -920,13 +920,13 @@ c---- DEBUGGINGS
 c      write(*,*) 'Exc, integrated and calculated',Exc,Ex
 c      write(*,*) 'Coulomb energy',E2-Ex
 c
-      CALL MPI_COMM_RANK(91,MYRANK,IERR)
-      if(MYRANK.eq.0)then
-      CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-     >          M,M18,NCOa,NCOb,RMM,Ex,23961645)
-      else
-      stop
-      endif
+c      CALL MPI_COMM_RANK(91,MYRANK,IERR)
+c      if(MYRANK.eq.0)then
+c      CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+c     >          M,M18,NCOa,NCOb,RMM,Ex,23961645)
+c      else
+c      stop
+c      endif
        return
        end
 C  -------------------------                                            
