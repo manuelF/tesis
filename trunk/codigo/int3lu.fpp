@@ -433,6 +433,8 @@ c
 
         NCOa=NCO
         NCOb=NCO+Nunp
+      
+c      WRITE(6,*)"NCOa",NCOa  
        call EXCHFOCK(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
      >               M,M18,NCOa,NCOb,RMM,Ex)
        Ndens=Ndens+1

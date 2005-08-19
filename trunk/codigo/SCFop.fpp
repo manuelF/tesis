@@ -1015,8 +1015,8 @@ c      write(*,*) 'Exc, integrated and calculated',Exc,Ex
 c      write(*,*) 'Coulomb energy',E2-Ex
 c
  
-      CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-     >              M,M18,NCOa,NCOb,RMM,Ex,23961645) 
+c      CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+c     >              M,M18,NCOa,NCOb,RMM,Ex,23961645) 
        return
        end
 C  -------------------------                                            

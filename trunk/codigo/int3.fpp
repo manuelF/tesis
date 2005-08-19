@@ -30,6 +30,25 @@ c-----------------------------------------------------------------
 c
 c
       implicit real*8 (a-h,o-z)
+c      implicit none
+c      real*8 r,a,c,cd,ad,rmm,x,e2,ex,gold,told,aux,d,p,ff,rc,w,q
+c      real*8 term,eb,ea,ss9,bda,r1,r0,t0,rcond,sq3,pi32,b,af
+c      real*8 rmax,pi,pi52,t6b,p5s,pj4s,d4s,t22a,dpk,d3pk,pj3pk
+c      real*8 pì3pk,s3pk,t15,t20,t21,t22,t24,t25,t26,t27,t28,t29,d2d
+c      real*8 d2pl,sdkl,pj2pl,pi2pl,t30,t40,t50,t60,t70,t80,t23,ddp
+c      real*8 pjdklp,pidklp,dijplp,dijpkp,t31,t41,t51,t61,f3,d1pl,t13
+c      real*8 t14,zc,ss1p,sspj,pispj,pijs,pij1s,pij2s,spjs,sp2js,pp1p
+c      real*8 spjpk,pispk,ds1p,pis1pk,pjs1pk,spks,d2p,pi2p,pj2p,dp1p
+c      real*8 pjpkpl,pipkpl,dspl,ddi,ss6s,pi3pk,s3pk,t15,t20,t21,t22
+c      real*8 t24,t25,t26
+c      integer natom,iz,nuc,m,mmem,ncont,nshell,nucd,md,ncontd,nshelld
+c      integer nmax,nco,nunp,nel,l2,l1,nk,info,irank,md5,md3
+c      integer m12,m10,i,j,k1,mmp,kk,k,l,mmem1,m23,m22,m21,m20
+c      integer ncob,ncoa,m19,m18,m18b,m17,m15,m13,m11,m9,m7,m5,m3,m1
+c      integer mmd,mm,md2,ndd,npd,nsd,m2,nd,np,ns,ncall,ndens,iexch
+c      integer nang,ll,jx,ndim,ngda,nga,ngd,ngd0,nl,ng,ng0,nt,nss
+c      integer ntc,ntq,l6,l56,l5,l23,l45
+
       logical NORM,dens,OPEN,SVD,ATRHO,integ
       logical VCINP,DIRECT,EXTR,SHFT,write
       integer nopt,iconst,igrid,igrid2
