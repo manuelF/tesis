@@ -1,0 +1,55 @@
+\documentclass[oneside,a4paper]{mecom}
+% Preamble
+\usepackage{graphicx}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amsfonts}
+\usepackage{url}
+\usepackage{overcite}
+\usepackage{times}
+\usepackage{bm}
+\usepackage{multicol}
+\usepackage{colortbl}
+
+\pagestyle{empty}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{21cm}
+\setlength{\oddsidemargin}{-0.04cm}
+\setlength{\topmargin}{18.1mm}
+\setlength{\headheight}{0mm}
+\setlength{\headsep}{0mm}
+
+
+\title{COMPUTACI\'ON DE ALTO RENDIMIENTO EN EL ESTUDIO DE REACCIONES QU\'IMICAS EN SOLUCIONES A TRAV\'ES DE M\'ETODOS CL\'ASICOS Y CU\'ANTICOS}
+\author{
+\textbf{P. Listingart\stared, E. Mocskos\stared, M.C. Gonz\'alez Lebrero\dagged and D. Estrin\dagged}\\
+\\
+\stared Laboratorio de Sistemas Complejos\\
+Departamento de Computaci\'on, Facultad de Ciencias Exactas y Naturales (FCEyN)\\
+Universidad de Buenos Aires, Ciudad Universitaria, \\
+Pabell\'on I, (C1428EGA) Buenos Aires, Argentina.\\
+web page: http://www.lsc.dc.uba.ar\\
+\dagged Departamento de Qu\'imica Inorg\'anica, Anal\'itica y Qu\'imica F\'isica, \\
+Facultad de Ciencias Exactas y Naturales (FCEyN), \\
+Universidad de Buenos Aires, Ciudad Universitaria, \\
+Pabell\'on I, 1428 Buenos Aires, Argentina.
+}
+
+\begin{document}
+\vspace{3cm}
+\maketitle
+\noindent\textbf{Key Words:} HPC, Cluster, Perfomance, Parallel Computing, Beowulf, Finite Differences
+\vspace{12pt}
+
+\begin{abstract}
+En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicado a la simulaci\'on de reactividad qu\'imica en soluci\'on. El m\'etodo utilizado para realizar la simulaci\'on se encuadra dentro de un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente (como masas y cargas puntuales) mientras que el soluto es tratado con rigurosidad cu\'antica (DFT, en nuestro caso), de esta manera se logra optimizar el costo computacional ya que se computa la estructura electr\'onica s\'olo de la porci\'on del sistema en la que es realmente relevante. El proyecto consiste en la construcci\'on de un software paralelo de simulaci\'on num\'erica a partir de una versi\'on serial preexistente y su implementaci\'on en un cluster Beowulf, en el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on. La combinaci\'on del hardware y software mencionado permiti\'o la resoluci\'on de problemas m\'as realistas y previamente inabordables, la validaci\'on de los resultados computacionales con mediciones experimentales y el an\'alisis de distintas estrategias de paralelizaci\'on (incluyendo diversas estrategias de pasaje de mensajes) con las que se obtuvo un algoritmo escalable.
+\end{abstract}
+
+\section{Introducci\'on}
+
+\section{Metodolog\'ia}
+
+\section{Resultados y Discusi\'on}
+
+\section{Conclusiones}
+
+\end{document}
