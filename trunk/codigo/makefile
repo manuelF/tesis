@@ -21,9 +21,12 @@ OBJ =     config.o cvemot.o  cvemotn.o  cvemotnn.o \
            intsolG.o intsol.o grilla.o\
            lalg.o int3mem.o int3lu.o ungles.o \
            cvemot1.o  proton.o dipcor.o  furim.o savestate.o
-OBJ_SER = exchfock.o
+OBJ_SER = exchfock.o exchnum.o exchnumop.o exchnum2.o\
+          exchnum2op.o
 
-OBJ_PAR = exchfockP.o
+OBJ_PAR = exchfockP.o exchnumP.o exchnumopP.o exchnum2P.o\
+          exchnum2opP.o
+          
 
 COMPFLG =  -O3 -pipe -fomit-frame-pointer -c\
            -falign-loops=2 -fno-strength-reduce \
