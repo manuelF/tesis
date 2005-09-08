@@ -70,8 +70,9 @@ C--------------------------------------------------------
       TEMPSLT=ZERO
       IFORT=70
 
+      if(MYRANK.eq.0)then
       write(6, *) "NG2=", NG2
-
+      endif
 
 C-----LLAMA A 'INICIO':LEE TODO SOBRE EL SISTEMA CLASICO
       CALL INICIO(NATSOL,NDIP,IDIPCOR,PMAX,PZMAX)
@@ -91,7 +92,9 @@ C-----LAS POSICIONES NUCLEARES.
 
        date='date'
        CALL SYSTEM(date)
+       if(MYRANK.eq.0)then
        write(*,*)
+       endif
      
 C-----LLAMA A 'CORECT': CALCULA TODO LO QUE NECESITA DESPUES
 
@@ -166,11 +169,11 @@ C-----(EMPEZAR DEL ORDEN QUIERE DECIR DE DRIVE)
 
 C-----CONTROL: COHERENCIA ENTRE ENTRADA DARIO Y MIA
       IF(NSPECQ.EQ.0)NSOL=NWAT
-      IF(NWAT.NE.NSOL)THEN
+      IF(NWAT.NE.NSOL.and.(MYRANK.eq.0))THEN
       WRITE(*,*)'NSOL DEBE SER = A NWAT',NSOL,NWAT
       PAUSE
       ENDIF
-      IF(NPART.NE.(NATOM+NSOL*NATSOL))THEN
+      IF(NPART.NE.(NATOM+NSOL*NATSOL).and.(MYRANK.eq.0))THEN
       WRITE(*,*)'ALGO INCOHERENTE NPART,NT',NPART,(NATOM+NSOL*NATSOL)
       STOP
       ENDIF
@@ -253,10 +256,12 @@ C-----(LAS LEE CON MI NUMERACION Y UNID.DE E)
  
 
 C-----GENERA UNA FOTO (ini.xyz)INICIAL
+      if(MYRANK.eq.0)then
         WRITE(12,50) NPART
         WRITE(12,*)
+      endif
         DO I=1,NPART
-        IF(NDFT.EQ.1)THEN     
+        IF(NDFT.EQ.1.and.(MYRANK.eq.0))THEN     
 
          IF(I.LE.NATOM)THEN
           WRITE(12,101)   AT(I),X(I),Y(I),Z(I)
@@ -269,7 +274,9 @@ C-----GENERA UNA FOTO (ini.xyz)INICIAL
         ENDIF
 
         ENDDO
+        if(MYRANK.eq.0)
         WRITE(12,*)'inicio '
+        endif
         
 
 C-- Para reacomodar el solvente a TIP4P o SPC:  
@@ -299,9 +306,9 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 C-----LLAMA A 'NEWXYZ':PONE EN X1 Y1 Z1 SITIOS REALES
 C-----Y EN XYZ LOS SITIOS CON CARGA (TIP4P)  
-c     write(*,*) 'ANTES DE NEW', X(6),Y(6),Z(6)   
+
       CALL NEWXYZ(NATSOL,F1,NT)
-c     write(*,*) 'DESPUES DE NEW',X(6),Y(6),Z(6)
+
    
       Vcerca = ZERO
       Vlejos = ZERO 
@@ -334,14 +341,14 @@ c     write(*,*) 'DESPUES DE NEW',X(6),Y(6),Z(6)
       IF(NWAT.EQ.0)GOTO 575
 
 C-----LLAMA A 'FSPHER':
-c     write(*,*)'SPC:',SPC
+
 
       IF(SPC.EQ.1) THEN
       CALL FSPHER2(NATSOL)
-c     write(*,*)'fspher2'
+
       ELSE
       CALL FSPHER(NATSOL)
-c     write(*,*)'fspher'
+
       ENDIF
  
  6880 CONTINUE
@@ -349,36 +356,17 @@ c     write(*,*)'fspher'
 C-----Para bulk solo las aguas dentro del cutoff
       
 
-c      nwatc=0 
-c      if(ICLSTR.EQ.1) THEN
-c      do kk=natom+1,natom+nwat
-c        nwatc = nwatc + 1
-c        JNFC(nwatc) = KK 
-c       enddo
-c      else
-c      do kk=natom+1,natom+nwat
-c
-c      rrcu(kK)=X(kk)**2 + Y(KK)**2 + Z(KK)**2
-c      IF (rrcu(kk).LT.RCTSQ) THEN
-c        nwatc = nwatc + 1
-c        JNFC(nwatc) = KK 
-c         ENDIF
-c      enddo
-c        endif
-C      write(*,*) 'Nsol'
-C      NSOL = nwatc
-C      write(*,*) 'Nsol',nsol,nwatc
 575   CONTINUE
 
 C-----LLAMA A 'FINT': INT. SOLV-SLT(NUCLEOS)
-C      write(*,*)'a fint',FX(1),FY(1),Fz(1)
+
 
       IF(SPC.EQ.1) THEN
       CALL FINT2(NT,IZ,NATSOL,FXH1,FYH1,FZH1)
       ELSE
       CALL FINT(NT,IZ,NATSOL,FXH1,FYH1,FZH1)
       ENDIF 
-C      write(*,*)' fint',FX(1),Fy(1),Fz(1)
+
 
  6881 CONTINUE
 
@@ -408,7 +396,7 @@ C-----LLAMA A 'DODA':PASA DE MI NUMERACION A LA DE DARIO (COORDS)
       CALL DODA(NATSOL,R,NT,IZ)
 
 C-----LLAMA A 'SCF': CALCULA ENERGIA SUBS. QUANTICO
-      IF(NPAS.NE.1)THEN
+      IF(NPAS.NE.1.and.(MYRANK.eq.0))THEN
        WRITE(*,*)
        WRITE(*,*)'DFT-   STEP No: ',ITEL
        WRITE(*,*)
@@ -475,7 +463,7 @@ C-----UNIDADES DE DARIO POR LAS MIAS PARA LAS FZAS SOBRE SLT
       FY(I)=FY(I)-F1(I,2)/A0*HH
       FZ(I)=FZ(I)-F1(I,3)/A0*HH
       ENDDO
-c      write(*,*) 'd intsolG',FX(1),FY(1),FZ(1)
+
 C-----ACOPLAMIENTO COULOMBIANO SOLUTO-SOLVENTE POR ATOMO
 C-----A PARTIR DE ACA, VCSS ES LA SUMA DE LAS INTERACCIONES
 C-----1) ELECTRONES CON NUCLEOS CLASICOS (EAC(I))
@@ -504,7 +492,7 @@ C-----2) NUCLEOS CLASICOS CON NUCLEOS CUANTICOS (VCSS(I))
  6882 CONTINUE
 
       VCSST = VCSST + VCSSO + VCSSH
-c     WRITE(*,*) 'VCSST VCSSO VCSSH',VCSST,VCSSO,VCSSH
+
 C-----UNIDADES DE DARIO A LAS MIAS PARA LAS FZAS SOBRE SOLV.
 
       NN=NATOM
@@ -581,7 +569,7 @@ C-----CAMBIO UNIDADES FZA. SOBRE SOLUTO
       FX(I)=FX(I)-F1(I,1)/A0*HH
       FY(I)=FY(I)-F1(I,2)/A0*HH
       FZ(I)=FZ(I)-F1(I,3)/A0*HH
-c      write(*,*)'f1 ',i,(f1(i,j)/a0*hh,j=1,3)
+
       ENDDO
 
 C-----ACOPLAMIENTO COULOMBIANO SOLUTO-SOLVENTE POR ATOMO
@@ -667,10 +655,8 @@ C------------------------------------------------------------------C
       FYT = FYT + FY (I)
       FZT = FZT + FZ (I)
 201   CONTINUE
-c      write(*,*)'Fza total: ',abs(fxt*fxt+fyt*fyt+fzt*fzt)
-c      write(*,*)'           ',fxt,fyt,fzt
 
-      IF (DSQRT(FXT*FXT+FYT*FYT+FZT*FZT).GT.1.D-04)THEN
+      IF (DSQRT(FXT*FXT+FYT*FYT+FZT*FZT).GT.1.D-04.and.(MYRANK.eq.0))THEN
       WRITE (6,*) ' FZA TOTAL NE ZERO EN MAIN  ', FXT, FYT,FZT
       ENDIF
 C------------------------------------------------------------------C
@@ -822,7 +808,7 @@ C          ENDIF
       RT = ONE / DBLE (IT)
       VOO = VLJ + VCOO
       EKIN = PTFIVE * TEMPAV * FACTOR
-c      WRITE(*,*) 'EKIN,TEMPAV,FACTOR',EKIN,TEMPAV,FACTOR
+
       EKINQ =PTFIVE * TEMPOL * FACTOR
       IF(NWAT.EQ.0)THEN
       EK = EKIN
@@ -840,9 +826,9 @@ c      WRITE(*,*) 'EKIN,TEMPAV,FACTOR',EKIN,TEMPAV,FACTOR
       POT = (EKS+E1s)*HH*FACTOR + EPOT1
       ETOTL = EK + POT
       TE = ETOTL+(QSEK+QSEP+QSEKQ+QSEPQ)
-c      WRITE(*,*)'TEMPAV,GDF',TEMPAV,GDF
+
       TEMPAV = TEMPAV/GDF
-c     WRITE(*,*) 'TEMPAV',TEMPAV
+
        if(GDFSLT.eq.zero)then
       TEMPSLT=TEMPSLT
       TEMPSLV=TEMPSLV/gdf
@@ -940,11 +926,6 @@ c22    CONTINUE
 
 
       NREF=NATOM+NWAT+NN+2*NPART
-c      IF(NREF.GT.500)THEN
-c      WRITE(*,*)'DANGER! DIMENSION AC(I).GT.500 ',NREF
-c      WRITE(*,*)'CUIDADO CON LOS ACUMULADORES DE CARGAS Y ETC'
-c      STOP
-c      ENDIF
 
       DO 290 I = 1, 500
       AV(I) = AC(I) * RT
@@ -975,7 +956,7 @@ c      ENDIF
       WRITE(6,*)'ENERGIA POT. VLJQC + VCQC     ',EINTQC
       WRITE(6,*)'ENERGIA POT. CLAS+ INTQC      ',EPOT1
       WRITE(6,*)'ENERGIA RHO*V                 ',E1s*HH*FACTOR
-c      WRITE(6,*)'ENERGIA KS                    ',EKS*HH*FACTOR
+
       WRITE(6,*)'ENERGIA KS                    ',EKS
       WRITE(6,*)'ENERGIA POTENCIAL TOTAL       ',POT
       WRITE(6,*)'ENERGIA CINETICA              ',EK
@@ -994,30 +975,36 @@ c                     *******
 
 C-----ENERGIAS Y TEMPERATURAS EN F. DEL TIEMPO
       IF(ICMOT.NE.2)THEN
+      if(MYRANK.eq.0)then
       WRITE(19,86)ITEL,TE,EK,POT,EINTQC,ECSELF,TEMPAV,TEMPOL,E1s*HH*FACTOR,
      & EKS*HH*FACTOR
       WRITE(80,'(i6,2x,F8.3,2x,F8.3,2x,F8.3,2x,F8.3)')ITEL,TEMPAV,
      & TEMPOL,TEMPSLT,TEMPSLV
+      endif
       CALL FLUSH(80)
-c      WRITE(81,*)ITEL,DIST,DIST1,DIST2
+      if(MYRANK.eq.0)then
       WRITE(82,*)ITEL,E1s*HH*FACTOR,VCQC
       WRITE(83,*)ITEL,(VCSS(I),I=1+NATOM,NATOM+NWAT)
       WRITE(84,*)ITEL,(VCSS(I),I=1+NATOM+NWAT,NPART)
       WRITE(85,*)ITEL,VCSSO,VCSSH,VCSST
+      endif
       ELSEIF(ICMOT.EQ.2)THEN
 C-----SI OPTIMIZA Q Y R ESCRIBE ENERGIA TOTAL, POTENCIAL Y GRADIENTES
+      if(MYRANK.eq.0)then
       WRITE(19,86)ITEL,TE,EMOD,EMODQ
       IF(NSPECQ.EQ.0)THEN
       WRITE(6,86)ITEL,TE,EMOD,EMODQ
       ENDIF
+      endif
       ENDIF
 
            ENDIF
      
 C-----IMPRIME ARCHIVO FORT.15 CADA "IP15" PASOS:
-c     write(*,*)'ANTES DE 15',X(6),Y(6),Z(6)
+
  
-         IF(MOD((IT-NIN),IP15).EQ.0)THEN
+      IF(MOD((IT-NIN),IP15).EQ.0.and.(MYRANK.eq.0))THEN
+         
       WRITE(15,*)NPART,ITEL
       WRITE(15,*)
       DO I=1,NPART
@@ -1033,9 +1020,10 @@ c     write(*,*)'ANTES DE 15',X(6),Y(6),Z(6)
       ENDDO
          ENDIF
 
-c     write(*,*)'DESPUES DE 15',X(6),Y(6),Z(6)
+
 
 C --  ESCRIBE EN CADA PASO: COORDS. Y VELOCIDADES SOLUTO
+      if(MYRANK.eq.0)then
       WRITE(18,*)NATOM,ITEL
       WRITE(20,*)ITEL
       WRITE(18,*)
@@ -1063,6 +1051,7 @@ C-----END FORT.15 y FORT.18 y FORT.20
       WRITE (8,*)HISTO2
       WRITE (8,*)QK
       WRITE (8,*)AC
+      endif
       REWIND 8
 
       ENDIF
@@ -1126,6 +1115,7 @@ c
 c       ENDIF
 
 C-----REESCRIBE LA FOTO (tt.alc) "FINAL" 
+      if(MYRANK.eq.0)then
         WRITE(41,50) NPART
         WRITE(41,*) 
         DO I=1,NPART
@@ -1140,9 +1130,11 @@ C-----REESCRIBE LA FOTO (tt.alc) "FINAL"
         ENDIF
         ENDDO
         WRITE(41,*)'ITEL: ',ITEL
+        
 C-----FIN FOTO  
 
       WRITE (6,*)
+      endif
 
       if(myrank.eq.0)then
       IF(IUNID.EQ.1)WRITE(6,*)'UNIDADES: ADIMENSIONALES, FACTOR DE 
@@ -1170,26 +1162,11 @@ C-----FIN FOTO
       WRITE (6,*)
       WRITE (6,*) '<POT COUL >',AV(26),' <DV>',DSQRT(AV(27)-AV(26)**2)
       WRITE (6,*)
-c      WRITE (6,*) '<POT VCQC>',AV(38),'  <VCQC**2>',AV(39),
-c     &  '  <D VCQC 2>',DSQRT(AV(39)-AV(38)**2)
-c      WRITE (6,*)
-c      WRITE (6,*) '<POT LJQC>',AV(40),'  <VLJQC**2>',AV(41),
-c     &  '  <D VLJQC 2>',DSQRT(AV(41)-AV(40)**2)
-c      WRITE (6,*)
-c      WRITE (6,*) '<POT INTQC >',AV(36),'  <EIQC**2>',AV(37),
-c     &  '  <D  2>',DSQRT(AV(37)-AV(36)**2)
-c      WRITE (6,*)
       WRITE (6,*) '<POT (C)+(QC) >',AV(44),' <DP>',
      & DSQRT(AV(45)-AV(44)**2)
       WRITE (6,*)
       WRITE (6,*) '<POT TOTAL >',AV(46),' <DP>',DSQRT(AV(47)-AV(46)**2)
       WRITE (6,*)
-c      WRITE (6,*) '< DV1 >',AV(48),'  <D DV1 >',DSQRT(AV(49)-AV(48)**2)
-c      WRITE (6,*)
-c      WRITE (6,*) '< DV2 >',AV(50),'  <D DV2 >',DSQRT(AV(51)-AV(50)**2)
-c      WRITE (6,*)
-c      WRITE (6,*) '< DV3 >',AV(52),'  <D DV3 >',DSQRT(AV(53)-AV(52)**2)
-c      WRITE (6,*)
       WRITE (6,*) '< V >',AV(54),'  <D V >',DSQRT(AV(55)-AV(54)**2)
       WRITE (6,*) 
       WRITE (6,*) '<VCSSO>',AV(56),'   <Delta>',DSQRT(AV(57)-AV(56)**2)
@@ -1199,22 +1176,10 @@ c      WRITE (6,*)
       WRITE (6,*) '<VCSST>',AV(60),'   <Delta>',DSQRT(AV(61)-AV(60)**2)
       WRITE (6,*)
 
-c      WRITE (6,*) '<FZ>',AV(62),'   <Delta>',DSQRT(AV(63)-AV(62)**2)
-c      WRITE (6,*)
-c      WRITE (6,*) '<F1>',AV(64),'   <Delta>',DSQRT(AV(65)-AV(64)**2)
-c      WRITE (6,*)
-c      WRITE (6,*) '<F2>',AV(66),'   <Delta>',DSQRT(AV(67)-AV(66)**2)
-c      WRITE (6,*)
        write (6,*) 'nano capo, Vcerca y Vlejos', AV(68), AV(69)
        endif
 
 
-c      OPEN(7,FILE='mull.out')
-c      WRITE (7,*)
-c      WRITE(7,*)'<MULLIKEN POP Y CARGAS: >'
-c      DO I=1,NPART
-c      WRITE(7,612)I,IZ(I),AV(NN+I),DSQRT(AV(NN+I+NPART)-AV(NN+I)**2)
-c      ENDDO
 
 909   CONTINUE
 
@@ -1252,7 +1217,9 @@ c      ENDDO
 101   FORMAT(5X,A5,4F9.4)
 102   FORMAT(2X,A5,4F15.6)
 
+      if(MYRANK.eq.0)then
       WRITE(6,*)"Llegue al final"
+      endif
       CALL MPI_FINALIZE(IERR)
 
 

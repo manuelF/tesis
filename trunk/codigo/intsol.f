@@ -43,7 +43,7 @@ c auxiliar quantities
 c--------------------------------------------------------------------
 c Modificacion para correr SPC o TIP4P desde afuera
 c---------------------------------------------------------------------
-c     write(*,*)'SPC=',SPC
+
       IF(SPC.EQ.1)THEN
 
         alpha=1.00D0
@@ -68,11 +68,8 @@ c caso SPC
 c       alpha=1.00D0
 c       alpha2=0.00D0
 c ----------------------------
-c      do i=1, 10000
-c       write(45,*) i,RMM(i)
-c      enddo
 
-c      goto 999 
+
       DO I=NATOM+1,NATOM+NSOL*NATSOL
       TTNA(I)=0.D0
       TTERM(I)=0.D0
@@ -81,10 +78,8 @@ c      goto 999
       ENDDO
 
       box=BXLGTH/A0 
-c      write(*,*) 'box',box,RCTSQ
-c      RCTSQ2=(box/2.)**2
       RCTSQ2=RCTSQ/(a0**2)
-C      RCTSQ2=1000000000.
+
       if (NORM) then
       sq3=sqrt(3.D0)
       else
@@ -182,7 +177,7 @@ C---- TIP4P
 
 
 333   continue
-c      write(76,*) nwatc*3
+
       ss=pi32*exp(-alf*dd)/(zij*sqrt(zij))
       temp=2.D0*sqrt(zij/pi)*ss
 c
@@ -193,12 +188,12 @@ c
       do 202 k1=1,natsol
        j1=jwatc(n1)+k1-1
 c
-c       write(76,*) 'O',Dw(j1,1)*A0,Dw(j1,2)*A0,Dw(j1,3)*A0  
+
 
         tx=-Dw(j1,1)
         ty=-Dw(j1,2)
         tz=-Dw(j1,3)
-c      write(*,*)'dist',j1,tx,ty,tz,PC(j1)
+
        u=tx**2 + ty**2 + tz**2
        u=u*zij
 
@@ -218,9 +213,6 @@ c       pause
 c      write(*,*)'nwatc y mas..',nwatc,j1,pc(j1),Dw(j1,1),tna,ccoef
     
  200  continue
-C      write(*,*)'intsol1 E1s',E1s,rmm(k),term
-c      pause
-c      write(*,*)'fqq (0|0) ',(fqq(i),i=natom+1,natom+10)
 c
 c------------------------------------------------------------------
 c
@@ -273,7 +265,7 @@ C-------nano minima distancia y cutoff
 
 334   continue
 c loop over nuclei, part common for all shell
-c       write(*,*)'nwatc',nwatc
+
       do 302 n1=1,nwatc
       do 302 k1=1,natsol
        j1=jwatc(n1)+k1-1
@@ -323,8 +315,8 @@ c
 c       EAC(J1)=EAC(J1)-PC(K1)*term*ccoef*RMM(k)
        EAC(J1)=EAC(J1)-TERM*CCOEF*RMM(k)*pc(j1)
        tna=tna-pc(j1)*term
-C       if(pc(j1).gt.1.or.pc(j1).lt.-1.5) pause
-c       write(*,*)'cacas',j1,term,t1*s0s(j1),t2*s1s(j1)
+
+
 c
  303  continue
 
@@ -335,7 +327,7 @@ c
 c
 
  300  continue       
-C        write(*,*)' 2.E1s ',E1s
+
 c-------------------------------------------------------------------
         
 C       goto 999
@@ -474,7 +466,7 @@ c
  403   continue
 c ---------------
  400  continue
-c       write(*,*)'3.E1s ',E1s,rmm(k),term
+
 c
 c-------------------------------------------------------------------
 
@@ -608,7 +600,7 @@ c       EAC(J1)=EAC(J1)+RMM(K)*term
 c
  503  continue
  500  continue
-c       write(*,*)'4.E1s ',E1s,rmm(k),term
+
 c-----------------------------------------------------------------
 c
 c (d|p) case 
@@ -749,7 +741,7 @@ c
  603  continue
 c
  600  continue
-c       write(*,*)'6.E1s ',E1s,rmm(k),term
+
 c
 c-------------------------------------------------------------------
 c
@@ -939,26 +931,12 @@ c
  706  continue
  703  continue
  700  continue
-c       write(*,*)'7.E1s ',E1s,rmm(k),term
+
 c
 
-c      IF(NPAS.NE.1)THEN
-c        IF(MOD((IT-NIN),NPAS).EQ.0)THEN
-c        write(*,*) 'E1s=',E1s
-c        ENDIF
-c      ENDIF
-
-c      do i=natom+1,natom+natsol*nsol
-c      write(*,*)' fq INTSOL ',i,pc(i),-fqq(i)
-c      enddo
-c      pause
-C      do 3 i=1,ns
-C      do 3 j=1,i
-C      k=i+((M2-j)*(j-1))/2
-C      coco= caca(k)-RMM(k)
 C3     continue
 999    continue
-c      write(*,*) 'Esol  posta',E1s
+
       return
       end
 c-------------------------------------------------------------------

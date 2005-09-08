@@ -72,7 +72,7 @@ c
 c------------------------------
       DO 12 na=1,natom
 c
-c     write(*,*) na,Iz(na),Nr(Iz(na)),Rm(Iz(na))
+
        do 16 n=1,Nr(Iz(na))
 c
        t0=pi/(Nr(Iz(na))+1)

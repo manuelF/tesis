@@ -57,7 +57,7 @@ c
 
 
 
-      WRITE(6,*)"checkpoint exchnum2op 1"
+
       CALL MPI_COMM_RANK (91,MYRANK,IERR)
 
       CALL MPI_COMM_SIZE (91,IPROC,IERR)
@@ -108,7 +108,7 @@ c
         npoint=194
       endif
 *
-c      WRITE(6,*)"estoy en exchnum2op"
+
       if ((IPROC.gt.1).AND.(natom.ge.IPROC)) then
         init = (natom/IPROC)*MYRANK+1
         iauxa = MYRANK+1
@@ -117,16 +117,16 @@ c      WRITE(6,*)"estoy en exchnum2op"
         else
             ifin=init+(natom/IPROC)-1
         endif
-c	WRITE(6,*) "exchnum2op: entre en el then"
+
       else
         init = 1
         ifin = natom
-c	WRITE(6,*) "exchnum2op: entre en el else"
+
       endif
 c
       DO 12 na=init,ifin
 c
-c     write(*,*) na,Iz(na),Nr(Iz(na)),Rm(Iz(na))
+
        do 16 n=1,Nr(Iz(na))
 c
        t0=pi/(Nr(Iz(na))+1)
@@ -263,11 +263,6 @@ c
  16   continue
  12   continue
 c-------------------------------------------------------
-*
-*      write(*,*) 'Exchange Energy  ',excha
-*      write(*,*) 'Correlation Energy  ',ecorr
-*      write(*,*) 'Density  ',ss0
-*
 
 
 

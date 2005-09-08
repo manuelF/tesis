@@ -99,21 +99,17 @@ c------------------------------
         else
             ifin=init+(natom/IPROC)-1
         endif
-c	WRITE(6,*) "exchnum: entre en el then"
+
       else
         init = 1
         ifin = natom
-c	WRITE(6,*) "exchnum: entre en el else"
+
       endif
-c      WRITE(6,*) "init:",init
-c      WRITE(6,*) "fin:",fin
-c      WRITE(6,*) "IPROC:",IPROC
-c      WRITE(6,*) "natom:",natom
 
       DO 12 na=init,ifin
 
 c
-c     write(*,*) na,Iz(na),Nr(Iz(na)),Rm(Iz(na))
+
        do 16 n=1,Nr(Iz(na))
 c
        t0=pi/(Nr(Iz(na))+1)
@@ -124,7 +120,7 @@ c w: weight
 c multiply also by radial part
 c
        r1=Rm(Iz(na))*(1.D0+x)/(1.D0-x)
-c      write(*,*) n,x,r1
+
        wrad=w * r1**2
 c
        wrad=wrad*Rm(Iz(na)) * 2.D0 /(1.D0-x)**2
@@ -231,7 +227,7 @@ c-------------------------------------------------------
 *
       ExcT=exchaT+ecorrT
       if((IPROC.gt.1).AND.(natom.ge.IPROC))then
-c      WRITE(6,*) "exchnum:entre en el then"
+
       CALL MPI_ALLReduce(ExcT,Exc,1,27,102,91
      >                 ,IERR)
 
