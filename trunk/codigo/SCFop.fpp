@@ -17,7 +17,7 @@ c      implicit real*8 (a-h,o-z)
       logical NORM,ATRHO,VCINP,DIRECT,EXTR,dens,write1
       logical OPEN,SVD,SHFT,GRAD,BSSE,integ,field,sol,free
       logical exter,MEMO
-      integer nopt,iconst,igrid,igrid2
+      integer nopt,iconst,igrid,igrid2,MYRANK,IERR
       real*8 r,c,a,cd,ad,rmm,x,xx,e,pc,gold,told,fqq,q,e1s,eac,ux,uy
       real*8 uz,q1,t0,u,exc,e0,del,tmp,shi,fac,g,ex,good,qc2,qc,damp
       real*8 damp0,d2,d1,sq2,es,e2,en,e1,fz,fy,fx,a0,str,ef
@@ -130,7 +130,8 @@ c
 c------------------------------------------------
 c Initializations/Defaults
 c
-      IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+      CALL MPI_COMM_RANK(91,MYRANK,IERR)
+      IF(MOD((IT-NIN),IPR1).EQ.0.and.(MYRANK.EQ.0))THEN
       write(*,*) ' SCF OPEN SHELL CALCULATION  ',itel
       ENDIF
 c
@@ -321,7 +322,7 @@ c
       do 999 while (good.ge.told)
 c
 c
-      if (niter.ge.NMAX) then
+      if (niter.ge.NMAX.and.(MYRANK.eq.0)) then
        write(*,*) 'NO CONVERGENCE AT ',NMAX,' ITERATIONS'
        goto 995
       endif
@@ -767,7 +768,7 @@ c      Es=Es+E1s
 c---------------------------------------------------------
        if (GRAD) then
 
-       if (nopt.eq.0) then
+       if (nopt.eq.0.and.(myrank.eq.0)) then
        IF(MOD((IT-NIN),IPR1).EQ.0)THEN
        write(*,*)
        write(*,600)
@@ -786,7 +787,7 @@ c         endif
 
 c---------------------------------------------------------
 
-          IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+          IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
        write(*,450) E
           ENDIF
 
@@ -842,7 +843,7 @@ c
      > Nel,ux,uy,uz)
       u=sqrt(ux**2+uy**2+uz**2)
 
-      IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+      IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
       write(*,*)
       write(*,*) 'DIPOLE MOMENT, X Y Z COMPONENTS AND NORM (DEBYES)'
       write(*,900) ux,uy,uz,u
@@ -882,7 +883,7 @@ c
         enddo
 c
 
-         IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+         IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
          write(*,*) 'MULLIKEN POPULATION ANALYSIS  STEP No ',ITEL
          write(*,770)
 
@@ -955,7 +956,7 @@ c
          enddo
         enddo
 c
-        IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+        IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
          write(*,*) 'UNPAIRED SPIN MULLIKEN POPULATION ANALYSIS ',ITEL
          write(*,770)
 

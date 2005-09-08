@@ -248,7 +248,7 @@ c      WRITE(6,*) "exchnum:entre en el then"
        ss0=ss0T
       endif
 
-      if (nopt.eq.0) then
+      if (nopt.eq.0.and.(myrank.eq.0)) then
        IF(MOD((IT-NIN),IPR1).EQ.0)THEN
         write(*,610)
         write(*,620) excha,ecorr,ss0
