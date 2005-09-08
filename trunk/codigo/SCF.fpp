@@ -130,7 +130,8 @@ c
 c------------------------------------------------
 c Initializations/Defaults
 c
-      IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+      CALL MPI_COMM_RANK(91,MYRANK,IERR)
+      IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
       write(*,*) ' SCF CALCULATION  ',itel
       ENDIF
 c
@@ -224,7 +225,7 @@ c        write(*,*)'mierda!!!!',M
 c
         do  j = 1,M
 c          WRITE(*,*)M13+J-1,RMM(M13+J-1)
-          if (RMM(M13+j-1).lt.1.0D-6) then
+          if (RMM(M13+j-1).lt.1.0D-6.and.(myrank.eq.0)) then
           write(*,*) 'LINEAR DEPENDENCY DETECTED'
          do  i = 1,M
        X(i,j)=0.0D0
@@ -451,7 +452,7 @@ c-------------------------------------------------------------------
 c
       do 999 while (good.ge.told)
 c
-      if (niter.ge.NMAX) then
+      if (niter.ge.NMAX.and.(myrank.eq.0)) then
        write(*,*) 'NO CONVERGENCE AT ',NMAX,' ITERATIONS'
        goto 995
       endif
@@ -743,7 +744,7 @@ c      pause
    
 c--------------------------------------------------------------
        if (GRAD) then
-        if(nopt.eq.0) then
+        if(nopt.eq.0.and.(myrank.eq.0)) then
          IF(MOD((IT-NIN),IPR1).EQ.0)THEN
          write(*,*)
          write(*,600)
@@ -764,7 +765,7 @@ c
 c--------------------------------------------------------------
         
 
-         IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+         IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
        write(*,*)
        write(*,450) E
          ENDIF
@@ -803,7 +804,7 @@ c
      >       Nel,ux,uy,uz)
       u=sqrt(ux**2+uy**2+uz**2)
 c
-      IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+      IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
       write(*,*)
       write(*,*)'DIPOLE MOMENT, X Y Z COMPONENTS AND NORM (DEBYES)'
       write(*,900) ux,uy,uz,u
@@ -812,8 +813,10 @@ c
 
 C---- ESCRIBE EN EL FORT.70 LAS COMPONENTES
 C     DEL MOMENTO DIPOLAR Y EL MODULO EN CADA PASO
+      if(myrank.eq.0)then
       write(70,'(4x,4f16.11)') ux,uy,uz,u
       CALL FLUSH(70)
+      endif
 
 c u in Debyes
        endif
@@ -847,7 +850,7 @@ c         write(*,*)'SCF ',n,iz(n),q(n)
          enddo
         enddo
 
-         IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+         IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
          write(*,*) 'MULLIKEN POPULATION ANALYSIS',ITEL
          write(*,770)
 
@@ -880,7 +883,7 @@ c      do 225 l=1,M
 c 225   write(2,400) (X(l,M+n),n=1,NCO)
 c-------------------------------------------------
 c writes down MO coefficients and orbital energies
-        IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+        IF(MOD((IT-NIN),IPR1).EQ.0.and.(myrank.eq.0))THEN
         write(29,*)'ORB COEFFIC AND ENERGIES, CLOSED SHELL, paso:',itel
        do n=1,NCO
         write(29,850) n,RMM(M13+n-1)
