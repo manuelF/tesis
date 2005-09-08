@@ -163,42 +163,8 @@ c----- SOLVENT CASE -----------------------------------
 c      call intsoln(NORM,natom,Nsol,natsol,pc,r,Nucd,M,Md,
 c     > ncontd,nshelld,cd,ad,Esoln,E1s)
 
-c prueba----------
-c      xi(1)=0.0
-c      xi(2)=0.0
-c      xi(3)=0.0
-c      call efield(NORM,natom,r,Nuc,Iz,M,Md,ncont,nshell,
-c    >            c,a,RMM,xi,V,Ef)
-c      write(*,*) Ef(1),Ef(2),Ef(3)
-c end prueba------
-c      call mmsol(natom,Nsol,natsol,Iz,pc,r,Em,Rm,Es)
       endif
-c test ---------------------------------------------------------
-c to check if MO are normalized
-c       kki=0
-c       kkj=0
-c       TE=0.0D0
-c       do i=1,NCO
-c        ss=0.0D0
-c        do ii=1,M
-c        do jj=1,M
-c        
-c          kki=M18+M*(i-1)+ii-1
-c          kkj=M18+M*(i-1)+jj-1
-c          if (ii.ge.jj) then
-c          kk=ii+((M2-jj)*(jj-1))/2
-c          else
-c          kk=jj+((M2-ii)*(ii-1))/2
-c          endif
-c        ss=ss+RMM(kki)*RMM(kkj)*RMM(M5+kk-1)
-c        enddo
-c        enddo
-c        write(*,*) i,ss
-c        TE=TE+ss
-c       enddo
-c
-c       write(*,*) 2.0D0*TE
-c       pause
+
          E1=0.D0
         do  k=1,MM
 
@@ -220,11 +186,8 @@ c LAPACK OPTION -----------------------------------------
 #endif
 c-----------------------------------------------------------
 c 
-c LINEAR DEPENDENCY ELIMINATION
-c        write(*,*)'mierda!!!!',M
-c
         do  j = 1,M
-c          WRITE(*,*)M13+J-1,RMM(M13+J-1)
+
           if (RMM(M13+j-1).lt.1.0D-6.and.(myrank.eq.0)) then
           write(*,*) 'LINEAR DEPENDENCY DETECTED'
          do  i = 1,M
@@ -343,12 +306,16 @@ c CASE  SAVING BASIS FUNCTIONS ON DISK
 c ONLY IN LEAST SQUARES
       if (.not.integ) then
       if (dens) then
+      if(MYRANK.eq.0)then
       write(*,*) 'in nwrite'
+      endif
       call nwrite(OPEN,NORM,natom,r,Iz,Nuc,M,ncont,nshell,c,a,NCO,
      >           NCO,Nucd,Md,ncontd,nshelld,cd,ad,M17,RMM)
 c
       else
+      if(MYRANK.eq.0)then
       write(*,*) 'in write'
+      endif
       call write(OPEN,NORM,natom,r,Iz,Nuc,M,ncont,nshell,c,a,
      >           NCO,NCO,Nucd,Md,ncontd,nshelld,cd,ad,M17,RMM)
 
@@ -457,14 +424,6 @@ c
        goto 995
       endif
 c
-c prueba----------
-c      xi(1)=0.0
-c      xi(2)=0.0
-c      xi(3)=0.0
-c      call efield(NORM,natom,r,Nuc,Iz,M,Md,ncont,nshell,
-c    >            c,a,RMM,xi,V,Ef)
-c      write(*,*) Ef(1),Ef(2),Ef(3)
-c end prueba------
 c
 c int3N is called close to convergence, it uses previous values
 c for the fitting coefficient vector af
@@ -486,7 +445,7 @@ c------------------
       call int3N(NORM,natom,Iz,r,Nuc,M,ncont,nshell,c,a,
      >     Nucd,Md,ncontd,nshelld,cd,ad,RMM,XX,E2,Ex,
      >     nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write1)
-c     write(*,*) 'INTN'
+
       endif
       endif
 c-------------------------------------------------------
@@ -520,10 +479,6 @@ c E1 includes solvent 1 electron contributions
         do 303 k=1,MM
   303     E1=E1+RMM(k)*RMM(M11+k-1)
 c
-c ---  debugging ------
-c      write(*,*) E1+E2
-c      return
-c ---------------------
 c
 c now, we know S matrix, and F matrix, and E for a given P
 c 1) diagonalize S, get X=U s^(-1/2)
@@ -707,7 +662,7 @@ c--tito
 c       write(*,300) niter,DAMP,E
        endif
 c
-c      write(*,*) 'Coulomb E',E2-Ex,Ex
+
        if (write1) then
 c
       open(unit=3,file='restart')
@@ -716,10 +671,13 @@ c outputs final  MO ---------------------
       do 320 n=1,NCO
   320   X(index(l),M+n)=X(l,M2+n)
 c
+      if(MYRANK.eq.0)then
        write(3,*) niter,E
+       
 c     
       do 325 l=1,M
   325   write(3,400) (X(l,M+n),n=1,NCO)
+      endif
 c
       close(3)
       endif
@@ -738,8 +696,6 @@ c--- E1s NO esta sumado aca al Esolvente!!(Esta sumado en main)
 c      Es=Es+E1s
       endif
      
-c      WRITE(*,*)'scf1 ',E1s
-c      pause
 
    
 c--------------------------------------------------------------
@@ -890,10 +846,12 @@ c writes down MO coefficients and orbital energies
         write(29,400) (X(l,M+n),l=1,M)
        enddo
        ENDIF
+       if(MYRANK.eq.0)then
 c       do n=NCO+1,M
 c        write(29,851) n,RMM(M13+n-1)
 c        write(29,400) (X(l,M+n),l=1,M)
 c       enddo
+       endif
 c       close(29)
 c
 c-------------------------------------------------
@@ -919,17 +877,6 @@ c
   777  format(4(F8.4,2x))
   776  format (3(F8.4,2x))
 
-c---- DEBUGGINGS
-c      write(*,*) 'Exc, integrated and calculated',Exc,Ex
-c      write(*,*) 'Coulomb energy',E2-Ex
-c
-c      CALL MPI_COMM_RANK(91,MYRANK,IERR)
-c      if(MYRANK.eq.0)then
-c      CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-c     >          M,M18,NCOa,NCOb,RMM,Ex,23961645)
-c      else
-c      stop
-c      endif
        return
        end
 C  -------------------------                                            

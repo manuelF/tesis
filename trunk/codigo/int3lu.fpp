@@ -176,7 +176,7 @@ c
 *
 c
 c------------------------------------------------
-c     write(*,*) 'Nro integ',ix
+
 c--- calculation of variational coefficients
 c
 c calculation of fitting coefficients
@@ -301,12 +301,6 @@ c
        ss9=ss9+af(m1)*P(m1)
   200  continue
 
-c tests
-c     do i=1,Md
-c      write(20,*) i,Rc(i),af(i)
-c     enddo
-c     write(20,*) Nel,bda,ss9
-c
 c no constraint applied
       else
       do 1200 m1=1,Md
@@ -434,7 +428,7 @@ c
         NCOa=NCO
         NCOb=NCO+Nunp
       
-c      WRITE(6,*)"NCOa",NCOa  
+
        call EXCHFOCK(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
      >               M,M18,NCOa,NCOb,RMM,Ex)
        Ndens=Ndens+1

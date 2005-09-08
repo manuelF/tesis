@@ -983,8 +983,10 @@ c-----------------------------------------------------
        kk=M18+(l-1)+M*(n-1)
   420   X(index(l),M+n)=RMM(kk)
 c
+      if(MYRANK.eq.0)then
       do 225 l=1,M
   225   write(2,400) (X(l,M+n),n=1,NCOa)
+      endif
 c
 c-------------------------------------------------
        do 520 l=1,M
@@ -992,8 +994,10 @@ c-------------------------------------------------
        kk=M18b+(l-1)+M*(n-1)
   520   X(index(l),M+n)=RMM(kk)
 c
+      if(MYRANK.eq.0)then
       do 425 l=1,M
   425   write(2,400) (X(l,M+n),n=1,NCOb)
+      endif
 c-------------------------------------------------
 c
 c
@@ -1011,13 +1015,7 @@ c
   300  format(I3,E14.6,2x,F14.7)
   850  format('MOLECULAR ORBITAL #',2x,I3,3x,'ORBITAL ENERGY ',F14.7)
   900  format(3(F10.4,2x),2x,F10.4)
-c---- DEBUGGINGS
-c      write(*,*) 'Exc, integrated and calculated',Exc,Ex
-c      write(*,*) 'Coulomb energy',E2-Ex
-c
  
-c      CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-c     >              M,M18,NCOa,NCOb,RMM,Ex,23961645) 
        return
        end
 C  -------------------------                                            

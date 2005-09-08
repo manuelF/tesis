@@ -42,7 +42,7 @@ c
       COMMON /TABLE/ STR(880,0:21)
       COMMON/BLOC08/FX(NAT),FY(NAT),FZ(NAT),RCT,RCTSQ,RKAPPA,RKAPPA2  
       COMMON/BLOC11/BXLGTH 
-      INTEGER SPC
+      INTEGER SPC,MYRANK,IERR
       COMMON/tipsol/SPC
 c auxiliar quantities
 c
@@ -59,6 +59,7 @@ c
 c--------------------------------------------------------------------
 c Modificacion para correr SPC o TIP4P desde afuera
 c---------------------------------------------------------------------
+      CALL MPI_COMM_RANK(91,MYRANK,IERR)
       IF(SPC.EQ.1)THEN
 
         alpha=1.00D0
@@ -85,15 +86,8 @@ c -----------------------------
 c
 c
        box=BXLGTH/A0
-C      write(*,*) 'box',box,RCTSQ
-c      RCTSQ2=(box/2.)**2
       RCTSQ2=RCTSQ/(a0**2)
-c      RCTSQ2=1000000000.
-c      write(*,*) ff(1,1),ff(1,2),ff(1,3)  
 
-c      do i=1,natom+natsol*nsol
-c      write(*,*) i,pc(i)
-c      enddo
 
       if (NORM) then
       sq3=sqrt(3.D0)
@@ -188,7 +182,7 @@ C---- TIP4P
       do jw=1,3
       Dw(iw,jw)=alpha*Dw(iw,jw)+alpha2*(Dw(iw+1,jw)+dw(iw+2,jw))
       enddo
-c      write(*,*)'iw y cosas',iw,Dw(iw,1),Dw(iw,2),Dw(iw,3) 
+
 333   continue
 
       ss=pi32*exp(-alf*dd)/(zij*sqrt(zij))
@@ -258,10 +252,6 @@ c
         ff(n,l2)=ff(n,l2)+te*x0x(n,l2)
           endif
           ccc=te*x0x(n,l2)+t4*piNs +t5*sNpi 
-c       if(ccc.gt.1.E-15) then
-c       write(*,*) 'fuerzas',K1,ccc
-c       pause  
-c       endif
 
 
  203  continue
@@ -1613,25 +1603,20 @@ c      IF(1.NE.2)GOTO 990
       fyy=zero
       fzz=zero
       
-c      write(*,*)'unid. "Estrin" (H)/au'
-c      write(*,*)'---------intsolG'
       do i=1,natom+natsol*nsol
       fxx=fxx+ff(i,1)
       fyy=fyy+ff(i,2)
       fzz=fzz+ff(i,3)
-c      write(*,*)i,ff(i,1),ff(i,2),ff(i,3)
-c      write(*,*)'INTSOLG fx fy fz',i,ff(i,1)*hh/a0,
-c     & ff(i,2)*hh/a0,ff(i,3)*hh/a0
       enddo
 
-c      write(*,*)'INTSOLG FTOT',dsqrt(fxx**2+fyy**2+fzz**2)*hh/a0
 
-      if(dsqrt(fxx**2+fyy**2+fzz**2)*hh/a0.gt.1.D-05)then
+
+      if(dsqrt(fxx**2+fyy**2+fzz**2)*hh/a0.gt.1.D-05.and.(MYRANK.eq.0))then
       write(*,*)'FZA TOTAL NE ZERO EN INTSOLG'  
       write(*,78)itel,fxx,fyy,fzz
       endif
 78    format(i9,3g15.7)
-c      write(*,*) ff(1,1),ff(1,2),ff(1,3)  
+
 
 c--- Caso particular [HNO3 H2O](H2O)n: ver fza sobre H
 c        FXH11 = FXH11 + ff(1,1)

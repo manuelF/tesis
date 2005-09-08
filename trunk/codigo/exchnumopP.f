@@ -101,16 +101,16 @@ c------------------------------
         else
             ifin=init+(natom/IPROC)-1
         endif
-c	WRITE(6,*) "exchnumop: entre en el then"
+
       else
         init = 1
         ifin = natom
-c	WRITE(6,*) "exchnumop: entre en el else"
+
       endif
 
       DO 12 na=init,ifin
 c
-c     write(*,*) na,Iz(na),Nr(Iz(na)),Rm(Iz(na))
+
        do 16 n=1,Nr(Iz(na))
 c
        t0=pi/(Nr(Iz(na))+1)
@@ -121,7 +121,7 @@ c w: weight
 c multiply also by radial part
 c
        r1=Rm(Iz(na))*(1.D0+x)/(1.D0-x)
-c      write(*,*) n,x,r1
+
        wrad=w * r1**2
 c
        wrad=wrad*Rm(Iz(na)) * 2.D0 /(1.D0-x)**2
@@ -246,14 +246,14 @@ c-------------------------------------------------------
        ss0=ss0T
       endif
 
-      if (nopt.eq.0) then
+      if (nopt.eq.0.and.(MYRANK.eq.0)) then
 c        write(*,610)
 c        write(*,620) excha,ecorr,ss0
       endif
 *
 c SPIN POLARIZATION CALCULATION
 c
-       if (ispin.eq.1) then
+       if (ispin.eq.1.and.(MYRANK.eq.0)) then
 c        write(*,*)
 c        write(*,800)
 c        write(*,810)

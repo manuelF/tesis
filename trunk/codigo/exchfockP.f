@@ -49,7 +49,7 @@ c
       INTEGER MYRANK, IPROC, ITAG,ITAG2, IERR,ISTAT
       INTEGER init, ifin, iaux,ih
 
-c      WRITE(6,*) "checkpoint exchfock 1"
+
       CALL MPI_COMM_RANK(91,MYRANK,IERR)
 
       CALL MPI_COMM_SIZE(91,IPROC,IERR)
@@ -149,18 +149,13 @@ c
          else
           ifin=init+(natom/IPROC)-1
          endif
-c	 WRITE(6,*) "exchfock: entre en el then"
+
       else
         init = 1
         ifin = natom
-c	WRITE(6,*) "exchfock: entre en el else"
+
       endif
 
-c      WRITE(6,*)"natom:",natom
-c      WRITE(6,*)"IPROC:",IPROC
-c      WRITE(6,*)"MYRANK:",MYRANK
-c      WRITE(6,*)"fin:",fin
-c      WRITE(6,*)"init:",init
 c
       DO 12 na=init,ifin
 c       DO 12 na=1,natom
@@ -350,7 +345,7 @@ c
  12   continue
 c
 
-c      WRITE(6,*) "checkpoint exchfock 2"
+
 
 
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
@@ -418,7 +413,7 @@ c      WRITE(6,*) "checkpoint exchfock 2"
 
 
 
-c      WRITE(6,*) "checkpoint exchfock 3"
+
 ! ojo se hard-codea el tamano de RMM=23961645. Hay que cambiar a recibirlo por parámetro.
 c      if(MYRANK.eq.0)then
 c	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,

@@ -54,7 +54,7 @@ c
 
 
 
-c     WRITE(6,*)"checkpoint exchnum2 1"
+
       CALL MPI_COMM_RANK(91,MYRANK,IERR)
 
       CALL MPI_COMM_SIZE(91,IPROC,IERR)
@@ -107,7 +107,7 @@ c
         npoint=194
       endif
 *
-c      WRITE(6,*)"checkpoint exchnum2 2"
+
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
         init = (natom/IPROC)*MYRANK+1
         iauxa = MYRANK+1
@@ -116,24 +116,19 @@ c      WRITE(6,*)"checkpoint exchnum2 2"
         else
             ifin=init+(natom/IPROC)-1
         endif
-c	WRITE(6,*) "exchnum2: entre en el then"
+
       else
-c        WRITE(6,*) "exchnum2: entre en el else"
+
         init = 1
         ifin = natom
       endif
 
-c      WRITE(6,*)"natom:",natom
-c      WRITE(6,*)"IPROC:",IPROC
-c      WRITE(6,*)"MYRANK:",MYRANK
-c      WRITE(6,*)"fin:",fin
-c      WRITE(6,*)"init:",init
 
 
       DO 12 na=init,ifin
 c
 c
-c     write(*,*) na,Iz(na),Nr(Iz(na)),Rm(Iz(na))
+
        do 16 n=1,Nr(Iz(na))
 c
        t0=pi/(Nr(Iz(na))+1)
@@ -255,19 +250,8 @@ c
  16   continue
  12   continue
 c-------------------------------------------------------
-*
-*       do 789 iina=1,natom
-*       write (*,*) 'Atomo numero ',iina
-*       write(*,900) iina,forza(iina,1), forza(iina,2),forza(iina,3)
-*       write(*,*) 'Valore di g ',Exc*ss0
-* 789   continue
-*
-*      write(*,*) 'Exchange Energy  ',excha
-*      write(*,*) 'Correlation Energy  ',ecorr
-*      write(*,*) 'Density  ',ss0
-*
 c
-c      WRITE(6,*)"checkpoint exchnum2 2"
+
 
 
 

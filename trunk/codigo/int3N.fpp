@@ -2475,7 +2475,7 @@ c ESSL OPTION ------------------------
       imax=idamax(Md,RMM(M10),1)
       ss=RMM(M10+imax-1)
       tau=0.22204D-15*Md*ss*10
-c     write(*,*) ss,tau
+
 c
       CALL DGESVS(X,Md,RMM(M9),Md,1,RMM(M10),af,Md,Md,Md,tau)
 #endif
