@@ -45,7 +45,12 @@ En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicad
 \end{abstract}
 
 \section{Introducci\'on}
-
+La simulaci\'on en qu\'imca es una herramienta cada vez m\'as utilizada, el desarrollo de técnicas
+  refinadas, asi como el aumento geom\'etrico del poder de c\'omputo son dos de las razones mas
+ importantes de su creciente uso. Ya sea com complemento o como reemplazo de experimentos, la simulaci\'on aporta, entre otras cosas, una visi\'on microsc\'opica inalcanzable por otra v\'ia. 
+Las metodolog\'ias utilizadas en simulaci\'on var\'in seg\'un el problema a tratar, en general se dividan en dos grandes ramas, la llamada rama cl\'asica y la llamada cu\'antica. La mec\'anica que rige el comportamiento de part\'iculas pequeñas (c\'omo los electr\'ones) es la llamada mec\'anica cu\'ntica fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhory otros. Lamentablemente no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son demandantes computacionalmente. Esta elevada demanda computacional hace prohibitivo el uso de esta t\'ecnica a sistemas con un n\'umero elevado de \'atomos.
+ Por otro lado la mec\'anica cl\'asica, menos demandante, es incap\'az de representar electr\'ones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia. No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
+Si quiero tratar reacciones en soluci\'on me encuentro el problema que el n\'umero de \'atomos es demaciado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reaccion qu\'imica, no puedo utilizar una metodolog\'ia totalmente cl\'asica. Por ello se han desarrollados las metodolog\'ias h\'ibridas , donde a una pequeña porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata con un campo de fuerzas cl\'asico. bla bla bla 
 \section{Metodolog\'ia}
 
 El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar una \'unica m\'etrica, como el tiempo de ejecuci\'on. Un buen dise\~no debe adem\'as optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenimiento de la soluci\'on, entre otros. Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, performance, portabilidad y otros factores.
