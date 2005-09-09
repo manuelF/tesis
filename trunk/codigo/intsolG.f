@@ -1611,9 +1611,11 @@ c      IF(1.NE.2)GOTO 990
 
 
 
-      if(dsqrt(fxx**2+fyy**2+fzz**2)*hh/a0.gt.1.D-05.and.(MYRANK.eq.0))then
+      if(dsqrt(fxx**2+fyy**2+fzz**2)*hh/a0.gt.1.D-05)then
+      if(MYRANK.eq.0)then
       write(*,*)'FZA TOTAL NE ZERO EN INTSOLG'  
       write(*,78)itel,fxx,fyy,fzz
+      endif
       endif
 78    format(i9,3g15.7)
 
