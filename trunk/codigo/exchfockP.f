@@ -29,6 +29,7 @@ c      implicit real*8 (a-h,o-z)
       integer ngd,iexch,natom,m,m18,ntq,ntc,nss,ng,ng0,nl,nt,iz,nco
       
       INCLUDE 'param'
+      INCLUDE 'mpif.h'
       parameter (pi=3.14159265358979312D0,pi2=6.28318530717958623D0)
       dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng)
       dimension r(nt,3),nshell(0:3),Xi(3)
@@ -50,9 +51,9 @@ c
       INTEGER init, ifin, iaux,ih
 
 
-      CALL MPI_COMM_RANK(91,MYRANK,IERR)
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD, MYRANK, IERR)
 
-      CALL MPI_COMM_SIZE(91,IPROC,IERR)
+      CALL MPI_COMM_SIZE(MPI_COMM_WORLD, IPROC, IERR)
       ITAG=730
       ITAG2=731
 c now we should evaluate all same loops as the ones used for
@@ -349,12 +350,12 @@ c
 
 
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-       CALL MPI_ALLReduce(ExP,Ex,1,27,102,91,
+       CALL MPI_ALLReduce(ExP,Ex,1,27,102,MPI_COMM_WORLD,
      >                  IERR)
 
          if(MYRANK.eq.0) then
            do 203 i=1,IPROC-1
- 	    CALL MPI_Recv(pnt,M,27,i,ITAG,91,
+ 	    CALL MPI_Recv(pnt,M,27,i,ITAG,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
 	    do 204 ih=0,M-1
               RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
@@ -362,7 +363,7 @@ c
  203       continue
 
            do 205 i=1,IPROC-1
-	    CALL MPI_Recv(pnt,M,27,i,ITAG2,91,
+	    CALL MPI_Recv(pnt,M,27,i,ITAG2,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
 	    do 206 ih=0,M-1
              RMM(M3+ih)=RMM(M3+ih)+pnt(ih+1)
@@ -373,13 +374,13 @@ c
 	   do ih=0,M-1
 	    send(ih+1)=RMM(M5+ih)
            enddo
-	   CALL MPI_Send(send,M,27,0,ITAG,91,
+	   CALL MPI_Send(send,M,27,0,ITAG,MPI_COMM_WORLD,
      >                   IERR)
 
 	   do ih=0,M-1
 	    send(ih+1)=RMM(M3+ih)
            enddo
-	   CALL MPI_Send(send,M,27,0,ITAG2,91,
+	   CALL MPI_Send(send,M,27,0,ITAG2,MPI_COMM_WORLD,
      >                   IERR)
          endif
 
@@ -388,7 +389,7 @@ c
 	    pnt(ih+1)=RMM(M5+ih)
 	  enddo
 	 endif
-	 CALL MPI_Bcast(pnt,M,27,0,91,
+	 CALL MPI_Bcast(pnt,M,27,0,MPI_COMM_WORLD,
      >	                 IERR)
 	 do ih=0,M-1
 	   RMM(M5+ih)=pnt(ih+1)
@@ -399,7 +400,7 @@ c
 	    pnt(ih+1)=RMM(M3+ih)
 	  enddo
 	 endif
-	 CALL MPI_Bcast(pnt,M,27,0,91,
+	 CALL MPI_Bcast(pnt,M,27,0,MPI_COMM_WORLD,
      >	                 IERR)
 	 do ih=0,M-1
 	   RMM(M3+ih)=pnt(ih+1)
