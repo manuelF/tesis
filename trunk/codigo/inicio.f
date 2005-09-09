@@ -1,7 +1,7 @@
       SUBROUTINE INICIO(NATSOL,NDIP,IDIPCOR,PMAX,PZMAX)
       INCLUDE 'COMM'
       
-      INTEGER SPC  
+      INTEGER SPC,MYRANK,IERR  
       COMMON /tipsol/SPC
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
@@ -31,6 +31,8 @@ C       CKUM y RUM: Constante y distancia del umbrella
 C       US1 y US2: Atomos cuanticos que usare en el umbrella 
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
+      
+      CALL MPI_COM_RANK(91,MYRANK,IERR)
       OPEN (51,FILE='constraint.dat')
       OPEN (8,FILE='file8.out')
       OPEN (12,FILE='ini.xyz')
@@ -44,8 +46,10 @@ C-----------------------------------------------------------------------
      & CKUM,RUM,JVEL,US1,US2 
 c     READ (51,*) 
 c     READ (51,*) ITERM,IPINPUT
+      if(MYRANK.eq.0)then
       WRITE (6,55)ICON,NTIME,NSCAL,NSAVE
       WRITE (6,59)NDIP,IRDF,ICMOT,NEWV,IPR,NANG
+      endif
       READ (51,*)
       READ (51,*) NSPECQ,NDFT,NPAS
       READ (51,*) 
@@ -55,7 +59,9 @@ c--ojo, soluto totalmente congelado:
       IF(NDFT.NE.1)THEN
       READ (51,*)
       READ (51,*)(PC1(I),I=1,NSPECQ)
+      if(MYRANK.eq.0)then
       write(*,*)' >>>>>SOLUTO TOTALMENTE CONGELADO!!<<<<<<'
+      endif
       ELSE
 c---sino:
       READ(51,*)
@@ -78,35 +84,49 @@ c---
       IF(ABS(WWM(I)-6.941D0).LT.TOLE)AT(I)='Li   '
       IF(ABS(WWM(I)-26.98D0).LT.TOLE)AT(I)='Al   '
       ENDDO
+      if(MYRANK.eq.0)then
       WRITE(*,1000)(AT(I),I=1,NSPECQ)
+      endif
       READ (51,*)
       READ (51,*) NATSOL
+      if(MYRANK.eq.0)then
       WRITE (6,70)NATSOL
+      endif
       READ (51,*)
       READ (51,*) (NNAT(I),I=NSPECQ+1,NSPECQ+NATSOL)
+      if(MYRANK.eq.0)then
       WRITE (6,656) (NNAT(I),I=NSPECQ+1,NSPECQ+NATSOL)
+      endif
       READ (51,*)
       READ (51,*) (WWM(I),I=NSPECQ+1,NSPECQ+NATSOL+1)
-c      WRITE (6,56) (WWM(I),I=1,NSPECQ+NATSOL+1)
+
       READ (51,*)
       READ (51,*) TEMPRQ,TEMPRSV,TEMPRQQ,DELTAT,QS, QSQ
+      if(MYRANK.eq.0)then
       WRITE (6,57) TEMPRQ,TEMPRQQ,DELTAT
       WRITE(6,60) QS,QSQ
+      endif
       READ (51,*)
       READ(51,*)  (SIGMA(I),I=NSPECQ+1,NSPECQ+NATSOL)
+      if(MYRANK.eq.0)then
       WRITE (6,111)SIGMA(NSPECQ+1)
+      endif
       READ (51,*)
       READ(51,*)  (EPS(I),I=NSPECQ+1,NSPECQ+NATSOL)
+      if(MYRANK.eq.0)then
       WRITE (6,112)EPS(NSPECQ+1) 
+      endif
       READ (51,*)
       READ(51,*)  (ZZZ(I),I=1,NATSOL)
+      if(MYRANK.eq.0)then
       WRITE (6,578)(ZZZ(I),I=1,NATSOL)
+      endif
       READ (51,*)
       READ (51,*) (DA(I),I=1,3)
-c      WRITE (6,113) DA(1),DA(2),DA(3)
+
       READ (51,*)
       READ (51,*) SPC
-c     write(*,*) 'SPC=',SPC
+
 
       IF(SPC.EQ.1)THEN
 
@@ -140,26 +160,31 @@ c     write(*,*) 'SPC=',SPC
       READ (51,*) XFAX,RBUF
       READ (51,*)
       READ (51,*) IEWLD
+      if(MYRANK.eq.0)then
       WRITE (6,115) IEWLD
+      endif
       READ (51,*)
       READ (51,*) KMAX
       READ (51,*)
       READ (51,*) IUNID
       READ (51,*)
-c      READ (51,*)IDIPCOR,PMAX,PZMAX 
 
 
-      IF(ICLSTR.EQ.1)THEN
+
+      IF(ICLSTR.EQ.1.and.(MYRANK.eq.0))THEN
       WRITE(6,114)BXLGTH
       ELSE
       NWAT=NNAT(1+NSPECQ)
       BXLGTH=(DBLE(NWAT)/RHO)**THIRD3
       
-
+      if(MYRANK.eq.0)then
       WRITE (6,114)BXLGTH
+      endif
       ENDIF
       IF((ICLSTR.EQ.1).AND.(IEWLD.EQ.1))THEN
+      if(MYRANK.eq.0)then
       WRITE(6,*)'Revisar constraint.dat,cluster con Ewald!'
+      endif
       STOP
       ENDIF
 
@@ -186,19 +211,21 @@ c      READ (51,*)IDIPCOR,PMAX,PZMAX
 119   FORMAT(/,2X,'DENSIDAD:',G14.6,2X)
 120   FORMAT(/,2X,'AGUA PURA, SIN SOLUTO')      
 1000  FORMAT(/,2X,'SOLUTO: ',20A5)
-      IF(ICMOT.EQ.2.AND.IQMOT.NE.2)THEN
+      IF(ICMOT.EQ.2.AND.IQMOT.NE.2.and.(MYRANK.eq.0))THEN
       WRITE(6,*)'OPTIMIZA SOLO LOS NUCLEOS'
-      ELSEIF(IQMOT.EQ.2.AND.ICMOT.NE.2)THEN
+      ELSEIF(IQMOT.EQ.2.AND.ICMOT.NE.2.and.(MYRANK.eq.0))THEN
       WRITE(6,*)'OPTIMIZA SOLO Q PARCIALES CLASICAS'
       PAUSE
       ENDIF
       
-      IF(NSPECQ.EQ.0)WRITE(6,120)
-      IF (ICLSTR.EQ.1)THEN
+      IF(NSPECQ.EQ.0.and.(MYRANK.eq.0))WRITE(6,120)
+      IF (ICLSTR.EQ.1.and.(MYRANK.eq.0))THEN
       WRITE(6,117)
       ELSE
+      if(MYRANK.eq.0)then
       WRITE (6,118)
       WRITE (6,*)'BULK'
+      endif
       ENDIF
 
       RETURN

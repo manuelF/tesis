@@ -91,8 +91,8 @@ C-----LAS POSICIONES NUCLEARES.
       ENDIF
 
        date='date'
-       CALL SYSTEM(date)
        if(MYRANK.eq.0)then
+       CALL SYSTEM(date)
        write(*,*)
        endif
      
@@ -274,7 +274,7 @@ C-----GENERA UNA FOTO (ini.xyz)INICIAL
         ENDIF
 
         ENDDO
-        if(MYRANK.eq.0)
+        if(MYRANK.eq.0)then
         WRITE(12,*)'inicio '
         endif
         
@@ -656,7 +656,7 @@ C------------------------------------------------------------------C
       FZT = FZT + FZ (I)
 201   CONTINUE
 
-      IF (DSQRT(FXT*FXT+FYT*FYT+FZT*FZT).GT.1.D-04.and.(MYRANK.eq.0))THEN
+      IF (DSQRT(FXT*FXT+FYT*FYT+FZT*FZT).GT.1.D-04.and.MYRANK.eq.0)THEN
       WRITE (6,*) ' FZA TOTAL NE ZERO EN MAIN  ', FXT, FYT,FZT
       ENDIF
 C------------------------------------------------------------------C
@@ -1186,9 +1186,9 @@ C-----FIN FOTO
       if(myrank.eq.0)then
       WRITE(*,*)
       WRITE(*,*)'----- FIN -----'
-      endif
       date='date'
       CALL SYSTEM(date)
+      endif
 
 
 

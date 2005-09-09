@@ -246,6 +246,7 @@ c-------------------------------------------------------
 
       if (nopt.eq.0.and.(myrank.eq.0)) then
        IF(MOD((IT-NIN),IPR1).EQ.0)THEN
+        write(6,*)'Estoy en exchnumP'
         write(*,610)
         write(*,620) excha,ecorr,ss0
        ENDIF
