@@ -45,19 +45,29 @@ En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicad
 \end{abstract}
 
 \section{Introducci\'on}
-La simulaci\'on en qu\'imca es una herramienta cada vez m\'as utilizada, el desarrollo de técnicas
-  refinadas, asi como el aumento geom\'etrico del poder de c\'omputo son dos de las razones mas
- importantes de su creciente uso. Ya sea com complemento o como reemplazo de experimentos, la simulaci\'on aporta, entre otras cosas, una visi\'on microsc\'opica inalcanzable por otra v\'ia. 
-Las metodolog\'ias utilizadas en simulaci\'on var\'in seg\'un el problema a tratar, en general se dividan en dos grandes ramas, la llamada rama cl\'asica y la llamada cu\'antica. La mec\'anica que rige el comportamiento de part\'iculas pequeñas (c\'omo los electr\'ones) es la llamada mec\'anica cu\'ntica fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhory otros. Lamentablemente no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son demandantes computacionalmente. Esta elevada demanda computacional hace prohibitivo el uso de esta t\'ecnica a sistemas con un n\'umero elevado de \'atomos.
- Por otro lado la mec\'anica cl\'asica, menos demandante, es incap\'az de representar electr\'ones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia. No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
-Si quiero tratar reacciones en soluci\'on me encuentro el problema que el n\'umero de \'atomos es demaciado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reaccion qu\'imica, no puedo utilizar una metodolog\'ia totalmente cl\'asica. Por ello se han desarrollados las metodolog\'ias h\'ibridas , donde a una pequeña porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata con un campo de fuerzas cl\'asico. bla bla bla 
+La simulaci\'on en qu\'imica es una herramienta cada vez m\'as utilizada, el desarrollo de t\'ecnicas refinadas, as\'ii como el aumento geom\'etrico del poder de c\'omputo son dos de las razones m\'as importantes de su creciente uso. 
+Ya sea como complemento o como reemplazo de experimentos, la simulaci\'on aporta, entre otras cosas, una visi\'on microsc\'opica inalcanzable por otra v\'ia.
+
+Las metodolog\'ias utilizadas en simulaci\'on var\'in seg\'un el problema a tratar, en general se dividen en dos grandes ramas, la llamada rama \emph{cl\'asica} y la llamada \emph{cu\'antica}. 
+La mec\'anica que rige el comportamiento de part\'iculas peque\~nas (c\'omo los electr\'ones) es la llamada mec\'anica cu\'antica, que fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhory otros. 
+Lamentablemente no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son demandantes computacionalmente. 
+Esta elevada demanda computacional hace prohibitivo el uso de esta t\'ecnica a sistemas con un n\'umero elevado de \'atomos.
+Por otro lado la mec\'anica cl\'asica, menos demandante, es incap\'az de representar electr\'ones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia. 
+No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
+
+Si se quieren tratar reacciones en soluci\'on, se encuentra el problema que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica. 
+Por ello se han desarrollado las metodolog\'ias h\'ibridas, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico. {\Huge{bla bla bla}} 
 \section{Metodolog\'ia}
 
-El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar una \'unica m\'etrica, como el tiempo de ejecuci\'on. Un buen dise\~no debe adem\'as optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenimiento de la soluci\'on, entre otros. Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, performance, portabilidad y otros factores.
+El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar una \'unica m\'etrica, como puede ser el tiempo de ejecuci\'on. 
+Un buen dise\~no debe, adem\'as, optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenimiento de la soluci\'on, entre otros. 
+Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, performance, portabilidad y otros factores.
 
-Para poder decidir c\'omo encarar estas optimizaciones, debimos realizar un estudio de la complejidad y del comportamiento del programa serial. Para ello realizamos un profiling utilizando diversas herramientas provistas por el sistema operativo y por el compilador fortran f77 utilizado.
+Para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial. 
+Para ello realizamos un profiling utilizando diversas herramientas provistas por el sistema operativo y por el compilador utilizado.
 
-El esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT), en la cual la variable fundamental es la densidad electr\'onica. Esta variable, r, se expande con unas funciones auxiliares, denominadas orbitales moleculares.
+El esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT), en la cual la variable fundamental es la densidad electr\'onica. 
+Esta variable, $r$, se expande con unas funciones auxiliares, denominadas \emph{orbitales moleculares}.
 
 \begin{displaymath}
 \rho = \sum_{i=1}^N \mid X_i^{KS} \mid^{2}
@@ -71,17 +81,19 @@ E[\rho] = -\frac{1}{2}[X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}]+ \int v(r)
 
 La parte m\'as costosa del c\'alculo esta relacionada con los dos \'ultimos t\'erminos de esta expresi\'on, son ellos los correspondientes a la energ\'ia de repulsi\'on de Coulomb, y el t\'ermino de intercambio y correlaci\'on.
 
-El primero se calcula en forma anal\'itica, pero su costo escala como N$^3$, donde N est\'a directamente relacionada con el tama\~no del sistema. Este t\'ermino consiste de N$^3$ integrales anal\'iticas que se pueden calcular en forma independiente, por lo que se puede paralelizar con facilidad.
+El primero se calcula en forma anal\'itica, pero su costo escala como $N^3$, donde $N$ est\'a directamente relacionada con el tama\~no del sistema. 
+Este t\'ermino consiste de $N^3$ integrales anal\'iticas que se pueden calcular en forma independiente, por lo que se puede paralelizar con facilidad.
 
-El segundo t\'ermino se debe evaluar en forma num\'erica, empleando un esquema de integraci\'on en una grilla centrada en los \'atomos y tambi\'en escala como N$^3$. Este t\'ermino tambi\'en es paralelizable en forma directa.
+El segundo t\'ermino se debe evaluar en forma num\'erica, empleando un esquema de integraci\'on en una grilla centrada en los \'atomos y tambi\'en escala como $N^3$. 
+Este t\'ermino tambi\'en es paralelizable en forma directa.
 
-En el profiling realizado veremos que el c\'omputo de estos dos t\'erminos representa m\'as del 90\% del costo computacional total, ya que el costo de los dos primeros t\'erminos escala con N$^2$.
+En el profiling realizado veremos que el c\'omputo de estos dos t\'erminos representa m\'as del 90\% del costo computacional total, ya que el costo de los dos primeros t\'erminos escala con $N^2$.
 
 \subsection{Profiling}
-A continuación observaremos los datos obtenidos de la realizaci\'on dek profiling del programa serial.
-En la figura \ref{fig:Profiling} se detallan los porcentajes de procesamiento que insume cada subrutina en una corrida:
+A continuaci\'on observaremos los datos obtenidos de la realizaci\'on del profiling del programa serial.
+En la figura \ref{fig:Profiling} se detallan los porcentajes de procesamiento que insume cada subrutina en una corrida.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Profiling}
 \end{center}
@@ -89,38 +101,47 @@ En la figura \ref{fig:Profiling} se detallan los porcentajes de procesamiento qu
 \label{fig:Profiling}
 \end{figure}
 
-
 Con estos resultados pudimos identificar cu\'ales eran las rutinas que conven\'ia analizar para evaluar su posible paralelizaci\'on.
 
-Se puede observar en la figura \ref{fig:Profiling} que si bien la rutina {\it dnsg} insume un 62.5 \% del tiempo de procesamiento total, esto se debe a la cantidad de veces que es invocada, ya que en cada invocaci\'on su tiempo de procesamieto es casi 0.0, es decir despreciable respecto de otras. Lo mismo ocurre con las rutinas {\it exchfock}, {\it funct} y {\it densg}.
+Se puede observar en la figura \ref{fig:Profiling} que si bien la rutina \textsf{dnsg} insume un 62.5\% del tiempo de procesamiento total, esto se debe a la cantidad de veces que es invocada, ya que en cada invocaci\'on su tiempo de procesamieto es casi cero, es decir despreciable respecto de otras. 
+Lo mismo ocurre con las rutinas \textsf{exchfock}, {\textsf{funct} y \textsf{densg}.
 
-Siguiendo con los resultados del profiling realizado, se buscaron las llamadas correspondientes a las rutinas que calculan la densidad electr\'onica ya que las mismas en las corridas son las que insumen mayor cantidad de tiempo de procesamiento. Al realizar esta b\'usqueda se encontraron las rutinas $exchfock$, $exhnum$ ,$exhnumop$, $exchnum2$ y $exchnum2op$.
+Siguiendo con los resultados del profiling realizado, se buscaron las llamadas correspondientes a las rutinas que calculan la densidad electr\'onica ya que las mismas en las corridas son las que insumen mayor cantidad de tiempo de procesamiento. 
+Al realizar esta b\'usqueda se encontraron las rutinas \textsf{exchfock}, \textsf{exhnum}, \textsf{exhnumop}, \textsf{exchnum2} y \textsf{exchnum2op}.
 
-Es en estas cinco \'ultimas rutinas es en las que se centra nuestro an\'alisis de paralelizaci\'on. Se podr\'a observar m\'as adelante que las cinco efect\'uan el mismo tipo de c\'alculo, variando s\'olo en algunos detalles internos como ser utilizaci\'on o no de una matriz resultado, o la cantidad de par\'ametros de salida que tienen.
+Es en estas cinco \'ultimas rutinas es en las que se centra nuestro an\'alisis de paralelizaci\'on. 
+Se podr\'a observar m\'as adelante que las cinco efect\'uan el mismo tipo de c\'alculo, variando s\'olo en algunos detalles internos como ser utilizaci\'on o no de una matriz resultado, o la cantidad de par\'ametros de salida que tienen.
 
 \subsection{Implementaci\'on}
 
-En primera instancia se intento reorganizar el c\'odigo de manera de emprolijarlo y lograr evitar ciertos problemas que pueden traer aparejadas algunas reglas de utilización del fortran. Por ejemplo, al utilizar declaración implícita de variables si el programador declara que las variables que empiecen con letras de la A a la H serán del tipo REAL*8 pero luego ante un descuido declara una variable INTEGER con algun nombre que empiece entre esas letras podr\'an darse errores o diferencias en los resultados. Por estos motivos se agregaron en algunas rutinas la instrucci\'on $implicit none$ que evita la declaración implícita de variables. Luego fueron declaradas todas las variables correspondientes y se ejecut\'o el programa de forma de corroborar que los resultados se mantuvieran consistentes a pesar del cambio.
+En primera instancia se reorganiz\'o el c\'odigo de manera de emprolijarlo y lograr evitar ciertos problemas que pueden traer aparejadas algunas reglas de utilizaci\'on del fortran. 
+Por ejemplo, al utilizar declaraci\'on impl\'icita de variables si el programador declara que las variables que empiecen con letras de la \texttt{A} a la \texttt{H} serán del tipo \texttt{REAL*8} pero luego ante un descuido declara otra variable \texttt{INTEGER} con alg\'un nombre que empiece entre esas letras podr\'an darse errores o diferencias en los resultados. 
+Por estos motivos se agregaron en algunas rutinas la instrucci\'on \texttt{implicit none} que evita la declaraci\'on impl\'icita de variables. 
+Luego fueron declaradas todas las variables correspondientes y se ejecut\'o el programa de forma de corroborar que los resultados se mantuvieran consistentes a pesar del cambio.
 
-La paralelizaci\'on del algoritmo se realiza a trav\'es de la paralelizaci\'on de la cadena de datos  (en contraposici\'on a la paralelizaci\'on de la cadena de instrucciones). Para ello se utiliza el m\'etodo de descomposici\'on por subdominios. Este m\'etodo consiste en dividir los datos del dominio sobre los cuales se realiza el c\'alculo, en $p$ porciones (p = cantidad de procesos), asign\'andole una porci\'on del dominio a cada uno de los procesos.
+La paralelizaci\'on del algoritmo se realiza a trav\'es de la paralelizaci\'on de la cadena de datos  (en contraposici\'on a la paralelizaci\'on de la cadena de instrucciones). 
+Para ello se utiliza el m\'etodo de descomposici\'on por subdominios. 
+Este m\'etodo consiste en dividir los datos del dominio sobre los cuales se realiza el c\'alculo, en $p$ porciones ($p$ = cantidad de procesos), asign\'andole una porci\'on del dominio a cada uno de los procesos.
 
-Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correpondiente sus c\'alculos en forma local. Finalmente, como para las siguientes operaciones es necesario contar con el total de los datos el resultado final es comunicado a todos los procesos para continuar el c\'alculo de forma consistente.
+Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correpondiente sus c\'alculos en forma local.
+Finalmente, como para las siguientes operaciones es necesario contar con el total de los datos el resultado final es comunicado a todos los procesos para continuar el c\'alculo de forma consistente.
 
 Como se mencion\'o con anterioridad al realizar el profiling se observ\'o que entre un 65\% y 75\% del tiempo era consumido por las rutinas de tipo dnsg que son las encargadas de calcular los gradientes necesarios para obtener el valor en cada punto de la grilla de trabajo.
 
 Esta rutinas en s\'i consum\'ian muy poco tiempo de ejecuci\'on, pero el problema se daba porque las mismas eran llamadas en el orden de los millones de veces.
 
-Por lo tanto se buscaron las rutinas donde dnsg(y las otras rutinas similares) eran llamadas. Esto ocurre en las funciones de tipo exch(exchfock, exchnum,exchnum2,exchnum2op). En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema. Se decidi\'o paralelizar por el ciclo mas externo, que justamente es el que itera por cada \'atomo, lo cual me pareci\'o la decisi\'on mas sensata a tomar para evitar sobrecarga de comunicaci\'on entre los nodos.
+Por lo tanto se buscaron las rutinas donde dnsg(y las otras rutinas similares) eran llamadas. Esto ocurre en las funciones de tipo \textsf{exch}(\textsf{exchfock}, \textsf{exchnum}, \textsf{exchnum2}, \textsf{exchnum2op}). 
+En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema. 
+Se decidi\'o paralelizar por el ciclo m\'as externo, que justamente es el que itera por cada \'atomo, para evitar sobrecarga de comunicaci\'on entre los nodos.
 
-En este caso, si el n\'umero de procesos utilizados es menor que el n\'umero de \'atomos con los que se trabaja se dividen los mismos de manera uniforme. En cambio, si hay mas procesos que \'atomos, todo el procesamiento va a un solo nodo, lo cual s\'olo produce p\'erdidas con respecto al modelo original por la sobrecarga de comunicaci\'on e inicializaci\'on del sistema paralelo.
+En este caso, si el n\'umero de procesos utilizados es menor que el n\'umero de \'atomos con los que se trabaja se dividen los mismos de manera uniforme. 
+En cambio, si hay m\'as procesos que \'atomos, todo el procesamiento va a un solo nodo, lo cual p\'erdidas con respecto al modelo original por la sobrecarga de comunicaci\'on e inicializaci\'on del sistema paralelo.
 
-En cuanto a las modificaciones realizadas al sistema, en el archivo main.f se agregaron sentencias de MPI para la inicializaci\'on y finalizaci\'on de la utilizaci\'on del Message Passing Interface.
+En cuanto a las modificaciones realizadas al sistema, en el archivo \textsf{main.f} se agregaron sentencias de MPI {\Huge{Referencia!}} para la inicializaci\'on y finalizaci\'on de la utilizaci\'on de la librer\'ia que lo implementa {\Huge{Referencia!}}.
 
-En cada uno de los archivos $exch$ se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema y otras para enviar los resultados obtenidos hacia el proceso 0(en caso de no serlo) y para recibir de todos los procesos los resultados(en caso de ser el proceso 0).
+En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema y otras para enviar los resultados obtenidos hacia el proceso 0 (en caso de no serlo) y para recibir de todos los procesos los resultados (en caso de ser el proceso 0).
 
-Las llamadas a rutinas de salida debieron ser eliminadas para los procesos distintos al root(proceso 0) para que el mismo fuera el \'unico en realizar la escritura de datos de salida.
-
-
+Las llamadas a rutinas de salida debieron ser eliminadas para los procesos distintos al root (proceso 0) para que el mismo fuera el \'unico en realizar la escritura de datos de salida.
 
 \section{Resultados y Discusi\'on}
 
