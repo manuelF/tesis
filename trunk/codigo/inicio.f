@@ -1,6 +1,6 @@
       SUBROUTINE INICIO(NATSOL,NDIP,IDIPCOR,PMAX,PZMAX)
       INCLUDE 'COMM'
-      
+      INCLUDE 'mpif.h'
       INTEGER SPC,MYRANK,IERR  
       COMMON /tipsol/SPC
 C-----------------------------------------------------------------------
@@ -32,7 +32,7 @@ C       US1 y US2: Atomos cuanticos que usare en el umbrella
 C-----------------------------------------------------------------------
 C-----------------------------------------------------------------------
       
-      CALL MPI_COM_RANK(91,MYRANK,IERR)
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
       OPEN (51,FILE='constraint.dat')
       OPEN (8,FILE='file8.out')
       OPEN (12,FILE='ini.xyz')
