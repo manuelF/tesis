@@ -92,6 +92,13 @@ c now Fock beta
       M3=M1+MM
 c now S, also F alpha later
       M5=M3+MM
+      
+      if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
+	 do ih=1,M
+	   pnt(ih)=0.0D0
+	   send(ih)=0.0D0
+	 enddo
+      endif
 c
 c open shell case
       M18b=M18+M*NCOa
@@ -313,8 +320,8 @@ c
         kk=kk+1
 c Fock matrices, alpha and beta
 c M5 pointer of alpha spin Fock matrix, M3 beta
-        RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
-        RMM(M3+kk-1)=RMM(M3+kk-1)+F(i)*tmpjb
+        pnt(kk)=pnt(kk)+F(i)*tmpja
+        send(kk)=send(kk)+F(i)*tmpjb
  102  continue
  101  continue
 c
@@ -335,7 +342,7 @@ c
         kk=kk+1
 c Fock matrix
 c M5 pointer
-        RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
+        pnt(kk)=pnt(kk)+F(i)*tmpja
  202  continue
  201  continue
       endif
@@ -348,12 +355,17 @@ c
 
 
 
-
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
        CALL MPI_ALLReduce(ExP,Ex,1,27,102,MPI_COMM_WORLD,
      >                  IERR)
 
          if(MYRANK.eq.0) then
+           do ih=0,M-1
+            RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
+           enddo
+           do ih=0,M-1
+            RMM(M3+ih)=RMM(M3+ih)+send(ih+1)
+           enddo
            do 203 i=1,IPROC-1
  	    CALL MPI_Recv(pnt,M,27,i,ITAG,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
@@ -363,23 +375,17 @@ c
  203       continue
 
            do 205 i=1,IPROC-1
-	    CALL MPI_Recv(pnt,M,27,i,ITAG2,MPI_COMM_WORLD,
+	    CALL MPI_Recv(send,M,27,i,ITAG2,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
 	    do 206 ih=0,M-1
-             RMM(M3+ih)=RMM(M3+ih)+pnt(ih+1)
+             RMM(M3+ih)=RMM(M3+ih)+send(ih+1)
  206        continue
  205       continue
 
          else
-	   do ih=0,M-1
-	    send(ih+1)=RMM(M5+ih)
-           enddo
-	   CALL MPI_Send(send,M,27,0,ITAG,MPI_COMM_WORLD,
+	   CALL MPI_Send(pnt,M,27,0,ITAG,MPI_COMM_WORLD,
      >                   IERR)
 
-	   do ih=0,M-1
-	    send(ih+1)=RMM(M3+ih)
-           enddo
 	   CALL MPI_Send(send,M,27,0,ITAG2,MPI_COMM_WORLD,
      >                   IERR)
          endif
@@ -412,16 +418,13 @@ c
 
 
 
-
-
-
 ! ojo se hard-codea el tamano de RMM=23961645. Hay que cambiar a recibirlo por parámetro.
-c      if(MYRANK.eq.0)then
-c	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
-c      else
-c       stop
-c      endif
+      if(MYRANK.eq.0)then
+	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+      else
+       stop
+      endif
       
       return
 c
