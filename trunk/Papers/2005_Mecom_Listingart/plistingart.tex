@@ -145,7 +145,7 @@ Las llamadas a rutinas de salida debieron ser eliminadas para los procesos disti
 
 \section{Resultados y Discusi\'on}
 
-Una vez realizadas las modificaciones se realizaron corridas en un cluster con 2 procesadores y se obtuvieron los siguientes resultados:
+Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SMP con 2 procesadores y se obtuvieron los siguientes resultados:
 
 \begin{table}
 \begin{center}
@@ -161,5 +161,7 @@ Una vez realizadas las modificaciones se realizaron corridas en un cluster con 2
 
 
 \section{Conclusiones}
+
+Como puede obeservarse el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por el paso de mensajes entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada un de los nodos. esto quiere decir que a pesar de existir un overhead por los mensajes, cuanto mejor se pueda dividir el dominio del problema entre los procesos y hacer que cada uno se ocupe de una parte del problema, mayor ser\'a la ganancia del sistema paralelo en detrimento del serial.
 
 \end{document}
