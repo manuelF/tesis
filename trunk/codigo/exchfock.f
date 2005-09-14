@@ -315,9 +315,9 @@ c
  12   continue
 c
 C	Es para guardar todo lo que puede modificar esta rutina.      
-c       CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
-c      
+       CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+      
       return
 
 

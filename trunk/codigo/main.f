@@ -106,7 +106,9 @@ C-----LLAMA A 'CORECT': CALCULA TODO LO QUE NECESITA DESPUES
      &  PMAX,PZMAX,HISTO,HISTO2,DELP,DELPZ)
       ENDIF 
  6778 CONTINUE
-     
+
+
+
 C-----TRANSFORMA NUMERACION Y UNIDADES DARIO A 
 C-----LAS MIAS (COORDS)
       IF(ABS(ICON).EQ.0)THEN
@@ -167,6 +169,8 @@ C-----(EMPEZAR DEL ORDEN QUIERE DECIR DE DRIVE)
 
       ENDIF
 
+      
+
 C-----CONTROL: COHERENCIA ENTRE ENTRADA DARIO Y MIA
       IF(NSPECQ.EQ.0)NSOL=NWAT
       IF(NWAT.NE.NSOL.and.(MYRANK.eq.0))THEN
@@ -190,7 +194,6 @@ C-----PONE A CERO LAS CANTIDADES CANONICAS
       SDQ = ZERO
       SSQ = ZERO
       SD0Q= ZERO
-
 C-----LLAMA A 'CONFIG': COMO EMPEZAR (NUCLEOS)
       CALL CONFIG (ANG,NATSOL,ntq,q,HISTO,HISTO2)
 
@@ -208,7 +211,6 @@ C-----IZ(I):NUMERO ATOMICO
       IZ(I+II1*NWAT)=IZTE(I+II1+K)
       ENDDO
       ENDDO
-
 
 C-----SI QUIERO PONER LAS QS INICIALES 
 C-----DEBE SER IZZ=1
@@ -230,7 +232,6 @@ C-----DEBE SER IZZ=1
  1090 CONTINUE 
       ENDIF
 
-
 C-----SI ICON=0 PERO QUIERO LEER LAS CARGAS DEL SOLVENTE(IZZ=2)
 C-----(LAS LEE CON MI NUMERACION Y UNID.DE E)
       IF(ICON.EQ.0.AND.IZZ.EQ.2)THEN
@@ -242,7 +243,6 @@ C-----(LAS LEE CON MI NUMERACION Y UNID.DE E)
       PC0(NU)=PC(NU)
       ENDDO
       ENDIF
-
 
       REWIND 8
       NIN = ITEL +2
@@ -264,21 +264,25 @@ C-----GENERA UNA FOTO (ini.xyz)INICIAL
         IF(NDFT.EQ.1.and.(MYRANK.eq.0))THEN     
 
          IF(I.LE.NATOM)THEN
+         if(MYRANK.eq.0)then
           WRITE(12,101)   AT(I),X(I),Y(I),Z(I)
+         endif
          ELSE
+         if(MYRANK.eq.0)then
           WRITE(12,101)   AT(I),X(I),Y(I),Z(I),PC(I)/EE
+          endif
          ENDIF
 
         ELSE
+        if(MYRANK.eq.0)then
          WRITE(12,101)   AT(I),X(I),Y(I),Z(I),PC(I)/EE
+        endif
         ENDIF
 
         ENDDO
         if(MYRANK.eq.0)then
         WRITE(12,*)'inicio '
         endif
-        
-
 C-- Para reacomodar el solvente a TIP4P o SPC:  
        do i=1,npart
        xx(i)=x(i)
@@ -293,7 +297,6 @@ C-- Para reacomodar el solvente a TIP4P o SPC:
        enddo
 C-- Fin reacomodo 
 
-
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 CC
 CC   AQUI COMIENZA EL LOOP
@@ -306,10 +309,8 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 C-----LLAMA A 'NEWXYZ':PONE EN X1 Y1 Z1 SITIOS REALES
 C-----Y EN XYZ LOS SITIOS CON CARGA (TIP4P)  
-
       CALL NEWXYZ(NATSOL,F1,NT)
 
-   
       Vcerca = ZERO
       Vlejos = ZERO 
       VCT    = ZERO
@@ -342,22 +343,18 @@ C-----Y EN XYZ LOS SITIOS CON CARGA (TIP4P)
 
 C-----LLAMA A 'FSPHER':
 
-
       IF(SPC.EQ.1) THEN
-      CALL FSPHER2(NATSOL)
+        CALL FSPHER2(NATSOL)
 
       ELSE
       CALL FSPHER(NATSOL)
-
       ENDIF
- 
- 6880 CONTINUE
 
+ 6880 CONTINUE
 C-----Para bulk solo las aguas dentro del cutoff
       
 
 575   CONTINUE
-
 C-----LLAMA A 'FINT': INT. SOLV-SLT(NUCLEOS)
 
 
@@ -366,7 +363,6 @@ C-----LLAMA A 'FINT': INT. SOLV-SLT(NUCLEOS)
       ELSE
       CALL FINT(NT,IZ,NATSOL,FXH1,FYH1,FZH1)
       ENDIF 
-
 
  6881 CONTINUE
 
@@ -387,14 +383,12 @@ C-----Y EN X1 Y1 Z1 LOS SITIOS CON CARGA (TIP4P)
        Y(I) = YT
        Z(I) = ZT
        ENDDO
-
         IF(NDFT.NE.1)GOTO 9000
       IF (NPAS.GT.0.AND.MOD(ITEL,NPAS).EQ.0) THEN
 
 C-----LLAMA A 'DODA':PASA DE MI NUMERACION A LA DE DARIO (COORDS)
 
       CALL DODA(NATSOL,R,NT,IZ)
-
 C-----LLAMA A 'SCF': CALCULA ENERGIA SUBS. QUANTICO
       IF(NPAS.NE.1.and.(MYRANK.eq.0))THEN
        WRITE(*,*)
@@ -402,8 +396,7 @@ C-----LLAMA A 'SCF': CALCULA ENERGIA SUBS. QUANTICO
        WRITE(*,*)
       ENDIF
 
-
-         IF(OPEN)THEN
+      IF(OPEN)THEN
 
       CALL SCFop(MEMO,NORM,NATOM,IZ,R,NUC,M,NCONT,NSHELL,C,A
      >    ,NUCD,MD,NCONTD,NSHELLD,CD,AD
@@ -425,6 +418,7 @@ C-----LLAMA A 'SCF': CALCULA ENERGIA SUBS. QUANTICO
 
           ENDIF
 
+      
       ESCF = E
       E1s0 = E1s
       EKS  = ESCF-E1s0

@@ -1,7 +1,10 @@
       SUBROUTINE CVEMOT(NATSOL)
       INCLUDE 'COMM'
+      include 'mpif.h'
+      integer myrank,ierr
       DIMENSION AXX(NAT),AYY(NAT),AZZ(NAT)
 
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
 
       NOFSET = 0
       DO 100 I = 1, NSPECQ+NATSOL
@@ -210,7 +213,9 @@ C-----DYNAMICS OF TIME SCALING
 
 2922  CONTINUE
 
+      if(myrank.eq.0)then
       WRITE (6,*) ' TOO MANY ITERATIONS IN CVTMOT'
+      endif
 
 
       STOP

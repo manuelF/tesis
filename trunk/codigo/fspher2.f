@@ -1,5 +1,8 @@
       SUBROUTINE FSPHER2(NATSOL)
       INCLUDE 'COMM'
+      include 'mpif.h'
+      integer myrank,ierr
+      
       DOUBLE PRECISION ERFCb
       DIMENSION DX(NAT),DY(NAT),DZ(NAT),RIJSQ(NAT)
       DIMENSION DX1(NAT),DY1(NAT),DZ1(NAT),RIJSQ1(NAT)
@@ -19,6 +22,8 @@ C-----PARAM LENN-JONES HIDOGENOS CLASICOS
       EE6H=E6(NSPECQ+2)
       FF12H=F12(NSPECQ+2)
       FF6H=F6(NSPECQ+2)
+      
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
 
 C-----PARAM LENN-JONES HID-OX
         SIG3OH  = PTFIVE * (SIGMA(NSPECQ+2)+SIGMA(NSPECQ+1))
@@ -446,8 +451,10 @@ c      write(*,*)i,fx(i),fy(i),fz(i)
       enddo
 
       if(dsqrt(fxx**2+fyy**2+fzz**2).gt.1.D-04)then
+      IF(MYRANK.EQ.0)THEN
       write(*,*)'FZA TOTAL NE ZERO EN FSPHER'  
       write(*,78)itel, fxx,fyy,fzz
+      ENDIF
       endif
 78    format(i9,3g15.7)
 

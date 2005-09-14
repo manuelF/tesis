@@ -1,6 +1,8 @@
       SUBROUTINE CORECT(NATSOL,RM,EM,NTQ,NSS,PM,NT,AVNPU,
      & PMAX,PZMAX,HISTO,HISTO2,DELP,DELPZ)
       INCLUDE 'COMM'
+      INCLUDE 'mpif.h'
+      integer myrank,ierr
       DIMENSION EM(NTQ+NSS),RM(NTQ+NSS),PM(NT),HISTO(100,100),
      & HISTO2(100)
 
@@ -12,6 +14,7 @@ C
 C---------------------------------------------------------------------*
 
 C-----PASO A UNIDADES PROGRAMA LOS PARAM L-J CUANTICOS
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
       DO I=1,NSPECQ
       IF(EM(I).LT.ZERO) EM(I)=-EM(I)
       EPS(I) = EM(I)*(4.3598D05)/BOLTZF
@@ -89,19 +92,25 @@ C-----CALCULA COSAS QUE NECESITA DESPUES
       NDGREE = NDSLV
 
       GDFSLV= DBLE(NDGREE)*BOLTZF
+      if(myrank.eq.0)then
       write(*,*) 'nabin',GDFSLV,GDFSLT,GDF
+      endif
       IF(NDFT.NE.1)THEN
         GDFSLT=ZER0
       ELSE
         GDFSLT= DBLE(3*NATOM)*BOLTZF
       ENDIF
+      if(myrank.eq.0)then
       write(*,*) 'nabin',GDFSLV,GDFSLT,GDF
+      endif
       GDF = GDFSLV + GDFSLT - 6.D0*BOLTZF
       GDQ = DBLE(2*NWAT) * BOLTZF
       VFTR = DSQRT(BOLTZF*TEMPRQ)
       RCT = DBLE((BXLGTH/TWO)*XFAX)
       RCTSQ = RCT * RCT
+      if(myrank.eq.0)then
       write(*,*)'RCTSQ=',RCTSQ
+      endif
       RKAPPA =  DBLE(5.D0/BXLGTH)
       RKAPPA2 = RKAPPA*RKAPPA
       QB = ONE/DBLE(4*RKAPPA2)

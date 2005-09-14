@@ -5,12 +5,16 @@ C-----Y LENN-JONES DE INTERACCION SIST. QUANTICO Y CLASICO
 C-----(NUCLEOS)
 
       INCLUDE 'COMM'
+      include 'mpif.h'
+      integer myrank,ierr
+
       
       DIMENSION DX(NAT),DY(NAT),DZ(NAT),RIJSQ(NAT)
       DIMENSION DX1(NAT),DY1(NAT),DZ1(NAT),RIJSQ1(NAT)
       DIMENSION QIJ(NAT),IZ(NT),RIJ(NAT)
       
 c     INTEGER US1,US2
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
 
       IF(NSPECQ.EQ.0) RETURN
       IF(NDFT.EQ.1)THEN   
@@ -289,7 +293,9 @@ c      write(*,*) J, DX(J), DY(J), DZ(J)
 C       RRIJK=DSQRT(RRSQK)
 c       write(*,*) 'RIJUMQ',RIJUMQ,RR,RUM   
 
+       IF(MYRANK.EQ.0)THEN
        write(69,*) ITEL,RR
+       ENDIF
        CALL FLUSH(69)
  
        EGUM = (CKUM/2)*(RR-RUM)**2
@@ -344,7 +350,9 @@ C       write(*,*) 'EGUM y FGUM',EGUM,FGUM,JVEL,RUM2
       FY(US2)=FY(US2)-AAY
       FZ(US2)=FZ(US2)-AAZ
 
+      IF(MYRANK.EQ.0)THEN
        write(69,*) RUM2,FGUM
+      ENDIF
 
       ENDIF
 
@@ -399,8 +407,10 @@ cc-----Control de fzas en fint
 
 c      write(*,*)'hx hy hz ',dsqrt(hxx**2+hyy**2+hzz**2)
       if(dsqrt(fxx**2+fyy**2+fzz**2).gt.1.d-04)then
+      IF(MYRANK.EQ.0)THEN
       write(*,*)'FZA TOTAL NE ZERO EN FINT  '  
       write(*,78)itel,fxx,fyy,fzz
+      ENDIF
       endif
 78    format(i9,3g15.7)
 
