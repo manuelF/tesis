@@ -22,8 +22,9 @@ c
 c------------------------commons y dimensiones copiadas de SCF
       implicit real*8 (a-h,o-z)
       INCLUDE 'param'
+      INCLUDE 'mpif.h'
 c
-      integer map(ntq)
+      integer map(ntq),myrank,ierr
       logical NORM,ATRHO,VCINP,DIRECT,EXTR,dens,write1
       logical OPEN,SVD,SHFT,GRAD,BSSE,integ,field,sol,free
       logical exter,MEMO,ATRHO1,VCINP1,SHFT1,MEMO1,NORM1
@@ -142,6 +143,7 @@ c
 c NORM true , expansion in normalized gaussians, so normalization factor
 c included in coefficients
 c default most stable isotopes, for mass asignation
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
       do i = 1,54
         isotop(i) = 1
       enddo
@@ -223,11 +225,15 @@ c reads input file
 c       write(*,*) ' Name of the input file ?'
 c       read(*,*) name1
       name1='input'
+      if(myrank.eq.0)then
       WRITE(*,*)'ARCHIVO DE ENTRADA: ',name1
+      endif
 
       inquire(file=name1,exist=exists)
       if (.not.exists) then
+      if(myrank.eq.0)then
       write(*,*) 'ERROR CANNOT FIND INPUT FILE ON UNIT 1'
+      endif
       pause
       else
 c  name of output file
@@ -254,7 +260,9 @@ c nopt 3 for SCF-nuclear MD
 c natom , all in namelist int0
 c
       read(1,nml=int0)
+      if(myrank.eq.0)then
       write(2,nml=int0)
+      endif
 c
       nopt1=nopt
       natom1=natom
@@ -268,7 +276,9 @@ c
       sol1=sol
       if (sol) then
        read(1,nml=solx)
+       if(myrank.eq.0)then
        write(2,nml=solx)
+       endif
        free1=free
       endif
 c
@@ -310,7 +320,9 @@ c-------------------------------------------------------
 c
       if (Prop) then
       read(1,nml=propx)
+      if(myrank.eq.0)then
       write(2,nml=propx)
+      endif
       endif
 c
       if (nopt.eq.4) then
@@ -331,7 +343,9 @@ c
        Pm(i) = xmass(indmass)
 c -----------------------------------------------------
        done(i)=.false.
+       if(myrank.eq.0)then
        write(2,500) Iz(i),x(i),y(i),z(i)
+       endif
    10  continue
 c
 c only in case of mixed calculations
@@ -344,7 +358,9 @@ c
 c
        indmass = (Iz(i)-1)*4 + isotop(Iz(i))
        Pm(i) = xmass(indmass)
+       if(myrank.eq.0)then
        write(2,501) Iz(i),x(i),y(i),z(i)
+       endif
    19    continue
 c
       else
@@ -363,12 +379,16 @@ c----------------
 c REACTION FIELD CASE
         if (field) then
         read(1,nml=fieldx)
+        if(myrank.eq.0)then
         write(2,nml=fieldx)
+        endif
         endif
 c ELECTRICAL RESPONSE CASE
         if (resp1) then
          read(1,nml=rfield)
+         if(myrank.eq.0)then
          write(2,nml=rfield)
+         endif
         endif
 c----------
 c
@@ -380,7 +400,9 @@ c time step , number of steps and masses
         istart0=istart
         istart=1
        endif
+       if(myrank.eq.0)then
        write(2,nml=intMD)
+       endif
        endif
 c
        h1=h
@@ -388,7 +410,9 @@ c
 c
        if (nopt.eq.2) then
         read(1,nml=GEO)
+        if(myrank.eq.0)then
         write(2,nml=GEO)
+        endif
         if(inmod.ne.0) then
           name3=name1(1:ikk)//'.nmod'
           name4=name1(1:ikk)//'.freq'
@@ -418,7 +442,9 @@ c automatically
 c
 c
       read(1,100) whatis
+      if(myrank.eq.0)then
       write(2,100) whatis
+      endif
 c
 c
       No=0
@@ -433,7 +459,9 @@ c
 c signals if a basis set was not used
       used=.false.
       read(1,*) iatom,nraw,ncon
+      if(myrank.eq.0)then
       write(2,600) iatom,nraw,ncon
+      endif
 c
 c reads contraction scheme. The value for p,d ,f should not be repeated
 c 3 ,6 , 10 .....   times
@@ -441,14 +469,20 @@ c reads also angular momentum for each of the contractions
 c 0 for s 1 for p, etc
 c
       read(1,*) (ncf(i),i=1,ncon)
+      if(myrank.eq.0)then
       write(2,*) (ncf(i),i=1,ncon)
+      endif
       read(1,*) (lt(i),i=1,ncon)
+      if(myrank.eq.0)then
       write(2,*) (lt(i),i=1,ncon)
+      endif
 c
 c loop over all primitives, no repeating p, d
       do 30 i=1,nraw
        read(1,*) at(i),ct(i)
+       if(myrank.eq.0)then
        write(2,700) at(i),ct(i)
+       endif
    30   continue
 c
       do 35 j=1,natom
@@ -521,7 +555,9 @@ c
 c     
 c
       if (.not.used) then
+      if(myrank.eq.0)then
        write(*,200) iatom
+      endif
       endif
 c
 c Exactly the same should be repeated for charge density
@@ -531,21 +567,29 @@ c
 c CHARGE DENSITY --------------------------------------------------
 c
       read(1,*) iatom,nraw,ncon
+      if(myrank.eq.0)then
       write(2,*) iatom,nraw,ncon
+      endif
 c
 c reads contraction scheme. The value for p,d ,f should not be repeated
 c 3 ,6 , 10 .....   times. Reads also angular type , 
 c 0 for s , 1 for p etc
       read(1,*) (ncf(i),i=1,ncon)
+      if(myrank.eq.0)then
       write(2,*) (ncf(i),i=1,ncon)
+      endif
       read(1,*) (lt(i),i=1,ncon)
+      if(myrank.eq.0)then
       write(2,*) (lt(i),i=1,ncon)
+      endif
 c     
 c
 c loop over all primitives, repeating p, d
       do 40 i=1,nraw
        read(1,*) at(i),ct(i)
+       if(myrank.eq.0)then
        write(2,700) at(i),ct(i)
+       endif
    40   continue
 c
       do 45 j=1,natom
@@ -622,26 +666,34 @@ c
    45   continue
 c
       read(1,100) whatis
+      if(myrank.eq.0)then
       write(2,100) whatis
+      endif
    25   end do
 c----- DIMENSION CONTROLS ------------------------------------
 c
       iprob=0
       if (M.gt.ngDyn.or.M.gt.ng) then
+      if(myrank.eq.0)then
        write(*,*) 'DIMENSION PROBLEMS WITH BASIS SET SIZE PARAMETER NG'
        write(*,*) 'NUMBER BASIS FUNCTIONS =',M,'<',ngDyn
+      endif
        iprob=1
       endif
 c
       if (Mdd.gt.ngdDyn.or.Mdd.gt.ngd) then
+      if(myrank.eq.0)then
        write(*,*) 'DIMENSION PROBLEMS WITH AUXILIAR BASIS PARAMETER NGD'
        write(*,*) 'NUMBER AUXILIAR BASIS FUNCTIONS =',Mdd,'<',ngdDyn
+      endif
        iprob=1
       endif
 c
       if (natom.gt.nt) then
+      if(myrank.eq.0)then
        write(*,*) 'DIMENSION PROBLEMS WITH NUMBER OF ATOMS PARAMETER NT'
        write(*,*) 'NUMBER OF ATOMS =',natom,'<',nt
+      endif
        iprob=1
       endif
 c
@@ -897,12 +949,16 @@ c
       igrid2c=igrid2
 c
       if ((Iexch.ge.4).and.(.not.(integ)).and.(.not.(dens))) then
+      if(myrank.eq.0)then
        write(*,*) 'OPTION SELECTED NOT AVAILABLE'
+      endif
 c      pause
       endif
 c
       if ((Iexch.eq.2).and.(OPEN)) then
+      if(myrank.eq.0)then
        write(*,*) 'OPTION SELECTED NOT AVAILABLE YET'
+       endif
 c      pause
       endif
 c
@@ -916,7 +972,9 @@ c DIMENSION TESTS -----------------------------------------------
 c
       Ndim=5*M*(M+1)/2+3*Mdd*(Mdd+1)/2+M+M*NCO+M*Ngrid
       if (Ndim.gt.ng2) then
+      if(myrank.eq.0)then
        write(*,*) 'DIMENSION PROBLEMS WITH DYNAMICAL VECTOR NG2'
+       endif
        iprob=1
        pause
       endif
@@ -1112,22 +1170,26 @@ c      VCINP=.TRUE.
 c this only for NH4Cl--------
 c----------------------------
       if (Scf1) then
+      if(myrank.eq.0)then
       write(2,nml=scfinp)
+      endif
       endif
 c
       if (ex) then
+      if(myrank.eq.0)then
       write(2,nml=EXCH)
+      endif
       endif
 c
       if (coul) then
+      if(myrank.eq.0)then
       write(2,nml=COULx)
+      endif
       endif
 c
 c      ATRHO=TMP
 c      VCINP=TMP2
 
-c        WRITE(*,*)'&5.3 ',a(1,1),a(2,1),a(3,1)
-c        pause
 
       do i=1,nt
        r1(i,1)=r(i,1)

@@ -13,7 +13,7 @@ OBJ =     config.o cvemot.o  cvemotn.o  cvemotnn.o \
            intSG.o write.o \
            dns.o dns2.o dnsg.o potg.o dip.o dipG.o  \
            int3N.o exchnum.o exchnum2.o grid.o\
-           densg.o  exchfock.o cvemotn1.o\
+           densg.o  cvemotn1.o\
            nwrite.o  SCFop.o\
            densgop.o dns2op.o dnsop.o exchnum2op.o\
            exchnumop.o potop.o alg.o eig.o svd.o \
@@ -21,20 +21,21 @@ OBJ =     config.o cvemot.o  cvemotn.o  cvemotnn.o \
            intsolG.o intsol.o grilla.o\
            lalg.o int3mem.o int3lu.o ungles.o \
            cvemot1.o  proton.o dipcor.o  furim.o savestate.o
-OBJ_SER = exchfock.o exchnum.o exchnumop.o exchnum2.o\
-          exchnum2op.o
+OBJ_SER = exchfock.o 
 
-OBJ_PAR = exchfockP.o exchnumP.o exchnumopP.o exchnum2P.o\
-          exchnum2opP.o
+
+
+          
+OBJ_PAR = exchfockP.o
           
 
 COMPFLG =  -O3 -pipe -fomit-frame-pointer -c\
            -falign-loops=2 -fno-strength-reduce \
-           -ffast-math -falign-functions=2 -I/usr/include
+           -ffast-math -falign-functions=2 -I/usr/include -I/usr/lib/mpich/include/
 
 #COMPFLG2 = -O -I/usr/include
 #more or less general
-LINKFLG = -lm  -lfmpich -lmpich -lmpichfsup -lpmpich -lpmpich++ -lmpe -lpthread 
+LINKFLG = -L/usr/lib/mpich/lib/ -lm  -lfmpich -lmpich -lmpichfsup -lpmpich -lpmpich++ -lmpe -lpthread 
 CPP     = /lib/cpp
 CPPFLAGS = -P 
 DEFINE   = -Dpack
@@ -44,10 +45,10 @@ DEFAULT = posta_ser
 .SUFFIXES: .f .o .fpp
 
 posta_ser:  $(OBJ) $(OBJ_SER)
-	$(F77) -o posta_ser $(OBJ) $(LINKFLG)
+	$(F77) -o posta_ser $(OBJ) $(OBJ_SER) $(LINKFLG)
 
 posta_par:  $(OBJ) $(OBJ_PAR)
-	$(F77) -o posta_par $(OBJ) $(LINKFLG)
+	$(F77) -o posta_par $(OBJ) $(OBJ_PAR) $(LINKFLG)
 
 clean:
 	@echo "Removing Object files.";rm -f *.o; 

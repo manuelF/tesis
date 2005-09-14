@@ -36,6 +36,9 @@ c
       logical field,sol,free
       integer nopt,iconst,igrid,imin,ibrent,thermo,igrid2
       INCLUDE 'param'
+      include 'mpif.h'
+      integer myrank,ierr
+      
       parameter(nt3=nt*3,nx=nt3*2)
       dimension r(nt,3),nshelld(0:3),nshell(0:3),q(ntq)
       dimension cd(ngd,nl),ad(ngd,nl),Nucd(Md),ncontd(Md)
@@ -73,6 +76,7 @@ c------------------------------------------------------------------
 c
 c Pointers
 c
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK.IERR)
       MM=M*(M+1)/2 
       MM2=M**2
       M2=2*M
@@ -108,8 +112,10 @@ c minimization (RECOMENDED option)
      >  nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write)
 c
 c
+      IF(MYRANK.EQ.0)THEN
       write(*,*) iter,fret
       write(*,*) 'Number of geometries',ngeo
+      ENDIF
 c
 c PROPERTIES CALCULATIONS
        if (idip.eq.1) then
@@ -144,14 +150,15 @@ c
          enddo
         enddo
 c
+         IF(MYRANK.EQ.0)THEN
          write(*,*) 'MULLIKEN POPULATION ANALYSIS'
          write(*,770)
-
+        
         do n=1,natom
          write(*,760) n,Iz(n),q(n)
         enddo
-c
         write(*,*)
+        ENDIF
         endif
 c--------------------------------------------------------------
 c Outputs final  MO ---------------------
@@ -167,8 +174,10 @@ c alpha
        kk=kk+1
  221   X(index(l),M+n)=RMM(kk)
 c
+      IF(MYRANK.EQ.0)THEN
       do 226 l=1,M
  226   write(2,400) (X(l,M+n),n=1,NCOa)
+      ENDIF
 c
       kk=M18b-1
       do 222 n=1,NCOb
@@ -176,8 +185,10 @@ c
        kk=kk+1
  222   X(index(l),M+n)=RMM(kk)
 c
+      IF(MYRANK.EQ.0)THEN
       do 227 l=1,M
  227   write(2,400) (X(l,M+n),n=1,NCOb)
+      ENDIF
 c
       else
 c
@@ -185,8 +196,10 @@ c
       do 220 n=1,NCO
  220   X(index(l),M+n)=X(l,M2+n)
 c
+      IF(MYRANK.EQ.0)THEN
       do 225 l=1,M
  225   write(2,400) (X(l,M+n),n=1,NCO)
+      ENDIF
 c
       endif
 c
@@ -199,10 +212,12 @@ c
        ntom=natom
       endif
 c
+      IF(MYRANK.EQ.0)THEN
       do 10 i=1,ntom
-c      write(2,500) Iz(i),Pm(i),r(i,1),r(i,2),r(i,3)
+
        write(2,500) Iz(i),r(i,1),r(i,2),r(i,3)
   10  continue
+      ENDIF
 c
 c
  400  format(4(E14.7E2,2x))
@@ -246,7 +261,9 @@ c
       name5 = name1(1:ikk)//'.rest'                   !  RESTART
       inquire(file=name5, exist=thereis)
       if (thereis) then
+         IF(MYRANK.EQ.0)THEN
          write(*,*)'THIS IS A RESTART RUN'   
+         ENDIF
          open(99,file=name5,form='unformatted')
          read(99) numcalc2
          do i = 1,numcalc2
@@ -266,7 +283,9 @@ c
         r(i,k) = r(i,k) + del2 
         GRAD=.false.
         numcalc = numcalc + 1
+        IF(MYRANK.EQ.0)THEN
         write(*,663) numcalc,numcalctot
+        ENDIF
  663  format('Calculation no. ',i3,' of ',i3)
 c
         if (field) then
@@ -310,7 +329,9 @@ c test
         r(i,k) = r(i,k) - delta 
         GRAD=.false. 
         numcalc = numcalc + 1
+        IF(MYRANK.EQ.0)THEN
         write(*,663) numcalc,numcalctot
+        ENDIF
 c
         if (OPEN) then
         call SCFop(MEMO,NORM,natom,Iz,r,Nuc,M,ncont,nshell,c,a,
@@ -361,11 +382,13 @@ c     xH  Force-constant matrix
 *****
       open(99,file=name5,form='unformatted')      ! WRITING RESTART FILE
       numcalc2 = numcalc/2
+      IF(MYRANK.EQ.0)THEN
       write(99) numcalc2
       do isf = 1,numcalc2
          write(99) (xH(isf,jsf),jsf=1,nat3)
          write(99) xU(isf,1),xU(isf,2),xU(isf,3)
       enddo
+      ENDIF
       close(99)                                   ! END WRITING
 *****
         
@@ -374,6 +397,7 @@ c     xH  Force-constant matrix
  201  continue
 *
 * Writing file .nmod
+      IF(MYRANK.EQ.0)THEN
       write(45,*)'Force-constant matrix  (Hessian with respect to ',
      >           'mass-weighted coordinates)'
       do i = 1,nat3
@@ -383,6 +407,7 @@ c     xH  Force-constant matrix
       do i = 1,nat3
          write(45,*)(xU(i,j),j=1,3)
       enddo 
+      ENDIF
 *
 *
 *     upper-packed storage mode
@@ -482,12 +507,16 @@ c
          enddo
          check = dabs(vecsum - 1.D0)
          if (check.gt.1.D-6) then
+            IF(MYRANK.EQ.0)THEN
             write(*,*)'check.gt.1.D-6',vecsum
+            ENDIF
             xnorm = dsqrt(vecsum)
             do j = 1,nat3
                XX(j,i) = XX(j,i)/xnorm
 cTEST
+            IF(MYRANK.EQ.0)THEN
             write(17,*) XX(j,i),j
+            ENDIF
             enddo
          endif
       enddo
@@ -531,40 +560,54 @@ c
       const6=-1.164856775
       const7=2.072364943
 c
+      IF(MYRANK.EQ.0)THEN
       write(44,662)ntom
+      ENDIF
  662  format('Number of Atoms and Molecular Geometry   (a.u.)',/,i2)
+      IF(MYRANK.EQ.0)THEN
       do i=1,ntom
        write(44,500) Iz(i),r(i,1),r(i,2),r(i,3)
       enddo
       write(44,661) nat3 - ntrasrot
+      ENDIF
  661  format(/,'Total Number of Normal Modes',/,i3)
 *
+      IF(MYRANK.EQ.0)THEN
       write(46,*)'FREQUENCES (cm**-1) and INTENSITIES (kcal/mol)'
+      ENDIF
       do i = nat3,1,-1
            xUU(i,1) = xUU(i,1)*xUU(i,1)
            xUU(i,2) = xUU(i,2)*xUU(i,2)
            xUU(i,3) = xUU(i,3)*xUU(i,3)
            if (xWW(i).lt.0.D0) then
+              IF(MYRANK.EQ.0)THEN
               write(46,*)'Purely imaginary eigenvalue'
+              ENDIF
               xWW(i) = dabs(xWW(i))
            endif
            freq = dsqrt(xWW(i))
            freqcm = freq * const1
            xintensity = const2 * (xUU(i,1)+xUU(i,2)+xUU(i,3))
+           IF(MYRANK.EQ.0)THEN
            write(46,*) freqcm, xintensity 
+           ENDIF
            if(i.ge.itemp) then
               zpecm = zpecm + freqcm
               vib(i)=freqcm*const4
            endif
 c
            ni = nat3 - i + 1
+           IF(MYRANK.EQ.0)THEN
            if(i.eq.(itemp)) write(46,669)
            write(44,664) ni,freqcm, xintensity 
            write(44,667) (XX(iku,i),iku=1,nat3)
+           ENDIF
       enddo
       zpecm = zpecm * const3 
+      IF(MYRANK.EQ.0)THEN
       write(46,*)'Zero-point energy (kcal/mol)  ',zpecm
       write(44,668) zpecm
+      ENDIF
 *
 c THERMO OPTION -------------------------------------------------
 c ALL THIS INFORMATION CORRESPONDS TO THE FOLLOWING MODEL:
@@ -633,6 +676,7 @@ c     Ev=Ev+0.50D0*vib(i)+rterm
       Ev=Ev*8.31451/4.186*TEMP
       Cv=Cv*8.31451/4.186
 c
+      IF(MYRANK.EQ.0)THEN
       write(44,700) TEMP,Prs
       write(44,*)
       write(44,701)
@@ -641,6 +685,7 @@ c
       write(44,703) Et,Ct,St
       write(44,704) Er,Cr,Sr
       write(44,705) Ev,Cv,Sv
+      ENDIF
 c
       endif
 c
@@ -667,6 +712,8 @@ c
       strng='rm '//name5
       call system(strng)
 *
+      IF(MYRANK.EQ.0)THEN
       write(*,*) 'Time for normal modes ', (itimefinal-itimeinit)/100
+      ENDIF
       return
       end

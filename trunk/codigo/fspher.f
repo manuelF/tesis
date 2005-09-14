@@ -1,13 +1,15 @@
       SUBROUTINE FSPHER(NATSOL)
       INCLUDE 'COMM'
+      include 'mpif.h'
       DOUBLE PRECISION ERFC
+      integer myrank,ierr
       DIMENSION DX(NAT),DY(NAT),DZ(NAT),RIJSQ(NAT)
       DIMENSION DX1(NAT),DY1(NAT),DZ1(NAT),RIJSQ1(NAT)
       DIMENSION JNF(NAT),QIJ(NAT) ,fqp1(nat)
       SQRTPI=SQRT(PI)
 
-
 C-----PARAM LENN-JONES OXIGENOS CLASICOS
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
       EE12=E12(NSPECQ+1)
       EE6=E6(NSPECQ+1)
       FF12=F12(NSPECQ+1)
@@ -413,8 +415,10 @@ c      write(*,*)i,fx(i),fy(i),fz(i)
       enddo
 
       if(dsqrt(fxx**2+fyy**2+fzz**2).gt.1.D-04)then
+      if(myrank.eq.0)then
       write(*,*)'FZA TOTAL NE ZERO EN FSPHER'  
       write(*,78)itel, fxx,fyy,fzz
+      endif
       endif
 78    format(i9,3g15.7)
 

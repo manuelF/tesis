@@ -15,6 +15,8 @@ c-----------------------------------------------------------------
       logical NORM,integ,dens1
       integer igrid,igrid2
       INCLUDE 'param'
+      include 'mpif.h'
+      integer myrank,ierr
       parameter (pi=3.14159265358979312D0,pi2=6.28318530717958623D0)
 c
 c input
@@ -34,6 +36,7 @@ c
 c
 c
 c
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
       excha=0.0D0
       ecorr=0.0D0
       Exc=0.0D0
@@ -190,8 +193,8 @@ c-------------------------------------------------------
 *
       Exc=excha+ecorr
       if (nopt.eq.0) then
-       IF(MOD((IT-NIN),IPR1).EQ.0)THEN
-        write(6,*)'Estoy en exchnum'
+       IF(MOD((IT-NIN),IPR1).EQ.0.AND.(MYRANK.EQ.0))THEN
+C        write(6,*)'Estoy en exchnum'
         write(*,610)
         write(*,620) excha,ecorr,ss0
        ENDIF

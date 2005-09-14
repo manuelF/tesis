@@ -10,7 +10,7 @@ C---------------------------------------------------------------------*
 C                    (1) 00, (2)OH , (3)HH
 C                                                         
 C---------------------------------------------------------------------*
-c     write(*,*) 'Estoy en corect2'
+C      write(6,*) 'Estoy en corect2'
 C-----PASO A UNIDADES PROGRAMA LOS PARAM L-J CUANTICOS
       DO I=1,NSPECQ
       IF(EM(I).LT.ZERO) EM(I)=-EM(I)

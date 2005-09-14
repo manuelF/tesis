@@ -282,7 +282,6 @@ c
       endif
 c End of Starting guess (No MO , AO known)-------------------------------
 c
-
       call intt2(NORM,natom,r,Nucd,M,Md,ncontd,
      >          nshelld,cd,ad,RMM,XX)
 c     
@@ -325,7 +324,7 @@ c LEVEL SHIFT CASE, contruction of initial vectors ------------------
 c
       if (SHFT) then
 c
-         if (MEMO) then
+        if (MEMO) then
             call int3lu(NORM,natom,Iz,r,Nuc,M,M20,ncont,nshell,c,a,Nucd,
      >                  Md,ncontd,nshelld,cd,ad,RMM,XX,E2,Ex,
      >     nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write1)
@@ -336,6 +335,7 @@ c
      >     nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write1)
 c
         endif
+        write(6,*)'SCF3'
 
         do 720 i=1,M
         do 720 j=1,M
