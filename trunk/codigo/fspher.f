@@ -16,12 +16,10 @@ C-----PARAM LENN-JONES OXIGENOS CLASICOS
       FF6=F6(NSPECQ+1)
 
 
-
       DO 1554 ISITE= 1, 3
       IOFSET=(ISITE-1)*NWAT
       DO 1554 JSITE=1,3
-      JOFSET=(JSITE-1)*NWAT
-
+      JOFSET=(JSITE-1)*NWAT 
       IPRD=ISITE*JSITE
 
       IF (IPRD.EQ.1) THEN
@@ -57,12 +55,10 @@ C-----PARAM LENN-JONES OXIGENOS CLASICOS
       DX(J)=XX(I+IOFSET)-XX(J+JOFSET)
       DY(J)=YY(I+IOFSET)-YY(J+JOFSET)
       DZ(J)=ZZ(I+IOFSET)-ZZ(J+JOFSET)
-c      write(*,*) J, DX(J), DY(J), DZ(J)
       DX(J) =(DX(J) - ANINT(DX(J)))*BXLGTH
       DY(J) =(DY(J) - ANINT(DY(J)))*BXLGTH
       DZ(J) =(DZ(J) - ANINT(DZ(J)))*BXLGTH
 
-c      write(*,*) J, DX(J), DY(J), DZ(J)
       ENDIF
 
       RIJSQ(J)=DX(J)*DX(J)+DY(J)*DY(J)+DZ(J)*DZ(J)
@@ -208,11 +204,6 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
              ELSEIF (ICLSTR.NE.1)THEN
 
 
-c       write(*,*)'fspher',i+iofset,jnf(j)+jofset,
-c     & pc(i+iofset)/ee,pc(jnf(j)+jofset)/ee,qij(jnf(j))/(ee**2)
-*      ------------------------------
-*      ----Coul: qq*erfc(Kr)/r + furim--------
-*      ------------------------------
 
        IF (IEWLD.EQ.1) THEN
 
@@ -250,7 +241,6 @@ c     & pc(i+iofset)/ee,pc(jnf(j)+jofset)/ee,qij(jnf(j))/(ee**2)
 
         ELSEIF((RIJSQ(JNF(J)).GT.RM2).AND.
      &         (RIJSQ(JNF(J)).LT.RCTSQ)) THEN
-c        write(*,*) 'cacas2', JNF(j),RIJSQ(JNF(J)),RCTSQ
 
         RR = RIJSQ(JNF(J))
         EGKC = QIJ(JNF(J))*(CSHIFT-(AB+B*RR)*RR)
@@ -266,16 +256,12 @@ c        write(*,*) 'cacas2', JNF(j),RIJSQ(JNF(J)),RCTSQ
 
 
         ENDIF
-c        write(99,*) rr ,pedo, pedo2 
    
 
       ENDIF
       ENDIF
 
 
-c      write(98,*)  'ESHIFT  CSHIFT  AB b AF BF  RM2 RCTSQ QIJ'
-c      write(98,*)  ESHIFT,  CSHIFT,  AB, B, AF, BF, RM2,
-c     > RCTSQ, QIJ(JNF(J))
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
@@ -301,13 +287,13 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       FZ(IIO)=FZ(IIO)+AAZ*ALFA2
 
       ELSE
-      
       FX(I+IOFSET)=FX(I+IOFSET)+AAX
       FY(I+IOFSET)=FY(I+IOFSET)+AAY
       FZ(I+IOFSET)=FZ(I+IOFSET)+AAZ
 
       ENDIF
 
+      
       IF (JSITE.EQ.1) THEN
 
       FX(JNF(J)+JOFSET)=FX(JNF(J)+JOFSET)-AAX*ALFA1
@@ -330,7 +316,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       FZ(JNF(J)+JOFSET)=FZ(JNF(J)+JOFSET)-AAZ
 
       ENDIF
-
+      
 1490  CONTINUE
 c===========================
          afx=zero
@@ -340,14 +326,9 @@ c===========================
          afx=afx+fx(ll)
          afy=afy+fy(ll)
          afz=afz+fz(ll)
-c         write(*,*) 'fspher 1, intermol' 
-c         write(*,*) ll,fx(ll),fy(ll),fz(ll)
          enddo
 
-      if(dsqrt(afx**2+afy**2+afz**2).gt.toll)then
-c      write(*,*)'FZA TOTAL NE ZERO EN FSPHER (2)'
-c      write(*,78)itel, afx,afy,afz
-      endif
+
 c============================         
 1554  CONTINUE
 
@@ -406,18 +387,16 @@ c-----Control de fzas en fspher
       fyy=zero
       fzz=zero
       
-c      write(*,*)'------------ fspher '
       do i=1+natom,npart
       fxx=fxx+fx(i)
       fyy=fyy+fy(i)
       fzz=fzz+fz(i)
-c      write(*,*)i,fx(i),fy(i),fz(i)
       enddo
 
       if(dsqrt(fxx**2+fyy**2+fzz**2).gt.1.D-04)then
       if(myrank.eq.0)then
-      write(*,*)'FZA TOTAL NE ZERO EN FSPHER'  
-      write(*,78)itel, fxx,fyy,fzz
+       write(*,*)'FZA TOTAL NE ZERO EN FSPHER'  
+       write(*,78)itel, fxx,fyy,fzz
       endif
       endif
 78    format(i9,3g15.7)

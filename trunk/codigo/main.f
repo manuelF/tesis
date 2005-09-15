@@ -342,14 +342,11 @@ C-----Y EN XYZ LOS SITIOS CON CARGA (TIP4P)
       IF(NWAT.EQ.0)GOTO 575
 
 C-----LLAMA A 'FSPHER':
-
       IF(SPC.EQ.1) THEN
         CALL FSPHER2(NATSOL)
-
       ELSE
       CALL FSPHER(NATSOL)
       ENDIF
-
  6880 CONTINUE
 C-----Para bulk solo las aguas dentro del cutoff
       
