@@ -45,6 +45,7 @@ c
 c
       dimension wang0(194),e0(194,3),Nr0(0:54)
 
+      
       real*8 pnt(M*(M+1)/2),send(M*(M+1)/2)
 
       INTEGER MYRANK, IPROC, ITAG,ITAG2, IERR,ISTAT
@@ -94,9 +95,9 @@ c now S, also F alpha later
       M5=M3+MM
       
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-	 do ih=1,M
-	   pnt(ih)=0.0D0
-	   send(ih)=0.0D0
+	 do ih=0,MM-1
+	   pnt(ih+1)=RMM(M5+ih)
+	   send(ih+1)=RMM(M3+ih)
 	 enddo
       endif
 c
@@ -322,8 +323,8 @@ c
         
 c Fock matrices, alpha and beta
 c M5 pointer of alpha spin Fock matrix, M3 beta
-        pnt(kk)=pnt(kk)+F(i)*tmpja
-        send(kk)=send(kk)+F(i)*tmpjb
+        RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
+        RMM(M3+kk-1)=RMM(M3+kk-1)+F(i)*tmpjb
  102  continue
  101  continue
 c
@@ -344,7 +345,7 @@ c
         kk=kk+1
 c Fock matrix
 c M5 pointer
-        pnt(kk)=pnt(kk)+F(i)*tmpja
+        RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
  202  continue
  201  continue
       endif
@@ -355,22 +356,11 @@ c
  12   continue
 c
 
-
-C      write(6,*)'exchfockP5'
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-C      write(6,*)'exchfockP9'
        CALL MPI_ALLReduce(ExP,Ex,1,27,102,MPI_COMM_WORLD,
      >                  IERR)
-C      write(6,*)'exchfockP10'
 
          if(MYRANK.eq.0) then
-           do ih=0,MM-1
-            RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
-           enddo
-           do ih=0,MM-1
-            RMM(M3+ih)=RMM(M3+ih)+send(ih+1)
-           enddo
-C           write(6,*)'exchfockP7'
            do 203 i=1,IPROC-1
  	    CALL MPI_Recv(pnt,MM,27,i,ITAG,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
@@ -378,7 +368,6 @@ C           write(6,*)'exchfockP7'
               RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
  204        continue
  203       continue
-C           write(6,*)'exchfockP8'
            do 205 i=1,IPROC-1
 	    CALL MPI_Recv(send,MM,27,i,ITAG2,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
@@ -388,6 +377,12 @@ C           write(6,*)'exchfockP8'
  205       continue
 
          else
+           do ih=0,MM-1
+            pnt(ih+1)=RMM(M5+ih)-pnt(ih+1)
+           enddo
+           do ih=0,MM-1
+            send(ih+1)=RMM(M3+ih)-send(ih+1)
+           enddo
 	   CALL MPI_Send(pnt,MM,27,0,ITAG,MPI_COMM_WORLD,
      >                   IERR)
 
@@ -421,15 +416,14 @@ C           write(6,*)'exchfockP8'
         Ex=ExP
        endif
 
-C       write(6,*)'exchfockP6'
 
-chard-codea el tamano de RMM=23961645.Hay que cambiar a recibirlo por parámetro.
-      if(MYRANK.eq.0)then
-	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
-      else
-       stop
-      endif
+c hard-codea el tamano de RMM=23961645.cambiar a recibirlo por parámetro.
+c      if(MYRANK.eq.0)then
+c	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+c      else
+c       stop
+c      endif
       
       return
 c
