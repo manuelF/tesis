@@ -159,9 +159,28 @@ Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SM
 \label{tab:TiemposEjecucion1}
 \end{table}
 
+Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est'a compuesto por cuatro nodos Xeon duales conectados por una red de Fast Ehernet. Las corridas fueron realizadas sobre cuatro procesos simult'aneos obteniendose los siguientes resultados:
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\ & \textbf{1000 pasos} & \textbf{3000 pasos}& \textbf{5000 pasos}\\
+\texttt{Serial} & 01:59	& 05:56	& 09:46	\\
+\texttt{Paralelo}  & 01:56 & 05:49 & 09:26 \\
+\end{tabular}
+\end{center}
+\caption[Tiempos de ejecuci\'on total del programa]{\small{Tiempos de ejecuci\'on total del programa.}}
+\label{tab:TiemposEjecucion2}
+\end{table}
+
+Puede observarse que conforme el dominio del problema crece la brecha entre los tiempos del sistema serial y los del paralelo se vuelven mayores. Quedar\'a a futuro la ejecuci\'on de un sistema de mayores dimensiones para completar el estudio sobre performance del sistema paralelizado. A simple vista puede observarse que para mayores dominios del problema la performance del sistema paralelo crece con respecto al serial. Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura. 
+
+Por otra parte podr\'ia investigarse a futuro la utilizaci\'on de mensajes no bloqueantes, ya que la metodolog\'ia actual (paso de mensajes bloqueantes) produce un overhead en el cual los procesos se encuentran inactivos. Sin embargo, la implementaci\'on de mensajes no bloqueantes requiere de un an\'alisis exhaustivo del problema para poder seleccionar instrucciones que se contin\'uen ejecutando sin causar ning\'un problema mientras se espera la concreci\'on del pasaje de mensajes. Como el sistema actual trabaja de una manera secuencial es complejo encontrar una manera de paralelizar el mismo utilizando mensajer\'ia no bloqueante.
 
 \section{Conclusiones}
 
-Como puede obeservarse el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por el paso de mensajes entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada un de los nodos. esto quiere decir que a pesar de existir un overhead por los mensajes, cuanto mejor se pueda dividir el dominio del problema entre los procesos y hacer que cada uno se ocupe de una parte del problema, mayor ser\'a la ganancia del sistema paralelo en detrimento del serial.
+Como pudo obeservarse el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por el paso de mensajes entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada un de los nodos. esto quiere decir que a pesar de existir un overhead por los mensajes, cuanto mejor se pueda dividir el dominio del problema entre los procesos y hacer que cada uno se ocupe de una parte del problema, mayor ser\'a la ganancia del sistema paralelo en detrimento del serial.
+
+El programa paralelo producir\'a una gran ventaja si es utilizado para sistemas extremadamente grandes, del orden de varios d\'ias de c\'omputo. Es en sistemas como los mencionados cuando la performance del programa paralelo sobrepasa de forma notable la del serial, y es cuando se encuentra la mayor ganancia en la utilizaci\'on del primero mencionado.
 
 \end{document}
