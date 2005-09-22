@@ -45,21 +45,23 @@ En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicad
 \end{abstract}
 
 \section{Introducci\'on}
-La simulaci\'on en qu\'imica es una herramienta cada vez m\'as utilizada, el desarrollo de t\'ecnicas refinadas, as\'ii como el aumento geom\'etrico del poder de c\'omputo son dos de las razones m\'as importantes de su creciente uso. 
+La simulaci\'on en qu\'imica es una herramienta cada vez m\'as utilizada, el desarrollo de t\'ecnicas refinadas, as\'i como el aumento geom\'etrico del poder de c\'omputo son dos de las razones m\'as importantes de su creciente uso.
 Ya sea como complemento o como reemplazo de experimentos, la simulaci\'on aporta, entre otras cosas, una visi\'on microsc\'opica inalcanzable por otra v\'ia.
 
-Las metodolog\'ias utilizadas en simulaci\'on var\'in seg\'un el problema a tratar, en general se dividen en dos grandes ramas, la llamada rama \emph{cl\'asica} y la llamada \emph{cu\'antica}. 
-La mec\'anica que rige el comportamiento de part\'iculas peque\~nas (c\'omo los electr\'ones) es la llamada mec\'anica cu\'antica, que fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhory otros. 
-Lamentablemente no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son demandantes computacionalmente. 
-Esta elevada demanda computacional hace prohibitivo el uso de esta t\'ecnica a sistemas con un n\'umero elevado de \'atomos.
-Por otro lado la mec\'anica cl\'asica, menos demandante, es incap\'az de representar electr\'ones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia. 
+Las metodolog\'ias utilizadas en simulaci\'on var\'ian seg\'un el problema a tratar. En general, se dividen en dos grandes ramas, la llamada rama \emph{cl\'asica} y la llamada \emph{cu\'antica}. 
+La mec\'anica que rige el comportamiento de part\'iculas peque\~nas (c\'omo los electrones) es la llamada mec\'anica cu\'antica, que fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhory otros. 
+Lamentablemente no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son muy demandantes desde el punto de vista computacional.
+Esta elevada demanda hace prohibitivo el uso de esta t\'ecnica a sistemas con un n\'umero elevado de \'atomos.
+
+Por otro lado la mec\'anica cl\'asica, menos demandante, es incapaz de representar electrones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia.
 No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
 
-Si se quieren tratar reacciones en soluci\'on, se encuentra el problema que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica. 
-Por ello se han desarrollado las metodolog\'ias h\'ibridas, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico. 
+Si se quieren tratar reacciones en soluci\'on, se encuentra el problema que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica.
+Por ello se han desarrollado las metodolog\'ias h\'ibridas, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
+
 \section{Metodolog\'ia}
 
-El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar una \'unica m\'etrica, como puede ser el tiempo de ejecuci\'on. 
+El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar una \'unica m\'etrica, como puede ser el tiempo de ejecuci\'on total.
 Un buen dise\~no debe, adem\'as, optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenimiento de la soluci\'on, entre otros. 
 Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, performance, portabilidad y otros factores.
 
@@ -130,14 +132,14 @@ Como se mencion\'o con anterioridad al realizar el profiling se observ\'o que en
 
 Esta rutinas en s\'i consum\'ian muy poco tiempo de ejecuci\'on, pero el problema se daba porque las mismas eran llamadas en el orden de los millones de veces.
 
-Por lo tanto se buscaron las rutinas donde dnsg(y las otras rutinas similares) eran llamadas. Esto ocurre en las funciones de tipo \textsf{exch}(\textsf{exchfock}, \textsf{exchnum}, \textsf{exchnum2}, \textsf{exchnum2op}). 
+Por lo tanto se buscaron las rutinas donde \textsf{dnsg}(y las otras rutinas similares) eran llamadas. Esto ocurre en las funciones de tipo \textsf{exch}(\textsf{exchfock}, \textsf{exchnum}, \textsf{exchnum2}, \textsf{exchnum2op}). 
 En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema. 
 Se decidi\'o paralelizar por el ciclo m\'as externo, que justamente es el que itera por cada \'atomo, para evitar sobrecarga de comunicaci\'on entre los nodos.
 
 En este caso, si el n\'umero de procesos utilizados es menor que el n\'umero de \'atomos con los que se trabaja se dividen los mismos de manera uniforme. 
 En cambio, si hay m\'as procesos que \'atomos, todo el procesamiento va a un solo nodo, lo cual p\'erdidas con respecto al modelo original por la sobrecarga de comunicaci\'on e inicializaci\'on del sistema paralelo.
 
-En cuanto a las modificaciones realizadas al sistema, en el archivo \textsf{main.f} se agregaron sentencias de MPI {\Huge{Referencia!}} para la inicializaci\'on y finalizaci\'on de la utilizaci\'on de la librer\'ia que lo implementa {\Huge{Referencia!}}.
+En cuanto a las modificaciones realizadas al sistema, en el archivo \textsf{main.f} se agregaron sentencias de MPI \cite{Pacheco96, mpich-install},  para la inicializaci\'on y finalizaci\'on de la utilizaci\'on de la librer\'ia que lo implementa. Se utiliz\'o la librer\'ia \textsf{MPICH}\cite{MPICH} para las pruebas realizadas.
 
 En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema y otras para enviar los resultados obtenidos hacia el proceso 0 (en caso de no serlo) y para recibir de todos los procesos los resultados (en caso de ser el proceso 0).
 
@@ -145,28 +147,34 @@ Las llamadas a rutinas de salida debieron ser eliminadas para los procesos disti
 
 \section{Resultados y Discusi\'on}
 
-Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SMP con 2 procesadores y se obtuvieron los siguientes resultados:
+Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SMP XEON Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}.
 
 \begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
+\hline
 \ & \textbf{1000 pasos} & \textbf{3000 pasos}& \textbf{5000 pasos}& \textbf{7000 pasos}& \textbf{10000 pasos}\\
+\hline
 \texttt{Serial} & 01:40	& 05:10	& 09:10	& 12:30 & 19:54	\\
 \texttt{Paralelo}  & 01:38 & 04:50 & 08:12 & 11:29 & 16:30\\
+\hline
 \end{tabular}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa]{\small{Tiempos de ejecuci\'on total del programa.}}
+\caption[Tiempos de ejecuci\'on en m\'aquina SMP]{\small{Tiempos de ejecuci\'on total del programa en una m\'aquina SMP Xeon Dual. Los resultados est\'an expresados en minutos.}}
 \label{tab:TiemposEjecucion1}
 \end{table}
 
-Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est'a compuesto por cuatro nodos Xeon duales conectados por una red de Fast Ehernet. Las corridas fueron realizadas sobre cuatro procesos simult'aneos obteniendose los siguientes resultados:
+Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est\'a compuesto por cuatro nodos AMD Opteron duales conectados por una red de Fast Ehernet. Las corridas fueron realizadas sobre cuatro procesos simult\'aneos obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion2}.
 
 \begin{table}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
+\hline
 \ & \textbf{1000 pasos} & \textbf{3000 pasos}& \textbf{5000 pasos}\\
+\hline
 \texttt{Serial} & 01:59	& 05:56	& 09:46	\\
 \texttt{Paralelo}  & 01:56 & 05:49 & 09:26 \\
+\hline
 \end{tabular}
 \end{center}
 \caption[Tiempos de ejecuci\'on total del programa]{\small{Tiempos de ejecuci\'on total del programa.}}
@@ -179,8 +187,12 @@ Por otra parte podr\'ia investigarse a futuro la utilizaci\'on de mensajes no bl
 
 \section{Conclusiones}
 
-Como pudo obeservarse el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por el paso de mensajes entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada un de los nodos. esto quiere decir que a pesar de existir un overhead por los mensajes, cuanto mejor se pueda dividir el dominio del problema entre los procesos y hacer que cada uno se ocupe de una parte del problema, mayor ser\'a la ganancia del sistema paralelo en detrimento del serial.
+Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos. 
+Esto quiere decir que a pesar de existir un overhead por los mensajes, cuanto mejor se pueda dividir el dominio del problema entre los procesos y hacer que cada uno se ocupe de una parte del problema, mayor ser\'a la ganancia del sistema paralelo en detrimento del serial.
 
 El programa paralelo producir\'a una gran ventaja si es utilizado para sistemas extremadamente grandes, del orden de varios d\'ias de c\'omputo. Es en sistemas como los mencionados cuando la performance del programa paralelo sobrepasa de forma notable la del serial, y es cuando se encuentra la mayor ganancia en la utilizaci\'on del primero mencionado.
+
+\bibliographystyle{mecom}
+\bibliography{complex_2005_09_12}
 
 \end{document}
