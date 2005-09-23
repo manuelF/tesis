@@ -41,11 +41,14 @@ Pabell\'on I, 1428 Buenos Aires, Argentina.
 \vspace{12pt}
 
 \begin{abstract}
-En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicado a la simulaci\'on de reactividad qu\'imica en soluci\'on. El m\'etodo utilizado para realizar la simulaci\'on se encuadra dentro de un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente (como masas y cargas puntuales) mientras que el soluto es tratado con rigurosidad cu\'antica (DFT, en nuestro caso), de esta manera se logra optimizar el costo computacional ya que se computa la estructura electr\'onica s\'olo de la porci\'on del sistema en la que es realmente relevante. El proyecto consiste en la construcci\'on de un software paralelo de simulaci\'on num\'erica a partir de una versi\'on serial preexistente y su implementaci\'on en un cluster Beowulf, en el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on. La combinaci\'on del hardware y software mencionado permiti\'o la resoluci\'on de problemas m\'as realistas y previamente inabordables, la validaci\'on de los resultados computacionales con mediciones experimentales y el an\'alisis de distintas estrategias de paralelizaci\'on (incluyendo diversas estrategias de pasaje de mensajes) con las que se obtuvo un algoritmo escalable.
+En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicado a la simulaci\'on de reactividad qu\'imica en soluci\'on. El m\'etodo utilizado para realizar la simulaci\'on se encuadra dentro de un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente (como masas y cargas puntuales) mientras que el soluto es tratado con rigurosidad cu\'antica (DFT, en nuestro caso), de esta manera se logra optimizar el costo computacional ya que se computa la estructura electr\'onica s\'olo de la porci\'on del sistema en la que es realmente relevante. El proyecto consiste en la construcci\'on de un software paralelo de simulaci\'on num\'erica a partir de una versi\'on serial preexistente y su implementaci\'on en un cluster Beowulf, en el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on. La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas estrategias de paralelizaci\'on (incluyendo diversas modalidades de pasaje de mensajes) permitieron la resoluci\'on de problemas m\'as realistas y previamente inabordables, obteniendo un algoritmo escalable.
 \end{abstract}
 
+\newpage
+
 \section{Introducci\'on}
-La simulaci\'on en qu\'imica es una herramienta cada vez m\'as utilizada, el desarrollo de t\'ecnicas refinadas, as\'i como el aumento geom\'etrico del poder de c\'omputo son dos de las razones m\'as importantes de su creciente uso.
+La simulaci\'on en qu\'imica es una herramienta cada vez m\'as utilizada. 
+El desarrollo de t\'ecnicas refinadas, as\'i como el aumento geom\'etrico del poder de c\'omputo son dos de las razones m\'as importantes de su creciente uso.
 Ya sea como complemento o como reemplazo de experimentos, la simulaci\'on aporta, entre otras cosas, una visi\'on microsc\'opica inalcanzable por otra v\'ia.
 
 Las metodolog\'ias utilizadas en simulaci\'on var\'ian seg\'un el problema a tratar. En general, se dividen en dos grandes ramas, la llamada rama \emph{cl\'asica} y la llamada \emph{cu\'antica}. 
