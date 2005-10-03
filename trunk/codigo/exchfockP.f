@@ -46,7 +46,7 @@ c
       dimension wang0(194),e0(194,3),Nr0(0:54)
 
       
-      real*8 pnt(M*(M+1)/2),send(M*(M+1)/2)
+      DOUBLE PRECISION pnt(M*(M+1)/2),send(M*(M+1)/2)
 
       INTEGER MYRANK, IPROC, ITAG,ITAG2, IERR,ISTAT
       INTEGER init, ifin, iaux,ih
@@ -66,6 +66,7 @@ c
       ExP=0.0D0
       ss0=0.0D0
 c
+
       do 43 l=1,3
  43    Ll(l)=l*(l-1)/2
 c
@@ -85,6 +86,11 @@ c
       nd=nshell(2)
       M2=2*M
       MM=M*(M+1)/2
+
+      do ih=1,MM
+       pnt(ih)=0.0D0
+       send(ih)=0.0D0
+      enddo
 c pointers
 c
 c first P
@@ -94,12 +100,6 @@ c now Fock beta
 c now S, also F alpha later
       M5=M3+MM
       
-      if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-	 do ih=0,MM-1
-	   pnt(ih+1)=RMM(M5+ih)
-	   send(ih+1)=RMM(M3+ih)
-	 enddo
-      endif
 c
 c open shell case
       M18b=M18+M*NCOa
@@ -166,7 +166,7 @@ c
       endif
 c
       DO 12 na=init,ifin
-c       DO 12 na=1,natom
+
 c
        do 16 n=1,Nr0(Iz(na))
 c
@@ -298,7 +298,7 @@ c
          y2b=0.0D0
         endif
 c
-c     tmp = weight * potential
+
 c
       
       if (OPEN) then
@@ -323,8 +323,13 @@ c
         
 c Fock matrices, alpha and beta
 c M5 pointer of alpha spin Fock matrix, M3 beta
+      if(MYRANK.eq.0)then
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
         RMM(M3+kk-1)=RMM(M3+kk-1)+F(i)*tmpjb
+      else
+        pnt(kk)=pnt(kk)+F(i)*tmpja
+        send(kk)=send(kk)+F(i)*tmpjb
+      endif
  102  continue
  101  continue
 c
@@ -345,31 +350,38 @@ c
         kk=kk+1
 c Fock matrix
 c M5 pointer
+      if(MYRANK.eq.0)then
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
+      else 
+        pnt(kk)=pnt(kk)+F(i)*tmpja
+      endif
+      
+      
+      
  202  continue
  201  continue
       endif
 c
- 15    CONTINUE
+ 15   CONTINUE
 c
  16   continue
  12   continue
 c
 
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
-       CALL MPI_ALLReduce(ExP,Ex,1,27,102,MPI_COMM_WORLD,
+      CALL MPI_ALLReduce(ExP,Ex,1,MPI_REAL8,102,MPI_COMM_WORLD,
      >                  IERR)
 
          if(MYRANK.eq.0) then
            do 203 i=1,IPROC-1
- 	    CALL MPI_Recv(pnt,MM,27,i,ITAG,MPI_COMM_WORLD,
+           CALL MPI_Recv(pnt,MM,11,i,ITAG,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
 	    do 204 ih=0,MM-1
               RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
  204        continue
  203       continue
            do 205 i=1,IPROC-1
-	    CALL MPI_Recv(send,MM,27,i,ITAG2,MPI_COMM_WORLD,
+	   CALL MPI_Recv(send,MM,11,i,ITAG2,MPI_COMM_WORLD,
      >                   ISTAT,IERR)
 	    do 206 ih=0,MM-1
              RMM(M3+ih)=RMM(M3+ih)+send(ih+1)
@@ -377,16 +389,10 @@ c
  205       continue
 
          else
-           do ih=0,MM-1
-            pnt(ih+1)=RMM(M5+ih)-pnt(ih+1)
-           enddo
-           do ih=0,MM-1
-            send(ih+1)=RMM(M3+ih)-send(ih+1)
-           enddo
-	   CALL MPI_Send(pnt,MM,27,0,ITAG,MPI_COMM_WORLD,
+	 CALL MPI_Send(pnt,MM,11,0,ITAG,MPI_COMM_WORLD,
      >                   IERR)
 
-	   CALL MPI_Send(send,MM,27,0,ITAG2,MPI_COMM_WORLD,
+	 CALL MPI_Send(send,MM,11,0,ITAG2,MPI_COMM_WORLD,
      >                   IERR)
          endif
 
@@ -395,7 +401,7 @@ c
 	    pnt(ih+1)=RMM(M5+ih)
 	  enddo
 	 endif
-	 CALL MPI_Bcast(pnt,MM,27,0,MPI_COMM_WORLD,
+	 CALL MPI_Bcast(pnt,MM,11,0,MPI_COMM_WORLD,
      >	                 IERR)
 	 do ih=0,MM-1
 	   RMM(M5+ih)=pnt(ih+1)
@@ -403,13 +409,13 @@ c
 
 	 if(MYRANK.eq.0) then
 	  do ih=0,MM-1
-	    pnt(ih+1)=RMM(M3+ih)
+	    send(ih+1)=RMM(M3+ih)
 	  enddo
 	 endif
-	 CALL MPI_Bcast(pnt,MM,27,0,MPI_COMM_WORLD,
+	 CALL MPI_Bcast(send,MM,11,0,MPI_COMM_WORLD,
      >	                 IERR)
 	 do ih=0,MM-1
-	   RMM(M3+ih)=pnt(ih+1)
+	   RMM(M3+ih)=send(ih+1)
 	 enddo
  
        else
@@ -418,12 +424,12 @@ c
 
 
 c hard-codea el tamano de RMM=23961645.cambiar a recibirlo por parámetro.
-c      if(MYRANK.eq.0)then
-c	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
-c      else
-c       stop
-c      endif
+      if(MYRANK.eq.0)then
+	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+      else
+       stop
+      endif
       
       return
 c
