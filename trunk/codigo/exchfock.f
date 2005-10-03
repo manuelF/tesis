@@ -17,7 +17,7 @@ c      implicit real*8 (a-h,o-z)
       implicit none
       integer igrid,igrid2,nshell,nang
       logical NORM,integ,dens1,OPEN
-      real*8 pi,pi2,a,c,r,rmm,w,rr,p
+      real*8 pi,pi2,a,c,r,w,rr,p,rmm
       real*8 ss0,fc,tmpjb,tmpja,tmpb,tmpa,tmp,pf,s,p3,p2,p1
       real*8 dz,dy,dx,dxib,dxia,bdxz,adxz,bdyz,adyz,bdxy,adxy,bdzz
       real*8 aij,x1,u,rnc,rnb,pp,tmp0,yi,dxz,dyz,dxy,dzz,dyy,dxx
@@ -282,8 +282,12 @@ c
         kk=kk+1
 c Fock matrices, alpha and beta
 c M5 pointer of alpha spin Fock matrix, M3 beta
+
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
+
         RMM(M3+kk-1)=RMM(M3+kk-1)+F(i)*tmpjb
+        
+     
  102  continue
  101  continue
 c
@@ -304,19 +308,23 @@ c
         kk=kk+1
 c Fock matrix
 c M5 pointer 
+
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
+
+        
  202  continue
  201  continue
       endif
 c
- 15    CONTINUE
 c
+ 15   continue
+
  16   continue
  12   continue
 c
 C	Es para guardar todo lo que puede modificar esta rutina.      
-c       CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+       CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
       
       return
 
