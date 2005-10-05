@@ -59,7 +59,7 @@ Esta elevada demanda hace prohibitivo el uso de esta t\'ecnica a sistemas con un
 Por otro lado la mec\'anica cl\'asica, menos demandante, es incapaz de representar electrones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia.
 No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
 
-Si se quieren tratar reacciones en soluci\'on, se encuentra el problema que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica.
+Si se quieren tratar reacciones en soluci\'on, se encuentra el problema de que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica.
 Por ello se han desarrollado las metodolog\'ias h\'ibridas, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
 
 \section{Metodolog\'ia}
@@ -68,8 +68,8 @@ El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar un
 Un buen dise\~no debe, adem\'as, optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenimiento de la soluci\'on, entre otros. 
 Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, performance, portabilidad y otros factores.
 
-Para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial. 
-Para ello realizamos un profiling utilizando diversas herramientas provistas por el sistema operativo y por el compilador utilizado.
+Partiendo de un programa serial pre existente y para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial. 
+Para ello realizamos un profiling utilizando diversas herramientas provistas por el sistema operativo Linux y por el compilador $g77$ utilizado.
 
 El esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT), en la cual la variable fundamental es la densidad electr\'onica. 
 Esta variable, $r$, se expande con un conjunto de funciones base.
@@ -86,11 +86,11 @@ E[\rho] = -\frac{1}{2}[X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}]+ \int v(r)
 
 La parte m\'as costosa del c\'alculo esta relacionada con los dos \'ultimos t\'erminos de esta expresi\'on, son ellos los correspondientes a la energ\'ia de repulsi\'on de Coulomb, y el t\'ermino de intercambio y correlaci\'on.
 
-El primero se calcula en forma anal\'itica, pero su costo escala como $N^3$, donde $N$ est\'a directamente relacionada con el tama\~no del sistema. 
-Este t\'ermino consiste de $N^3$ integrales anal\'iticas que se pueden calcular en forma independiente, por lo que se puede paralelizar con facilidad.
+El primer termino es calculado en forma anal\'itica, pero su costo del orden de $N^3$, donde $N$ est\'a directamente relacionada con el tama\~no del sistema. 
+Este t\'ermino consiste de $N^3$ integrales anal\'iticas que se pueden calcular en forma independiente, por lo que el mismo se puede paralelizar con facilidad.
 
 El segundo t\'ermino se debe evaluar en forma num\'erica, empleando un esquema de integraci\'on en una grilla centrada en los \'atomos y tambi\'en escala como $N^3$. 
-Este t\'ermino tambi\'en es paralelizable en forma directa.
+Este t\'ermino es paralelizable entre los distintos procesos separando el dominio sobre el que se calcula la integral.
 
 En el profiling realizado veremos que el c\'omputo de estos dos t\'erminos representa m\'as del 90\% del costo computacional total, ya que el costo de los dos primeros t\'erminos escala con $N^2$.
 
@@ -100,7 +100,7 @@ En la figura \ref{fig:Profiling} se detallan los porcentajes de procesamiento qu
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Profiling}
+\includegraphics[keepaspectratio, width=14cm]{Profiling2}
 \end{center}
 \caption[Porcentajes de tiempo consumidos por las rutinas]{\small{Porcentajes de tiempo consumidos por las rutinas.}}
 \label{fig:Profiling}
@@ -119,23 +119,20 @@ Se podr\'a observar m\'as adelante que las cinco efect\'uan el mismo tipo de c\'
 
 \subsection{Implementaci\'on}
 
-En primera instancia se reorganiz\'o el c\'odigo de manera de emprolijarlo y lograr evitar ciertos problemas que pueden traer aparejadas algunas reglas de utilizaci\'on del fortran. 
+En primera instancia se reorganiz\'o el c\'odigo de manera de eliminar vicios de programaci\'on y lograr evitar ciertos problemas que pueden traer aparejadas algunas reglas de utilizaci\'on del fortran. 
 Por ejemplo, al utilizar declaraci\'on impl\'icita de variables si el programador declara que las variables que empiecen con letras de la \texttt{A} a la \texttt{H} serán del tipo \texttt{REAL*8} pero luego ante un descuido declara otra variable \texttt{INTEGER} con alg\'un nombre que empiece entre esas letras podr\'an darse errores o diferencias en los resultados. 
-Por estos motivos se agregaron en algunas rutinas la instrucci\'on \texttt{implicit none} que evita la declaraci\'on impl\'icita de variables. 
-Luego fueron declaradas todas las variables correspondientes y se ejecut\'o el programa de forma de corroborar que los resultados se mantuvieran consistentes a pesar del cambio.
+En etapas posteriores se fueron eliminando las declaraciones impl\'icitas de variables y se constat\'o mediante un $dump$ del estado del programa que no se hubiera modificado nada respecto a la versi\'on serial.
 
-La paralelizaci\'on del algoritmo se realiza a trav\'es de la paralelizaci\'on de la cadena de datos  (en contraposici\'on a la paralelizaci\'on de la cadena de instrucciones). 
-Para ello se utiliza el m\'etodo de descomposici\'on por subdominios. 
-Este m\'etodo consiste en dividir los datos del dominio sobre los cuales se realiza el c\'alculo, en $p$ porciones ($p$ = cantidad de procesos), asign\'andole una porci\'on del dominio a cada uno de los procesos.
+La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral. 
 
 Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correpondiente sus c\'alculos en forma local.
 Finalmente, como para las siguientes operaciones es necesario contar con el total de los datos el resultado final es comunicado a todos los procesos para continuar el c\'alculo de forma consistente.
 
-Como se mencion\'o con anterioridad al realizar el profiling se observ\'o que entre un 65\% y 75\% del tiempo era consumido por las rutinas de tipo dnsg que son las encargadas de calcular los gradientes necesarios para obtener el valor en cada punto de la grilla de trabajo.
+Como se mencion\'o con anterioridad al realizar el profiling se observ\'o que entre un 65\% y 75\% del tiempo era consumido por las rutinas de tipo densg que son las encargadas de calcular los gradientes necesarios para obtener el valor en cada punto de la grilla de trabajo.
 
-Esta rutinas en s\'i consum\'ian muy poco tiempo de ejecuci\'on, pero el problema se daba porque las mismas eran llamadas en el orden de los millones de veces.
+Esta rutinas en s\'i consumen muy poco tiempo de ejecuci\'on, pero el problema es que son llamadas en el orden de los millones de veces.
 
-Por lo tanto se buscaron las rutinas donde \textsf{dnsg}(y las otras rutinas similares) eran llamadas. Esto ocurre en las funciones de tipo \textsf{exch}(\textsf{exchfock}, \textsf{exchnum}, \textsf{exchnum2}, \textsf{exchnum2op}). 
+Por lo tanto se buscaron las rutinas desde donde \textsf{dnsg}(y las otras rutinas similares) eran llamadas. Esto ocurre en las funciones de tipo \textsf{exch}(\textsf{exchfock}, \textsf{exchnum}, \textsf{exchnum2}, \textsf{exchnum2op}). 
 En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema. 
 Se decidi\'o paralelizar por el ciclo m\'as externo, que justamente es el que itera por cada \'atomo, para evitar sobrecarga de comunicaci\'on entre los nodos.
 
@@ -167,6 +164,17 @@ Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SM
 \label{tab:TiemposEjecucion1}
 \end{table}
 
+La misma puede observarse de mejor manera en la figura \ref{fig:Papita}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Papita}
+\end{center}
+\caption[Tiempos de ejecuci\'on en m\'aquina SMP]{\small{Tiempos de ejecuci\'on total del programa en una m\'aquina SMP Xeon Dual. Los resultados est\'an expresados en minutos.}}
+\label{fig:Papita}
+\end{figure}
+
+
 Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est\'a compuesto por cuatro nodos AMD Opteron duales conectados por una red de Fast Ehernet. Las corridas fueron realizadas sobre cuatro procesos simult\'aneos obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion2}.
 
 \begin{table}
@@ -180,9 +188,71 @@ Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas
 \hline
 \end{tabular}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa]{\small{Tiempos de ejecuci\'on total del programa.}}
+\caption[Tiempos de ejecuci\'on total del programa en 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 4 procesos.}}
 \label{tab:TiemposEjecucion2}
 \end{table}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Rocky1}
+\end{center}
+\caption[Tiempos de ejecuci\'on total del programa en 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 4 procesos.}}
+\label{fig:Rocky1}
+\end{figure}
+
+
+
+Finalmente fueron realizadas las mismas ejecuciones sobre el mismo cluster pero utilizando uncamente dos procesos en el mismo, obteniendose los siguientes resultados visibles en la tabla \ref{tab:TiemposEjecucion3}.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\ & \textbf{1000 pasos} & \textbf{3000 pasos}& \textbf{5000 pasos}\\
+\hline
+\texttt{Serial} & 01:59	& 05:56	& 09:46	\\
+\texttt{Paralelo}  & 01:57 & 05:53 & 09:36 \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Tiempos de ejecuci\'on total del programa en 2 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 procesos.}}
+\label{tab:TiemposEjecucion3}
+\end{table}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Rocky2}
+\end{center}
+\caption[Tiempos de ejecuci\'on total del programa en 2 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 procesos.}}
+\label{fig:Rocky2}
+\end{figure}
+
+Una vez obtenidos los datos de las ejecuciones del sistema en distintas configuraciones y entornos se pudieron obtener datos sobre $Speedup$, $Overhead$ y $Eficiencia$, observables en las figuras \ref{fig:Speedup}, \ref{fig:Overhead} y \ref{fig:Eficiencia}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Speedup}
+\end{center}
+\caption[Comparaci\'on del Speedup obtenido en las distintas configuraciones]{\small{Comparaci\'on del Speedup obtenido en las distintas configuraciones.}}
+\label{fig:Speedup}
+\end{figure}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Overhead}
+\end{center}
+\caption[Comparaci\'on del Overhead obtenido en las distintas configuraciones]{\small{Comparaci\'on del Overhead obtenido en las distintas configuraciones.}}
+\label{fig:Overhead}
+\end{figure}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Eficiencia}
+\end{center}
+\caption[Comparaci\'on de la eficiencia obtenida en las distintas configuraciones]{\small{Comparaci\'on de la eficiencia obtenida en las distintas configuraciones.}}
+\label{fig:Eficiencia}
+\end{figure}
+
 
 Puede observarse que conforme el dominio del problema crece la brecha entre los tiempos del sistema serial y los del paralelo se vuelven mayores. Quedar\'a a futuro la ejecuci\'on de un sistema de mayores dimensiones para completar el estudio sobre performance del sistema paralelizado. A simple vista puede observarse que para mayores dominios del problema la performance del sistema paralelo crece con respecto al serial. Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura. 
 
