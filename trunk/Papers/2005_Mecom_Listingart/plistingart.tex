@@ -60,7 +60,7 @@ Por otro lado la mec\'anica cl\'asica, menos demandante, es incapaz de represent
 No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
 
 Si se quieren tratar reacciones en soluci\'on, se encuentra el problema de que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica.
-Por ello se han desarrollado las metodolog\'ias h\'ibridas, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
+Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{jejej}, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
 
 \section{Metodolog\'ia}
 
@@ -81,7 +81,7 @@ Esta variable, $r$, se expande con un conjunto de funciones base.
 Se puede escribir la energ\'ia total como:
 
 \begin{displaymath}
-E[\rho] = -\frac{1}{2}[X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}]+ \int v(r) \rho(r) dr + \frac{1}{2}\int \int \frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
+E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int \frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
 \end{displaymath}
 
 La parte m\'as costosa del c\'alculo esta relacionada con los dos \'ultimos t\'erminos de esta expresi\'on, son ellos los correspondientes a la energ\'ia de repulsi\'on de Coulomb, y el t\'ermino de intercambio y correlaci\'on.
@@ -146,6 +146,10 @@ En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcul
 Las llamadas a rutinas de salida debieron ser eliminadas para los procesos distintos al root (proceso 0) para que el mismo fuera el \'unico en realizar la escritura de datos de salida.
 
 \section{Resultados y Discusi\'on}
+
+\textbf{el de 7 átomos es un peroxinitrito (OONO) mas un dióxido de carbono (CO2) cuanticos mas 498 moléculas de agua}
+
+\textbf{el de 4 átomos es sólo el peroxinitrito con las 498 moléculas de agua}
 
 Las corridas en todos los casos fueron realizadas con iguales par\'ametros de entrada variando solamente la cantidad de pasos entre las mismas. El sistema const\'o de siete \'atomos yfue armado de forma tal de que se pudiera tener una distribuci\'on casi uniforme de los dominios sobre los procesos.
 
