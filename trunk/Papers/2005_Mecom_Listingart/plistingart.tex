@@ -147,6 +147,8 @@ Las llamadas a rutinas de salida debieron ser eliminadas para los procesos disti
 
 \section{Resultados y Discusi\'on}
 
+Las corridas en todos los casos fueron realizadas con iguales par\'ametros de entrada variando solamente la cantidad de pasos entre las mismas. El sistema const\'o de siete \'atomos yfue armado de forma tal de que se pudiera tener una distribuci\'on casi uniforme de los dominios sobre los procesos.
+
 Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SMP XEON Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}.
 
 \begin{table}
@@ -175,7 +177,7 @@ La misma puede observarse de mejor manera en la figura \ref{fig:Papita}
 \end{figure}
 
 
-Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est\'a compuesto por cuatro nodos AMD Opteron duales conectados por una red de Fast Ehernet. Las corridas fueron realizadas sobre cuatro procesos simult\'aneos obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion2}.
+Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est\'a compuesto por cuatro nodos AMD Opteron duales conectados por una red de Fast Ehernet. Las corridas fueron realizadas con cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion2}.
 
 \begin{table}
 \begin{center}
@@ -202,7 +204,7 @@ Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas
 
 
 
-Finalmente fueron realizadas las mismas ejecuciones sobre el mismo cluster pero utilizando uncamente dos procesos en el mismo, obteniendose los siguientes resultados visibles en la tabla \ref{tab:TiemposEjecucion3}.
+Finalmente fueron realizadas las mismas ejecuciones sobre el mismo cluster pero utilizando uncamente dos procesos en nodos distintos, obteniendose los siguientes resultados visibles en la tabla \ref{tab:TiemposEjecucion3}.
 
 \begin{table}
 \begin{center}
@@ -254,16 +256,20 @@ Una vez obtenidos los datos de las ejecuciones del sistema en distintas configur
 \end{figure}
 
 
-Puede observarse que conforme el dominio del problema crece la brecha entre los tiempos del sistema serial y los del paralelo se vuelven mayores. Quedar\'a a futuro la ejecuci\'on de un sistema de mayores dimensiones para completar el estudio sobre performance del sistema paralelizado. A simple vista puede observarse que para mayores dominios del problema la performance del sistema paralelo crece con respecto al serial. Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura. 
+Puede observarse que conforme el dominio del problema crece la brecha entre los tiempos del sistema serial y los del paralelo se vuelven mayores. Quedar\'a a futuro la ejecuci\'on de un sistema de mayores dimensiones para completar el estudio sobre performance del sistema paralelizado. A simple vista puede observarse que para mayores dominios del problema la performance del sistema paralelo crece con respecto al serial. 
 
-Por otra parte podr\'ia investigarse a futuro la utilizaci\'on de mensajes no bloqueantes, ya que la metodolog\'ia actual (paso de mensajes bloqueantes) produce un overhead en el cual los procesos se encuentran inactivos. Sin embargo, la implementaci\'on de mensajes no bloqueantes requiere de un an\'alisis exhaustivo del problema para poder seleccionar instrucciones que se contin\'uen ejecutando sin causar ning\'un problema mientras se espera la concreci\'on del pasaje de mensajes. Como el sistema actual trabaja de una manera secuencial es complejo encontrar una manera de paralelizar el mismo utilizando mensajer\'ia no bloqueante.
+En contraparte a los resultados obtenidos puede observarse el gran overhead introducido en la versi\'on paralela del programa debido al pasaje de mensajes, lo cual hace que el $Speedup$ no sea lineal con respecto a la cantidad de procesos utilizados. Esto quiere decir que si el $Speedup$ fuera lineal, utilizando dos procesos el c\'alculo deber\'ia tardar la mitad de tiempo. \'esta situaci\'on no se esta cumpliendo debido a que el overhead es pr\'acticamente la mitad del total del tiempo, y a futuro queda una investigaci\'on m\'as profunda para intentar reducir el overhead.
+
+Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura. 
+
+Por otra parte podr\'ia investigarse a futuro la utilizaci\'on de mensajes no bloqueantes, ya que la metodolog\'ia actual (paso de mensajes bloqueantes) produce un overhead en el cual los procesos se encuentran inactivos. Sin embargo, la implementaci\'on de mensajes no bloqueantes requiere de un an\'alisis exhaustivo del problema para poder seleccionar zonas del programa en el que puedan solaparse c\'alculo y comunicaci\'on. Dado que la funci\'on que ha sido elegida como blanco de optimizaci\'on no requiere sincronizaci\'on intermedia, por el momento no hemos utilizado esta modalidad.
 
 \section{Conclusiones}
 
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos. 
-Esto quiere decir que a pesar de existir un overhead por los mensajes, cuanto mejor se pueda dividir el dominio del problema entre los procesos y hacer que cada uno se ocupe de una parte del problema, mayor ser\'a la ganancia del sistema paralelo en detrimento del serial.
 
-El programa paralelo producir\'a una gran ventaja si es utilizado para sistemas extremadamente grandes, del orden de varios d\'ias de c\'omputo. Es en sistemas como los mencionados cuando la performance del programa paralelo sobrepasa de forma notable la del serial, y es cuando se encuentra la mayor ganancia en la utilizaci\'on del primero mencionado.
+
+El programa paralelo obtenido abre un abanico de posibilidades para poder resolver sistemas ????? hasta el momento, he aqu\'i su mejor caracter\'istica. Adicionalmente la performance del mismo resulta razonable para sistemas que hasta el momento no han podido ser estudiados debido a la gran cantidad de c\'omputo necesario para los mismos. El overhead producido se ve mas que compensado por la venaja de reducir los tiempos de ejecuci\'on considerablemente.
 
 \bibliographystyle{mecom}
 \bibliography{complex_2005_09_12}
