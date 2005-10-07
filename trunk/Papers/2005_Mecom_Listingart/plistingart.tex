@@ -60,7 +60,7 @@ Por otro lado la mec\'anica cl\'asica, menos demandante, es incapaz de represent
 No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
 
 Si se quieren tratar reacciones en soluci\'on, se encuentra el problema de que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica.
-Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{jejej}, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
+Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{Diaz2001,Nemukhin2002,Kesavan2003}, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
 
 \section{Metodolog\'ia}
 
@@ -68,7 +68,7 @@ El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar un
 Un buen dise\~no debe, adem\'as, optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenimiento de la soluci\'on, entre otros. 
 Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, performance, portabilidad y otros factores.
 
-Partiendo de un programa serial pre existente y para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial. 
+Partiendo de un programa serial pre existente \cite{lebrero2002} y para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial. 
 Para ello realizamos un profiling utilizando diversas herramientas provistas por el sistema operativo Linux y por el compilador $g77$ utilizado.
 
 El esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT), en la cual la variable fundamental es la densidad electr\'onica. 
@@ -86,8 +86,8 @@ E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}\rang
 
 La parte m\'as costosa del c\'alculo esta relacionada con los dos \'ultimos t\'erminos de esta expresi\'on, son ellos los correspondientes a la energ\'ia de repulsi\'on de Coulomb, y el t\'ermino de intercambio y correlaci\'on.
 
-El primer termino es calculado en forma anal\'itica, pero su costo del orden de $N^3$, donde $N$ est\'a directamente relacionada con el tama\~no del sistema. 
-Este t\'ermino consiste de $N^3$ integrales anal\'iticas que se pueden calcular en forma independiente, por lo que el mismo se puede paralelizar con facilidad.
+El primer termino es calculado en forma anal\'itica, pero su costo del orden de $N^3$, donde $N$ est\'a directamente relacionada con el tama\~no del sistema.
+Este t\'ermino consiste de $N^3$ integrales anal\'iticas que se pueden calcular en forma independiente, por lo que se puede paralelizar con facilidad.
 
 El segundo t\'ermino se debe evaluar en forma num\'erica, empleando un esquema de integraci\'on en una grilla centrada en los \'atomos y tambi\'en escala como $N^3$. 
 Este t\'ermino es paralelizable entre los distintos procesos separando el dominio sobre el que se calcula la integral.
