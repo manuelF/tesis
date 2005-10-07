@@ -126,24 +126,25 @@ En etapas posteriores se fueron eliminando las declaraciones impl\'icitas de var
 La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral. 
 
 Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correpondiente sus c\'alculos en forma local.
-Finalmente, como para las siguientes operaciones es necesario contar con el total de los datos el resultado final es comunicado a todos los procesos para continuar el c\'alculo de forma consistente.
+Finalmente, como es necesario para las operaciones subsiguientes contar con el total de los datos, se realiza la sincronizaci\'on con todos los procesos.
 
-Como se mencion\'o con anterioridad al realizar el profiling se observ\'o que entre un 65\% y 75\% del tiempo era consumido por las rutinas de tipo densg que son las encargadas de calcular los gradientes necesarios para obtener el valor en cada punto de la grilla de trabajo.
+Como se mencion\'o con anterioridad al realizar el profiling se observ\'o que entre un 65\% y 75\% del tiempo era consumido por las rutinas de tipo \textsf{densg} que son las encargadas de calcular los gradientes necesarios para obtener el valor en cada punto de la grilla de trabajo.
 
 Esta rutinas en s\'i consumen muy poco tiempo de ejecuci\'on, pero el problema es que son llamadas en el orden de los millones de veces.
 
-Por lo tanto se buscaron las rutinas desde donde \textsf{dnsg}(y las otras rutinas similares) eran llamadas. Esto ocurre en las funciones de tipo \textsf{exch}(\textsf{exchfock}, \textsf{exchnum}, \textsf{exchnum2}, \textsf{exchnum2op}). 
-En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema. 
+Por lo tanto, se buscaron las rutinas desde donde \textsf{dnsg}(y las otras rutinas similares) eran llamadas.
+Esto ocurre en las funciones de tipo \textsf{exch}(\textsf{exchfock}, \textsf{exchnum}, \textsf{exchnum2}, \textsf{exchnum2op}).
+En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema.
 Se decidi\'o paralelizar por el ciclo m\'as externo, que justamente es el que itera por cada \'atomo, para evitar sobrecarga de comunicaci\'on entre los nodos.
 
 En este caso, si el n\'umero de procesos utilizados es menor que el n\'umero de \'atomos con los que se trabaja se dividen los mismos de manera uniforme. 
-En cambio, si hay m\'as procesos que \'atomos, todo el procesamiento va a un solo nodo, lo cual p\'erdidas con respecto al modelo original por la sobrecarga de comunicaci\'on e inicializaci\'on del sistema paralelo.
+En cambio, si hay m\'as procesos que \'atomos, todo el procesamiento va a un solo nodo, lo cual produce p\'erdidas con respecto al modelo original por la sobrecarga de comunicaci\'on e inicializaci\'on del sistema paralelo.
 
 En cuanto a las modificaciones realizadas al sistema, en el archivo \textsf{main.f} se agregaron sentencias de MPI \cite{Pacheco96, mpich-install},  para la inicializaci\'on y finalizaci\'on de la utilizaci\'on de la librer\'ia que lo implementa. Se utiliz\'o la librer\'ia \textsf{MPICH}\cite{MPICH} para las pruebas realizadas.
 
-En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema y otras para enviar los resultados obtenidos hacia el proceso 0 (en caso de no serlo) y para recibir de todos los procesos los resultados (en caso de ser el proceso 0).
+En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema, otras para enviar los resultados obtenidos hacia el proceso 0 (o simplemente \emph{root}) en caso de no serlo y para recibir de todos los procesos los resultados (en caso de ser el \emph{root}).
 
-Las llamadas a rutinas de salida debieron ser eliminadas para los procesos distintos al root (proceso 0) para que el mismo fuera el \'unico en realizar la escritura de datos de salida.
+Las llamadas a rutinas de salida debieron ser eliminadas para los procesos distintos al \emph{root} para que el mismo fuera el \'unico en realizar la escritura de datos de salida.
 
 \section{Resultados y Discusi\'on}
 
@@ -152,8 +153,6 @@ Las llamadas a rutinas de salida debieron ser eliminadas para los procesos disti
 \textbf{el de 4 átomos es sólo el peroxinitrito con las 498 moléculas de agua}
 
 Las corridas en todos los casos fueron realizadas con iguales par\'ametros de entrada variando solamente la cantidad de pasos entre las mismas. El sistema const\'o de siete \'atomos yfue armado de forma tal de que se pudiera tener una distribuci\'on casi uniforme de los dominios sobre los procesos.
-
-Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SMP XEON Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}.
 
 \begin{table}
 \begin{center}
@@ -170,6 +169,7 @@ Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SM
 \label{tab:TiemposEjecucion1}
 \end{table}
 
+Una vez realizadas las modificaciones se realizaron corridas en una m\'aquina SMP XEON Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}.
 La misma puede observarse de mejor manera en la figura \ref{fig:Papita}
 
 \begin{figure}[ht!]
@@ -181,7 +181,8 @@ La misma puede observarse de mejor manera en la figura \ref{fig:Papita}
 \end{figure}
 
 
-Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est\'a compuesto por cuatro nodos AMD Opteron duales conectados por una red de Fast Ehernet. Las corridas fueron realizadas con cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion2}.
+Luego se realizaron mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est\'a compuesto por cuatro nodos AMD Opteron duales conectados por una red de Gigabit Ehernet. 
+Las corridas fueron realizadas con cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion2}.
 
 \begin{table}
 \begin{center}
@@ -273,7 +274,8 @@ Por otra parte podr\'ia investigarse a futuro la utilizaci\'on de mensajes no bl
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos. 
 
 
-El programa paralelo obtenido abre un abanico de posibilidades para poder resolver sistemas ????? hasta el momento, he aqu\'i su mejor caracter\'istica. Adicionalmente la performance del mismo resulta razonable para sistemas que hasta el momento no han podido ser estudiados debido a la gran cantidad de c\'omputo necesario para los mismos. El overhead producido se ve mas que compensado por la venaja de reducir los tiempos de ejecuci\'on considerablemente.
+El programa paralelo obtenido abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica. 
+Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes.
 
 \bibliographystyle{mecom}
 \bibliography{complex_2005_09_12}
