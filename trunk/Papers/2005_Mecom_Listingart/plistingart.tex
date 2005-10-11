@@ -84,9 +84,9 @@ Se puede escribir la energ\'ia total como:
 E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int \frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
 \end{displaymath}
 
-La parte m\'as costosa del c\'alculo esta relacionada con los dos \'ultimos t\'erminos de esta expresi\'on, son ellos los correspondientes a la energ\'ia de repulsi\'on de Coulomb, y el t\'ermino de intercambio y correlaci\'on.
+La parte m\'as costosa del c\'alculo esta relacionada con los dos \'ultimos t\'erminos de esta expresi\'on, que corresponden a la energ\'ia de repulsi\'on de Coulomb, y el t\'ermino de intercambio y correlaci\'on.
 
-El primer termino es calculado en forma anal\'itica, pero su costo del orden de $N^3$, donde $N$ est\'a directamente relacionada con el tama\~no del sistema.
+El primer t\'ermino es calculado en forma anal\'itica, pero su costo del orden de $N^3$, donde $N$ est\'a directamente relacionada con el tama\~no del sistema.
 Este t\'ermino consiste de $N^3$ integrales anal\'iticas que se pueden calcular en forma independiente, por lo que se puede paralelizar con facilidad.
 
 El segundo t\'ermino se debe evaluar en forma num\'erica, empleando un esquema de integraci\'on en una grilla centrada en los \'atomos y tambi\'en escala como $N^3$. 
