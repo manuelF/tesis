@@ -150,7 +150,7 @@ En cambio, si hay m\'as procesos que \'atomos, todo el procesamiento va a un sol
 
 En cuanto a las modificaciones realizadas al sistema, en el archivo \textsf{main.f} se agregaron sentencias de MPI \cite{Pacheco96, mpich-install},  para la inicializaci\'on y finalizaci\'on de la utilizaci\'on de la librer\'ia que lo implementa. Se utiliz\'o la librer\'ia \textsf{MPICH}\cite{MPICH} para las pruebas realizadas.
 
-En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema, otras para enviar los resultados obtenidos hacia el proceso 0 (o simplemente \emph{root}) en caso de no serlo y para recibir de todos los procesos los resultados (en caso de ser el \emph{root}).
+En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema, otras para enviar los resultados obtenidos hacia el proceso 0 (conocido como proceso \emph{root}) en caso de no serlo y para recibir de todos los procesos los resultados (en caso de ser el \emph{root}).
 
 Las llamadas a rutinas de salida debieron ser eliminadas para los procesos distintos al \emph{root} para que el mismo fuera el \'unico en realizar la escritura de datos de salida.
 
@@ -160,7 +160,7 @@ Las llamadas a rutinas de salida debieron ser eliminadas para los procesos disti
 
 \textbf{el de 4 átomos es sólo el peroxinitrito con las 498 moléculas de agua}
 
-Las corridas en todos los casos fueron realizadas con iguales par\'ametros de entrada variando solamente la cantidad de pasos entre las mismas. El sistema const\'o de siete \'atomos yfue armado de forma tal de que se pudiera tener una distribuci\'on casi uniforme de los dominios sobre los procesos.
+Las corridas en todos los casos fueron realizadas con iguales par\'ametros de entrada variando solamente la cantidad de pasos entre las mismas. El sistema const\'o de siete \'atomos y fue armado de forma tal de que se pudiera tener una distribuci\'on casi uniforme de los dominios sobre los procesos.
 
 \begin{table}
 \begin{center}
@@ -217,7 +217,7 @@ Las corridas fueron realizadas con cuatro procesos en nodos distintos, es decir 
 
 
 
-Finalmente fueron realizadas las mismas ejecuciones sobre el mismo cluster pero utilizando uncamente dos procesos en nodos distintos, obteniendose los siguientes resultados visibles en la tabla \ref{tab:TiemposEjecucion3}.
+Finalmente fueron realizadas las mismas ejecuciones sobre el mismo cluster pero utilizando \'unicamente dos procesos en nodos distintos, obteni\'endose los siguientes resultados visibles en la tabla \ref{tab:TiemposEjecucion3}.
 
 \begin{table}
 \begin{center}
@@ -242,11 +242,11 @@ Finalmente fueron realizadas las mismas ejecuciones sobre el mismo cluster pero 
 \label{fig:Rocky2}
 \end{figure}
 
-Una vez obtenidos los datos de las ejecuciones del sistema en distintas configuraciones y entornos se pudieron obtener datos sobre $Speedup$, $Overhead$ y $Eficiencia$, observables en las figuras \ref{fig:Speedup}, \ref{fig:Overhead} y \ref{fig:Eficiencia}
+Una vez obtenidos los datos de las ejecuciones del sistema en distintas configuraciones y entornos se pudieron obtener datos sobre \emph{speedup}, \emph{overhead} y \emph{eficiencia}, observables en las figuras \ref{fig:Speedup}, \ref{fig:Overhead} y \ref{fig:Eficiencia} respectivamente.
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Speedup}
+\includegraphics[keepaspectratio, width=15cm]{Speedup}
 \end{center}
 \caption[Comparaci\'on del Speedup obtenido en las distintas configuraciones]{\small{Comparaci\'on del Speedup obtenido en las distintas configuraciones.}}
 \label{fig:Speedup}
@@ -254,7 +254,7 @@ Una vez obtenidos los datos de las ejecuciones del sistema en distintas configur
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Overhead}
+\includegraphics[keepaspectratio, width=15cm]{Overhead}
 \end{center}
 \caption[Comparaci\'on del Overhead obtenido en las distintas configuraciones]{\small{Comparaci\'on del Overhead obtenido en las distintas configuraciones.}}
 \label{fig:Overhead}
@@ -262,7 +262,7 @@ Una vez obtenidos los datos de las ejecuciones del sistema en distintas configur
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Eficiencia}
+\includegraphics[keepaspectratio, width=15cm]{Eficiencia}
 \end{center}
 \caption[Comparaci\'on de la eficiencia obtenida en las distintas configuraciones]{\small{Comparaci\'on de la eficiencia obtenida en las distintas configuraciones.}}
 \label{fig:Eficiencia}
