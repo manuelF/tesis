@@ -13,7 +13,7 @@ c
      >               M,M18,NCOa,NCOb,RMM,Ex)
 
 c
-c      implicit real*8 (a-h,o-z)
+
       implicit none
       integer igrid,igrid2,nshell,nang
       logical NORM,integ,dens1,OPEN
@@ -46,7 +46,8 @@ c
       dimension wang0(194),e0(194,3),Nr0(0:54)
 
       
-      DOUBLE PRECISION pnt(M*(M+1)/2),send(M*(M+1)/2)
+      real*8 pnt1((M*(M+1)/2)),pnt2((M*(M+1)/2))
+      real*8 pnt3((M*(M+1)/2))
 
       INTEGER MYRANK, IPROC, ITAG,ITAG2, IERR,ISTAT
       INTEGER init, ifin, iaux,ih
@@ -88,8 +89,9 @@ c
       MM=M*(M+1)/2
 
       do ih=1,MM
-       pnt(ih)=0.0D0
-       send(ih)=0.0D0
+       pnt1(ih)=0.D0
+       pnt2(ih)=0.D0
+       pnt3(ih)=0.D0
       enddo
 c pointers
 c
@@ -273,8 +275,7 @@ c
          p1=1.5D0*u-0.5D0*u**3
          p2=1.5D0*p1-0.5D0*p1**3
          p3=1.5D0*p2-0.5D0*p2**3
-c        p4=1.5D0*p3-0.5D0*p3**3
-c        p5=1.5D0*p4-0.5D0*p4**3
+
          s=0.5D0*(1.D0-p3)
          P(nb)=P(nb)*s
 c
@@ -323,13 +324,12 @@ c
         
 c Fock matrices, alpha and beta
 c M5 pointer of alpha spin Fock matrix, M3 beta
-      if(MYRANK.eq.0)then
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
         RMM(M3+kk-1)=RMM(M3+kk-1)+F(i)*tmpjb
-      else
-        pnt(kk)=pnt(kk)+F(i)*tmpja
-        send(kk)=send(kk)+F(i)*tmpjb
-      endif
+ 
+ 	pnt1(kk)=pnt1(kk)+F(i)*tmpja
+        pnt2(kk)=pnt2(kk)+F(i)*tmpjb
+         
  102  continue
  101  continue
 c
@@ -350,13 +350,12 @@ c
         kk=kk+1
 c Fock matrix
 c M5 pointer
-      if(MYRANK.eq.0)then
+
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
-      else 
-        pnt(kk)=pnt(kk)+F(i)*tmpja
-      endif
+        
+        pnt1(kk)=pnt1(kk)+F(i)*tmpja
       
-      
+
       
  202  continue
  201  continue
@@ -367,60 +366,48 @@ c
  16   continue
  12   continue
 c
-
+      
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
       CALL MPI_ALLReduce(ExP,Ex,1,MPI_REAL8,102,MPI_COMM_WORLD,
      >                  IERR)
 
-         if(MYRANK.eq.0) then
-           do 203 i=1,IPROC-1
-           CALL MPI_Recv(pnt,MM,11,i,ITAG,MPI_COMM_WORLD,
-     >                   ISTAT,IERR)
-	    do 204 ih=0,MM-1
-              RMM(M5+ih)=RMM(M5+ih)+pnt(ih+1)
- 204        continue
- 203       continue
-           do 205 i=1,IPROC-1
-	   CALL MPI_Recv(send,MM,11,i,ITAG2,MPI_COMM_WORLD,
-     >                   ISTAT,IERR)
-	    do 206 ih=0,MM-1
-             RMM(M3+ih)=RMM(M3+ih)+send(ih+1)
- 206        continue
- 205       continue
-
-         else
-	 CALL MPI_Send(pnt,MM,11,0,ITAG,MPI_COMM_WORLD,
-     >                   IERR)
-
-	 CALL MPI_Send(send,MM,11,0,ITAG2,MPI_COMM_WORLD,
-     >                   IERR)
-         endif
-
-	 if(MYRANK.eq.0) then
-	  do ih=0,MM-1
-	    pnt(ih+1)=RMM(M5+ih)
+      do 203 i=0,IPROC-1
+	if(MYRANK.eq.i) then
+	  do ih=1,MM
+	   pnt3(ih)=pnt1(ih)
 	  enddo
-	 endif
-	 CALL MPI_Bcast(pnt,MM,11,0,MPI_COMM_WORLD,
+	CALL MPI_Bcast(pnt3,MM,MPI_REAL8,i,MPI_COMM_WORLD,
      >	                 IERR)
-	 do ih=0,MM-1
-	   RMM(M5+ih)=pnt(ih+1)
-	 enddo
-
-	 if(MYRANK.eq.0) then
-	  do ih=0,MM-1
-	    send(ih+1)=RMM(M3+ih)
+        else
+        CALL MPI_Bcast(pnt3,MM,MPI_REAL8,i,MPI_COMM_WORLD,
+     >                    IERR)
+          do ih=1,MM
+            RMM(M5+ih-1)=RMM(M5+ih-1)+pnt3(ih)
+          enddo
+	endif
+	
+		
+	if(MYRANK.eq.i) then
+	  do ih=1,MM
+	   pnt3(ih)=pnt2(ih)
 	  enddo
-	 endif
-	 CALL MPI_Bcast(send,MM,11,0,MPI_COMM_WORLD,
+	CALL MPI_Bcast(pnt3,MM,MPI_REAL8,i,MPI_COMM_WORLD,
      >	                 IERR)
-	 do ih=0,MM-1
-	   RMM(M3+ih)=send(ih+1)
-	 enddo
+        else
+        CALL MPI_Bcast(pnt3,MM,MPI_REAL8,i,MPI_COMM_WORLD,
+     >                   IERR)
+	do ih=1,MM
+	  RMM(M3+ih-1)=RMM(M3+ih-1)+pnt3(ih)
+	enddo
+	endif
+	
+ 203  continue
+       
  
        else
         Ex=ExP
        endif
+
 
 
 c hard-codea el tamano de RMM=23961645.cambiar a recibirlo por parámetro.
