@@ -1,0 +1,128 @@
+      SUBROUTINE QTMOT
+      INCLUDE 'COMM'
+
+      DIMENSION SUMQ(NAT)
+
+      DO I=1,NAT
+      SUMQ(I)=ZERO
+      ENDDO
+
+      DO 2922 ITER = 1, 200
+
+      TEMPOL = ZERO
+      DO  I= NATOM+1,NPART
+      TEMPOL = TEMPOL +VQ(I)*VQ(I)*WWQ 
+      ENDDO
+
+C--------- DYNAMICS OF TIME SCALING
+
+      SNQ = TWO * STQ - S0Q + DEL/QSQ*(TEMPOL - GDQ*TEMPRQQ)
+      SD0Q = FACTV * ( SNQ - S0Q)
+      SLDQ = SD0Q*DEL
+
+
+      DO 4100 J= NATOM+1,NWAT+NATOM
+      J1=J+NWAT
+      J2=J1+NWAT
+      PCC(J) = TWO * PC(J) - PC0(J) + FFQ * FQ(J) -SLDQ * VQ(J)
+      PCC(J1) =TWO * PC(J1)- PC0(J1)+ FFQ * FQ(J1)-SLDQ * VQ(J1)
+      PCC(J2) =TWO * PC(J2)- PC0(J2)+ FFQ * FQ(J2)-SLDQ * VQ(J2)
+
+      SUMQ(J)=THIRD3*(PCC(J)+PCC(J1)+PCC(J2))
+      PCC(J) = PCC(J) -SUMQ(J)
+      PCC(J1)= PCC(J1)-SUMQ(J)
+      PCC(J2)= PCC(J2)-SUMQ(J)
+
+      SUM2=PCC(J)+PCC(J1)+PCC(J2)
+      IF(DABS(SUM2/EE).GT.TOLL)THEN
+      WRITE(6,*)'PROBLEMAS CONSTRAINTS QS (qtmot.f) EN PASO: ',ITEL
+      WRITE(6,*)'J,SUM2/E,CARGAS',J,SUM2/EE,PCC(J)/EE,
+     &  PCC(J1)/EE,PCC(J2)/EE
+      STOP
+      ENDIF
+
+4100  CONTINUE
+
+
+      DO 11 I = NATOM+1, NPART 
+      VQ0(I) = FACTV*(PCC(I) - PC0(I))
+11    CONTINUE
+
+      DO 111 I = NATOM+1, NPART
+      IF (VQ0(I).NE.ZERO)THEN
+      DIFF = DABS ( (VQ0(I) - VQ(I)) / VQ0(I) )
+      IF (DIFF.GT.0.0001)GO TO 383
+      ENDIF
+111   CONTINUE
+
+      GOTO 66
+
+383   CONTINUE
+
+      DO 2881 I = NATOM+1, NPART
+      VQ(I) = VQ0(I)
+2881  CONTINUE
+
+2922  CONTINUE
+
+      WRITE (6,*) ' TOO MANY ITERATIONS IN QTMOT'
+
+      STOP
+     
+c------ NEW ESTIMATION FOR THE NEXT STEP
+
+66    CONTINUE
+      FACT2 = ONE/DELTAT
+      FACTC = FFQ / DELTAT 
+      DO 533 J = NATOM+1,NATOM+NWAT
+      J1 = J + NWAT
+      J2 = J + 2*NWAT
+      VQ(J )=VQ0(J )+FACTC*FQ(J )-FACT2*(SLDQ*VQ(J )+SUMQ(J))
+      VQ(J1)=VQ0(J1)+FACTC*FQ(J1)-FACT2*(SLDQ*VQ(J1)+SUMQ(J))
+      VQ(J2)=VQ0(J2)+FACTC*FQ(J2)-FACT2*(SLDQ*VQ(J2)+SUMQ(J))
+533   CONTINUE
+
+      QQCM =ZERO
+
+      DO 8101 J= NATOM+1,NPART
+      QQCM = QQCM + PCC(J)*WWQ
+8101  CONTINUE
+
+      QQCM = QQCM /TOTMASQ
+
+      DO 228 I = NATOM+1, NPART
+      PCC(I) = PCC(I) - QQCM
+      VQ0(I) = FACTV*(PCC(I) - PC0(I))  
+228   CONTINUE
+
+      TEMPOL = ZERO
+
+      DO 1101 J =NATOM+1,NPART 
+      TEMPOL= TEMPOL+VQ0(J)*VQ0(J)*WWQ
+1101  CONTINUE
+
+      TEMTR = ZERO
+      DO 2212 J =NATOM+1,NPART
+      TEMTR = TEMTR + WWQ*VQ0(J)**2
+2212  CONTINUE
+
+
+C-------- UPDATE POSITIONS
+
+      DO 12 I = NATOM+1, NPART
+      Q2 = PC0(I)
+      PC0(I) = PC(I)
+      PC(I) = PCC(I)
+      PCC(I) = Q2 
+
+ 12   CONTINUE
+
+
+      S0Q = STQ
+      STQ = SNQ
+
+
+
+      RETURN
+      END
+
