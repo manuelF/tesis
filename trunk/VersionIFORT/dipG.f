@@ -26,7 +26,8 @@ c-----------------------------------------------------------------
       subroutine dipg(NORM,Iz,natom,r,Nuc,M,ncont,nshell,c,a,RMM,
      >               Nel,g,ux,uy,uz,f)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM
       INCLUDE 'param'
       parameter(pi32=5.56832799683170698D0,pi=3.14159265358979312D0,

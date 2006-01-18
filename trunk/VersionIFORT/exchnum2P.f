@@ -11,13 +11,14 @@ c 11-2-93
 c-----------------------------------------------------------------
       subroutine exchnum2(NORM,natom,r,Iz,Nuc,M,ncont,nshell,c,a,RMM,
      >                    M18,NCO,Exc,forza)
-c      implicit real*8 (a-h,o-z)
+c      implicit real*16 (a-h,o-z)
       implicit none
-      real*8 r,a,c,rmm,exc,forza,pi,pi2,excp,excha,ecorr,ss0,t0
-      real*8 t1,x,w,r1,wrad,tmp0,dens,dxi,yiex,yiec,y2i,dx,dy,dz
-      real*8 dxx,dyy,dzz,dxy,dyz,dxz,yi,pp,rnb,rnc,u,x1,aij,p1,p2
-      real*8 p3,s,pf,xi,ds,rr,p,ddx,ddy,ddz,aux,e,wang,e3,wang3,rm
-      real*8 radii
+      real*16 r,a,c,exc,forza,pi,pi2,excp,excha,ecorr,ss0,t0
+      real*16 t1,x,w,r1,wrad,tmp0,dens,dxi,yiex,yiec,y2i,dx,dy,dz
+      real*16 dxx,dyy,dzz,dxy,dyz,dxz,yi,pp,rnb,rnc,u,x1,aij,p1,p2
+      real*16 p3,s,pf,xi,ds,rr,p,ddx,ddy,ddz,aux,e,wang,e3,wang3,rm
+      real*16 radii
+      real*16 rmm
 
       integer natom,iz,nuc,m,ncont,nshell,m18,nco,j,ns,npp,nd
       integer npoint,na,n,k,nb,nc,ina,ih,ng,nl,ngd0,ngd,ll,nang
@@ -27,6 +28,7 @@ c      implicit real*8 (a-h,o-z)
       integer igrid
       logical NORM,integ,dens1
       INCLUDE 'param'
+      INCLUDE 'mpif.h'
       parameter (pi=3.14159265358979312D0,pi2=6.28318530717958623D0)
 c
 c input
@@ -49,7 +51,7 @@ c
 
       INTEGER MYRANK,IPROC,IERR,ITAG,ITAG2,ITAG3,ISTAT
       INTEGER init, ifin, iauxa
-      real*8 pnt(natom),send(natom)
+      real*16 pnt(natom),send(natom)
 
 
 

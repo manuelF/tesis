@@ -4,7 +4,8 @@
       IMPLICIT NONE
       logical NORM, OPEN
       integer NATOM, IZ, NUC, NCONT, NSHELL, M, M18, NCOA, NCOB, NG2
-      real*8  a, c, r, RMM(NG2), EX
+      real*16  a, c, r, EX
+      real*16 RMM(NG2)
 C	Estas dos se usan para formate      
       integer i, j
       
@@ -37,7 +38,7 @@ C	Estas dos se usan para formate
       write(99, *) "--------------------------------------------------"      
       
       write(6, *) 'Starting RMM save'
-      do 8 i=1,NG2/5
+      do 8 i=0,NG2/5-1
 C      do 8 i=1,100
          write (99, 30) RMM(i*5+1), RMM(i*5+2), RMM(i*5+3),
      1    RMM(i*5+4), RMM(i*5+5)

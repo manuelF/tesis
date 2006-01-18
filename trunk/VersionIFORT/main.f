@@ -29,14 +29,14 @@ c Ngrid may be set to 0 , in the case of using Num. Integ.
       COMMON /tipsol/SPC
       parameter (ngDyn=350)
       parameter (ngdDyn=380)
-c      parameter (ngDyn=32830)
-c      parameter (ngdDyn=32830)
       parameter (norbit=250,Ngrid=8000)
 
       parameter (ng3=4*ngDyn)
 c---- para version en memoria
       parameter (ng2=5*ngDyn*(ngDyn+1)/2+3*ngdDyn*(ngdDyn+1)/2+
      >           ngDyn+ngDyn*norbit+Ngrid+ngDyn*(NgDyn+1)/2*NgdDyn)
+     
+      real*16 rmm
 
       dimension XW(ngDyn,ng3),XXW(ngdDyn,ngdDyn),RMM(ng2)
 
@@ -46,10 +46,8 @@ C-----DIMENSIONES DE TODO
       logical OPEN,SVD,SHFT,GRAD,BSSE,integ,field,sol,free
       logical exter,MEMO
       dimension r(nt,3),nshelld(0:3),nshell(0:3)
-      dimension cd(ngd,nl),ad(ngd,nl),ncontd(32830)
-      dimension c(ng,nl),a(ng,nl),ncont(32830),Iz(nt)
-c     dimension Nucd(ngd),Nuc(ng),ncont(ng),ncontd(ngd)
-      dimension Nucd(32830),Nuc(32830)
+      dimension cd(ngd,nl),ad(ngd,nl),Nucd(ngd),ncontd(ngd)
+      dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng),Iz(nt)
       dimension Em(ntq+nss),Rm(ntq+nss),alpha(nss),pcx(nt)
       dimension xte(nat),yte(nat),zte(nat)
       dimension fxte(nat),fyte(nat),fzte(nat)
@@ -65,7 +63,7 @@ C--------------------------------------------------------
 C--------------------------------------------------------
       CALL MPI_INIT(IERR)
       CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
-      write(6,*) 'pecho frio'
+
 C--------------------------------------------------------
 C--------------------------------------------------------
       TEMPAV=ZERO

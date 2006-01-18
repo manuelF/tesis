@@ -1,7 +1,11 @@
       SUBROUTINE TEPCHR(NATSOL)
       INCLUDE 'COMM'
+      include 'mpif.h'
+      integer myrank,ierr
       DIMENSION TI(3,3),OMG(3),INDX(3)
-     
+    
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYRANK,IERR)
+      
 *-----------Velocid. al azar de 1 distr. gausseana--------------*
       TEMPAV = ZERO
       NOFSET=0
@@ -143,11 +147,14 @@
 *        TEMPAV2: despues de restar Vcm              *
 *        TEMPP  : despues de llamar gamma y          *
 *		  recalcular posiciones y velocids---*
-
+      if(MYRANK.EQ.0)then
       WRITE(6,19) TEMPRQ,TEMPAV1,TEMPAV2
+      endif
 19     FORMAT (/,2X, 'TERMOSTATO:, TEMP1, TEMP2',G14.6,2X,
      & G14.6,2X,G14.6)
+      if(MYRANK.eq.0)then
       WRITE (6,*)itel, ' ENTRE A TEPCHR y TEMP ES:', TEMPP
+      endif
 
 
 

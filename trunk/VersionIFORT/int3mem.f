@@ -29,7 +29,9 @@ c-----------------------------------------------------------------
      > nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write)
 c
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
+      real*16 t0
       logical NORM,dens,OPEN,SVD,ATRHO,integ
       logical VCINP,DIRECT,EXTR,SHFT,write
       integer nopt,iconst,igrid,igrid2

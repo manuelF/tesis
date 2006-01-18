@@ -27,7 +27,8 @@ c---------------------------------------------------
      >  inmod,name1,ikk,thermo,TEMP,sigma,
      > nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       character*20 strng
       character*17 name5
       character*12 name1

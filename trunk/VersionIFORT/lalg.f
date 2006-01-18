@@ -1,8 +1,8 @@
        SUBROUTINE lubksb(a,n,np,indx,b)
        INTEGER n,np,indx(n)
-       REAL*8 a(np,np),b(n)
+       real*16 a(np,np),b(n)
        INTEGER i,ii,j,ll
-       REAL*8 sum
+       real*16 sum
        ii=0
        do 12 i=1,n
          ll=indx(i)
@@ -30,10 +30,10 @@ c
 c-------------------------------------------------------------------
        SUBROUTINE ludcmp(a,n,np,indx,d)
        INTEGER n,np,indx(n),NMAX
-       REAL*8 d,a(np,np),TINY
+       real*16 d,a(np,np),TINY
        PARAMETER (NMAX=200,TINY=1.0e-20)
        INTEGER i,imax,j,k
-       REAL*8 aamax,dum,sum,vv(NMAX)
+       real*16 aamax,dum,sum,vv(NMAX)
        d=1.D0
        do 12 i=1,n
          aamax=0.D0

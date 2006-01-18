@@ -4,7 +4,8 @@ c on disk ( ONLY for local density functionals)
 c
       SUBROUTINE DNS2(Dens,M,M18,NCO,RMM)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       INCLUDE 'param'
       dimension F(ng),W(ng),RMM(*)
 c
@@ -61,7 +62,7 @@ c---------------------------------------------------
 c subroutine that reads vectors from disk
 c
       subroutine CDE(FF,MM,i)
-       implicit real*8 (a-h,o-z)
+       implicit real*16 (a-h,o-z)
        dimension FF(MM)
 c
        read(i) FF

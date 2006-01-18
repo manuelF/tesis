@@ -13,17 +13,18 @@ c
      >               M,M18,NCOa,NCOb,RMM,Ex)
     
 c
-c      implicit real*8 (a-h,o-z)
+c      implicit real*16 (a-h,o-z)
       implicit none
       integer igrid,igrid2,nshell,nang
       logical NORM,integ,dens1,OPEN
-      real*8 pi,pi2,a,c,r,w,rr,p,rmm
-      real*8 ss0,fc,tmpjb,tmpja,tmpb,tmpa,tmp,pf,s,p3,p2,p1
-      real*8 dz,dy,dx,dxib,dxia,bdxz,adxz,bdyz,adyz,bdxy,adxy,bdzz
-      real*8 aij,x1,u,rnc,rnb,pp,tmp0,yi,dxz,dyz,dxy,dzz,dyy,dxx
-      real*8 bdyy,adyy,bdxx,adxx,bdz,adz,bdy,ady,bdx,adx,dxi,dens,y2b
-      real*8 y2a,yiec,yiex,densb,densa,wrad,r1,w1,x,t1,t0,rm,wang0
-      real*8 wang3,e0,e3,wang2,e2,wang,e,xi,ds,f,ex,adzz
+      real*16 pi,pi2,a,c,r,w,rr,p
+      real*16 ss0,fc,tmpjb,tmpja,tmpb,tmpa,tmp,pf,s,p3,p2,p1
+      real*16 dz,dy,dx,dxib,dxia,bdxz,adxz,bdyz,adyz,bdxy,adxy,bdzz
+      real*16 aij,x1,u,rnc,rnb,pp,tmp0,yi,dxz,dyz,dxy,dzz,dyy,dxx
+      real*16 bdyy,adyy,bdxx,adxx,bdz,adz,bdy,ady,bdx,adx,dxi,dens,y2b
+      real*16 y2a,yiec,yiex,densb,densa,wrad,r1,w1,x,t1,t0,rm,wang0
+      real*16 wang3,e0,e3,wang2,e2,wang,e,xi,ds,f,ex,adzz
+      real*16 rmm
       integer kk,nc,nb,i1,k,iang,n,na,m18b,m5,m3,m1,mm,m2,nd,np,ns
       integer i,j,l,nr2,nr,ndens,nr0,ll,nuc,ncont,ncoa,ncob,ngd0
       integer ngd,iexch,natom,m,m18,ntq,ntc,nss,ng,ng0,nl,nt,iz,nco
@@ -324,8 +325,8 @@ c
  12   continue
 c
 C	Es para guardar todo lo que puede modificar esta rutina.      
-       CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+c       CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
       
       return
 

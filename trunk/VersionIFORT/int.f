@@ -20,7 +20,8 @@ c      Output: F matrix, and S matrix
 c-------------------------------------------------------------------
       subroutine int1(NORM,natom,r,Nuc,Iz,M,Md,ncont,nshell,c,a,RMM,En)
 
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM,BSSE
       integer nopt
       INCLUDE 'param'

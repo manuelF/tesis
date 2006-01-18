@@ -17,7 +17,8 @@ c-------------------------------------------------------------------
      >            ncont,nshell,c,a,pc,RMM,E1s,FQQ,IT,ITEL,NIN,
      >            IPR1,EAC,NPAS)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM
       INCLUDE 'param'
 c     INCLUDE 'COMM'

@@ -31,7 +31,8 @@ c-----------------------------------------------------------------
 
 c
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM,dens,OPEN,SVD,integ
       logical ATRHO,VCINP,DIRECT,EXTR,SHFT,write
       integer nopt,iconst,igrid,iforce,igrid2

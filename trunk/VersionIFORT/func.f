@@ -11,7 +11,7 @@ c program
 c 11 March 1992 -----------------------------------------------
 c
       FUNCTION FUNCT(M,T)                                               
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
+      IMPLICIT REAL*16 (A-H,O-Z)                                         
       COMMON /TABLE/ STR(880,0:21),FAC(0:16)
 C
       if (T.lt.0.0D0) then
@@ -55,7 +55,7 @@ c subroutine for generating tables, used later on in the Taylor expansion
 c for the incomplete Gamma functions
 c-----------------------------------------------
       SUBROUTINE GENERF
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
       parameter (sqpi=1.77245385090551588D0)
       COMMON /TABLE/ STR(880,0:21),FAC(0:16)
 c
@@ -89,7 +89,7 @@ c
 c-------------------
 c same version as in old version of GDFMOL
       FUNCTION FMCH(M,X)
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
       parameter (sqpi=1.77245385090551588D0)
 c
       Y=DEXP(-X)

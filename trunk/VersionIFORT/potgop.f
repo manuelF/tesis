@@ -17,7 +17,7 @@ c
       subroutine potgop(Iexch,densa,densb,adx,bdx,ady,bdy,adz,bdz,adxx,
      >           bdxx,adyy,bdyy,adzz,bdzz,adxy,bdxy,adyz,bdyz,adxz,bdxz,
      >           ex,ec,va,vb)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       external asinh
 c
 c data X alpha
@@ -700,7 +700,7 @@ c----------------------------------------------------------------------
 c needed constants:
 c pi32=3 pi**2
 c alpha=(9pi/4)**thrd
-      implicit real*8(a-h,o-z)
+      implicit real*16(a-h,o-z)
       parameter(thrd=1.d0/3.d0,thrd2=2.d0*thrd)
       parameter(pi32=29.608813203268075856503472999628d0)
       parameter(pi=3.1415926535897932384626433832795d0)
@@ -710,6 +710,7 @@ c----------------------------------------------------------------------
 c PBE exchange
 c use  Ex[up,dn]=0.5*(Ex[2*up]+Ex[2*dn]) (i.e., exact spin-scaling)
 c do up exchange
+
 c fk=local Fermi wavevector for 2*up=(3 pi^2 (2up))^(1/3) 
 c s=dimensionless density gradient=|grad rho|/ (2*fk*rho)_(rho=2*up)
 c u=delgrad/(rho^2*(2*fk)**3)_(rho=2*up)
@@ -897,7 +898,7 @@ c	FxPBE(s)=1+uk-uk/(1+ul*s*s)                 [a](13)
 c uk, ul defined after [a](13) 
 c----------------------------------------------------------------------
 c----------------------------------------------------------------------
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT real*16 (A-H,O-Z)
       parameter(thrd=1.d0/3.d0,thrd4=4.d0/3.d0)
       parameter(pi=3.14159265358979323846264338327950d0)
       parameter(ax=-0.738558766382022405884230032680836d0)
@@ -969,7 +970,7 @@ c     density functional}, submitted to Phys. Rev. B, Feb. 1996.
 c [c] J. P. Perdew and Y. Wang, Phys. Rev. B {\bf 45}, 13244 (1992).
 c----------------------------------------------------------------------
 c----------------------------------------------------------------------
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
 c thrd*=various multiples of 1/3
 c numbers for use in LSD energy spin-interpolation formula, [c](9).
 c      GAM= 2^(4/3)-2
@@ -1045,7 +1046,7 @@ c B=A of [a](8)
       G=((1.d0+ZET)**thrd2+(1.d0-ZET)**thrd2)/2.d0
       G3 = G**3
       PON=-EC/(G3*gama)
-      B = DELT/(DEXP(PON)-1.D0)
+      B = DELT / (DEXP(PON) -1.D0)
       B2 = B*B
       T2 = T*T
       T4 = T2*T2
@@ -1122,7 +1123,7 @@ c slimmed down version of GCOR used in PW91 routines, to interpolate
 c LSD correlation energy, as given by (10) of
 c J. P. Perdew and Y. Wang, Phys. Rev. B {\bf 45}, 13244 (1992).
 c K. Burke, May 11, 1996.
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
       Q0 = -2.D0*A*(1.D0+A1*rtrs*rtrs)
       Q1 = 2.D0*A*rtrs*(B1+rtrs*(B2+rtrs*(B3+B4*rtrs)))
       Q2 = DLOG(1.D0+1.D0/Q1)
@@ -1141,7 +1142,7 @@ C  INPUT S:  ABS(GRAD D)/(2*KF*D)
 C  INPUT U:  (GRAD D)*GRAD(ABS(GRAD D))/(D**2 * (2*KF)**3)
 C  INPUT V: (LAPLACIAN D)/(D*(2*KF)**2)
 C  OUTPUT:  EXCHANGE ENERGY PER ELECTRON (EX) AND POTENTIAL (VX)
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
       parameter(a1=0.19645D0,a2=0.27430D0,a3=0.15084D0,a4=100.d0)
       parameter(ax=-0.7385588D0,a=7.7956D0,b1=0.004d0)
       parameter(thrd=0.333333333333D0,thrd4=1.33333333333D0)
@@ -1183,7 +1184,7 @@ C  INPUT: SEITZ RADIUS (RS), RELATIVE SPIN POLARIZATION (ZET)
 C  OUTPUT: CORRELATION ENERGY PER ELECTRON (EC), UP- AND DOWN-SPIN
 C     POTENTIALS (VCUP,VCDN), DERIVATIVES OF EC WRT RS (ECRS) & ZET (ECZET)
 C  OUTPUT: CORRELATION CONTRIBUTION (ALFC) TO THE SPIN STIFFNESS
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
       parameter(gam=0.5198421D0,fzz=1.709921D0)
       parameter(thrd=0.333333333333D0,thrd4=1.333333333333D0)
       F = ((1.D0+ZET)**THRD4+(1.D0-ZET)**THRD4-2.D0)/GAM
@@ -1212,7 +1213,7 @@ c######################################################################
 c----------------------------------------------------------------------
       SUBROUTINE GCOR(A,A1,B1,B2,B3,B4,P,RS,GG,GGRS)
 C  CALLED BY SUBROUTINE CORLSD
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
       P1 = P + 1.D0
       Q0 = -2.D0*A*(1.D0+A1*RS)
       RS12 = DSQRT(RS)
@@ -1241,7 +1242,7 @@ C  INPUT VV: (LAPLACIAN D)/(D * (2*KS*G)**2)
 C  INPUT WW:  (GRAD D)*(GRAD ZET)/(D * (2*KS*G)**2
 C  OUTPUT H: NONLOCAL PART OF CORRELATION ENERGY PER ELECTRON
 C  OUTPUT DVCUP,DVCDN:  NONLOCAL PARTS OF CORRELATION POTENTIALS
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT REAL*16 (A-H,O-Z)
       parameter(xnu=15.75592D0,cc0=0.004235D0,cx=-0.001667212D0)
       parameter(alf=0.09D0)
       parameter(c1=0.002568D0,c2=0.023266D0,c3=7.389D-6,c4=8.723D0)

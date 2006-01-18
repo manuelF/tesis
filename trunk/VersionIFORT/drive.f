@@ -20,7 +20,7 @@ c
  
 
 c------------------------commons y dimensiones copiadas de SCF
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       INCLUDE 'param'
       INCLUDE 'mpif.h'
 c
@@ -29,10 +29,9 @@ c
       logical OPEN,SVD,SHFT,GRAD,BSSE,integ,field,sol,free
       logical exter,MEMO,ATRHO1,VCINP1,SHFT1,MEMO1,NORM1
       dimension r(nt,3),nshelld(0:3),nshell(0:3),q(ntq),r1(nt,3)
-      dimension cd(ngd,nl),ad(ngd,nl),Nucd(32830),ncontd(32830)
-      dimension c(ng,nl),a(ng,nl),Nuc(32830),ncont(32830),Iz(nt)
-C      dimension nucx(ngd),ncontx(ngd),ii(ng),iid(ngd)
-C      dimension Nucd(ngd),Buc(ng),nlb(ng),nld(ngd),ncont(ng),ncontd(ngd)
+      dimension cd(ngd,nl),ad(ngd,nl),Nucd(ngd),ncontd(ngd)
+      dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng),Iz(nt)
+
       dimension Em(ntq+nss),Rm(ntq+nss),pc(nt),alpha(nss),xpc(nt)
       parameter (nng=50)
 c
@@ -64,10 +63,10 @@ c
 c Everything is dimensioned for 2 basis, normal and density
 c ncf, lt,at,ct parameters for atomic basis sets
       dimension at(nng),ct(nng)
-      dimension Num(0:3),nlb(32830),nld(32830)
+      dimension Num(0:3),nlb(ng),nld(ngd)
 
-      dimension cx(ngd,nl),ax(ngd,nl),Nucx(32830),ncontx(32830)
-      integer ii(32830),iid(32830)
+      dimension cx(ngd,nl),ax(ngd,nl),Nucx(ngd),ncontx(ngd)
+      integer ii(ng),iid(ngd)
 
 c auxiliar , and debuggings
 c ------------------

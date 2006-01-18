@@ -4,7 +4,8 @@ c on disk ( ONLY for local density functionals)
 c
       SUBROUTINE DNS2OP(Densa,Densb,M,M18,NCOa,NCOb,RMM)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       INCLUDE 'param'
       dimension F(ng),W(ng),RMM(*)
 c
