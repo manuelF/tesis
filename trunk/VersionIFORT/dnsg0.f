@@ -7,7 +7,8 @@ c
       SUBROUTINE DNSG(Dens,F,Dx,Dy,Dz,Dxx,Dyy,Dzz,Dxy,Dyz,Dxz,
      >           Xi,ds,NORM,Nuc,ncont,nshell,a,c,r,M,M18,NCO,RMM)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM
       INCLUDE 'param'
       dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng)

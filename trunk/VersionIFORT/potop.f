@@ -12,7 +12,7 @@ c------------------------------------------------------------------
 c
 c     
       subroutine potop(Iexch,densa,densb,ex,ec,va,vb)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
 c
 c data X alpha
       data const,constv /-0.930525736349100185D0,-1.24070098179880017D0/

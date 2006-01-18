@@ -1,5 +1,5 @@
       BLOCK DATA
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       common /masses/ xmass(216)
 *     Atomic masses (u.m.a.) of most common isotopes
       data xmass /
@@ -121,7 +121,7 @@ c for 50 and 116 angular points
 c 12-02-93 , D.E
 c-------------------------------------------------------
       SUBROUTINE GRID
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
 *      real*16 e,e2,e3,wang,wang2,wang3,pi,pi4
       parameter (pi=3.14159265358979312D0)
 c

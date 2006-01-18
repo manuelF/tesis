@@ -17,13 +17,14 @@ c
       implicit none
       integer igrid,igrid2,nshell,nang
       logical NORM,integ,dens1,OPEN
-      real*8 pi,pi2,a,c,r,rmm,w,rr,p
-      real*8 ss0,fc,tmpjb,tmpja,tmpb,tmpa,tmp,pf,s,p3,p2,p1
-      real*8 dz,dy,dx,dxib,dxia,bdxz,adxz,bdyz,adyz,bdxy,adxy,bdzz
-      real*8 aij,x1,u,rnc,rnb,pp,tmp0,yi,dxz,dyz,dxy,dzz,dyy,dxx
-      real*8 bdyy,adyy,bdxx,adxx,bdz,adz,bdy,ady,bdx,adx,dxi,dens,y2b
-      real*8 y2a,yiec,yiex,densb,densa,wrad,r1,w1,x,t1,t0,rm,wang0
-      real*8 wang3,e0,e3,wang2,e2,wang,e,xi,ds,f,ex,adzz,exp
+      real*16 pi,pi2,a,c,r,w,rr,p
+      real*16 ss0,fc,tmpjb,tmpja,tmpb,tmpa,tmp,pf,s,p3,p2,p1
+      real*16 dz,dy,dx,dxib,dxia,bdxz,adxz,bdyz,adyz,bdxy,adxy,bdzz
+      real*16 aij,x1,u,rnc,rnb,pp,tmp0,yi,dxz,dyz,dxy,dzz,dyy,dxx
+      real*16 bdyy,adyy,bdxx,adxx,bdz,adz,bdy,ady,bdx,adx,dxi,dens,y2b
+      real*16 y2a,yiec,yiex,densb,densa,wrad,r1,w1,x,t1,t0,rm,wang0
+      real*16 wang3,e0,e3,wang2,e2,wang,e,xi,ds,f,ex,adzz,exp
+      real*16 rmm
       integer kk,nc,nb,i1,k,iang,n,na,m18b,m5,m3,m1,mm,m2,nd,np,ns
       integer i,j,l,nr2,nr,ndens,nr0,ll,nuc,ncont,ncoa,ncob,ngd0
       integer ngd,iexch,natom,m,m18,ntq,ntc,nss,ng,ng0,nl,nt,iz,nco
@@ -46,8 +47,9 @@ c
       dimension wang0(194),e0(194,3),Nr0(0:54)
 
       
-      real*8 pnt1((M*(M+1)/2)),pnt2((M*(M+1)/2))
-      real*8 pnt3((M*(M+1)/2))
+      DOUBLE PRECISION pnt1((M*(M+1)/2)),pnt2((M*(M+1)/2))
+      DOUBLE PRECISION pnt3((M*(M+1)/2)),pnt4((M*(M+1)/2))
+      DOUBLE PRECISION pnt5((M*(M+1)/2))
 
       INTEGER MYRANK, IPROC, ITAG,ITAG2, IERR,ISTAT
       INTEGER init, ifin, iaux,ih
@@ -88,11 +90,7 @@ c
       M2=2*M
       MM=M*(M+1)/2
 
-      do ih=1,MM
-       pnt1(ih)=0.D0
-       pnt2(ih)=0.D0
-       pnt3(ih)=0.D0
-      enddo
+      
 c pointers
 c
 c first P
@@ -101,6 +99,12 @@ c now Fock beta
       M3=M1+MM
 c now S, also F alpha later
       M5=M3+MM
+      
+      do ih=1,MM
+        pnt1(ih)=0.D0
+        pnt2(ih)=0.D0
+        pnt3(ih)=0.D0
+      enddo
       
 c
 c open shell case
@@ -352,6 +356,7 @@ c Fock matrix
 c M5 pointer
 
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
+
         
         pnt1(kk)=pnt1(kk)+F(i)*tmpja
       
@@ -376,10 +381,10 @@ c
 	  do ih=1,MM
 	   pnt3(ih)=pnt1(ih)
 	  enddo
-	CALL MPI_Bcast(pnt3,MM,MPI_DOUBLE_PRECISION,i,MPI_COMM_WORLD,
+	CALL MPI_Bcast(pnt3,MM,12,i,MPI_COMM_WORLD,
      >	                 IERR)
         else
-        CALL MPI_Bcast(pnt3,MM,MPI_DOUBLE_PRECISION,i,MPI_COMM_WORLD,
+        CALL MPI_Bcast(pnt3,MM,12,i,MPI_COMM_WORLD,
      >                    IERR)
           do ih=1,MM
             RMM(M5+ih-1)=RMM(M5+ih-1)+pnt3(ih)
@@ -391,18 +396,18 @@ c
 	  do ih=1,MM
 	   pnt3(ih)=pnt2(ih)
 	  enddo
-	CALL MPI_Bcast(pnt3,MM,MPI_DOUBLE_PRECISION,i,MPI_COMM_WORLD,
+	CALL MPI_Bcast(pnt3,MM,12,i,MPI_COMM_WORLD,
      >	                 IERR)
         else
-        CALL MPI_Bcast(pnt3,MM,MPI_DOUBLE_PRECISION,i,MPI_COMM_WORLD,
+        CALL MPI_Bcast(pnt3,MM,12,i,MPI_COMM_WORLD,
      >                   IERR)
 	do ih=1,MM
-	  RMM(M3+ih-1)=RMM(M3+ih-1)+pnt3(ih)
+         RMM(M3+ih-1)=RMM(M3+ih-1)+pnt3(ih)
 	enddo
 	endif
 	
  203  continue
-       
+
  
        else
         Ex=ExP
@@ -411,12 +416,12 @@ c
 
 
 c hard-codea el tamano de RMM=23961645.cambiar a recibirlo por parámetro.
-      if(MYRANK.eq.0)then
-	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
-      else
-       stop
-      endif
+c      if(MYRANK.eq.0)then
+c	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+c      else
+c       stop
+c      endif
       
       return
 c

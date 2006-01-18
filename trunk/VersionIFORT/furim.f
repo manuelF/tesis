@@ -1,5 +1,6 @@
       SUBROUTINE FURIM
       INCLUDE 'COMM'
+      real*8 rkappa,af1,af2,af3
       DIMENSION ELR(NAT,200),ELI(NAT,200),EMR(NAT,200)
       DIMENSION EMI(NAT,200),ENR(NAT,200),ENI(NAT,200)
       DIMENSION FURX(NAT),FURY(NAT),FURZ(NAT),FURQ(NAT)
@@ -162,9 +163,9 @@ c      write(*,*)'B: ',bpp1
 c      stop
 
       DO I = 1, NWAT
-      AF1 = PC(I)  *  PC(I+NWAT)   * DERF(RKAPPA*DA(1))/DA(1)
-      AF2 = PC(I)  *PC(I+2*NWAT)   * DERF(RKAPPA*DA(2))/DA(2)
-      AF3 = PC(I+2*NWAT)*PC(I+NWAT)* DERF(RKAPPA*DA(3))/DA(3)
+      AF1 = PC(I) * PC(I+NWAT) * DERF(RKAPPA*DA(1))/DA(1)
+      AF2 = PC(I) * PC(I+2*NWAT) * DERF(RKAPPA*DA(2))/DA(2)
+      AF3 = PC(I+2*NWAT) * PC(I+NWAT) * DERF(RKAPPA*DA(3))/DA(3)
 
       EFF =  EFF - AF1 - AF2 - AF3
 

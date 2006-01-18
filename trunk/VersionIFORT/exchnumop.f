@@ -11,7 +11,8 @@ c 11-2-93
 c-----------------------------------------------------------------
       subroutine exchnumop(NORM,natom,r,Iz,Nuc,M,ncont,nshell,c,a,RMM,
      >                   M18,NCOa,NCOb,Exc,nopt)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM,integ,dens1
       integer igrid,igrid2
       INCLUDE 'param'

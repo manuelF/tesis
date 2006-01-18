@@ -2,7 +2,7 @@
       INCLUDE 'COMM'
       DIMENSION DTOT (100,100)
       DIMENSION MSGF (100,100)
-      REAL*8 BUG
+      REAL*16 BUG
       dimension Tzo(3),Xri(20)
       dimension Xam(50),Yam(50),Zam(50)
 

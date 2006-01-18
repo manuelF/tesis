@@ -3,6 +3,7 @@
       include 'mpif.h'
       integer myrank,ierr
       
+      real*8 rkappa,rrijk
       DOUBLE PRECISION ERFCb
       DIMENSION DX(NAT),DY(NAT),DZ(NAT),RIJSQ(NAT)
       DIMENSION DX1(NAT),DY1(NAT),DZ1(NAT),RIJSQ1(NAT)
@@ -259,7 +260,7 @@ c     & pc(i+iofset)/ee,pc(jnf(j)+jofset)/ee,qij(jnf(j))/(ee**2)
 
        IF (IEWLD.EQ.1) THEN
 
-       EGKC = QIJ(JNF(J))*RRIJK*DERFC(RKAPPA/RRIJK)
+       EGKC = QIJ(JNF(J)) * RRIJK * DERFC(RKAPPA/RRIJK)
        FGKC = EGKC +TWO*RKAPPA*DEXP(-RKAPPA2/RRSQK)
      &   /SQRTPI*QIJ(JNF(J))
        FGKC = FGKC*RRSQK

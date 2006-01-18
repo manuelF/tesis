@@ -17,7 +17,7 @@ c     on entry
 c
 c        ap      double precision (n*(n+1)/2)
 c                the packed form of a symmetric matrix  a .  the
-c                columns of the upper triangle are stored sequentially
+c                columns of the per triangle are stored sequentially
 c                in a one-dimensional array of length  n*(n+1)/2 .
 c                see comments below for details.
 c

@@ -22,7 +22,7 @@ c
 c D.Estrin, Bs As Enero 1994
 c----------------------------------------------------------------------
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       INCLUDE 'param'
       dimension r(nt,3),Pm(nt),vib(3*nt),Ei(3),Xi(20)
       dimension xmass(216)
@@ -259,7 +259,7 @@ c
       end
 c-------------------------------------------------------------------------
       BLOCK DATA
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       common /masses/ xmass(216)
 *     Atomic masses (u.m.a.) of most common isotopes
       data xmass /

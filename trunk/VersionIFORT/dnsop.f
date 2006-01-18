@@ -6,7 +6,8 @@ c
      >               M,M18,NCOa,NCOb,RMM)
     
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM
       INCLUDE 'param'
       dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng)

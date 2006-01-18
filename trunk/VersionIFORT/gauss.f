@@ -1,5 +1,5 @@
       FUNCTION GAUSSN()
-      IMPLICIT REAL*8  (A-H,O-Z)
+      IMPLICIT REAL*16  (A-H,O-Z)
       R1=RANF()
       R2=RANF()
       GAUSSN=DSQRT(-2.D0*DLOG(R1))*DCOS(6.2831853D0*R2)
@@ -8,7 +8,7 @@
 
 
       FUNCTION RANF()
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT real*16 (A-H,O-Z)
       PARAMETER (M1=1048576,M2=324565)
       COMMON/YU/X,IDUM
 

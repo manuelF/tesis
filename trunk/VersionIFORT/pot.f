@@ -11,7 +11,7 @@ c------------------------------------------------------------------
 c
 c     
       subroutine pot(Iexch,dens,ex,ec,v)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
 c
 c data X alpha
       data const /-0.738558766382022447D0/

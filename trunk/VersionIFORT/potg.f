@@ -22,7 +22,7 @@ c
 c     
       subroutine potg(Iexch,dens,dx,dy,dz,dxx,dyy,dzz,dxy,dyz,dxz,
      >                ex,ec,v)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       external asinh
 c
 c data X alpha
@@ -387,7 +387,7 @@ c----------------------------------------------------------------------
       subroutine closedpbe(rho,agrad,delgrad,rlap,
      1           expbe,vxpbe,ecpbe,vcpbe)
 
-      implicit real*8(a-h,o-z)
+      implicit real*16(a-h,o-z)
       parameter(thrd=1.d0/3.d0)
       parameter(pi32=29.608813203268075856503472999628d0)
       parameter(pi=3.1415926535897932384626433832795d0)
@@ -603,7 +603,7 @@ c K. Burke, May 11, 1996.
 C
 C This subroutine calculates ec and its first derivative
 
-      IMPLICIT REAL*8 (A-H,O-Z)
+      IMPLICIT real*16 (A-H,O-Z)
       PARAMETER(A=0.0310907D0)
       PARAMETER(A1=0.21370D0)
       PARAMETER(B1=7.5957D0)
@@ -625,7 +625,7 @@ c---------------------------------------------------------------------
 
 c
       FUNCTION ASINH(X)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
 c
       t1=sqrt(X**2+1.D0)
       if (X.gt.0.0D0) then

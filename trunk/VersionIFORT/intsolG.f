@@ -27,9 +27,11 @@ c-------------------------------------------------------------------
      > ncont,nshell,c,a,pc,RMM,ff,FXH11,FYH11,FZH11)
 
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM
       INCLUDE 'param'
+      include 'mpif.h'
       parameter(pi32=5.56832799683170698D0,pi=3.14159265358979312D0,
      >          rpi=1.77245385090551588D0)
       PARAMETER (A0=0.52918 D0)      
