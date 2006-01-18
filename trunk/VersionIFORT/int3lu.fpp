@@ -29,11 +29,12 @@ c-----------------------------------------------------------------
      > nopt,OPEN,NMAX,NCO,ATRHO,VCINP,SHFT,Nunp,GOLD,told,write)
 c
 c
-c      implicit real*8 (a-h,o-z)
+c      implicit real*16 (a-h,o-z)
       implicit none
-      real*8 r,a,c,cd,ad,rmm,x,e2,ex,gold,told,aux,d,p,ff,rc,w,q
-      real*8 term,eb,ea,ss9,bda,r1,r0,t0,rcond,sq3,pi32,b,af
-      real*8 rmax,pi,pi52
+      real*16 r,a,c,cd,ad,x,e2,ex,gold,told,aux,d,p,ff,rc,w,q
+      real*16 term,eb,ea,ss9,bda,r1,r0,t0,rcond,sq3,pi32,b,af
+      real*16 rmax,pi,pi52
+      real*16 rmm
       integer natom,iz,nuc,m,mmem,ncont,nshell,nucd,md,ncontd,nshelld
       integer nmax,nco,nunp,nel,l2,l1,nk,info,irank,md5,md3
       integer m12,m10,i,j,k1,mmp,kk,k,l,mmem1,m23,m22,m21,m20

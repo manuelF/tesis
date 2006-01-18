@@ -1,8 +1,9 @@
       subroutine nwrite(OPEN,NORM,natom,r,Iz,Nuc,M,ncont,nshell,c,a,
      >          NCOa,NCOb,Nucd,Md,ncontd,nshelld,cd,ad,M17,RMM)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       logical NORM,dens1,SVD,integ,OPEN
       integer iconst,igrid,igrid2
+      real*16 rmm
       INCLUDE 'param'
       parameter (pi=3.14159265358979312D0,pi2=6.28318530717958623D0)
 c input
