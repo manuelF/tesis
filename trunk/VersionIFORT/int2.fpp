@@ -24,7 +24,8 @@ c-----------------------------------------------------------------
       subroutine intt2(NORM,natom,r,Nucd,M,Md,ncontd,nshelld,cd,ad,
      > RMM,XX)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical NORM,SVD
       integer iconst
       INCLUDE 'param'

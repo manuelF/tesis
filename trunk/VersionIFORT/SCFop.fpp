@@ -12,16 +12,17 @@ c---------------------------------------------------
      > write1,FQQ,Q,IT,ITEL,NIN,IPR1,E1s,EAC,
      > ux,uy,uz,NPAS)
 c
-c      implicit real*8 (a-h,o-z)
+c      implicit real*16 (a-h,o-z)
       implicit none
       logical NORM,ATRHO,VCINP,DIRECT,EXTR,dens,write1
       logical OPEN,SVD,SHFT,GRAD,BSSE,integ,field,sol,free
       logical exter,MEMO
       integer nopt,iconst,igrid,igrid2,MYRANK,IERR
-      real*8 r,c,a,cd,ad,rmm,x,xx,e,pc,gold,told,fqq,q,e1s,eac,ux,uy
-      real*8 uz,q1,t0,u,exc,e0,del,tmp,shi,fac,g,ex,good,qc2,qc,damp
-      real*8 damp0,d2,d1,sq2,es,e2,en,e1,fz,fy,fx,a0,str,ef
-      real*8 xi,pci,rm,em,alpha,b,af,epsilon
+      real*16 r,c,a,cd,ad,x,xx,e,pc,gold,told,fqq,q,e1s,eac,ux,uy
+      real*16 uz,q1,t0,u,exc,e0,del,tmp,shi,fac,g,ex,good,qc2,qc,damp
+      real*16 damp0,d2,d1,sq2,es,e2,en,e1,fz,fy,fx,a0,str,ef
+      real*16 xi,pci,rm,em,alpha,b,af,epsilon
+      real*16 rmm
       integer natom,iz,nuc,m,ncont,nshell,nucd,md,ncontd,nshelld
       integer nmax,nco,nunp,it,itel,nin,ipr1,npas,kkb,kka,kk1,idamp
       integer kj,ki,k0,n,l,ii,kk2,kk,j,info,k,i,niter,m23,m22,m21,m20

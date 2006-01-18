@@ -1,13 +1,14 @@
       subroutine exch(OPEN,NORM,natom,r,Iz,Nuc,M,ncont,nshell,c,a,Md,
      >  ncontd,nshelld,Nucd,cd,ad,RMM,NCO,NCOb,M17,B1)
 c
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
       logical NORM,SVD,dens1,integ,OPEN
       INCLUDE 'param'
       parameter (pi=3.14159265358979312D0,pi2=6.28318530717958623D0)
 c
 c input
       integer iconst,igrid,igrid2
+      real*16 rmm
       dimension c(ng,nl),a(ng,nl),Nuc(ng),ncont(ng),Iz(ntq)
       dimension r(nt,3),nshell(0:3),nshelld(0:3)
       dimension cd(ngd,nl),ad(ngd,nl),Nucd(Md),ncontd(Md)

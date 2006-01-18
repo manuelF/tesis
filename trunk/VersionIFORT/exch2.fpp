@@ -8,7 +8,8 @@ c where the integrals are evaluated)
 c-----------------------------------------------------------------
        subroutine exch2(OPEN,Iz,natom,RMM,nshelld,M,Md,M17,
      >                  NCOa,NCOb,B1)
-      implicit real*8 (a-h,o-z)
+      implicit real*16 (a-h,o-z)
+      real*16 rmm
       logical dens1,SVD,integ,OPEN
       integer iconst,igrid,igrid2
       INCLUDE 'param'
