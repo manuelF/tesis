@@ -46,7 +46,7 @@ a trav\'es de m\'etodos cl\'asicos y cu\'anticos.}
 
 \section*{Propuesta}
 
-Construcci\'on de un software paralelo de simulaci\'on num\'erica a partir de una versi\'on serial preexistente y su implementaci\'on en un cluster Beowulf para el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on.
+Construcci\'on de un software paralelo de simulaci\'on num\'erica modificando el algoritmo actual presente en una versi\'on serial preexistente y su implementaci\'on en un cluster Beowulf para el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on.
 
 La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas estrategias de paralelizaci\'on (incluyendo diversas modalidades de pasaje de mensajes) permitir\'an la resoluci\'on de problemas m\'as realistas y previamente inabordables, obteniendo un algoritmo escalable.
 
@@ -54,7 +54,7 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 \section*{Objetivos}
 
 \begin{itemize}
-\item Desarrollar un programa paralelo que resuelva num\'ericamente un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente.
+\item Desarrollar un programa paralelo modificando el algoritmo de c\'alculo actual utilizando una librer\'ia de $Message Passing$ que resuelva num\'ericamente un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente.
 
 \item Comparar los resultados num\'ericos obtenidos frente a los obtenidos en forma serial del mismo problema.
 
@@ -73,6 +73,8 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 \item M\'aquina con suficiente memoria y poder de c\'alculo para poder realizar simulaciones que puedan aproximarse a la realidad f\'isica.
 
 \item C\'odigo fuente de la versi\'on serial que soluciona el modelo.
+
+\item Diversas librer\'ias de $Message Passing$ (MPICH, LAM)
 \end{itemize}
 
 \section*{Plan inicial}
@@ -84,7 +86,7 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 
 \item Determinar las t\'ecnicas posibles de paralelizaci\'on.
 
-\item Realizar la paralelizaci\'on del programa serial siguiendo una estrategia de caja negra.
+\item Realizar la paralelizaci\'on del programa serial siguiendo una estrategia de caja negra, modificando el algoritmo actual a fines de lograr una mejor performance.
 
 \item Realizar experimentos para el estudio de reacciones qu\'imicas en soluci\'on a trav\'es de m\'etodos cl\'asicos y cu\'anticos.
 
