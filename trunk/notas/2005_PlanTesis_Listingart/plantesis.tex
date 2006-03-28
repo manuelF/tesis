@@ -54,7 +54,7 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 \section*{Objetivos}
 
 \begin{itemize}
-\item Desarrollar un programa paralelo modificando el algoritmo de c\'alculo actual utilizando una librer\'ia de $Message Passing$ que resuelva num\'ericamente un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente.
+\item Desarrollar un programa paralelo modificando el algoritmo de c\'alculo actual utilizando una librer\'ia de $Message Passing$ que resuelva num\'ericamente un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente \cite{Nemukhin2002, Kesavan2003, lebrero2002}.
 
 \item Comparar los resultados num\'ericos obtenidos frente a los obtenidos en forma serial del mismo problema.
 
@@ -70,11 +70,12 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 
 \item Lenguaje de programaci\'on: Fortran 77.
 
-\item M\'aquina con suficiente memoria y poder de c\'alculo para poder realizar simulaciones que puedan aproximarse a la realidad f\'isica.
+\item M\'aquina con suficiente memoria y poder de c\'alculo para poder realizar pruebas iniciales.
 
 \item C\'odigo fuente de la versi\'on serial que soluciona el modelo.
 
-\item Diversas librer\'ias de $Message Passing$ (MPICH, LAM)
+\item Cluster tipo Beowulf y diversas librer\'ias de $Message Passing$ (\texttt{MPICH}\cite{MPICH}, \texttt{LAM}\cite{LAM_MPI}).
+
 \end{itemize}
 
 \section*{Plan inicial}
@@ -84,13 +85,13 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 
 \item Analizar el programa serial utilizado para la resoluci\'on de sistemas qu\'imicos.
 
-\item Determinar las t\'ecnicas posibles de paralelizaci\'on.
+\item Determinar las t\'ecnicas y estrategias posibles de paralelizaci\'on.
 
-\item Realizar la paralelizaci\'on del programa serial siguiendo una estrategia de caja negra, modificando el algoritmo actual a fines de lograr una mejor performance.
+\item Realizar la paralelizaci\'on del programa serial, modificando el algoritmo actual a fines de lograr una mejor performance.
 
 \item Realizar experimentos para el estudio de reacciones qu\'imicas en soluci\'on a trav\'es de m\'etodos cl\'asicos y cu\'anticos.
 
-\item Analizar los resultados y relizar pruebas de performance.
+\item Analizar los resultados y realizar pruebas de performance.
 
 \end{enumerate}
 
@@ -98,33 +99,31 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 
 \begin{thebibliography}{9}
 
-\bibitem {Nemukhin2002}A. V. Nemukhin, I. A. Topol, B. L. Grigorenko y S. K. Burt, On the Origin of Potential Barrier for the Reaction OH$^-$ + CO$_2$ $\rightarrow$ HCO$_3$ in Water: Studies by Using Continuum and Cluster Solvation
+\bibitem{Nemukhin2002} A. V. Nemukhin, I. A. Topol, B. L. Grigorenko y S. K. Burt, On the Origin of Potential Barrier for the Reaction OH$^-$ + CO$_2$ $\rightarrow$ HCO$_3$ in Water: Studies by Using Continuum and Cluster Solvation
 Methods(2002)
 
-\bibitem {Kesavan2003} L. S. Devi-Kesavan y J. Gao, Combined QM/MM Study of the Mechanism and Kinetic Isotope Effect
+\bibitem{Kesavan2003} L. S. Devi-Kesavan y J. Gao, Combined QM/MM Study of the Mechanism and Kinetic Isotope Effect
 of the Nucleophilic Substitution Reaction in Haloalkane
 Dehalogenase (2003)
 
-\bibitem {lebrero2002} M. C. Gonz\'alez Lebrero, D. E.
-Bikiel, M. D. Elola, D. A. Estrin y A. E. Roitberg,
-Solvent-induced symmetry breaking of nitrate ion in aqueous
-clusters: A quantum-classical simulation study
+\bibitem{lebrero2002} M. C. Gonz\'alez Lebrero, D. E. Bikiel, M. D. Elola, D. A. Estrin y A. E. Roitberg,
+Solvent-induced symmetry breaking of nitrate ion in aqueous clusters: A quantum-classical simulation study.
 
-\bibitem {mpich-install}William D. Gropp and Ewing Lusk, Installation Guide for {\tt mpich}, a Portable Implementation of
+\bibitem{mpich-install} William D. Gropp and Ewing Lusk, Installation Guide for {\tt mpich}, a Portable Implementation of
 {MPI}(1996)
 
-\bibitem {LAM_MPI}Local Area Multicomputer - MPI Parallel Computing Environment, http://www.osc.edu/lam.html
+\bibitem{LAM_MPI} Local Area Multicomputer - MPI Parallel Computing Environment, http://www.osc.edu/lam.html
 
-\bibitem {MPICH}MPICH(A Portable MPI Implementation), http://www.mcs.anl.gov/mpi/mpich
+\bibitem{MPICH} MPICH(A Portable MPI Implementation), http://www.mcs.anl.gov/mpi/mpich
 
-\bibitem {Pacheco96}Peter S. Pacheco, Parallel programming with MPI(1996)
+\bibitem{Pacheco96} Peter S. Pacheco, Parallel programming with MPI(1996)
 
-\bibitem {Gropp94}William Gropp, Ewing Lusk y Anthony Skjellum, Using MPI: Portable Parallel Programming with the Message-Passing
+\bibitem{Gropp94} William Gropp, Ewing Lusk y Anthony Skjellum, Using MPI: Portable Parallel Programming with the Message-Passing
 Interface(1994)
 
-\bibitem {LSC}Laboratorio de Sistemas Complejos, Departamento de Computaci\'on, Facultad de Ciencias Exactas y Naturales, Universidad de Buenos Aires, http://lsc.dc.uba.ar
+\bibitem{LSC} Laboratorio de Sistemas Complejos, Departamento de Computaci\'on, Facultad de Ciencias Exactas y Naturales, Universidad de Buenos Aires, http://lsc.dc.uba.ar
 
-\bibitem {Amdahl}G.M. Amdahl, Validity of the single-processor approach to achieving large scale computing capabilities(1967)
+\bibitem{Amdahl} G.M. Amdahl, Validity of the single-processor approach to achieving large scale computing capabilities(1967)
 
 \bibitem {Gustafson88}John L. Gustafson, Reevaluating Amdahl's Law.(1988)
 
