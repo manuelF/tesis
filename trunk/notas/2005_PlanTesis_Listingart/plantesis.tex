@@ -46,21 +46,22 @@ a trav\'es de m\'etodos cl\'asicos y cu\'anticos.}
 
 \section*{Propuesta}
 
-Construcci\'on de un software paralelo de simulaci\'on num\'erica modificando el algoritmo actual presente en una versi\'on serial preexistente y su implementaci\'on en un cluster Beowulf para el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on.
+Construcci\'on de un software paralelo de simulaci\'on num\'erica mediante el an\'alisis y posterior modificaci\'on de un programa serial preexistente y para su implementaci\'on en un cluster Beowulf con el objeto de estudiar y predecir el comportamiento de reacciones qu\'imicas en soluci\'on.
 
-La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas estrategias de paralelizaci\'on (incluyendo diversas modalidades de pasaje de mensajes) permitir\'an la resoluci\'on de problemas m\'as realistas y previamente inabordables, obteniendo un algoritmo escalable.
+La combinaci\'on del hardware y software mencionado, y el an\'alisis de distintas estrategias de paralelizaci\'on (incluyendo diversas modalidades de pasaje de mensajes) permitir\'an la resoluci\'on de problemas m\'as realistas y previamente inabordables, obteniendo un algoritmo escalable.
 
 
 \section*{Objetivos}
 
 \begin{itemize}
-\item Desarrollar un programa paralelo modificando el algoritmo de c\'alculo actual utilizando una librer\'ia de $Message Passing$ que resuelva num\'ericamente un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente \cite{Nemukhin2002, Kesavan2003, lebrero2002}.
+\item Desarrollar un programa paralelo modificando el algoritmo de c\'alculo actual utilizando el paradigma de pasaje de mensajes ($Message Passing$) que resuelva num\'ericamente un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente \cite{Nemukhin2002, Kesavan2003, lebrero2002}.
 
-\item Comparar los resultados num\'ericos obtenidos frente a los obtenidos en forma serial del mismo problema.
+\item Comparar los resultados num\'ericos obtenidos frente a los obtenidos en con el programa serial bajo las mismas condiciones y par\'ametros.
 
-\item Incorporar herramientas de visualizaci\'on para realizar el an\'alisis de los datos obtenidos.
+\item Incorporar herramientas para realizar el an\'alisis de los datos obtenidos.
 
-\item Aplicar el programa obtenido a tama\~nos de problemas m\'as realistas y previamente inabordables.
+\item Utilizar el programa modificado a tama\~nos de problemas m\'as realistas y previamente inabordables.
+
 \end{itemize}
 
 \section*{Elementos a utilizar}
@@ -83,11 +84,11 @@ La combinaci\'on del hardware y software mencionado y el an\'alisis de distintas
 \begin{enumerate}
 \item Interiorizarse de la realidad qu\'imica que ocurre durante un experimento en soluci\'on a trav\'es de m\'etodos cl\'asicos y cu\'anticos.
 
-\item Analizar el programa serial utilizado para la resoluci\'on de sistemas qu\'imicos.
+\item Analizar el programa serial utilizado para la resoluci\'on de sistemas qu\'imicos con el fin de entender los detalles de implementaci\'on del programa existente.
 
 \item Determinar las t\'ecnicas y estrategias posibles de paralelizaci\'on.
 
-\item Realizar la paralelizaci\'on del programa serial, modificando el algoritmo actual a fines de lograr una mejor performance.
+\item Realizar la paralelizaci\'on del programa serial, modificando el algoritmo actual a fin de lograr una mejor performance.
 
 \item Realizar experimentos para el estudio de reacciones qu\'imicas en soluci\'on a trav\'es de m\'etodos cl\'asicos y cu\'anticos.
 
