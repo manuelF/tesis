@@ -87,12 +87,7 @@ c
       nd=nshell(2)
       M2=2*M
       MM=M*(M+1)/2
-
-      do ih=1,MM
-       pnt1(ih)=0.D0
-       pnt2(ih)=0.D0
-       pnt3(ih)=0.D0
-      enddo
+      
 c pointers
 c
 c first P
@@ -101,7 +96,12 @@ c now Fock beta
       M3=M1+MM
 c now S, also F alpha later
       M5=M3+MM
-      
+
+      do ih=1,MM
+       pnt1(ih)=RMM(M5+ih-1)
+       pnt2(ih)=RMM(M3+ih-1)
+       pnt3(ih)=0.D0
+      enddo      
 c
 c open shell case
       M18b=M18+M*NCOa
@@ -326,10 +326,7 @@ c Fock matrices, alpha and beta
 c M5 pointer of alpha spin Fock matrix, M3 beta
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
         RMM(M3+kk-1)=RMM(M3+kk-1)+F(i)*tmpjb
- 
- 	pnt1(kk)=pnt1(kk)+F(i)*tmpja
-        pnt2(kk)=pnt2(kk)+F(i)*tmpjb
-         
+        
  102  continue
  101  continue
 c
@@ -353,9 +350,6 @@ c M5 pointer
 
         RMM(M5+kk-1)=RMM(M5+kk-1)+F(i)*tmpja
         
-        pnt1(kk)=pnt1(kk)+F(i)*tmpja
-      
-
       
  202  continue
  201  continue
@@ -366,8 +360,13 @@ c
  16   continue
  12   continue
 c
+
       
       if ((IPROC.gt.1) .AND. (natom.ge.IPROC)) then
+      do ih=1,MM
+             pnt1(ih)=RMM(M5+ih-1)-pnt1(ih)
+             pnt2(ih)=RMM(M3+ih-1)-pnt2(ih)
+      enddo
       CALL MPI_ALLReduce(ExP,Ex,1,MPI_REAL8,102,MPI_COMM_WORLD,
      >                  IERR)
 
@@ -411,12 +410,12 @@ c
 
 
 c hard-codea el tamano de RMM=23961645.cambiar a recibirlo por parámetro.
-      if(MYRANK.eq.0)then
-	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
-     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
-      else
-       stop
-      endif
+c      if(MYRANK.eq.0)then
+c	CALL SAVESTATE(OPEN,NORM,natom,Iz,Nuc,ncont,nshell,a,c,r,
+c     >               M,M18,NCOa,NCOb,RMM,Ex, 23961645)
+c      else
+c       stop
+c      endif
       
       return
 c
