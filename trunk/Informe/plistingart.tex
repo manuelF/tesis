@@ -4,7 +4,7 @@
 \usepackage{amsmath,amsfonts}
 \usepackage{graphicx}
 \usepackage{url}
-% \usepackage{overcite}
+\usepackage{overcite}
 \usepackage{times}
 \usepackage{bm}
 \usepackage{multicol}
@@ -294,9 +294,9 @@ El overhead, que est\'a presente en virtualmente todos los algoritmos paralelos,
 
 \section{L\'imites te\'oricos de la performance de un algoritmo paralelo}
 
-Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado. Inicialmente, Amdahl \cite{Amdahl} evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo. Esto es conocido como $Ley de Amdahl$. Posteriormente, Gustafson \cite{Gustafson88} re-evalu\'o la ley de Amdahl, considerando que un problema paralelo puede $agrandarse$ para mantener la performance a medida que se aumentan los procesadores. A continuaci\'on se mencionan ambos estudios.
+Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado. Inicialmente, Amdahl evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo. Esto es conocido como $Ley de Amdahl$. Posteriormente, Gustafson re-evalu\'o la ley de Amdahl, considerando que un problema paralelo puede $agrandarse$ para mantener la performance a medida que se aumentan los procesadores. A continuaci\'on se mencionan ambos estudios.
 
-\subsection{Ley de Amdahl}
+\subsection{Ley de Amdahl \cite{Amdahl}}
 
 Al analizar cualquier algoritmo paralelo, se encontrar\'a que al menos una parte del mismo es inherentemente secuencial. Esto limita el speedup que se puede obtener por medio de la utilizaci\'on de una computadora paralela.
 Si la fracci\'on del problema que es inherentemente secuencial es f, entonces el m\'aximo speedup que se puede obtener en una computadora paralela es 1/f. Esto es, el tiempo de ejecuci\'on de la soluci\'on paralela ser\'a:
@@ -326,7 +326,7 @@ $S(n,p)<\frac{1}{f} y n \rightarrow \infty$
 
 De acuerdo con la Ley de Amdahl y a modo de ejemplo, resulta que si un problema es solo 5\% serial, el m\'aximo speedup que se puede obtener con una soluci\'on paralela es 20, independientemente de la cantidad de procesadores que se utilicen.
 
-\subsection{Ley de Gustafson}
+\subsection{Ley de Gustafson \cite{Gustafson88}}
 
 Gustafson, presenta un argumento para mostrar que la ley de Amdahl no es tan significativa como se pensaba con anterioridad, en limitar el speedup potencial de una soluci\'on paralela. Este argumento se basa en la observaci\'on de que una computadora paralela de mayor tamaño, permite ejecutar un problema de mayor tamaño tambi\'en, en un tiempo razonable. De esta forma, se propone mantener fijo el tiempo de ejecuci\'on, pero incrementar el tamaño del problema y la cantidad de procesadores de la computadora paralela. Es as\'i que, manteniendo constante el tiempo de ejecuci\'on, entonces el factor de speedup resultar\'a diferente al que define Amdahl y se denomina $factor de speedup escalado$.
 
@@ -1078,7 +1078,7 @@ Implementaciones utilizadas de MPI: LAM-MPI 7.0.4 y MPICH 1.2.7p1
 
 \pagebreak
 
+\bibliographystyle{plain}
 \bibliography{bibliografia}
-\bibliographystyle{unsrt}
 
 \end{document}
