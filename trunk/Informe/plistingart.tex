@@ -124,9 +124,9 @@ Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{Diaz2001,Nemukhi
 
 \subsection{Introducci\'on a la Teor\'ia del Funcional de la Densidad}
 
-En esta tesis se utiliza la teor\'ia del funcional de la densidad (DFT) para el c\'alculo de la estructura electr\'onica en el esquema h\'ibrido cu\'antico-cl\'asico, por este motivo surge la necesidad de realizar una peque\~na rese\~na la misma \cite{Wiki}.
+En esta tesis se utiliza la teor\'ia del funcional de la densidad (DFT) para el c\'alculo de la estructura electr\'onica en el esquema h\'ibrido cu\'antico-cl\'asico, por este motivo surge la necesidad de realizar una peque\~na rese\~na la misma \cite{Cramer}.
 
-La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{MCGLPHD,Cramer,Wiki}, el cual es equivalente en qu\'imica computacional a la aproximaci\'on de orbitales moleculares de enorme utilidad conceptual para los qu\'imicos. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64}que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
+La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{MCGLPHD,Cramer}, el cual es equivalente en qu\'imica computacional a la aproximaci\'on de orbitales moleculares de enorme utilidad conceptual para los qu\'imicos. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64}que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
 
 Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad electr\'onica, sin embargo no preve\'ia la manera de calcular una u otra. En el a\~no 1965 Kohn y Sham \cite{Kohn65} introdujeron una aproximaci\'on para la forma funcional de la energ\'ia cin\'etica a trav\'es de la cual se hizo posible evaluar la densidad y obtener la
 energ\'ia total. Este m\'etodo, denominado de Kohn-Sham, es el que permiti\'o utilizar a DFT como un instrumento de c\'alculo de estructura electr\'onica eficiente. La enorme importancia que adquiri\'o la teor\'ia del funcional de la densidad en qu\'imica se vio reflejada en el otorgamiento del premio Nobel al profesor Kohn en 1998.
@@ -163,7 +163,7 @@ En los estados l\'iquido y gaseoso, el gas de electrones es un mal modelo para e
 
 \section{\strut El problema $n-body$}
 
-El problema $n-body$ es aquel de encontrar, dada la posici\'on inicial, masas y velocidades de $n$ cuerpos, sus movimientos siguientes determinados por las leyes de la mec\'anica cl\'asica \cite{Wiki}.
+El problema $n-body$ es aquel de encontrar, dada la posici\'on inicial, masas y velocidades de $n$ cuerpos, sus movimientos siguientes determinados por las leyes de la mec\'anica cl\'asica \cite{NBodyAlgorithms,NBody,Cramer}.
 
 Este problema puede referirse tanto a encontrar tanto los movimientos de cuerpos celestes por medio de la gravedad como los de \'atomos y mol\'eculas debido al potencial el\'ectrico. Usualmente uno tiene un estado inicial, y el problema consiste en ir determinando los estados subsiguientes, para observar como interact\'uan estos cuerpos en el tiempo.
 
@@ -194,7 +194,7 @@ Para analizar los movimientos de part\'iculas deben primero calcularse los poten
 El potencial en cada punto del sistema es igual a la suma de los potenciales determinados por las part\'iculas. Como puede observarse el costo de este c\'alculo es alto y es por este motivo que se intenta mejorar los tiempos de c\'alculo mediante la paralelizaci\'on del software serial utilizado originalmente, con el objetivo final de permitir utilizarlo en problemas de magnitud creciente.
 
 A continuaci\'on se ver\'an distintos tipos de m\'etodos de resoluci\'on del problema $n-body$. A pesar de que la problem\'atica con la que se trabaja es muy similar computacionalmente a la que se ha mencionado en esta secci\'on, no se opt\'o en esta etapa del trabajo por aplicar estas estrategias debido a que el programa serial ya estaba utilizando otra t\'ecnica de resoluci\'on y se opt\'o por no cambiar totalmente la misma debido a la incertidumbre sobre los resultados que esto generar\'ia. 
-Sin embargo existe la necesidad de mencionar que existen otras formas de resoluci\'on para situaciones similares. Pueden observarse distintos aspectos del problema en \cite{Cramer,Callahan92,NBody,Wiki}. El mismo problema aparece en diversos lugares tambi\'en como \"many-body problem\".
+Sin embargo existe la necesidad de mencionar que existen otras formas de resoluci\'on para situaciones similares. Pueden observarse distintos aspectos del problema en \cite{Cramer,Callahan92,NBody,NBodyAlgorithms}. El mismo problema aparece en diversos lugares tambi\'en como \"many-body problem\".
 
 
 \section{\strut M\'etodos H\'ibridos QM/MM}
@@ -226,7 +226,7 @@ En este tipo de t\'ecnicas la base consiste en que el total de energ\'ia de inte
 
 \section{Medici\'on de performance de algoritmos paralelos}
 
-Al desarrollar sistemas paralelos, se tiene como objetivo no solo alcanzar la mayor performance posible, sino que la misma se mantenga en proporci\'on a medida que se agregan procesadores al c\'alculo. Para poder tener una noci\'on de la medida de performance de los algoritmos paralelos, se definen las m\'etricas de speedup, eficiencia, overhead y escalabilidad\cite{Pach96,Wiki}, que se explican a continuaci\'on.
+Al desarrollar sistemas paralelos, se tiene como objetivo no solo alcanzar la mayor performance posible, sino que la misma se mantenga en proporci\'on a medida que se agregan procesadores al c\'alculo. Para poder tener una noci\'on de la medida de performance de los algoritmos paralelos, se definen las m\'etricas de speedup, eficiencia, overhead y escalabilidad\cite{Pach96,Amdahl,Gustafson}, que se explican a continuaci\'on.
 
 \subsection{Speedup}
 
@@ -388,7 +388,7 @@ Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, p
 Partiendo de un programa serial pre existente \cite{lebrero2002} y para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial.
 Para ello realizamos un profiling utilizando diversas herramientas provistas por el sistema operativo Linux y por el compilador $g77$ utilizado.
 
-En la versi\'on serial se utiliz\'o para realizar los estudios un m\'etodo h\'ibrido $QM/MM$. Esta t\'ecnica consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
+En la versi\'on serial se utiliz\'o para realizar los estudios un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}. Esta t\'ecnica consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
 
 Este m\'etodo propone que es posible escribir la energ\'ia como suma de contribuciones
 
@@ -1080,5 +1080,37 @@ Implementaciones utilizadas de MPI: LAM-MPI 7.0.4 y MPICH 1.2.7p1
 
 \bibliographystyle{plain}
 \bibliography{bibliografia}
+
+\nocite{Gropp94}
+\nocite{Newman}
+\nocite{Probstein}
+\nocite{Szabo99}
+\nocite{Estrin96}
+\nocite{Perdew96}
+\nocite{Lee88}
+\nocite{Perdew86}
+\nocite{Becke93}
+\nocite{Kiyohara98}
+\nocite{VanDerSpoel98}
+\nocite{Mahoney2001}
+\nocite{Kusalik94}
+\nocite{Baez94}
+\nocite{Svischev96}
+\nocite{VanMaaren2001}
+\nocite{Yu2004}
+\nocite{Stern2001}
+\nocite{Jarzinski1997}
+\nocite{Liphardt2002}
+\nocite{Waterland2000}
+\nocite{Godbout92}
+\nocite{Koppenol93}
+\nocite{Squadrito95}
+\nocite{Keith69}
+\nocite{Lymar98}
+\nocite{Bonini99}
+\nocite{Greengard88}
+\nocite{Lambert76}
+\nocite{LSC}
+\nocite{Wiki}
 
 \end{document}
