@@ -4,7 +4,6 @@
 \usepackage{amsmath,amsfonts}
 \usepackage{graphicx}
 \usepackage{url}
-\usepackage{overcite}
 \usepackage{times}
 \usepackage{bm}
 \usepackage{multicol}
@@ -38,13 +37,13 @@ Departamento de Computaci\'on\\
         Director de Tesis\\
         Lic. Esteban Mocskos\\
         Co-Director de Tesis\\
-        Mariano Camilo Gonzalez Lebrero\\
+        Dr. Mariano Camilo Gonzalez Lebrero\\
         \\
         Tesis para optar al grado de \\
         Licenciado en Ciencias de la Computaci\'on\\
         \\
         }
-\date{2006}
+\date{Mayo de 2006}
 
 \maketitle
 
@@ -105,13 +104,13 @@ Cuando nos referimos a \emph{simulaci\'on} hablamos del uso de tecnolog\'ia digi
 El desarrollo de t\'ecnicas refinadas, as\'i como el aumento geom\'etrico del poder de c\'omputo son dos de las razones m\'as importantes de su creciente uso.
 Ya sea como complemento o como reemplazo de experimentos, la simulaci\'on aporta, entre otras cosas, una visi\'on microsc\'opica inalcanzable por otra v\'ia.
 
-Por otra parte, la simulaci\'on num\'erica ha crecido de forma considerable en los ultimos a\~nos debido a que, desde la perspectiva econ\'omica, el desarrollo te\'orico ha demostrado ser una forma viable de reducir los costos o enfocar m\'as eficientemente la experimentaci\'on.
+Por otra parte, la simulaci\'on num\'erica ha crecido de forma considerable en los \'ultimos a\~nos debido a que, desde la perspectiva econ\'omica, el desarrollo te\'orico ha demostrado ser una forma viable de reducir los costos o enfocar m\'as eficientemente la experimentaci\'on.
 
 Las metodolog\'ias utilizadas en simulaci\'on en qu\'imica var\'ian seg\'un el problema a tratar.
 En general, se dividen en dos grandes ramas, la llamada rama \emph{cl\'asica} y la llamada \emph{cu\'antica}.
-La mec\'anica que rige el comportamiento de part\'iculas peque\~nas (como los electrones) es la llamada mec\'anica cu\'antica, que fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhory otros.
+La mec\'anica que rige el comportamiento de part\'iculas peque\~nas (como los electrones) es la llamada mec\'anica cu\'antica, que fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhor y otros.
 
-Lamentablemente no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son muy demandantes desde el punto de vista computacional.
+Lamentablemente, no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son muy demandantes desde el punto de vista computacional.
 Esta elevada demanda hace prohibitivo el uso de esta t\'ecnica a sistemas con un n\'umero elevado de \'atomos.
 
 Por otro lado la mec\'anica cl\'asica, menos demandante, es incapaz de representar electrones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia.
@@ -126,7 +125,7 @@ Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{Diaz2001,Nemukhi
 
 En esta tesis se utiliza la teor\'ia del funcional de la densidad (DFT) para el c\'alculo de la estructura electr\'onica en el esquema h\'ibrido cu\'antico-cl\'asico, por este motivo surge la necesidad de realizar una peque\~na rese\~na la misma \cite{Cramer}.
 
-La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{MCGLPHD,Cramer}, el cual es equivalente en qu\'imica computacional a la aproximaci\'on de orbitales moleculares de enorme utilidad conceptual para los qu\'imicos. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64}que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
+La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{MCGLPHD,Cramer}, el cual es equivalente en qu\'imica computacional a la aproximaci\'on de orbitales moleculares de enorme utilidad conceptual para los qu\'imicos. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64} que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
 
 Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad electr\'onica, sin embargo no preve\'ia la manera de calcular una u otra. En el a\~no 1965 Kohn y Sham \cite{Kohn65} introdujeron una aproximaci\'on para la forma funcional de la energ\'ia cin\'etica a trav\'es de la cual se hizo posible evaluar la densidad y obtener la
 energ\'ia total. Este m\'etodo, denominado de Kohn-Sham, es el que permiti\'o utilizar a DFT como un instrumento de c\'alculo de estructura electr\'onica eficiente. La enorme importancia que adquiri\'o la teor\'ia del funcional de la densidad en qu\'imica se vio reflejada en el otorgamiento del premio Nobel al profesor Kohn en 1998.
@@ -140,7 +139,7 @@ A pesar de que la DFT tiene sus ra\'ices en el modelo de Thomas-Fermi, como hemo
 
 Como se menciona anteriormente, la implementaci\'on m\'as com\'un de la DFT es mediante el m\'etodo de Kohn-Sham. Mediante el mismo, el problema $n-body$ de electrones que interact\'uan en un potencial est\'atico externo se ve reducido a un problema de electrones que no interact\'uan y se mueven en un potencial efectivo. Este \'ultimo incluye un potencial externo y los efectos de las interacciones de Coulomb entre los electrones.
 
-DFT se ha convertido en un m\'etodo muy popular desde la d\'ecada del 70 para c\'alculos de estado s\'olido debido a su relaci\'on de costo-calidad sobre otros m\'etodos de resolver el problema $n-body$ en mec\'anica cu\'antica. Sin embargo no fu\'e considerado suficientemente preciso en qu\'imica cu\'antica hasta la d\'ecada del 90 cuando se refinaron las aproximaciones de los mapeos para mejorar el modelado de las interacciones.
+DFT se ha convertido en un m\'etodo muy popular desde la d\'ecada del 70 para c\'alculos de estado s\'olido debido a su relaci\'on de costo-calidad sobre otros m\'etodos de resolver el problema $n-body$ en mec\'anica cu\'antica. Sin embargo no fue considerado suficientemente preciso en qu\'imica cu\'antica hasta la d\'ecada del 90 cuando se refinaron las aproximaciones de los mapeos para mejorar el modelado de las interacciones.
 
 DFT es actualmente el m\'etodo m\'as ampliamente utilizado para estructuras electr\'onicas. A pesar de las mejoras que ha ido sufriendo todav\'ia existen dificultades para describir adecuadamente algunas interacciones intermoleculares.
 
@@ -167,14 +166,14 @@ El problema $n-body$ es aquel de encontrar, dada la posici\'on inicial, masas y 
 
 Este problema puede referirse tanto a encontrar tanto los movimientos de cuerpos celestes por medio de la gravedad como los de \'atomos y mol\'eculas debido al potencial el\'ectrico. Usualmente uno tiene un estado inicial, y el problema consiste en ir determinando los estados subsiguientes, para observar como interact\'uan estos cuerpos en el tiempo.
 
-Puede oservarse parte de la dificultad del problema $n-body$ analizando incialmente los casos m\'as sencillos del mismo.
+Puede observarse parte de la dificultad del problema $n-body$ analizando inicialmente los casos m\'as sencillos del mismo.
 El problema, teniendo dos cuerpos, consiste en estudiar c\'omo interact\'uan los mismos a trav\'es del tiempo.
 
 Si se considera que el centro com\'un de masa de los dos cuerpos esta en reposo, cada cuerpo viaja en una secci\'on c\'onica cuyo foco est\'a en el centro de masa del sistema.
 
-Si ambos cuerpos est\'an ligados, ambos describir\'an elipses en sus trayectorias. La energ\'ia potencial relativa al estar alejados (cuyo valor siempre es negativo) tiene un valor absoluto menor que el total de energ\'ia cin\'etica del sistema(no esta siendo tenida en cuenta la energ\'ia de rotaci\'on sobre sus ejes de los cuerpos).
+Si ambos cuerpos est\'an ligados, ambos describir\'an elipses en sus trayectorias. La energ\'ia potencial relativa al estar alejados (cuyo valor siempre es negativo) tiene un valor absoluto menor que el total de energ\'ia cin\'etica del sistema (no esta siendo tenida en cuenta la energ\'ia de rotaci\'on sobre sus ejes de los cuerpos).
 
-Si ambos se est\'an alejando, lo har\'an describiendo par\'abolas o hip\'erbolas. En el caso de la hip\'erbola, la energ\'ia potencial tiene un valor absoluto menor que el total de energ\'ia cin\'etica del sistema, por lo tanto la suma de ambas energ\'ias es positiva. En el caso de la par\'abola, la suma de las energ\'ias es igua a cero. Las velocidades tienden tambi\'en a cero a medida que los cuerpos se alejan. El hecho de que la trayectoria parab\'olica no tenga energ\'ia surge de la presunci\'on de que la energ\'ia potencial gravitacional tiende a cero a medida que los cuerpos se alejan infinitamente.
+Si ambos se est\'an alejando, lo har\'an describiendo par\'abolas o hip\'erbolas. En el caso de la hip\'erbola, la energ\'ia potencial tiene un valor absoluto menor que el total de energ\'ia cin\'etica del sistema, por lo tanto la suma de ambas energ\'ias es positiva. En el caso de la par\'abola, la suma de las energ\'ias es igual a cero. Las velocidades tienden tambi\'en a cero a medida que los cuerpos se alejan. El hecho de que la trayectoria parab\'olica no tenga energ\'ia surge de la presunci\'on de que la energ\'ia potencial gravitacional tiende a cero a medida que los cuerpos se alejan infinitamente.
 
 A continuaci\'on se analiza como es el comportamiento del sistema con tres cuerpos.
 El mismo es bastante m\'as complicado que el visto anteriormente.
@@ -184,7 +183,7 @@ Sin embargo existen soluciones aproximadas que pueden ser calculadas por m\'etod
 
 Un caso especial del problema de tres cuerpos es el llamado $restringido$ que asume que la masa de uno de los mismos es despreciable. Este problema es un caso especial en el cual dos de los tres cuerpos estan en \'orbitas circulares o el\'ipticas.
 
-El problema restringido fue abordado extensamente por muchos matem\'aticos y f\'isicos famosos, como Lagrange en el Siglo 18 y Henri Poincar\'e al final del Siglo 19.
+El problema restringido fue abordado extensamente por muchos matem\'aticos y f\'isicos famosos, como Lagrange en el siglo 18 y Henri Poincar\'e al final del siglo 19.
 
 El trabajo de Poincar\'e en el problema restringido de tres cuerpos result\'o ser la base de la teor\'ia del caos determin\'istico.
 
@@ -193,8 +192,8 @@ La simulaci\'on de un sistema de part\'iculas es uno de los mayores problemas co
 Para analizar los movimientos de part\'iculas deben primero calcularse los potenciales del sistema en su totalidad.
 El potencial en cada punto del sistema es igual a la suma de los potenciales determinados por las part\'iculas. Como puede observarse el costo de este c\'alculo es alto y es por este motivo que se intenta mejorar los tiempos de c\'alculo mediante la paralelizaci\'on del software serial utilizado originalmente, con el objetivo final de permitir utilizarlo en problemas de magnitud creciente.
 
-A continuaci\'on se ver\'an distintos tipos de m\'etodos de resoluci\'on del problema $n-body$. A pesar de que la problem\'atica con la que se trabaja es muy similar computacionalmente a la que se ha mencionado en esta secci\'on, no se opt\'o en esta etapa del trabajo por aplicar estas estrategias debido a que el programa serial ya estaba utilizando otra t\'ecnica de resoluci\'on y se opt\'o por no cambiar totalmente la misma debido a la incertidumbre sobre los resultados que esto generar\'ia. 
-Sin embargo existe la necesidad de mencionar que existen otras formas de resoluci\'on para situaciones similares. Pueden observarse distintos aspectos del problema en \cite{Cramer,Callahan92,NBody,NBodyAlgorithms}. El mismo problema aparece en diversos lugares tambi\'en como \"many-body problem\".
+A pesar de que la problem\'atica con la que se trabaja es muy similar computacionalmente a la que se ha mencionado en esta secci\'on, no se opt\'o en esta etapa del trabajo por aplicar estas estrategias debido a que el programa serial ya estaba utilizando otra t\'ecnica de resoluci\'on y se opt\'o por no cambiar totalmente la misma debido a la incertidumbre sobre los resultados que esto generar\'ia. 
+Sin embargo, existe la necesidad de mencionar que existen otras formas de resoluci\'on para situaciones similares. Pueden observarse distintos aspectos del problema en \cite{Cramer,Callahan92,NBody,NBodyAlgorithms}. En la literatura este problema se lo conoce, tambi\'en, como \emph{many-body problem}.
 
 
 \section{\strut M\'etodos H\'ibridos QM/MM}
@@ -294,9 +293,9 @@ El overhead, que est\'a presente en virtualmente todos los algoritmos paralelos,
 
 \section{L\'imites te\'oricos de la performance de un algoritmo paralelo}
 
-Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado. Inicialmente, Amdahl evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo. Esto es conocido como $Ley de Amdahl$. Posteriormente, Gustafson re-evalu\'o la ley de Amdahl, considerando que un problema paralelo puede $agrandarse$ para mantener la performance a medida que se aumentan los procesadores. A continuaci\'on se mencionan ambos estudios.
+Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado. Inicialmente, Amdahl \cite{Amdahl} evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo. Esto es conocido como $Ley de Amdahl$. Posteriormente, Gustafson \cite{Gustafson88} re-evalu\'o la ley de Amdahl, considerando que un problema paralelo puede $agrandarse$ para mantener la performance a medida que se aumentan los procesadores. A continuaci\'on se mencionan ambos estudios.
 
-\subsection{Ley de Amdahl \cite{Amdahl}}
+\subsection{Ley de Amdahl}
 
 Al analizar cualquier algoritmo paralelo, se encontrar\'a que al menos una parte del mismo es inherentemente secuencial. Esto limita el speedup que se puede obtener por medio de la utilizaci\'on de una computadora paralela.
 Si la fracci\'on del problema que es inherentemente secuencial es f, entonces el m\'aximo speedup que se puede obtener en una computadora paralela es 1/f. Esto es, el tiempo de ejecuci\'on de la soluci\'on paralela ser\'a:
@@ -326,7 +325,7 @@ $S(n,p)<\frac{1}{f} y n \rightarrow \infty$
 
 De acuerdo con la Ley de Amdahl y a modo de ejemplo, resulta que si un problema es solo 5\% serial, el m\'aximo speedup que se puede obtener con una soluci\'on paralela es 20, independientemente de la cantidad de procesadores que se utilicen.
 
-\subsection{Ley de Gustafson \cite{Gustafson88}}
+\subsection{Ley de Gustafson}
 
 Gustafson, presenta un argumento para mostrar que la ley de Amdahl no es tan significativa como se pensaba con anterioridad, en limitar el speedup potencial de una soluci\'on paralela. Este argumento se basa en la observaci\'on de que una computadora paralela de mayor tamaño, permite ejecutar un problema de mayor tamaño tambi\'en, en un tiempo razonable. De esta forma, se propone mantener fijo el tiempo de ejecuci\'on, pero incrementar el tamaño del problema y la cantidad de procesadores de la computadora paralela. Es as\'i que, manteniendo constante el tiempo de ejecuci\'on, entonces el factor de speedup resultar\'a diferente al que define Amdahl y se denomina $factor de speedup escalado$.
 
@@ -1078,7 +1077,7 @@ Implementaciones utilizadas de MPI: LAM-MPI 7.0.4 y MPICH 1.2.7p1
 
 \pagebreak
 
-\bibliographystyle{plain}
+\bibliographystyle{unsrt}
 \bibliography{bibliografia}
 
 \nocite{Gropp94}
