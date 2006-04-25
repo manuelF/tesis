@@ -198,13 +198,14 @@ Sin embargo, existe la necesidad de mencionar que existen otras formas de resolu
 
 \section{\strut M\'etodos H\'ibridos QM/MM}
 
-Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un gran sistema. En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas en el sistema. Por razones de costo computacional y eficiencia, generalmente estos sistemas son tratados a nivel de mec\'anica molecular (MM)\cite{Leach96}.
+Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un gran sistema. En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas.
+Por razones de costo computacional y eficiencia, generalmente estos sistemas son tratados a nivel de mec\'anica molecular (MM)\cite{Leach96}.
 Sin embargo, el mayor problema que tiene la teor\'ia de MM es que no suele ser apropiada para describir procesos que incluyen generaci\'on o rompimiento de v\'inculos tales como las reacciones qu\'imicas.
 Para modelar correctamente este tipo de procesos deben utilizarse m\'etodos de mec\'anica cu\'antica (QM)\cite{Szabo89}.
 
 La regi\'on del espacio a lo largo de una reacci\'on en la cual ocurren cambios significativos en la estructura electr\'onica generalmente es muy peque\~na comparado con el sistema en su totalidad.
-Por lo tanto, lo que se busca es hacer uso de las herramientas de mec\'anica cu\'antica en una regi\'on limitada para modelar el problema, mientras que el resto del problema, para reducir su complejidad, es modelado mediante mec\'anica molecular (ver figura \ref{fig:Hibrido}).
-Cuando esto ocurre se tiene un h\'ibrido de las metodolog\'ias QM/MM\cite{MCGLPHD,Cramer}.
+Por lo tanto, lo que se busca es hacer uso de las herramientas de mec\'anica cu\'antica en una regi\'on limitada para modelar el problema, mientras que el resto es modelado mediante mec\'anica molecular (ver figura \ref{fig:Hibrido}) para reducir su complejidad.
+Cuando esto ocurre se tiene un h\'ibrido de las metodolog\'ias QM/MM\cite{Cramer,MCGLPHD}.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -215,44 +216,53 @@ Cuando esto ocurre se tiene un h\'ibrido de las metodolog\'ias QM/MM\cite{MCGLPH
 \label{fig:Hibrido}
 \end{figure}
 
-En este tipo de t\'ecnicas la base consiste en que el total de energ\'ia de interacci\'on de las part\'iculas es igual a la sumatoria de la energ\'ia de interacci\'on de todas las particulas de mec\'anica cu\'antica entre ellas, m\'as las de la part\'iculas cl\'asicas, m\'as las interacciones entre cada una de las pat\'iculas cu\'anticas con cada una de las cl\'asicas. Un problema importante que presenta esta t\'ecnica es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico. Si esto no ocurre el modelado es simple. Si en cambio se presenta esta situaci\'on la representaci\'on puede convertirse en algo intrincado.
+En este tipo de t\'ecnicas la base consiste en que el total de energ\'ia de interacci\'on de las part\'iculas es igual a la sumatoria de la energ\'ia de interacci\'on de todas las part\'iculas de mec\'anica cu\'antica entre ellas, m\'as las de la part\'iculas cl\'asicas, m\'as las interacciones entre cada una de las pat\'iculas cu\'anticas con cada una de las cl\'asicas.
+Un problema importante que presenta esta t\'ecnica es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico: si esto no ocurre el modelado es simple. Si, en cambio, se presenta esta situaci\'on la representaci\'on puede convertirse en algo intrincado.
+
+{\huge En el parrafo anterior estaría bueno poner una formulita que ejemplifique como esta compuesta la energia total del sistema. En tanto que para el segundo parrafo, estaria bueno que haya una figura que muestre los dos ejemplos, sino queda en el aire.}
 
 
-
-
-\pagebreak
+% \pagebreak
 \chapter{\strut Simulaci\'on num\'erica paralela \label{Simulacion}}
 
 \section{Medici\'on de performance de algoritmos paralelos}
 
-Al desarrollar sistemas paralelos, se tiene como objetivo no solo alcanzar la mayor performance posible, sino que la misma se mantenga en proporci\'on a medida que se agregan procesadores al c\'alculo. Para poder tener una noci\'on de la medida de performance de los algoritmos paralelos, se definen las m\'etricas de speedup, eficiencia, overhead y escalabilidad\cite{Pach96,Amdahl,Gustafson88}, que se explican a continuaci\'on.
+Al desarrollar programas de c\'alculo paralelo, se tiene como objetivo no solo alcanzar la mayor performance posible, sino que la misma se mantenga en proporci\'on a medida que se agregan procesadores al c\'alculo. Para poder tener una noci\'on de la medida de performance de los algoritmos paralelos, se definen las m\'etricas de speedup, eficiencia, overhead y escalabilidad\cite{Pach96,Amdahl,Gustafson88}, que se introducen a continuaci\'on.
 
 \subsection{Speedup}
 
 El Speedup de un programa paralelo, es la relaci\'on entre la versi\'on paralela de un algoritmo, para una cantidad dada de procesadores, y el tiempo de ejecuci\'on de la versi\'on serial del mismo algoritmo. Para poder calcularlo, necesitamos definir primero:
 
-$T1(n)$: Tiempo necesario para la ejecuci\'on de un programa serial
-$Tp(n,p)$: Tiempo necesario para la ejecuci\'on de la versi\'on paralela del mismo programa con p procesadores.
+\begin{itemize}
+\item $T_1(n)$: Tiempo necesario para la ejecuci\'on de un programa serial, $n$ corresponde a la entrada del programa. \\
+\item $T_\mathcal{P}(n,p)$: Tiempo necesario para la ejecuci\'on de la versi\'on paralela del mismo programa con $p$ procesadores.\\
+\end{itemize}
 
-Se define entonces como speedup de un programa paralelo corriendo en p procesadores a:
+
+Se define entonces como speedup de un programa paralelo corriendo en $p$ procesadores a:
 
 \begin{displaymath}
-S(n,p)=\frac{T1(n)}{Tp(n,p)}
+S(n,p)=\frac{T_1(n)}{T_\mathcal{P}(n,p)}
 \end{displaymath}
 
 
-Esta medida sirve para comparar el rendimiento del algoritmo paralelo con respecto al serial. Cuando S(n,p) = p, se dice que se cuenta con un programa de $speedup lineal$. El speedup lineal es el \'optimo desde el punto de vista de la paralelizaci\'on, puesto que indica una proporci\'on directa y sin desperdicios entre el tiempo de ejecuci\'on y la cantidad de procesadores que intervienen.  Es as\'i que  $0 < S(n,p) \leq p$. Cuanto mayor sea el speedup de un algoritmo paralelo, mejor ser\'a la performance del mismo en la ejecuci\'on con p procesadores.
+Esta medida sirve para comparar el rendimiento del algoritmo paralelo con respecto al serial. Cuando $S(n,p) = p$, se dice que se cuenta con un programa de \emph{speedup lineal}.
+
+El speedup lineal es el \'optimo desde el punto de vista de la paralelizaci\'on, puesto que indica una proporci\'on directa y sin desperdicios entre el tiempo de ejecuci\'on y la cantidad de procesadores que intervienen.
+Es as\'i que  $0 < S(n,p) \leq p$.
+Cuanto mayor sea el speedup de un algoritmo paralelo, mejor ser\'a la performance del mismo en la ejecuci\'on con p procesadores.
 
 \subsection{Eficiencia}
 
-La eficiencia de un algoritmo paralelo, como su nombre lo indica, expresa el aprovechamiento de los recursos de procesador, por parte de dicho algoritmo. Se define como:
+La eficiencia de un programa paralelo, como su nombre lo indica, expresa el aprovechamiento de los recursos de procesador, por parte de dicho programa. Se define como:
 
 \begin{displaymath}
-E(n,p)=\frac{S(n,p)}{p}=\frac{T1(n)}{p*Tp(n,p)}
+E(n,p)=\frac{S(n,p)}{p}=\frac{T_1(n)}{p*T_\mathcal{P}(n,p)}
 \end{displaymath}
 
-
-de donde se deduce que, para el caso \'optimo de speedup lineal E(n,p)=1 . Para el caso de la Eficiencia, las cotas son: 0 < E(n,p) < 1 . A medida que nuestro valor de eficiencia se acerque a 1, nuestro algoritmo tendr\'a mejor performance.
+de donde se deduce que, para el caso \'optimo de speedup lineal $E(n,p)=1$ .
+Para el caso de la eficiencia, las cotas son: $0 < E(n,p) < 1$.
+A medida que nuestro valor de eficiencia se acerque a 1, el programa tendr\'a mejor performance.
 
 \subsection{Overhead}
 
@@ -265,35 +275,44 @@ Hay muchos factores que influyen negativamente en los tiempos de ejecuci\'on de 
 \item   Partes inherentemente seriales del algoritmo (No siempre se puede paralelizar la totalidad del algoritmo)
 \end{itemize}
 
-Es por esto, que existe el concepto de overhead de un algoritmo paralelo. Antes de definirlo, necesitamos definir el concepto de $trabajo$ realizado por un algoritmo. En el caso de un algoritmo secuencial, El trabajo realizado por el mismo, es el tiempo que se necesita para su ejecuci\'on:
+Es por esto, que existe el concepto de \emph{overhead} de un algoritmo paralelo.
+Antes de definirlo, necesitamos definir el concepto de $trabajo$ realizado por un algoritmo.
+En el caso de un algoritmo serial, el trabajo realizado por el mismo, es simplemente el tiempo que se necesita para su ejecuci\'on:
 
-$W1(n)=T1(n)$
+\begin{displaymath}
+W_1(n)=T_1(n)
+\end{displaymath}
 
 Cuando se trata de un algoritmo paralelo, el trabajo realizado por el mismo es la suma del trabajo de cada uno de los procesadores:
 
 \begin{displaymath}
-Wp(n,p)=\sum_{i=1}^{p}W_{i}(n,p)
+W_\mathcal{P}(n,p)=\sum_{i=1}^{p}W_i(n,p)
 \end{displaymath}
 
-
-Puesto que los tiempos de espera en cada procesador forman parte de su trabajo, resulta que  Wi(n,p)=Tp(n,p) con lo cual:
+Donde $W_i(n,p)$ es el trabajo realizado por el programa ejecutado en el procesador $i$.
+Puesto que los tiempos de espera en cada procesador forman parte de su trabajo, resulta que  $W_i(n,p)=T_\mathcal{P}(n,p)$, es decir que cada uno de los procesos tarda el tiempo total en terminar (haciendo algo \'util o no).
+Con lo cual:
 
 \begin{displaymath}
-Wp(n,p)=\sum_{i=1}^{p}W_{i}(n,p)=\sum_{i=1}^{p}Tp_{i}(n,p)=p*W_{i}(n,p)
+W_\mathcal{P}(n,p)=\sum_{i=1}^{p}W_i(n,p)=\sum_{i=1}^{p}T_{\mathcal{P}_i}(n,p)=p * W_i(n,p)
 \end{displaymath}
 
+Con estas definiciones, decimos entonces que el overhead de un programa paralelo es el trabajo adicional que dicho programa realiza respecto a la soluci\'on serial equivalente:
 
+\begin{displaymath}
+T_\mathcal{O}(n,p) = W_\mathcal{P}(n,p) - W_1(n)=p * T_\mathcal{P}(n,p) - T_1(n)
+\end{displaymath}
 
-Con estas definiciones previas, decimos entonces que el overhead de un algoritmo paralelo es el trabajo adicional que dicho algoritmo realiza respecto a la soluci\'on serial equivalente:
-
-$T0(n,p)=Wp(n,p)-W1(n)=p*Tp(n,p)-T1(n)$
-
-El overhead, que est\'a presente en virtualmente todos los algoritmos paralelos, es el responsable de no poder lograr un $speedup lineal$. Al diseñar algoritmos paralelos, se trabaja para minimizar el overhead y poder lograr as\'i un aumento del speedup.
+El overhead, que est\'a presente en todos los algoritmos paralelos, es el responsable de no poder lograr un \emph{speedup lineal}.
+Al dise\~nar algoritmos paralelos, se trabaja para minimizar el overhead y poder lograr as\'i un aumento del speedup.
 
 
 \section{L\'imites te\'oricos de la performance de un algoritmo paralelo}
 
-Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado. Inicialmente, Amdahl \cite{Amdahl} evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo. Esto es conocido como $Ley de Amdahl$. Posteriormente, Gustafson \cite{Gustafson88} re-evalu\'o la ley de Amdahl, considerando que un problema paralelo puede $agrandarse$ para mantener la performance a medida que se aumentan los procesadores. A continuaci\'on se mencionan ambos estudios.
+Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado. Inicialmente, Amdahl \cite{Amdahl} evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo. Esto es conocido como \emph{Ley de Amdahl}.
+
+Posteriormente, Gustafson \cite{Gustafson88} re-evalu\'o la ley de Amdahl, considerando que un problema paralelo puede \emph{agrandarse} para mantener la performance a medida que se aumentan los procesadores.
+A continuaci\'on se mencionan ambos estudios.
 
 \subsection{Ley de Amdahl}
 
@@ -301,35 +320,39 @@ Al analizar cualquier algoritmo paralelo, se encontrar\'a que al menos una parte
 Si la fracci\'on del problema que es inherentemente secuencial es f, entonces el m\'aximo speedup que se puede obtener en una computadora paralela es 1/f. Esto es, el tiempo de ejecuci\'on de la soluci\'on paralela ser\'a:
 
 \begin{displaymath}
-Tp(n,p)=f*T1(n)+\frac{(1-f)T1(n)}{p}
+T_\mathcal{P}(n,p)=f * T_1(n)+\frac{(1-f)T_1(n)}{p}
 \end{displaymath}
-
 
 Y por lo tanto, el factor de speedup ser\'a:
 
 \begin{displaymath}
-S(n,p)=\frac{T1(n)}{Tp(n,p)}=\frac{T1(n)}{fT1(n)\frac{(1-f)T1(n)}{p}}=\frac{1}{\frac{f+(1-f)}{p}}=\frac{p}{1+(p-1)f}
+S(n,p)=\frac{T_1(n)}{T_\mathcal{P}(n,p)} = \frac{T_1(n)}{f * T_1(n) + \frac{(1-f) T_1(n)}{p}}= \frac{1}{\frac{p*f+(1-f)}{p}}=\frac{p}{1 + (p-1) f}
 \end{displaymath}
 
-
-Luego, a\'un contando con infinitos procesadores, el m\'aximo speedup que se puede obtener est\'a limitado por 1/f.
+Luego, a\'un contando con infinitos procesadores, el m\'aximo speedup que se puede obtener est\'a limitado por $1 / f$.
 
 \begin{displaymath}
-\lim_{n \to \infty} S(n,p)=\frac{1}{f}
+\lim_{p \to \infty} S(n,p)=\frac{1}{f}
 \end{displaymath}
 
+A su vez, la eficiencia de un programa paralelo se acercar\'a a cero a medida que se incorporen nuevos procesadores, puesto que
 
- A su vez, la eficiencia de un programa paralelo se acercar\'a a cero a medida que se incorporen nuevos procesadores, puesto que
-
-$S(n,p)<\frac{1}{f} y n \rightarrow \infty$
+\begin{displaymath}
+\lim_{p \to \infty} E(n,p) = \lim_{p \to \infty} \frac{S(n,p)}{p} = 0
+\end{displaymath}
 
 De acuerdo con la Ley de Amdahl y a modo de ejemplo, resulta que si un problema es solo 5\% serial, el m\'aximo speedup que se puede obtener con una soluci\'on paralela es 20, independientemente de la cantidad de procesadores que se utilicen.
 
 \subsection{Ley de Gustafson}
 
-Gustafson, presenta un argumento para mostrar que la ley de Amdahl no es tan significativa como se pensaba con anterioridad, en limitar el speedup potencial de una soluci\'on paralela. Este argumento se basa en la observaci\'on de que una computadora paralela de mayor tamaño, permite ejecutar un problema de mayor tamaño tambi\'en, en un tiempo razonable. De esta forma, se propone mantener fijo el tiempo de ejecuci\'on, pero incrementar el tamaño del problema y la cantidad de procesadores de la computadora paralela. Es as\'i que, manteniendo constante el tiempo de ejecuci\'on, entonces el factor de speedup resultar\'a diferente al que define Amdahl y se denomina $factor de speedup escalado$.
+Gustafson, presenta un argumento para mostrar que la ley de Amdahl no es tan significativa como se pensaba con anterioridad, en limitar el speedup potencial de una soluci\'on paralela.
+Este argumento se basa en la observaci\'on de que una computadora paralela de mayor tama\~no, permite ejecutar un problema de mayor tama\~no tambi\'en, en un tiempo razonable.
 
-La ley de Gustafson se expresa de la siguiente forma: Sea s la fracci\'on inherentemente serial de un algoritmo paralelo, y sea p la fracci\'on paralelizada. Si se fija de forma constante en s + p el tiempo de ejecuci\'on en un procesador, y para simplificar la explicaci\'on, se asume que s + p = 1, entonces, la ley de Amdahl establece que:
+De esta forma, se propone mantener fijo el tiempo de ejecuci\'on, pero incrementar el tama\~no del problema y la cantidad de procesadores de la computadora paralela.
+Es as\'i que, manteniendo constante el tiempo de ejecuci\'on, entonces el factor de speedup resultar\'a diferente al que define Amdahl y se denomina \emph{factor de speedup escalado}.
+
+La ley de Gustafson se expresa de la siguiente forma: Sea $s$ la fracci\'on inherentemente serial de un algoritmo paralelo, y sea $p$ la fracci\'on paralelizada.
+Si se fija de forma constante en $s + p$ el tiempo de ejecuci\'on en un procesador, y para simplificar la explicaci\'on, se asume que $s + p = 1$. entonces, la ley de Amdahl establece que:
 
 \begin{displaymath}
 S(n)=\frac{s+p}{s+p/n}=\frac{1}{s+(1-s)/n}
@@ -338,7 +361,10 @@ S(n)=\frac{s+p}{s+p/n}=\frac{1}{s+(1-s)/n}
 
 (Nota: En este caso, la cantidad de procesadores est\'a denotada por n).
 
-Para utilizar el factor de speedup escalado que define Gustafson, se considera constante el tiempo de ejecuci\'on en paralelo en lugar del tiempo de ejecuci\'on serial. Ahora s + p (la parte serial y paralela del programa, respectivamente) ser\'a el tiempo de ejecuci\'on en la computadora paralela y, nuevamente, para simplificar la explicaci\'on, se asume que s+p=1. Entonces, el tiempo que requiere la ejecuci\'on en una \'unica m\'aquina para resolver el mismo problema es s+np, puesto que la parte paralela debe ejecutarse en forma secuencial. El speedup escalado ser\'a:
+Para utilizar el factor de speedup escalado que define Gustafson, se considera constante el tiempo de ejecuci\'on en paralelo en lugar del tiempo de ejecuci\'on serial. Ahora $s + p$ (la parte serial y paralela del programa, respectivamente) ser\'a el tiempo de ejecuci\'on en la computadora paralela y, nuevamente, para simplificar la explicaci\'on, se asume que $s+p=1$.
+
+Entonces, el tiempo que requiere la ejecuci\'on en una \'unica m\'aquina para resolver el mismo problema es $s+n p$, puesto que la parte paralela debe ejecutarse en forma secuencial.
+El speedup escalado ser\'a:
 
 \begin{displaymath}
 S_{s}(n)=\frac{s+np}{s+p}=s+np=s+n(1-s)=n+(1-n)s
@@ -356,38 +382,44 @@ La taxonom\'ia de Flynn define las siguientes categor\'ias
 \begin{itemize}
 \item Single instruction/single data stream (SISD) - Computadora secuencial.
 \item Multiple instruction/single data stream (MISD) - Inusual debido a que no tiene mucho sentido pues generalmente m\'ultiples instrucciones requieren de m\'ultiples datos para ser efectivas. Sin embargo, esta arquitectura se utiliza en algunas m\'aquinas en las que se necesita paralelismo redundante. 
-\item Single instruction/multiple data streams (SIMD) - Por ejemplo un procesador array.
-\item Multiple instruction/multiple data streams (MIMD) - multiples procesadores aut\'oonomos ejecutando simultaneamente diferentes instrucciones sobre diferentes datos.
+\item Single instruction/multiple data streams (SIMD) - Por ejemplo un \emph{array processor}.
+\item Multiple instruction/multiple data streams (MIMD) - m\'ultiples procesadores aut\'onomos ejecutando simult\'aneamente diferentes instrucciones sobre diferentes datos.
 \end{itemize}
 
 
 \subsection{Message passing (Pasaje de mensajes)\label{message passing}}
 
-\textit{Message-passing} consiste en un grupo de procesos que se comunican entre si por medio del intercambio de mensajes para realizar una tarea determinada. En esta implementaci\'on hemos utilizado la biblioteca standard MPI\ (Message Passing Interface) sobre una arquitectura Beowulf.
+\textit{Message-passing} consiste en un grupo de procesos que se comunican entre s\'i por medio del intercambio de mensajes para realizar una tarea determinada. En esta implementaci\'on hemos utilizado la biblioteca standard MPI\ (Message Passing Interface) \cite{Pach96, Gropp94} sobre una arquitectura Beowulf \cite{Beowulf}.
 
-Un cluster Beowulf es un conjunto de computadoras personales, no necesariamente homog\'eneas, interconectadas en red que comparten sus recursos de procesamiento y almacenamiento y pueden funcionar cooperativamente y en forma sincronizada para la ejecuci\'on de algoritmos paralelos diseñados especialmente. Estas computadoras, en comparaci\'on con las supercomputadoras de alta performance, tienen un costo mucho m\'as accesible, ampliando las posibilidades de equipamiento de los investigadores e instituciones educativas. La posibilidad de coexistencia de diferentes modelos de procesadores y hardware, simplifican la escalabilidad de un cluster Beowulf.
+Un cluster Beowulf es un conjunto de computadoras personales, no necesariamente homog\'eneas, interconectadas en red que comparten sus recursos de procesamiento y almacenamiento y pueden funcionar cooperativamente y en forma sincronizada para la ejecuci\'on de algoritmos paralelos dise\~nados especialmente.
+Estas computadoras, en comparaci\'on con las supercomputadoras de alta performance, tienen un costo mucho m\'as accesible, ampliando las posibilidades de equipamiento de los investigadores e instituciones educativas.
+La posibilidad de coexistencia de diferentes modelos de procesadores y hardware, simplifican la escalabilidad de un cluster Beowulf.
 
-En un cluster Beowulf, cada computadora o procesador se denomina $nodo$. De esta forma, se puede abstraer la arquitectura del mismo, a\'un en los casos de contar tanto con computadoras monoprocesador como multiprocesador en el mismo cluster. Aquí se asume que en cada procesador f\'isico se corre un solo proceso.
+En un cluster Beowulf, cada computadora o procesador se denomina $nodo$.
+De esta forma, se puede abstraer la arquitectura del mismo, a\'un en los casos de contar tanto con computadoras monoprocesador como multiprocesador en el mismo cluster.
+Aqu\'i se asume que en cada procesador f\'isico se corre un solo proceso.
 
-Existen diversas aplicaciones de administración de procesos y aplicaciones en clusters Beowulf, muchas de ellas gratuitas y de c\'odigo abierto. Las m\'as importantes que se utilizan en el laboratorio de Sistemas Complejos son:
+Existen diversas aplicaciones de administraci\'on de procesos y aplicaciones en clusters Beowulf, muchas de ellas gratuitas y de c\'odigo abierto. Las m\'as importantes que se utilizan en el Laboratorio de Sistemas Complejos\cite{LSC} son:
 
 \begin{itemize}
-\item   PBS: Administrador de recursos de un cluster. Se utiliza para establecer pol\'iticas sobre la asignación y utilizaci\'on de los recursos (principalmente procesadores) de un cluster. Provee colas de procesos, herramientas para encolar, visualizar y desencolar procesos, herramientas de monitoreo, etc.
-\item   MAUI Scheduler: Encolador avanzado de procesos. Se encarga de administrar la cola de procesos, para permitir la aplicaci\'on de prioridades, límites de ejecuci\'on, permisos, etc.
+\item   PBS: Administrador de recursos de un cluster. Se utiliza para establecer pol\'iticas sobre la asignación y utilizaci\'on de los recursos (principalmente procesadores) de un cluster. Provee colas de procesos, herramientas para encolar, visualizar y desencolar procesos, herramientas de monitoreo, etc.{\huge poner cita a donde conseguirlo}
+\item   MAUI Scheduler: Encolador avanzado de procesos. Se encarga de administrar la cola de procesos, para permitir la aplicaci\'on de prioridades, límites de ejecuci\'on, permisos, etc. {\huge poner cita a donde conseguirlo}
 \end{itemize}
 
 
-\pagebreak
+% \pagebreak
 \chapter{Metodolog\'ia \label{Metodologia}}
 
 El desarrollo de un programa paralelo tiene como objetivo no s\'olo optimizar una \'unica m\'etrica, como puede ser el tiempo de ejecuci\'on total.
-Un buen dise\~no debe, adem\'as, optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenimiento de la soluci\'on, entre otros.
+Un buen dise\~no debe, adem\'as, optimizar una funci\'on dependiente del problema a resolver donde se tienen en cuenta el tiempo de ejecuci\'on, los requerimientos de memoria, los costos de implementaci\'on y mantenibilidad de la soluci\'on, entre otros.
 Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, performance, portabilidad y otros factores.
 
 Partiendo de un programa serial pre existente \cite{lebrero2002} y para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial.
-Para ello realizamos un profiling utilizando diversas herramientas provistas por el sistema operativo Linux y por el compilador $g77$ utilizado.
+Para ello se realiz\'o un profiling utilizando diversas herramientas provistas por el sistema operativo Linux y por el compilador $g77$ utilizado (son descriptas m\'as adelante).
 
-En la versi\'on serial se utiliz\'o para realizar los estudios un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}. Esta t\'ecnica consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
+{\huge toda esta parte tiene que estar en la introduccion!!!!!!!!!!!!!!!!!! Si necesitas, podes repetir la formula o hacerle referencia}
+En la versi\'on serial se utiliz\'o un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}.
+Esta t\'ecnica consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
 
 Este m\'etodo propone que es posible escribir la energ\'ia como suma de contribuciones
 
@@ -439,7 +471,7 @@ Por ejemplo:
 
 a la terminaci\'on del programa se obtiene por ejemplo:
 
-{\bf demo\% 451.48user 0.53system 7:49.20elapsed 96\%CPU (0avgtext+0avgdata 0maxresident)k 0inputs+0outputs (1109major+3084minor)pagefaults 0swaps}
+{\bf demo\% 451.48 user 0.53 system 7:49.20 elapsed 96\%CPU (0 avgtext + 0 avgdata 0 maxresident) k 0inputs + 0 outputs (1109 major + 3084 minor) pagefaults 0 swaps}
 
 
 Donde la interpretaci\'on es la siguiente:
@@ -457,15 +489,16 @@ Donde la interpretaci\'on es la siguiente:
 
 El comando {\it gprof} provee un an\'alisis postmortem de tiempos a nivel de subrutinas, incluyendo cu\'antas veces una subrutina fue llamada, por qui\'en fue llamada, y cu\'anto tiempo fue insumido por cada subrutina y las llamadas por \'esta .
 
-Para activar la opci\'on de este tipo de profiling se debe compilar el programa con los flags {\it -gp}.
+Para activar la opci\'on de este tipo de profiling se debe compilar el programa con los flags \texttt{-gp}.
 
-{\bf demo\% f77 -o miprograma -pg miprograma.f ...etc }
+\texttt{demo\% f77 -o miprograma -pg miprograma.f }...etc
 
-Luego, se ejecuta el programa normalmente. Esta ejecuci\'on va a generar autom\'aticamente un archivo {\it gmon.out} con todos los datos de profiling.
+Luego, se ejecuta el programa normalmente.
+Esta ejecuci\'on va a generar autom\'aticamente un archivo \texttt{gmon.out} con todos los datos de profiling.
 
 Luego se ejecuta:
 
-{\bf demo\% gprof miprograma}
+\texttt{demo\% gprof miprograma}
 
 y se obtiene como resultado un reporte con el an\'alisis completo.
 
@@ -614,7 +647,7 @@ Se plantear\'an en esta secci\'on dos soluciones ampliamente conocidas para solu
 
 \subsection{Ampliaci\'on de la precisi\'on}
 
-Para solucionar los problemas de precisi\'on en punto flotante inicialmente se opt\'o por duplicar el tamaño de las variables que presentaban este inconveniente en la implementaci\'on.
+Para solucionar los problemas de precisi\'on en punto flotante inicialmente se opt\'o por duplicar el tama\~no de las variables que presentaban este inconveniente en la implementaci\'on.
 Para realizar esto se opt\'o por cambiar de compilador ya que los compiladores de Fortran 77 no aceptan n\'umeros de punto flotante cuadruples (llamados long double o Real*16 seg\'un el lenguaje utilizado). Por esto es que se migr\'o todo el programa de manera de que pueda ser compilado mediante el Intel Fortran Compiler para Linux.
 Esta migraci\'on acarre\'o los inconvenientes que cualquier traspaso de un lenguaje a otro puede acarrear, debido a que los chequeos realizados por los compiladores modernos suelen ser m\'as exigentes que los antiguos.
 Luego de sortear los inconvenientes de migraci\'on surgi\'o la necesidad de obtener y utilizar una librer\'ia de Message Passing que permita el env\'io y recepci\'on de datos de tipo Real*16.
