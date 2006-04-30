@@ -707,15 +707,21 @@ Si una representaci\'on o c\'alculo con d\'igitos finitos introduce un error, \'
 
 \section{Resoluci\'ones a los errores de punto flotante en la implementaci\'on}
 
-Se plantear\'an en esta secci\'on dos soluciones ampliamente conocidas para solucionar el tipo de problema presentado. Luego en la secci\'on de resultados y discusi\'on se explicar\'a porque la primera soluci\'on presentada no result\'o satisfactoria.
+En esta secci\'on se plantean dos soluciones ampliamente conocidas en la literatura para solucionar el tipo de problema presentado anteriormente.
+Luego en la secci\'on \ref{ResultadosDiscucion} se explicar\'a porqu\'e la primera soluci\'on presentada no result\'o satisfactoria y se avanz\'o sobre la segunda.
 
 \subsection{Ampliaci\'on de la precisi\'on}
 
 Para solucionar los problemas de precisi\'on en punto flotante inicialmente se opt\'o por duplicar el tama\~no de las variables que presentaban este inconveniente en la implementaci\'on.
-Para realizar esto se opt\'o por cambiar de compilador ya que los compiladores de Fortran 77 no aceptan n\'umeros de punto flotante cuadruples (llamados long double o Real*16 seg\'un el lenguaje utilizado). Por esto es que se migr\'o todo el programa de manera de que pueda ser compilado mediante el Intel Fortran Compiler para Linux.
-Esta migraci\'on acarre\'o los inconvenientes que cualquier traspaso de un lenguaje a otro puede acarrear, debido a que los chequeos realizados por los compiladores modernos suelen ser m\'as exigentes que los antiguos.
-Luego de sortear los inconvenientes de migraci\'on surgi\'o la necesidad de obtener y utilizar una librer\'ia de Message Passing que permita el env\'io y recepci\'on de datos de tipo Real*16.
-Ninguna librer\'ia de las investigadas (Intel, LAM, MPICH) ten\'ia implementado este tipo de datos para Fortran. Sin embargo, la librer\'ia MPICH ten\'ia implementado el tipo long double para el lenguaje de programaci\'on C/C++.
+
+Para realizar esto se opt\'o por cambiar de compilador ya que los compiladores de Fortran 77 basados en \texttt{gcc}\cite{gcc} no aceptan n\'umeros de punto flotante cuadruples (llamados \texttt{long double} o \texttt{Real*16}).
+Por esto es que se migr\'o todo el programa de manera de que pueda ser compilado mediante el Intel Fortran Compiler para Linux\cite{ifc}.
+Esta migraci\'on acarre\'o los inconvenientes que cualquier traspaso de un lenguaje a otro puede acarrear, especialmente a que los este compilador realiza chequeos mucho m\'as estrictos que los realizados por compilador usado anteriormente.
+
+Luego de sortear los inconvenientes de migraci\'on surgi\'o la necesidad de obtener y utilizar una librer\'ia de Message Passing que permita el env\'io y recepci\'on de datos de tipo \texttt{Real*16}.
+Ninguna librer\'ia de las revisadas(\texttt{Intel}\cite{intelMPI}, \texttt{LAM}, \texttt{MPICH}) ten\'ia implementado este tipo de datos para \texttt{Fortran}.
+Sin embargo, la librer\'ia \texttt{MPICH} ten\'ia implementado el tipo \texttt{long double} para \texttt{C/C++}.
+
 El inconveniente surgido es que en las m\'aquinas IAS-32 y AMD comunes ese tipo de datos es de 80 bits y no de 128 como en realidad es el tipo REAL*16.
 Finalmente, se opt\'o por utilizar el tipo correspondiente a long double de MPICH coriendolo en una m\'aquina SMP Xeon Dual, Papita, la cual fue cedida por Intel Argentina, AMD Opteron e Itanium ya que en las mismas este tipo de dato y el Real*16 son equivalentes (128 bits).
 Se realizaron diversas pruebas para corroborar que luego de esta soluci\'on al problema de punto flotante la diferencia entre los resultados del programa serial y el paralelo no eran significativos.
@@ -793,8 +799,7 @@ Esta nueva soluci\'on puede observarse en la figura \ref{fig:EjecucionParalela2}
 Finalmente se realizaron diversas corridas para corroborar el buen funcionamiento de esta implementaci\'on y se obtuvieron los resultados que se ver\'an en la proxima secci\'on, Resultados y Discusi\'on.
 
 
-\pagebreak
-\chapter{Resultados y Discusi\'on}
+\chapter{Resultados y Discusi\'on} \label{ResultadosDiscucion}
 
 \textbf{La entrada de 7 \'atomos es un peroxinitrito (OONO) m\'as un di\'oxido de carbono (CO2) cu\'anticos m\'as 498 mol\'eculas de agua}
 
