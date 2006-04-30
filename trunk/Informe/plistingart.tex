@@ -141,7 +141,7 @@ Como se menciona anteriormente, la implementaci\'on m\'as com\'un de la DFT es m
 
 DFT se ha convertido en un m\'etodo muy popular desde la d\'ecada del 70 para c\'alculos de estado s\'olido debido a su relaci\'on de costo-calidad sobre otros m\'etodos de resolver el problema $n-body$ en mec\'anica cu\'antica. Sin embargo no fue considerado suficientemente preciso en qu\'imica cu\'antica hasta la d\'ecada del 90 cuando se refinaron las aproximaciones de los mapeos para mejorar el modelado de las interacciones.
 
-DFT es actualmente el m\'etodo m\'as ampliamente utilizado para estructuras electr\'onicas. A pesar de las mejoras que ha ido sufriendo todav\'ia existen dificultades para describir adecuadamente algunas interacciones intermoleculares.
+DFT es actualmente el m\'etodo m\'as ampliamente utilizado para estructuras electr\'onicas \cite{Estrin,Perdew86,Becke93}. A pesar de las mejoras que ha ido sufriendo todav\'ia existen dificultades para describir adecuadamente algunas interacciones intermoleculares.
 
 
 \subsection{El modelo Thomas-Fermi}
@@ -199,9 +199,9 @@ Sin embargo, existe la necesidad de mencionar que existen otras formas de resolu
 \section{\strut M\'etodos H\'ibridos QM/MM}
 
 Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un gran sistema. En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas.
-Por razones de costo computacional y eficiencia, generalmente estos sistemas son tratados a nivel de mec\'anica molecular (MM)\cite{Leach96}.
+Por razones de costo computacional y eficiencia, generalmente estos sistemas son tratados a nivel de mec\'anica molecular (MM)\cite{Leach96,VanDerSpoel98,VanMaaren2001}.
 Sin embargo, el mayor problema que tiene la teor\'ia de MM es que no suele ser apropiada para describir procesos que incluyen generaci\'on o rompimiento de v\'inculos tales como las reacciones qu\'imicas.
-Para modelar correctamente este tipo de procesos deben utilizarse m\'etodos de mec\'anica cu\'antica (QM)\cite{Szabo89}.
+Para modelar correctamente este tipo de procesos deben utilizarse m\'etodos de mec\'anica cu\'antica (QM)\cite{Szabo89,Mahoney2001}.
 
 La regi\'on del espacio a lo largo de una reacci\'on en la cual ocurren cambios significativos en la estructura electr\'onica generalmente es muy peque\~na comparado con el sistema en su totalidad.
 Por lo tanto, lo que se busca es hacer uso de las herramientas de mec\'anica cu\'antica en una regi\'on limitada para modelar el problema, mientras que el resto es modelado mediante mec\'anica molecular (ver figura \ref{fig:Hibrido}) para reducir su complejidad.
@@ -212,14 +212,25 @@ Cuando esto ocurre se tiene un h\'ibrido de las metodolog\'ias QM/MM\cite{Cramer
 \includegraphics[keepaspectratio, width=10cm]{Hibrido}
 \end{center}
 \caption[Regiones de un sistema en las cuales se deben aplicar distintas t\'ecnicas.]{\small
-{En sistemas grandes, la generaci\'on y rompimiento de v\'inculos puede lograrse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo, utilizando mec\'anica molecular para representar el resto.}}
+{En sistemas grandes, la generaci\'on y rompimiento de v\'inculos puede lograrse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo (Quantum Mechanics, QM), utilizando mec\'anica molecular (Molecular Mechanics, MM) para representar el resto.}}
 \label{fig:Hibrido}
 \end{figure}
 
-En este tipo de t\'ecnicas la base consiste en que el total de energ\'ia de interacci\'on de las part\'iculas es igual a la sumatoria de la energ\'ia de interacci\'on de todas las part\'iculas de mec\'anica cu\'antica entre ellas, m\'as las de la part\'iculas cl\'asicas, m\'as las interacciones entre cada una de las pat\'iculas cu\'anticas con cada una de las cl\'asicas.
+En este tipo de t\'ecnicas la base consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). En la versi\'on serial del programa modificado en esta t\'esis se utiliz\'o un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}. Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
+
+Este m\'etodo propone que es posible escribir la energ\'ia como suma de contribuciones
+
+\begin{displaymath}
+E[{R_{i}},{\tau _{a} }] = E_{QM} + E_{QM-MM} + E_{MM}
+\end{displaymath}
+
+Donde $E_{QM}$ denota la energ\'ia del subsistema cu\'antico, $E_{MM}$ la del subsistema cl\'asico y $E_{QM-MM}$ es la energ\'ia introducida por la interacci\'on de ambos subsistemas. $R_{i}$ y $\tau _{a}$ son las coordenadas de los n\'ucleos cl\'asicos y cu\'anticos respectivamente.
+
 Un problema importante que presenta esta t\'ecnica es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico: si esto no ocurre el modelado es simple. Si, en cambio, se presenta esta situaci\'on la representaci\'on puede convertirse en algo intrincado.
 
-{\huge En el parrafo anterior estaría bueno poner una formulita que ejemplifique como esta compuesta la energia total del sistema. En tanto que para el segundo parrafo, estaria bueno que haya una figura que muestre los dos ejemplos, sino queda en el aire.}
+{\huge En tanto que para el segundo parrafo, estaria bueno que haya una figura que muestre los dos ejemplos, sino queda en el aire.}
+
+Mas informaci\'on sobre diversas simulaciones realizadas utilizando m\'etodos QM/MM puede encontrarse en \cite{Kiyohara98,Kusalik94,Svischev96,Yu2004,Stern2001}
 
 
 % \pagebreak
@@ -402,8 +413,8 @@ Aqu\'i se asume que en cada procesador f\'isico se corre un solo proceso.
 Existen diversas aplicaciones de administraci\'on de procesos y aplicaciones en clusters Beowulf, muchas de ellas gratuitas y de c\'odigo abierto. Las m\'as importantes que se utilizan en el Laboratorio de Sistemas Complejos\cite{LSC} son:
 
 \begin{itemize}
-\item   PBS: Administrador de recursos de un cluster. Se utiliza para establecer pol\'iticas sobre la asignación y utilizaci\'on de los recursos (principalmente procesadores) de un cluster. Provee colas de procesos, herramientas para encolar, visualizar y desencolar procesos, herramientas de monitoreo, etc.{\huge poner cita a donde conseguirlo}
-\item   MAUI Scheduler: Encolador avanzado de procesos. Se encarga de administrar la cola de procesos, para permitir la aplicaci\'on de prioridades, límites de ejecuci\'on, permisos, etc. {\huge poner cita a donde conseguirlo}
+\item   PBS: Administrador de recursos de un cluster. Se utiliza para establecer pol\'iticas sobre la asignación y utilizaci\'on de los recursos (principalmente procesadores) de un cluster. Provee colas de procesos, herramientas para encolar, visualizar y desencolar procesos, herramientas de monitoreo, etc.\cite{PBS}
+\item   MAUI Scheduler: Encolador avanzado de procesos. Se encarga de administrar la cola de procesos, para permitir la aplicaci\'on de prioridades, límites de ejecuci\'on, permisos, etc. \cite{MAUI}
 \end{itemize}
 
 
@@ -417,17 +428,16 @@ Estas optimizaciones en el dise\~no conllevan una tensi\'on entre simplicidad, p
 Partiendo de un programa serial pre existente \cite{lebrero2002} y para poder decidir c\'omo encarar estas optimizaciones, se debi\'o realizar un estudio de la complejidad y del comportamiento del programa serial.
 Para ello se realiz\'o un profiling utilizando diversas herramientas provistas por el sistema operativo Linux y por el compilador $g77$ utilizado (son descriptas m\'as adelante).
 
-{\huge toda esta parte tiene que estar en la introduccion!!!!!!!!!!!!!!!!!! Si necesitas, podes repetir la formula o hacerle referencia}
-En la versi\'on serial se utiliz\'o un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}.
-Esta t\'ecnica consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
+Como ya fue mencionado, en la versi\'on serial se utiliz\'o un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}.
+Mediante la combinaci\'on de m\'etodos cu\'anticos y cl\'asicos es posible el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
 
-Este m\'etodo propone que es posible escribir la energ\'ia como suma de contribuciones
+Sepuede observar en el cap\'itulo \ref{Introduccion} que el m\'etodo QM/MM describe la energ\'ia como suma de contribuciones
 
 \begin{displaymath}
 E[{R_{i}},{\tau _{a} }] = E_{QM} + E_{QM-MM} + E_{MM}
 \end{displaymath}
 
-Donde $E_{QM}$ denota la energ\'ia del subsistema cu\'antico, $E_{MM}$ la del subsistema cl\'asico y $E_{QM-MM}$ es la energ\'ia introducida por la interacci\'on de ambos subsistemas. $R_{i}$ y $\tau _{a}$ son las coordenadas de los n\'ucleos cl\'asicos y cu\'anticos respectivamente. Ver cap\'itulo \ref{Introduccion}.
+Esta f\'ormula indica que el total de enrg\'ia del sistema es equivalente a la suma de energ\'ia del subsistema cu\'antico ($E_{QM}$), la del subsistema cl\'asico ($E_{MM}$)  y la energ\'ia introducida por la interacci\'on de ambos subsistemas ($E_{QM-MM}$).
 
 La energ\'ia correspondiente al subsistema cu\'antico puede calcularse con cualquier m\'etodo de estructura electr\'onica. De la misma manera cualquier campo de fuerzas cl\'asico puede aplicarse al subsistema correspondiente.
 
@@ -1086,7 +1096,7 @@ Los primeros, como indica su nombre, se han desarrollado a partir de la formulac
 \section{Hardware}
 Papita: Intel SMP Xeon Dual, cedida gentilmente por Intel Argentina.
 
-Rocky: 4 nodos AMD Opteron duales conectados por una red Gigabit Ehernet.
+FIU-PG (Florida): 17 Intel SMP Xeon Dual HT 2.6GHz, 1.96Gb RAM
 
 \section{Software}
 
@@ -1114,28 +1124,14 @@ Implementaciones utilizadas de MPI: LAM-MPI 7.0.4 y MPICH 1.2.7p1
 \bibliographystyle{unsrt}
 \bibliography{bibliografia}
 
-\nocite{Gropp94}
 \nocite{Newman}
 \nocite{Probstein}
 \nocite{Szabo99}
-\nocite{Estrin96}
 \nocite{Perdew96}
 \nocite{Lee88}
-\nocite{Perdew86}
-\nocite{Becke93}
-\nocite{Kiyohara98}
-\nocite{VanDerSpoel98}
-\nocite{Mahoney2001}
-\nocite{Kusalik94}
 \nocite{Baez94}
-\nocite{Svischev96}
-\nocite{VanMaaren2001}
-\nocite{Yu2004}
-\nocite{Stern2001}
 \nocite{Jarzinski1997}
 \nocite{Liphardt2002}
-\nocite{Waterland2000}
-\nocite{Godbout92}
 \nocite{Koppenol93}
 \nocite{Squadrito95}
 \nocite{Keith69}
@@ -1143,7 +1139,6 @@ Implementaciones utilizadas de MPI: LAM-MPI 7.0.4 y MPICH 1.2.7p1
 \nocite{Bonini99}
 \nocite{Greengard88}
 \nocite{Lambert76}
-\nocite{LSC}
 \nocite{Wiki}
 
 \end{document}
