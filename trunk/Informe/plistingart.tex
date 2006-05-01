@@ -229,6 +229,26 @@ E[{R_{i}},{\tau _{a} }] = E_{QM} + E_{QM-MM} + E_{MM}
 
 Donde $E_{QM}$ denota la energ\'ia del subsistema cu\'antico, $E_{MM}$ la del subsistema cl\'asico y $E_{QM-MM}$ es la energ\'ia introducida por la interacci\'on de ambos subsistemas. $R_{i}$ y $\tau _{a}$ son las coordenadas de los n\'ucleos cl\'asicos y cu\'anticos respectivamente.
 
+La energ\'ia correspondiente al subsistema cu\'antico puede calcularse con cualquier m\'etodo de estructura electr\'onica. De la misma manera cualquier campo de fuerzas cl\'asico puede aplicarse al subsistema correspondiente.
+
+El esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT) por su buena relaci\'on costo-calidad, en la cual la variable fundamental es la densidad electr\'onica.
+Esta variable, $\rho$, se expande con un conjunto de funciones base.
+
+\begin{displaymath}
+\rho = \sum_{i=1}^N \mid X_i^{KS} \mid^{2}
+\end{displaymath}
+
+{\Huge Tenes que poner que significa cada uno de las variables que introducis. Una formula donde  no decis que respresenta cada termino, no dice nada }
+
+Se puede escribir la energ\'ia total como:
+
+\begin{displaymath}
+E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int \frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
+\end{displaymath}
+
+{\Huge Idem arriba. Podes ponerle un label a la ecuacion y hacerle referencia aqui. Si queres dejar aca la parte del costo de calcularlo, me parece razonable, pero el resto tiene que estar presentado arriba.}
+
+
 Un problema importante que presenta esta t\'ecnica es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico: si esto no ocurre el modelado es simple. Si, en cambio, se presenta esta situaci\'on la representaci\'on puede convertirse en algo intrincado.
 
 {\huge En tanto que para el segundo parrafo, estaria bueno que haya una figura que muestre los dos ejemplos, sino queda en el aire.}
@@ -436,7 +456,7 @@ Para ello se realiz\'o un profiling utilizando diversas herramientas provistas p
 Como ya fue mencionado, en la versi\'on serial se utiliz\'o un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}.
 Mediante la combinaci\'on de m\'etodos cu\'anticos y cl\'asicos es posible el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
 
-Sepuede observar en el cap\'itulo \ref{Introduccion} que el m\'etodo QM/MM describe la energ\'ia como suma de contribuciones
+Se puede observar en el cap\'itulo \ref{Introduccion} que el m\'etodo QM/MM describe la energ\'ia como suma de contribuciones
 
 \begin{displaymath}
 E[{R_{i}},{\tau _{a} }] = E_{QM} + E_{QM-MM} + E_{MM}
@@ -497,15 +517,15 @@ a la terminaci\'on del programa se obtiene por ejemplo:
 
 
 Donde la interpretaci\'on es la siguiente:
-{\Huge Esto te parece una interpretacion? A mi me parece una copia de lo que dice arriba. Si vas a poner esto, explica que significa cada uno de los items que reporta, para copiar esta el parrafo de arriba con el resultado}
+
 \begin{itemize}
-\item {\it User}: 451.48 segundos de c\'odigo de usuario
-\item {\it System}: 0.53 segundos de c\'odigo de sistema
-\item {\it Wallclock}: 7:49.20 minutos para completar el procesamiento completo
-\item {\it Recursos}: 96\% de uso de CPU
-\item {\it Memoria}: (0 avgtext + 0 avgdata 0 maxresident)k
+\item {\it User}: 451.48 segundos de CPU ejecutando c\'odigo en modo de usuario, no necesita permisos especiales para lo que debe realizar.
+\item {\it System}: 0.53 segundos de CPU ejecutando c\'odigo en modo de sistema, (en modo de kernel). Ejecuci\'on de instrucciones de proceso.
+\item {\it Wallclock}: 7:49.20 minutos para completar el procesamiento completo.
+\item {\it Recursos}: 96\% de consumo de CPU en la corrida.
+\item {\it Memoria}: (0 avgtext + 0 avgdata 0 maxresident)k. Promedio de memoria total utilizada en el proceos dividida en datos, stack y texto.
 \item {\it I/O}: 0 lecturas, 0 escrituras
-\item {\it Paginaci\'on}: (1109 major + 3084 minor)pagefaults, 0 swaps
+\item {\it Paginaci\'on}: (1109 major + 3084 minor)pagefaults, 0 swaps. N\'umero de p\'aginas no encontradas durante la ejecuci\'on del proceso. \'Estas faltas ocurren cuando la p\'agina requerida ya no se encuentra en memoria principal (major) o cuando las p\'aginas encontradas no son v\'alidas (minor). El swap se refiere a la cantidad de veces que el proceso ha sido quitado de memoria principal.
 \end{itemize}
 
 \item  Comando \texttt{gprof}
@@ -584,9 +604,7 @@ En etapas posteriores se fueron eliminando las declaraciones impl\'icitas de var
 La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral.
 
 Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correpondiente sus c\'alculos en forma local.
-Finalmente, como es necesario para las operaciones subsiguientes contar con el total de los datos, se realiza la sincronizaci\'on con todos los procesos.
-
-{\Huge Se sincronizan todos los procesos contra todos, no? Si es asi ponelo.}
+Finalmente, como es necesario para las operaciones subsiguientes contar con el total de los datos en cada uno de los procesos, se realiza la sincronizaci\'on de cada uno de los procesos contra todos los restantes de forma de que cada uno tenga la misma informaci\'on que los dem\'as.
 
 Como se mencion\'o con anterioridad al realizar el profiling se observ\'o que entre un 65\% y 75\% del tiempo era consumido por las rutinas de tipo \textsf{densg} que son las encargadas de calcular los gradientes necesarios para obtener el valor en cada punto de la grilla de trabajo.
 
