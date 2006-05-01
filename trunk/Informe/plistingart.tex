@@ -312,7 +312,7 @@ Hay muchos factores que influyen negativamente en los tiempos de ejecuci\'on de 
 \end{itemize}
 
 Es por esto, que existe el concepto de \emph{overhead} de un algoritmo paralelo.
-Antes de definirlo, necesitamos definir el concepto de $trabajo$ realizado por un algoritmo.
+Antes de definirlo, necesitamos definir el concepto de \emph{trabajo} realizado por un algoritmo.
 En el caso de un algoritmo serial, el trabajo realizado por el mismo, es simplemente el tiempo que se necesita para su ejecuci\'on:
 
 \begin{displaymath}
@@ -345,7 +345,9 @@ Al dise\~nar algoritmos paralelos, se trabaja para minimizar el overhead y poder
 
 \section{L\'imites te\'oricos de la performance de un algoritmo paralelo}
 
-Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado. Inicialmente, Amdahl \cite{Amdahl} evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo. Esto es conocido como \emph{Ley de Amdahl}.
+Si bien la paralelizaci\'on de un algoritmo provee un aumento de la performance con respecto al algoritmo serial, este aumento no es necesariamente ilimitado.
+Inicialmente, Amdahl \cite{Amdahl} evalu\'o que la m\'axima eficiencia que un algoritmo paralelo puede lograr, con respecto a su soluci\'on serial, est\'a sujeta a la proporci\'on paralelizable del algoritmo serial y no depende de la cantidad de procesos que intervengan en el c\'alculo.
+Esto es conocido como \emph{Ley de Amdahl}.
 
 Posteriormente, Gustafson \cite{Gustafson88} re-evalu\'o la ley de Amdahl, considerando que un problema paralelo puede \emph{agrandarse} para mantener la performance a medida que se aumentan los procesadores.
 A continuaci\'on se mencionan ambos estudios.
