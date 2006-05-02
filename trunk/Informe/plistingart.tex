@@ -215,8 +215,17 @@ Cuando esto ocurre se tiene un h\'ibrido de las metodolog\'ias QM/MM\cite{Cramer
 \includegraphics[keepaspectratio, width=10cm]{Hibrido}
 \end{center}
 \caption[Regiones de un sistema en las cuales se deben aplicar distintas t\'ecnicas.]{\small
-{En sistemas grandes, la generaci\'on y rompimiento de v\'inculos puede lograrse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo (Quantum Mechanics, QM), utilizando mec\'anica molecular (Molecular Mechanics, MM) para representar el resto.}}
+{En esta figura se muestra como en sistemas grandes la generaci\'on y rompimiento de v\'inculos puede estudiarse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo (Quantum Mechanics, QM), utilizando mec\'anica molecular (Molecular Mechanics, MM) para representar el resto. En este caso no hay relaci\'on entre los elementos de ambos subsistemas y el modelado es simple.}}
 \label{fig:Hibrido}
+\end{figure}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=10cm]{Hibrido2}
+\end{center}
+\caption[Regiones de un sistema en las cuales se deben aplicar distintas t\'ecnicas.]{\small
+{Este sistema se representa de manera similar al se\~nalado en la figura \ref{fig:Hibrido} pero presenta la complicaci\'on de tener \'atomos de ambos subsistemas que interact\'uan entre s\'i.}}
+\label{fig:Hibrido2}
 \end{figure}
 
 En este tipo de t\'ecnicas la base consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). En la versi\'on serial del programa modificado en esta t\'esis se utiliz\'o un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}. Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
@@ -242,19 +251,13 @@ Esta variable, $\rho$, se expande con un conjunto de funciones base.
 
 Se puede escribir la energ\'ia total como:
 
-\begin{displaymath}
+\begin{displaymath \label{energia}}
 E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int \frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
 \end{displaymath}
 
-{\Huge Idem arriba. Podes ponerle un label a la ecuacion y hacerle referencia aqui. Si queres dejar aca la parte del costo de calcularlo, me parece razonable, pero el resto tiene que estar presentado arriba.}
+{\Huge Idem arriba.}
 
-
-Un problema importante que presenta esta t\'ecnica es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico: si esto no ocurre el modelado es simple. Si, en cambio, se presenta esta situaci\'on la representaci\'on puede convertirse en algo intrincado.
-
-{\huge En tanto que para el segundo parrafo, estaria bueno que haya una figura que muestre los dos ejemplos, sino queda en el aire.}
-
-{\huge Lo del corte del vinculo quimico queda medio solitario, expandi un poco la explicacion para que se entienda porque es un problema, quizas junto con la figura que aun tenes que poner, se llegue a captar bien la idea.}
-{\huge La figura sacada del cramer sigue siendo muy chota, mejorala y agrega a la explicacion que lo que se esta representando es, de alguna manera, la parte del sistema que es resuelta mediante QM y MM.}
+Finalmente, una clasificaci\'on importante para estos m\'etodos h\'ibridos es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico. Si esto no ocurre el modelado es simple, la uni\'on de la mec\'anica molecular y la cu\'antica puede ser realizada sin mayores inconvenientes (ver figura \ref{fig:Hibrido}). Si, por ejemplo, se presenta una situaci\'on en la cual existen al menos un par de \'atomos, uno en la parte representada cu\'anticamente y otro en la mec\'anica, que interact\'uan entre s\'i (ver figura \ref{fig:Hibrido2}), la representaci\'on puede convertirse en algo intrincado para unir ambos subespacios.
 
 Mas informaci\'on sobre diversas simulaciones realizadas utilizando m\'etodos QM/MM puede encontrarse en \cite{Kiyohara98,Kusalik94,Svischev96,Yu2004,Stern2001}
 
@@ -466,27 +469,9 @@ E[{R_{i}},{\tau _{a} }] = E_{QM} + E_{QM-MM} + E_{MM}
 
 Esta f\'ormula indica que el total de enrg\'ia del sistema es equivalente a la suma de energ\'ia del subsistema cu\'antico ($E_{QM}$), la del subsistema cl\'asico ($E_{MM}$)  y la energ\'ia introducida por la interacci\'on de ambos subsistemas ($E_{QM-MM}$).
 
-{\Huge Esta parte TIENE que ir en la introduccion teorica. No solo la cuenta de las energias, toda la explicacion de como se llega a lo que tenes que calcular tiene que ir ahi.}
-
-
 La energ\'ia correspondiente al subsistema cu\'antico puede calcularse con cualquier m\'etodo de estructura electr\'onica. De la misma manera cualquier campo de fuerzas cl\'asico puede aplicarse al subsistema correspondiente.
 
-Como se mencion\'o con anterioridad, el esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT) por su buena relaci\'on costo-calidad, en la cual la variable fundamental es la densidad electr\'onica.
-Esta variable, $\rho$, se expande con un conjunto de funciones base.
-
-\begin{displaymath}
-\rho = \sum_{i=1}^N \mid X_i^{KS} \mid^{2}
-\end{displaymath}
-
-{\Huge Tenes que poner que significa cada uno de las variables que introducis. Una formula donde  no decis que respresenta cada termino, no dice nada (ademas de tener que ir en la introduccion.}
-
-Se puede escribir la energ\'ia total como:
-
-\begin{displaymath}
-E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int \frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
-\end{displaymath}
-
-{\Huge Idem arriba. Podes ponerle un label a la ecuacion y hacerle referencia aqui, pero esto BIEN EXPLICADO tiene que ir en la introduccion. Si queres dejar aca la parte del costo de calcularlo, me parece razonable, pero el resto tiene que estar presentado arriba.}
+Como se mencion\'o con anterioridad, el esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT) por su buena relaci\'on costo-calidad, en la cual la variable fundamental es la densidad electr\'onica. Tambi\'en se menciona en el cap\'itulo \ref{Introduccion} que la energ\'ia total se puede describir como se encuentra en la f\'ormula \ref{energia}
 
 La parte m\'as costosa del c\'alculo esta relacionada con los dos \'ultimos t\'erminos de esta expresi\'on, que corresponden a la energ\'ia de repulsi\'on de Coulomb, y el t\'ermino de intercambio y correlaci\'on.
 
@@ -573,14 +558,14 @@ En la figura \ref{fig:Profiling} se detallan los porcentajes de procesamiento qu
 \centering
 \includegraphics[keepaspectratio, width=14cm]{tiempos}
 % \end{center}
-\caption[Tiempo consumido por las rutinas]{\small{Tiempo consumido por las rutinas.} {\Huge Saca los titulos que forman parte de los graficos, no quedan bien.}}
+\caption[Tiempo consumido por las rutinas]{\small{Tiempo consumido por las rutinas.}}
 \label{fig:tiempos}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
 \includegraphics[keepaspectratio, width=14cm]{Profiling2}
-\caption[Porcentajes de tiempo consumidos por las rutinas]{\small{Porcentajes de tiempo consumidos por las rutinas.}{\Huge Saca los titulos que forman parte de los graficos, no quedan bien.}}
+\caption[Porcentajes de tiempo consumidos por las rutinas]{\small{Porcentajes de tiempo consumidos por las rutinas.}}
 \label{fig:Profiling}
 \end{figure}
 
@@ -623,26 +608,22 @@ Se decidi\'o paralelizar el algoritmo por el ciclo m\'as externo, que justamente
 En este caso, si el n\'umero de procesos utilizados es menor o igual que el n\'umero de \'atomos con los que se trabaja se dividen los mismos de manera uniforme.
 En cambio, si hay m\'as procesos que \'atomos, todo el procesamiento va a un solo nodo, lo cual produce p\'erdidas con respecto al modelo original por la introducci\'on de instrucciones de la librer\'ia \texttt{MPI}, operaciones que no son utilizadas a ning\'un fin pr\'actico con un solo proceso (como ser inicializaci\'on de acumuladores) y la inicializaci\'on del sistema paralelo.
 
-En figura \ref{fig:Paralelo} se muestra como se paraleliza el sistema en caso de tener 7 una entrada con 7 \'atomos y dos procesos paralelos.
+En figura \ref{fig:Paralelo} se muestra como se paraleliza el sistema en caso de tener 7 una entrada con 7 \'atomos y dos procesos paralelos. La matriz \texttt{RMM} es utilizada para calcular la integral y los subsiguientes \texttt{Atomo i} corresponden a matrices de datos calculadas en la iteraci\'on perteneciente a cada \'atomo y que se le van sumando al valor original de \texttt{RMM} correspondiente. Las flechas azules indican la transici\'on de estados y las verdes indican el intercambio de mensajes y datos entre procesos.
 
 \begin{figure}[ht!]
 \begin{center}
 \includegraphics[keepaspectratio, width=10cm]{EjecucionParalela1}
 \end{center}
-\caption[Forma en que es paralelizado el dominio de 7 \'atomos en dos procesos]{\small{Forma en que es paralelizado el dominio de 7 \'atomos en dos procesos.}}
+\caption[Forma en que es paralelizado el dominio de 7 \'atomos en dos procesos. Las matrices \texttt{RMM} y \texttt{Atomo i} son utilizadas para calcular la integral.Las flechas azules indican la transici\'on de estados y las verdes indican el intercambio de mensajes y datos entre procesos.]{\small{Forma en que es paralelizado el dominio de 7 \'atomos en dos procesos.Las matrices \texttt{RMM} y \texttt{Atomo i} son utilizadas para calcular la integral.Las flechas azules indican la transici\'on de estados y las verdes indican el intercambio de mensajes y datos entre procesos.}}
 \label{fig:Paralelo}
 \end{figure}
-
-{\Huge Si vas a hacer referencia a RMM, tenes que decir que es(tanto en el caption como en el texto donde presentas la figura). Tambien indica que significan las distintas flechas (quizas con una leyenda sobre el mismo grafico}
 
 En esa figura se ve como, en vez de realizar la sumatoria del vector RMM original m\'as los siete \'atomos se toman dos conjuntos, se realizan las sumatorias parciales y luego se suman los resultados para obetener el valor final.
 Se puede observar que, por un lado, se hacen las sumatorias parciales: por ejemplo en el proceso 0 se suman RMM m\'as los tres primeros \'atomos y por otro lado en un acumulador se guarda solamente la sumatoria de los \'atomos.
 Esto es as\'i para poder luego enviar el contenido de los acumuladores a los otros procesos y que RMM no sea sumado $N$ veces con $N$ igual al n\'umero de procesos, sino una \'unica vez.
 
 En cuanto a las modificaciones realizadas al programa, se agregaron sentencias de \texttt{MPI} \cite{Pach96, mpich-install}  para la inicializaci\'on y finalizaci\'on de la utilizaci\'on de la librer\'ia que lo implementa.
-Se utilizaron las librer\'ias \texttt{MPICH}\cite{MPICH} y \texttt{LAM MPI}\cite{LAM_MPI} para las pruebas realizadas.
-{\Huge cualquiera con dos dedos de frente se va a preguntar porque usaste las dos o si todas las corridas las hiciste con las dos y si hubo diferencias en tiempos. Pone en que caso usaste cada una y porque.}
-
+Se utiliz\'o la librer\'ia \texttt{MPICH}\cite{MPICH} para las pruebas realizadas.
 
 En cada uno de los archivos \textsf{exch} se agregaron instrucciones para calcular el n\'umero de procesadores a utilizar de acuerdo a los \'atomos presentes en el sistema, y otras para compartir los resultados parciales obtenidos con el resto de los procesos para luego poder construir el resultado final.
 
@@ -749,9 +730,9 @@ El inconveniente surgido es que en las m\'aquinas IA-32 y AMD utilizadas ese tip
 Finalmente, se opt\'o por utilizar el tipo correspondiente a long double de \texttt{MPICH} corri\'endolo en una m\'aquina SMP Xeon Dual, \emph{Papita}, la cual fue cedida en pr\'estamo por Intel Argentina, AMD Opteron e Itanium ya que en las mismas este tipo de dato y el Real*16 son equivalentes (128 bits).
 Se realizaron diversas pruebas para corroborar que luego de esta soluci\'on al problema de punto flotante la diferencia entre los resultados del programa serial y el paralelo no eran significativos.
 
-\subsection{Reordenamiento del C\'alculo}
+\subsection{Reordenamiento del C\'alculo \label{reordenamiento}}
 
-Para resolver finalmente el problema de precisi\'on en punto flotante se intent\'o realizar un reordenamiento de los c\'alculos para que el orden de las operaciones en la sumatoria {\huge que sumatoria? pone una referencia a la ecuacion, o parte de ella, a la que te estas refiriendo} sea similar al del programa original.
+Para resolver finalmente el problema de precisi\'on en punto flotante se intent\'o realizar un reordenamiento de los c\'alculos para que el orden de las operaciones en la sumatoria con la cual se calcula la integral presente en la ecuaci\'on \ref{energia} sea similar al del programa original.
 
 Para realizar esta soluci\'on se debieron hacer diversos an\'alisis. En primera instancia se observaron los exponentes de los t\'erminos participantes en la sumatoria a realizar. Para realizar esto se modific\'o el programa para guardar en archivos cada uno de los vectores participantes en la sumatoria. Luego estos archivos fueron importados en una planilla de c\'alculo para poder observarlos en conjunto.
 A continuaci\'on se realiz\'o una clasificaci\'on de los datos de acuerdo a los exponentes de los mismos, categoriz\'andolos entre $1\times 10^{-50}$ y $1\times 10^4$.
@@ -809,13 +790,11 @@ Suponiendo finalmente que los d\'igitos significativos en nuestros c\'alculos fu
 No fueron graficados los resultados tanto del proceso 0 como las primeras tres sumatorias del sistema serial debido a que estos datos eran id\'enticos (y as\'i se supon\'ia que deb\'ia ser).
 Los datos de las figuras \ref{fig:DispersionSerial1} y \ref{fig:DispersionSerial2} correponden a las sumatorias del programa serial (RMM123+4, RMM1234+5, RMM12345+6 y RMM123456+7 respectivamente) y los de las figuras \ref{fig:DispersionParalelo1} y \ref{fig:DispersionParalelo2} al paralelo(4+5, 45+6, 456+7 y Proceso0+4567 respectivamente), donde cada n\'umero indica los valores del \'atomo correspondiente (1 es \'atomo 1, y as\'i sucesivamente).
 
-Puede observarse que hay una cierta cantidad de datos en el programa paralelo que no son p\'erdidos y en el serial s\'i. Esto se debe principalmente a que en el proceso 1 la diferencia con los resultados parciales no son tan grandes con respecto a los nuevos valores que se van sumando como para que se produzcan tales p\'erdidas. Observando los datos se vi\'o que la mayor diferencia se daba generalmente contra el valor inicial de RMM, que en muchas ocasiones pose\'ia un valor mayor al de los \'atomos que se suman posteriormente. {\Huge ok, si pones esto, indica en el grafico cual es la zona donde se produce este fenomeno, recuadrala o lo que sea, pero que se pueda identificar sin problemas}
+Puede observarse que hay una cierta cantidad de datos en el programa paralelo que no son perdidos y en el serial s\'i. Esto se debe principalmente a que en el proceso 1 la diferencia con los resultados parciales no son tan grandes con respecto a los nuevos valores que se van sumando como para que se produzcan tales p\'erdidas. Observando los datos se vi\'o que la mayor diferencia se daba generalmente contra el valor inicial de RMM, que en muchas ocasiones pose\'ia un valor mayor al de los \'atomos que se suman posteriormente. {\Huge ok, si pones esto, indica en el grafico cual es la zona donde se produce este fenomeno, recuadrala o lo que sea, pero que se pueda identificar sin problemas}
 
-Finalmente de la observaci\'on de los datos se lleg\'o a una soluci\'on alternativa al problema. Si bien los resultados obtenidos no eran iguales a los del serial, los mismos eran muy similares, y a los efectos de la investigaci\'on qu\'imica para la cual se utilizar\'ian, eran v\'alidos {\Huge esto no se entiende a que va? Estas hablando de la solucion que vas a plantear en el proximo parrafo, o que?}.
+Finalmente de la observaci\'on de los datos se lleg\'o a una soluci\'on alternativa al problema.La misma consisti\'o en agregar en cada uno de los procesos un valor determinado de forma tal que en cada sumatoria se ocasione una p\'erdida similar a la ocurrida en el programa serial, y luego finalmente restarle ese valor al total. Por ejemplo, si en el programa serial se realizaba una suma entre el vector RMM original m\'as los \'atomos del 1 al 7, en el paralelo se suma por un lado el vector RMM m\'as los \'atomos 1,2 y 3 y en el otro, aunque deber\'ian sumarse s\'olo los \'atomos 4 a 7, se le agrega un valor inicial que luego es finalmente restado antes de unir ambos procesos.
 
-La soluci\'on implementada consisti\'o en agregar en cada uno de los procesos un valor determinado de forma tal que en cada sumatoria se ocasione una p\'erdida similar a la ocurrida en el programa serial, y luego finalmente restarle ese valor al total. Por ejemplo, si en el programa serial se realizaba una suma entre el vector RMM original m\'as los \'atomos del 1 al 7, en el paralelo se suma por un lado el vector RMM m\'as los \'atomos 1,2 y 3 y en el otro, aunque deber\'ian sumarse s\'olo los \'atomos 4 a 7, se le agrega un valor inicial que luego es finalmente restado antes de unir ambos procesos.
-
-Al analizar como eran los valores utilizados en las operaciones se observ\'o que la mayor parte de las p\'erdidas se daban debido a la diferencia de magnitud entre los valores del vector original RMM y el resto de los \'atomos como se mencion\'o con anterioridad. Esto quiere decir que en una gran cantidad de casos en el sistema serial al momento de sumar el cuarto \'atomo el orden de magnitud presentado por la sumatoria de RMM m\'as el resto de los \'atomos correspondientes al proceso era igual al del RMM original. Por este motivo se opt\'o por tomar el RMM original como n\'umero a sumar y restar en todos los procesos para producir la p\'erdida de informaci\'on necesaria.
+Al analizar como eran los valores utilizados en las operaciones se observ\'o que la mayor parte de las p\'erdidas se daban debido a la diferencia de magnitud entre los valores del vector original RMM y el resto de los \'atomos como se mencion\'o con anterioridad. Esto quiere decir que en una gran cantidad de casos en el sistema serial al momento de sumar el cuarto \'atomo el orden de magnitud presentado por la sumatoria de RMM m\'as el resto de los \'atomos correspondientes al proceso era igual al del RMM original. Por este motivo se opt\'o por tomar el RMM original como n\'umero a sumar y restar en todos los procesos para producir la p\'erdida de informaci\'on necesaria. Si bien los resultados obtenidos no fueron iguales a los del serial, los mismos eran muy similares, y a los efectos de la investigaci\'on qu\'imica para la cual se utilizar\'ian, eran v\'alidos
 
 Esta nueva soluci\'on puede observarse en el esquema de la figura \ref{fig:EjecucionParalela2}
 
@@ -832,13 +811,59 @@ Finalmente se realizaron diversas corridas para corroborar el buen funcionamient
 
 \chapter{Resultados y Discusi\'on} \label{ResultadosDiscucion}
 
-{\huge Que es esto que esta en negrita? No se entiende de que va. Si queres aclarar a que corresponde cada corrida, podes poner una seccion donde los explicas y donde mostrar un diagrama de la estructura quimica del mismo, estaria bueno.}
+\section{Entradas utilizadas}
 
-\textbf{La entrada de 7 \'atomos es un peroxinitrito (OONO) m\'as un di\'oxido de carbono (CO2) cu\'anticos m\'as 498 mol\'eculas de agua}
+Se utilizaron dos tipos de entradas para realizar las pruebas de las distintas implementaciones realizadas.
+Una entrada de corresponde a un peroxinitrito (OONO-) m\'as un di\'oxido de carbono (CO2) cu\'anticos m\'as 498 mol\'eculas de agua. La segunda entrada utilizada de corresponde a s\'olo el peroxinitrito con las 498 mol\'eculas de agua.
 
-\textbf{La entrada de 4 \'atomos es s\'olo el peroxinitrito con las 498 mol\'eculas de agua}
+El peroxinitrito (OONO-) es una especie estable formada en ambientes biol\'ogicos por la reacci\'on del ani\'on radical super\'oxido (O2-) con el NO \cite{szabo99}. Es muy estable en soluciones alcalinas \cite{szabo89} pero no en soluciones neutras o \'acidas, ya que su \'acido conjugado (peroxinitroso) isomeriza a \'acido n\'itrico.El
+peroxinitrito exhibe una gran toxicidad por su capacidad de formar radicales libres que oxidan grupos sulfhidrilos, fosfol\'ipidos y ADN.
 
-Una vez implementado el algoritmo con precisi\'on exendida se realizaron corridas en una m\'aquina SMP Xeon Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}. {\Huge podes hacer referencia a la pagina o seccion donde hablabas de esta modificacion para que no quede tan descolgado, si vas a hablar inicialmente de la solucion de precision extendida, podes ponerle ese titulo.}
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=10cm]{peroxinitrito}
+\end{center}
+\caption[Representaci\'on esquem\'atica de los conf\'ormeros cis y trans del peroxinitrito]{\small{Representaci\'on esquem\'atica de los conf\'ormeros cis y trans del peroxinitrito.}}
+\label{fig:peroxinitrito}
+\end{figure}
+
+Con la primera entrada utilizada se intenta determinar es el mecanismo de reacción del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on, en primer lugar la alta concentración del CO2 en medios fisiol\'ogicos y en segundo lugar la alta velocidad con que ocurre esta
+reacci\'on. Un esquema de la misma se puede ver en la figura \ref{fig:peroxinitrito4}. 
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=10cm]{peroxinitrito4}
+\end{center}
+\caption[Esquema de la reacci\'on del peroxinitrito con di\'oxido de carbono.]{\small{Esquema de la reacci\'on del peroxinitrito con di\'oxido de carbono.}}
+\label{fig:peroxinitrito4}
+\end{figure}
+
+
+En una primera etapa, como puede observarse en la figura \ref{fig:peroxinitrito4}, el peroxinitrito se adiciona al CO2 formando un aducto (el nitrosoperoxicarbonato). Este aducto se descompone en los radicales carbonato y NO2 encerrados en una caja de solvente. A su vez, estos radicales pueden reacomodarse de manera tal que conforman otro aducto llamado nitrocarbonato, o bien pueden liberarse como tales.
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=10cm]{peroxinitrito3}
+\end{center}
+\caption[El peroxinitrito, el di\'oxido de carbono y las aguas en la caja de simulaci\'on.]{\small{El peroxinitrito, el di\'oxido de carbono y las aguas en la caja de simulaci\'on.}}
+\label{fig:peroxinitrito3}
+\end{figure}
+
+Finalmente la investigaci\'on correspondiente a la segunda entrada se utiliza se realiza a efecto de estudiar como influye un solvente (agua) sobre el peroxinitrito. Pueden observarse algunas reacciones en la figura \ref{fig:peroxinitrito2}.
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=10cm]{peroxinitrito2}
+\end{center}
+\caption[Representaci\'on esquem\'atica de complejos de peroxinitrito con una y dos mol\'eculas de agua.]{\small{Representaci\'on esquem\'atica de complejos de peroxinitrito con una y dos mol\'eculas de agua.}}
+\label{fig:peroxinitrito2}
+\end{figure}
+
+
+\section{Implementaci\'on de precisi\'on extendida}
+
+Una vez implementado el algoritmo con precisi\'on exendida se realizaron corridas en una m\'aquina SMP Xeon Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}. 
+
 La misma puede observarse de mejor manera en la figura \ref{fig:Papita128}. Se utiliz\'o la entrada de 7 \'atomos variando la cantidad de pasos a realizarse.
 
 
@@ -873,13 +898,13 @@ Tanto la SMP Xeon Dual como las Itanium de Intel, y las Opteron de AMD realizan 
 Es debido a esta emulaci\'on por software que la velocidad de procesamiento se ve fuertemente afectada.
 
 Por estos motivos, a pesar de que el programa paralelo funcione mejor que el serial modificado (lo cual podr\'ia indicar que a futuro cuando haya computadoras de 128 bits nativos, la soluci\'on servir\'a), no se logr\'o el objetivo de este trabajo, por lo cual se opt\'o por proceder con la implementaci\'on de la segunda opci\'on.
-A continuaci\'on se muestran gr\'aficos de eficiencia, overhead y speedup de este m\'etodo en las figuras \ref{fig:Speedup128}, \ref{fig:Eficiencia128}, \ref{fig:Overhead128} y \ref{fig:OverheadP128} respectivamente {\huge a que corresponden estos graficos a precision extendida o a la otra? Podrias poner dos secciones para que quede bien claro}.
+A continuaci\'on se muestran gr\'aficos de eficiencia, overhead y speedup de este m\'etodo en las figuras \ref{fig:Speedup128}, \ref{fig:Eficiencia128}, \ref{fig:Overhead128} y \ref{fig:OverheadP128} respectivamente.
 
 \begin{figure}[ht!]
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Speedup128}
 \end{center}
-\caption[Speedup del programa de 128 bits en 2 procesos.]{\small{Speedup del programa de 128 bits en 2 procesos.}}
+\caption[Speedup del programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.]{\small{Speedup del programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.}}
 \label{fig:Speedup128}
 \end{figure}
 
@@ -887,7 +912,7 @@ A continuaci\'on se muestran gr\'aficos de eficiencia, overhead y speedup de est
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Eficiencia128}
 \end{center}
-\caption[Eficiencia del programa de 128 bits en 2 procesos.]{\small{Eficiencia del programa de 128 bits en 2 procesos.}}
+\caption[Eficiencia del programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.]{\small{Eficiencia del programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.}}
 \label{fig:Eficiencia128}
 \end{figure}
 
@@ -895,7 +920,7 @@ A continuaci\'on se muestran gr\'aficos de eficiencia, overhead y speedup de est
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Overhead128}
 \end{center}
-\caption[Overhead del programa de 128 bits en 2 procesos.]{\small{Overhead del programa de 128 bits en 2 procesos.}}
+\caption[Overhead del programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.]{\small{Overhead del programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.}}
 \label{fig:Overhead128}
 \end{figure}
 
@@ -903,15 +928,16 @@ A continuaci\'on se muestran gr\'aficos de eficiencia, overhead y speedup de est
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{OverheadP128}
 \end{center}
-\caption[Overhead del programa de 128 bits en 2 procesos.]{\small{Overhead del programa de 128 bits en 2 procesos.}}
+\caption[Overhead en porcentaje sobre el total de tiempo consumido por el programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.]{\small{Overhead en porcentaje sobre el total de tiempo consumido por el programa paralelo con precisi\'on extendida a 128 bits corrido en 2 procesos.}}
 \label{fig:OverheadP128}
 \end{figure}
 
-{\huge en todos los graficos tenes que indicar a que corresponde la corrida y que estas mostrando. Se tiene que entender sin leer el texto.}
-
 No fueron realizadas corridas con otro tipo de entradas o en otras m\'aquinas con esta versi\'on debido a la limitaci\'on de performance comentada con anterioridad.
 
-En segunda instancia se implement\'o la soluci\'on de reordenamiento de c\'alculo mencionada en la secci\'on anterior. Para esta implementaci\'on inicialmente se realizaron diversas corridas en la m\'aquina SMP Xeon Dual para corroborar que los resultados obtenidos se correspondan a los del programa serial. Estas corridas iniciales fueron realizadas con una entrada de 4 \'atomos y variando la cantidad de pasos de ejecuci\'on. Los tiempos de ejecuci\'on de estas corridas y otros valores de performance pueden observarse en las tablas \ref{tab:Tiempos4Atomos}, \ref{tab:Speedup4Atomos}, \ref{tab:Eficiencia4Atomos} y \ref{tab:Overhead4Atomos} {\Huge porque armas una sola tabla con eficiencia, overhead y speedup, una fila por cada tabla no tiene sentido}.
+
+\section{Implementaci\'on con reordenamiento de c\'alculo}
+
+En segunda instancia se implement\'o la soluci\'on de reordenamiento de c\'alculo mencionada en la secci\'on \ref{reordenamiento}. Para esta implementaci\'on inicialmente se realizaron diversas corridas en la m\'aquina SMP Xeon Dual para corroborar que los resultados obtenidos se correspondan a los del programa serial. Estas corridas iniciales fueron realizadas con una entrada de 4 \'atomos y variando la cantidad de pasos de ejecuci\'on. Los tiempos de ejecuci\'on de estas corridas y otros valores de performance pueden observarse en las tablas \ref{tab:Tiempos4Atomos} y \ref{tab:SEO4Atomos}.
 
 
 \begin{table}
@@ -935,40 +961,16 @@ En segunda instancia se implement\'o la soluci\'on de reordenamiento de c\'alcul
 \hline
 \ & \textbf{100 pasos}& \textbf{200 pasos}& \textbf{300 pasos}& \textbf{400 pasos}\\
 \hline
-\texttt{Paralelo}  & 1.2608 & 1.2857 & 1.2512 & 1.2773 \\
+\texttt{Speedup}  & 1.2608 & 1.2857 & 1.2512 & 1.2773 \\
 \hline
-\end{tabular}
-\end{center}
-\caption[Speedup en m\'aquina SMP Xeon Dual con reordenamiento de c\'alculo]{\small{Speedup del programa en una m\'aquina SMP Xeon Dual con 4 \'atomos con reordenamiento de c\'alculo en el programa.}}
-\label{tab:Speedup4Atomos}
-\end{table}
-
-\begin{table}
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-\ & \textbf{100 pasos}& \textbf{200 pasos}& \textbf{300 pasos}& \textbf{400 pasos}\\
-\hline
-\texttt{Paralelo}  & 0.6304 & 0.6428 & 0.6256 & 0.6386 \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Eficiencia en m\'aquina SMP Xeon Dual con reordenamiento de c\'alculo]{\small{Eficiencia del programa en una m\'aquina SMP Xeon Dual con 4 \'atomos con reordenamiento de c\'alculo en el programa.}}
-\label{tab:Eficiencia4Atomos}
-\end{table}
-
-\begin{table}
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-\ & \textbf{100 pasos}& \textbf{200 pasos}& \textbf{300 pasos}& \textbf{400 pasos}\\
+\texttt{Eficiencia}  & 0.6304 & 0.6428 & 0.6256 & 0.6386 \\
 \hline
 \texttt{Paralelo}  & 36.95\% & 35.71\% & 37.43\% & 36.13\% \\
 \hline
 \end{tabular}
 \end{center}
-\caption[Overhead en m\'aquina SMP Xeon Dual con reordenamiento de c\'alculo]{\small{Overhead del programa en una m\'aquina SMP Xeon Dual con 4 \'atomos con reordenamiento de c\'alculo en el programa.}}
-\label{tab:Overhead4Atomos}
+\caption[Speedup, Eficiencia y Overhead en m\'aquina SMP Xeon Dual con reordenamiento de c\'alculo]{\small{Speedup, Eficiencia y overhead del programa en una m\'aquina SMP Xeon Dual con 4 \'atomos con reordenamiento de c\'alculo en el programa.}}
+\label{tab:SEO4Atomos}
 \end{table}
 
 Finalmente, una vez verificados los resultados se procedi\'o a realizar corridas m\'as extensas con un problema m\'as grande que constaba de un sistema con 7 \'atomos. Inicialmente estas corridas fueron realizadas en la m\'aquina Xeon Dual. Ver la tabla \ref{tab:TiemposEjecucion2} y la figura \ref{fig:Papita}.
@@ -1032,8 +1034,9 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que de la d
 
 Puede observarse en los gr\'aficos que cuando se realiz\'o la medici\'on con una ejecuci\'on de 10000 pasos el overhead en practicamente un 2\%. A pesar de que el gr\'afico porduce la sensaci\'on de que esta variaci\'on es muy grande no lo es realmente. Esta situaci\'on puede deberse al hecho de que la m\'aquina en la cual fueron realizadas las corridas tambi\'en es utilizada espor\'adicamente para realizar otros trabajos. Si bien se intent\'o que la m\'aquina no fuera utilizada por otras personas es posible que no haya sido este el caso y se haya corrido algun proceso corto que haya modificado los tiempos de ejecuci\'on del programa. A\'un as\'i, el speedup y la eficiencia medidas no son para nada despreciables y demuestran una ganancia en performance m\'as que interesante a los fines de la investigaci\'on futura de sistema de part\'iculas mayores. Por otro lado cabe aclarar que la utilizaci\'on por parte de otros usuarios de la SMP Xeon Dual no afecta el programa serial dado que el mismo es corrido en un solo procesador, mientras que los procesos de usuarios pueden correrse en el otro. En cambio, si afecta al programa paralelo dado que el mismo utiliza ambos procesadores, y si uno se retrasa debido al uso, el otro tambi\'en lo har\'a debido a la mensajer\'ia bloqueante y a la interacci\'on de ambos procesos.
 
-Luego fueron realizadas mediciones en el cluster $Rocky$ del Laboratorio de Sistemas Complejos de la Facultad de Ciencias Exactas y Naturales de la UBA. El mismo est\'a compuesto por cuatro nodos AMD Opteron duales conectados por una red de Gigabit Ehernet.
-Las corridas fueron realizadas con cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura \ref{fig:RockyTiempos1}.
+Luego fueron realizadas mediciones en el cluster $FIUPG$, sito en el estado de Florida, Estados Unidos . El mismo est\'a compuesto por 17 nodos Intel SMP Xeon duales.
+Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura 
+\ref{fig:FIUPGTiempos1}.
 
 \begin{table}
 \begin{center}
@@ -1041,81 +1044,56 @@ Las corridas fueron realizadas con cuatro procesos en nodos distintos, es decir 
 \hline
 \ & \textbf{5000 pasos}& \textbf{10000 pasos}& \textbf{15000 pasos}& \textbf{20000 pasos}\\
 \hline
-\texttt{Serial} & 37:33 & 72:12 & 110:25 & 145:10 \\
-\texttt{Paralelo}  & 31:55 & 63:24 & 93:40 & 122:27 \\
+\texttt{Serial} & 73:10 & 145:30 & 218:20 & 292:00 \\
+\texttt{2 Procesos}  & 48:50 & 97:42 & 146:40 & 195:30 \\
+\texttt{4 Procesos}  & 45:03 & 88:10 & 134:00 & 175:50 \\
 \hline
 \end{tabular}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa en 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 4 procesos.}}
+\caption[Tiempos de ejecuci\'on total del programa en 2 y 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 y 4 procesos.}}
 \label{tab:TiemposEjecucion3}
 \end{table}
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Papita}
+\includegraphics[keepaspectratio, width=14cm]{FIUPG}
 \end{center}
 \caption[Tiempos de ejecuci\'on total del programa en 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 4 procesos.}}
-\label{fig:RockyTiempos1}
+\label{fig:FIUPGTiempos1}
 \end{figure}
 
-
-A continuaci\'on fueron realizadas las mismas ejecuciones sobre el mismo cluster pero utilizando \'unicamente dos procesos en nodos distintos, obteni\'endose los siguientes resultados visibles en la tabla \ref{tab:TiemposEjecucion4} y en la figura \ref{fig:RockyTiempos2}.
-
-\begin{table}
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-\ & \textbf{5000 pasos}& \textbf{10000 pasos}& \textbf{15000 pasos}& \textbf{20000 pasos}\\
-\hline
-\texttt{Serial} & 37:33 & 72:12 & 110:25 & 145:10 \\
-\texttt{Paralelo}  & 31:55 & 63:24 & 93:40 & 122:27 \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Tiempos de ejecuci\'on total del programa en 2 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 procesos.}}
-\label{tab:TiemposEjecucion4}
-\end{table}
+Una vez obtenidos los datos de las ejecuciones del sistema en distintas configuraciones y entornos se pudieron obtener datos sobre \emph{speedup}, \emph{overhead} y \emph{eficiencia}, observables en las figuras \ref{fig:SpeedupFIUPG}, \ref{fig:EficienciaFIUPG}, \ref{fig:OverheadFIUPG} y \ref{fig:OverheadPFIUPG} respectivamente.
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Papita}
+\includegraphics[keepaspectratio, width=14cm]{SpeedupFIUPG}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa en 2 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 procesos.}}
-\label{fig:RockyTiempos2}
-\end{figure}
-
-Una vez obtenidos los datos de las ejecuciones del sistema en distintas configuraciones y entornos se pudieron obtener datos sobre \emph{speedup}, \emph{overhead} y \emph{eficiencia}, observables en las figuras \ref{fig:SpeedupRocky}, \ref{fig:EficienciaRocky}, \ref{fig:OverheadRocky} y \ref{fig:OverheadPRocky} respectivamente.
-
-\begin{figure}[ht!]
-\begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Speedup}
-\end{center}
-\caption[Speedup del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.]{\small{Speedup del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.}}
-\label{fig:SpeedupRocky}
+\caption[Speedup del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.]{\small{Speedup del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.}}
+\label{fig:SpeedupFIUPG}
 \end{figure}
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Eficiencia}
+\includegraphics[keepaspectratio, width=14cm]{EficienciaFIUPG}
 \end{center}
-\caption[Eficiencia del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.]{\small{Eficiencia del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.}}
-\label{fig:EficienciaRocky}
+\caption[Eficiencia del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.]{\small{Eficiencia del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.}}
+\label{fig:EficienciaFIUPG}
 \end{figure}
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{Overhead}
+\includegraphics[keepaspectratio, width=14cm]{OverheadFIUPG}
 \end{center}
-\caption[Overhead del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.]{\small{Overhead del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.}}
-\label{fig:OverheadRocky}
+\caption[Overhead del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.]{\small{Overhead del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.}}
+\label{fig:OverheadFIUPG}
 \end{figure}
 
 \begin{figure}[ht!]
 \begin{center}
-\includegraphics[keepaspectratio, width=14cm]{OverheadP}
+\includegraphics[keepaspectratio, width=14cm]{OverheadPFIUPG}
 \end{center}
-\caption[Overhead del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.]{\small{Overhead del programa con reordenamiento de c\'alculo en cluster de AMD Opteron Duales.}}
-\label{fig:OverheadPRocky}
+\caption[Overhead del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.]{\small{Overhead del programa con reordenamiento de c\'alculo en cluster de Intel SMP Xeon Dual.}}
+\label{fig:OverheadPFIUPG}
 \end{figure}
 
 
