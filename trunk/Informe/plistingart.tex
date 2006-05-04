@@ -89,9 +89,9 @@ Departamento de Computaci\'on\\
 \maketitle
 
 \chapter*{Resumen \label{Resumen}}
-En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicado a la simulaci\'on de reactividad qu\'imica en soluci\'on. 
+En este trabajo se presenta un software de c\'omputo de alto rendimiento aplicado a la simulaci\'on de reactividad qu\'imica en soluci\'on.
 El m\'etodo utilizado para realizar la simulaci\'on se encuadra dentro de un esquema h\'ibrido cu\'antico-cl\'asico (QM-MM) en el cual el solvente es tratado cl\'asicamente (como masas y cargas puntuales) mientras que el soluto es tratado con rigurosidad cu\'antica (DFT, en nuestro caso), de esta manera se logra optimizar el costo computacional ya que se calcula la estructura electr\'onica s\'olo de la porci\'on del sistema en la que es realmente relevante.
-El trabajo consisti\'o en la construcci\'on de un software paralelo de simulaci\'on num\'erica a partir de una versi\'on serial preexistente y su implementaci\'on en una computadora SMP y en un cluster Beowulf para el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on. 
+El trabajo consisti\'o en la construcci\'on de un software paralelo de simulaci\'on num\'erica a partir de una versi\'on serial preexistente y su implementaci\'on en una computadora SMP y en un cluster Beowulf para el estudio y predicci\'on de reacciones qu\'imicas en soluci\'on.
 La combinaci\'on del hardware y software mencionado, y el an\'alisis de distintas estrategias de paralelizaci\'on (incluyendo diversas modalidades de pasaje de mensajes) permitieron la resoluci\'on de problemas m\'as realistas y previamente inabordables, obteniendo un algoritmo escalable.
 
 \noindent \textbf{Key Words:} \emph{Beowulf}, \emph{C\'alculo paralelo}, \emph{Cluster}, \emph{DFT}, \emph{M\'etodos h\'ibridos}, \emph{n-body}, \emph{Perfomance}
@@ -127,12 +127,11 @@ En esta tesis se utiliza la teor\'ia del funcional de la densidad (DFT) para el 
 
 La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{Cramer, MCGLPHD}, el cual es equivalente en qu\'imica computacional a la aproximaci\'on de orbitales moleculares de enorme utilidad conceptual para los qu\'imicos. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64} que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
 
-Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad electr\'onica, sin embargo no preve\'ia la manera de calcular una u otra. En el a\~no 1965 Kohn y Sham \cite{Kohn65} introdujeron una aproximaci\'on para la forma funcional de la energ\'ia cin\'etica a trav\'es de la cual se hizo posible evaluar la densidad y obtener la
-energ\'ia total. Este m\'etodo, denominado de Kohn-Sham, es el que permiti\'o utilizar a DFT como un instrumento de c\'alculo de estructura electr\'onica eficiente. La enorme importancia que adquiri\'o la teor\'ia del funcional de la densidad en qu\'imica se vio reflejada en el otorgamiento del premio Nobel al profesor Kohn en 1998.
+Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad electr\'onica, sin embargo no preve\'ia la manera de calcular una u otra. En el a\~no 1965 Kohn y Sham \cite{Kohn65} introdujeron una aproximaci\'on para la forma funcional de la energ\'ia cin\'etica a trav\'es de la cual se hizo posible evaluar la densidad y obtener la energ\'ia total. Este m\'etodo, denominado de Kohn-Sham, es el que permiti\'o utilizar a DFT como un instrumento de c\'alculo de estructura electr\'onica eficiente. La enorme importancia que adquiri\'o la teor\'ia del funcional de la densidad en qu\'imica se vio reflejada en el otorgamiento del premio Nobel al profesor Kohn en 1998.
 
 \subsection{Descripci\'on de la DFT}
 
-Los m\'etodos tradicionales en la teor\'ia de estructura electr\'onica, en particular Hartree-Fock y sus descendientes, est\'an basadas en una complicada funci\'on de onda para varios electrones \cite{Becke88,Parr89,Koch2002}. 
+Los m\'etodos tradicionales en la teor\'ia de estructura electr\'onica, en particular Hartree-Fock y sus descendientes, est\'an basadas en una complicada funci\'on de onda para varios electrones \cite{Becke88,Parr89,Koch2002}.
 El objetivo principal de la DFT es reemplazar esta funci\'on de onda por la densidad electr\'onica como base. Mientras que la funci\'on de onda depende de $3N$ variables (tres variables espaciales por cada uno de los N electrones), la densidad es solo funci\'on de tres variables que es mucho m\'as simple para trabajar tanto conceptual como pr\'acticamente.
 
 A pesar de que la DFT tiene sus ra\'ices en el modelo de Thomas-Fermi, como hemos mencionado con anterioridad, no se utiliz\'o realmente hasta que Hohenberg-Kohn propusieron dos teoremas. El primero de ellos demuestra la existencia de un mapeo uno a uno entre la densidad del estado fundamental del electr\'on y la funci\'on de onda del estado fundamental de un sistema con m\'ultiples part\'iculas. En f\'isica, el estado fundamental de un sistema es su estado cu\'antico de menor energ\'ia. El segundo teorema prueba que la densidad del estado fundamental minimiza la energ\'ia electr\'onica total del sistema. Los teoremas originales se mantienen solo para el estado fundamental en ausencia de un campo magn\'etico, aunque los mismos han sido generalizados. El primero de los teoremas es solo uno existencial, aseverando que el mapeo existe, pero no provee ninguno en particular.
@@ -247,15 +246,28 @@ Esta variable, $\rho$, se expande con un conjunto de funciones base.
 \rho = \sum_{i=1}^N \mid X_i^{KS} \mid^{2}
 \end{displaymath}
 
-{\Huge Tenes que poner que significa cada uno de las variables que introducis. Una formula donde  no decis que respresenta cada termino, no dice nada }
+%{\Huge Tenes que poner que significa cada uno de las variables que introducis. Una formula donde  no decis que respresenta cada termino, no dice nada }
 
-Se puede escribir la energ\'ia total como:
+Donde $X_i^{KS}$ representa a el orbital $i$ de Kohn y Sham el cual est\'a expresado como combinaci\'on lineal de gaussianas \cite{Kohn65}.
 
-\begin{displaymath \label{energia}}
-E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\sigma_i^{2} \mid X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int \frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
+La energ\'ia total del sistema puede describirse como:
+
+\begin{displaymath}\label{energia}
+E[\rho] = -\frac{1}{2}\langle X_i^{KS}\mid \sum_i\nabla_i^{2} \mid
+X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int
+\frac{\rho(r_{1})\rho(r_{2})}{r_{12}}dr_{1}dr_{2}+E_{xc}[\rho]
 \end{displaymath}
 
-{\Huge Idem arriba.}
+%{\Huge Idem arriba.}
+Donde:
+\begin{itemize}
+\item $v(r)$ es la densidad que corresponde a los $N$ electrones del sistema interactuantes sometidos al potencial real.
+\item $\nabla$ es el operador laplaciano.
+\item $r_i$ son las coordenadas del electron $i$.
+\item $r$ es una generalizaci\'on de las coordenadas.
+\end{itemize}
+
+El primer t\'ermino de la f\'ormula corresponde a la energ\'ia cin\'etica del sistema, el segundo es la atracci\'on entre n\'ucleos y electrones, el tercer t\'ermino es la interacci\'on de la densidad consigo misma y el \'ultimo es la energ\'ia de intercambio y correlaci\'on. En la teor\'ia de DFT, si se conociese el valor exacto de este \'ultimo t\'ermino, se podr\'ia conocer la estructura electr\'onica de una mol\'ecula sin problemas. Sin embargo, la dependencia de \'este con la densidad es desconocida y la calidad del c\'alculo depender\'a la aproximaci\'on utilizada para obtener este t\'ermino.
 
 Finalmente, una clasificaci\'on importante para estos m\'etodos h\'ibridos es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico. Si esto no ocurre el modelado es simple, la uni\'on de la mec\'anica molecular y la cu\'antica puede ser realizada sin mayores inconvenientes (ver figura \ref{fig:Hibrido}). Si, por ejemplo, se presenta una situaci\'on en la cual existen al menos un par de \'atomos, uno en la parte representada cu\'anticamente y otro en la mec\'anica, que interact\'uan entre s\'i (ver figura \ref{fig:Hibrido2}), la representaci\'on puede convertirse en algo intrincado para unir ambos subespacios.
 
@@ -422,7 +434,7 @@ Multiple-instruction-multiple-data es la clasificaci\'on en la taxonom\'ia de Fl
 La taxonom\'ia de Flynn define las siguientes categor\'ias
 \begin{itemize}
 \item Single instruction/single data stream (SISD) - Computadora secuencial.
-\item Multiple instruction/single data stream (MISD) - Inusual debido a que no tiene mucho sentido pues generalmente m\'ultiples instrucciones requieren de m\'ultiples datos para ser efectivas. Sin embargo, esta arquitectura se utiliza en algunas m\'aquinas en las que se necesita paralelismo redundante. 
+\item Multiple instruction/single data stream (MISD) - Inusual debido a que no tiene mucho sentido pues generalmente m\'ultiples instrucciones requieren de m\'ultiples datos para ser efectivas. Sin embargo, esta arquitectura se utiliza en algunas m\'aquinas en las que se necesita paralelismo redundante.
 \item Single instruction/multiple data streams (SIMD) - Por ejemplo un \emph{array processor}.
 \item Multiple instruction/multiple data streams (MIMD) - m\'ultiples procesadores aut\'onomos ejecutando simult\'aneamente diferentes instrucciones sobre diferentes datos.
 \end{itemize}
@@ -668,8 +680,8 @@ Estas instrucciones se comportan en forma mucho m\'as eficiente que si uno reali
 Por medio de la comunicaci\'on colectiva se logr\'o bajar considerablemente el tiempo de ejecuci\'on de manera de que la performance del programa paralelo fuese mejor que la del serial, lo cual era el objetivo de este trabajo. Los resultados se ver\'an m\'as adelante en la secci\'on correspondiente.
 
 Por \'ultimo, cuando se cre\'ia que se hab\'ia logrado el objetivo de desarrollar un programa paralelo que se comportase de manera similar al serial pero con una mejor performance, se tuvo un problema que fue determinante en la realizaci\'on de este trabajo.
-{\Huge aca definis para que sirve RMM cuando la estas nombrando desde hace rato, muda la definicion para arriba al primer lugar donde aparezca}
-El mismo surgi\'o cuando se observ\'o que los resultados obtenidos en la matriz \texttt{RMM} utilizada para calcular la integral difer\'ian en el programa paralelo con respecto al serial. Esto pudo ser observado gracias a la realizaci\'on de una rutina en lenguaje de programaci\'on Fortran 77 desarrollada para este trabajo que permite guardar en memoria(mediante un archivo de texto) una cantidad de variables que cre\'imos convenientes analizar para determinar la correctitud de los c\'alculos.
+%{\Huge aca definis para que sirve RMM cuando la estas nombrando desde hace rato, muda la definicion para arriba al primer lugar donde aparezca}
+El mismo surgi\'o cuando se observ\'o que los resultados obtenidos en la matriz \texttt{RMM} difer\'ian en el programa paralelo con respecto al serial. Esto pudo ser observado gracias a la realizaci\'on de una rutina en lenguaje de programaci\'on Fortran 77 desarrollada para este trabajo que permite guardar en memoria(mediante un archivo de texto) una cantidad de variables que cre\'imos convenientes analizar para determinar la correctitud de los c\'alculos.
 
 En un principio se pens\'o que el problema ser\'ia debido a un error en la manera de calcular el mismo, pero luego de un an\'alisis se confirm\'o que el c\'alculo era correcto. Para tal efecto se fueron guardando los diversos t\'erminos participantes en las sumatorias y los mismos fueron sumados ``a mano''.
 A partir de la confirmaci\'on de la correctitud de c\'alculo se intuy\'o que el problema podr\'ia corresponder al redondeo realizado sobre n\'umeros de punto flotante, debido a que la diferencia era de unos pocos decimales.
@@ -685,9 +697,17 @@ En todos los casos de test se utiliz\'o un entorno con 4 \'atomos.
 
 De esta manera se concluy\'o que el problema radicaba en la uni\'on de los resultados obtenidos en los distintos procesos del programa paralelo.
 
-Una vez reducido el \'area donde pod\'ia ocurrir el problema se procedieron a realizar otros tests para determinar finalmente el problema. Para tal efecto se realiz\'o una modificacion al programa serial para que calcule en RMM el resultado de las 2 primeras iteraciones, y las \'ultimas dos las guarde en un acumulador. Finalmente se uni\'o el vector RMM con el acumulador por medio de sumas. Esto hizo que el programa serial diera el mismo resultado que el paralelo. De esta manera se demostr\'o que el problema se debe a la limitaci\'on generada por la finitud de los n\'umeros representados en la computadora, lo cual es un problema ampliamente conocido en los m\'etodos num\'ericos.
+Una vez reducido el \'area donde pod\'ia ocurrir el problema se procedieron a realizar otros tests para determinar finalmente el problema. Para tal efecto se realiz\'o una modificacion al programa serial para que calcule en RMM el resultado de las 2 primeras iteraciones, y las \'ultimas dos las guarde en un acumulador. Finalmente se uni\'o el vector RMM con el acumulador por medio de sumas. Esto hizo que el programa serial diera el mismo resultado que el paralelo. De esta manera se demostr\'o que el problema se debe a la limitaci\'on generada por la finitud de los n\'umeros representados en la computadora, lo cual es un problema ampliamente conocido en los m\'etodos num\'ericos. Ver figura \ref{fig:Redondeo}
 
-{\Huge Aca si te queres lucir, podes poner tambien un diagrama mostrando como se concluyo que era un problema de redondeo, va a ayudar a que quede claro el concepto.}
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Redondeo}
+\end{center}
+\caption[El algoritmo serial, separado en dos fases y unido por medio de sumas otorga el mismo resultado que realizando la cuenta en paralelo, demostrando que el error no se debe a que los valores de los \'ultimos \'atomos dependen de los primeros, sino que son independientes y el problema es de redondeo.]{\small{El algoritmo serial, separado en dos fases y unido por medio de sumas otorga el mismo resultado que realizando la cuenta en paralelo, demostrando que el error no se debe a que los valores de los \'ultimos \'atomos dependen de los primeros, sino que son independientes y el problema es de redondeo.}}
+\label{fig:Redondeo}
+\end{figure}
+
+%{\Huge Aca si te queres lucir, podes poner tambien un diagrama mostrando como se concluyo que era un problema de redondeo, va a ayudar a que quede claro el concepto.}
 
 \subsection{Errores de punto flotante surgidos durante la implementaci\'on}%
 
@@ -702,7 +722,7 @@ Pero no siempre es as\'i, y en este caso la diferencia producida es amplificada 
 El error de redondeo se da cuando usamos una calculadora o computadora para efectuar c\'alculos con n\'umeros reales.
 El error surge porque las operaciones aritm\'eticas realizadas en una m\'aquina incluyen exclusivamente n\'umeros finitos de d\'igitos, de manera que los c\'alculos se llevan a cabo con representaciones aproximadas de los n\'umeros reales.
 En una computadora com\'un, s\'olo un conjunto relativamente peque\~no de n\'umeros reales se utiliza para representar a todos estos n\'umeros.
-El subconjunto que contiene \'unicamente n\'umeros racionales, tanto positivos como negativos, y almacena una parte fraccionaria es denominada mantisa, junto con una parte exponencial conocida con el nombre de caracter\'istica. La composici\'on de un n\'umero de punto flotante seg\'un el IEEE es un d\'igito binario para el signo, ocho d\'igitos para el exponente y 23 para la mantisa {\Huge pone una cita para esta info!}. Un n\'umero de doble precisi\'on (como los utilizados para los nuestros c\'alculos) est\'a compuesto por un d\'igito para el signo, once para el exponente y 52 para la mantisa.
+El subconjunto que contiene \'unicamente n\'umeros racionales, tanto positivos como negativos, y almacena una parte fraccionaria es denominada mantisa, junto con una parte exponencial conocida con el nombre de caracter\'istica. La composici\'on de un n\'umero de punto flotante seg\'un el IEEE es un d\'igito binario para el signo, ocho d\'igitos para el exponente y 23 para la mantisa \cite{MicroIntel}. Un n\'umero de doble precisi\'on (como los utilizados para los nuestros c\'alculos) est\'a compuesto por un d\'igito para el signo, once para el exponente y 52 para la mantisa.
 
 No solo la representaci\'on de los n\'umeros es poco exacta, la aritm\'etica efectuada en una computadora tambi\'en lo es.
 Esta aritm\'etica requiere el manejo de los d\'igitos binarios con varias operaciones l\'ogicas o de traslaci\'on.
@@ -726,8 +746,9 @@ Luego de sortear los inconvenientes de migraci\'on surgi\'o la necesidad de obte
 Ninguna librer\'ia de las revisadas (\texttt{Intel}\cite{intelMPI}, \texttt{LAM}, \texttt{MPICH}) ten\'ia implementado este tipo de datos para \texttt{Fortran}.
 Sin embargo, la librer\'ia \texttt{MPICH} ten\'ia implementado el tipo \texttt{long double} para \texttt{C/C++}.
 
-El inconveniente surgido es que en las m\'aquinas IA-32 y AMD utilizadas ese tipo de datos es de 80 bits y no de 128 como en realidad es el tipo \texttt{REAL*16}. {\Huge no se entiende cual es el incoveniente, explica un poco esta parte}
-Finalmente, se opt\'o por utilizar el tipo correspondiente a long double de \texttt{MPICH} corri\'endolo en una m\'aquina SMP Xeon Dual, \emph{Papita}, la cual fue cedida en pr\'estamo por Intel Argentina, AMD Opteron e Itanium ya que en las mismas este tipo de dato y el Real*16 son equivalentes (128 bits).
+El inconveniente surgido es que en las m\'aquinas IA-32 y AMD utilizadas ese tipo de datos es de 80 bits y no de 128 como en realidad es el tipo \texttt{REAL*16}. Esto quiere decir que el tipo de datos \texttt{long double} para \texttt{C/C++} que s\'i se encuentra definido en \texttt{MPICH} y el tipo \texttt{REAL*16} de \texttt{Fortran} no son iguales, y por lo tanto el primero no pod\'ia ser utilizado para reemplazar al segundo.
+%{\Huge no se entiende cual es el incoveniente, explica un poco esta parte}
+Finalmente, se opt\'o por utilizar el tipo correspondiente a long double de \texttt{MPICH} corri\'endolo en una m\'aquina SMP Xeon Dual, \emph{Papita}, la cual fue cedida en pr\'estamo por Intel Argentina, en una AMD Opteron y en una Itanium ya que en las mismas este tipo de dato y el \texttt{Real*16} son equivalentes (128 bits).
 Se realizaron diversas pruebas para corroborar que luego de esta soluci\'on al problema de punto flotante la diferencia entre los resultados del programa serial y el paralelo no eran significativos.
 
 \subsection{Reordenamiento del C\'alculo \label{reordenamiento}}
@@ -790,7 +811,8 @@ Suponiendo finalmente que los d\'igitos significativos en nuestros c\'alculos fu
 No fueron graficados los resultados tanto del proceso 0 como las primeras tres sumatorias del sistema serial debido a que estos datos eran id\'enticos (y as\'i se supon\'ia que deb\'ia ser).
 Los datos de las figuras \ref{fig:DispersionSerial1} y \ref{fig:DispersionSerial2} correponden a las sumatorias del programa serial (RMM123+4, RMM1234+5, RMM12345+6 y RMM123456+7 respectivamente) y los de las figuras \ref{fig:DispersionParalelo1} y \ref{fig:DispersionParalelo2} al paralelo(4+5, 45+6, 456+7 y Proceso0+4567 respectivamente), donde cada n\'umero indica los valores del \'atomo correspondiente (1 es \'atomo 1, y as\'i sucesivamente).
 
-Puede observarse que hay una cierta cantidad de datos en el programa paralelo que no son perdidos y en el serial s\'i. Esto se debe principalmente a que en el proceso 1 la diferencia con los resultados parciales no son tan grandes con respecto a los nuevos valores que se van sumando como para que se produzcan tales p\'erdidas. Observando los datos se vi\'o que la mayor diferencia se daba generalmente contra el valor inicial de RMM, que en muchas ocasiones pose\'ia un valor mayor al de los \'atomos que se suman posteriormente. {\Huge ok, si pones esto, indica en el grafico cual es la zona donde se produce este fenomeno, recuadrala o lo que sea, pero que se pueda identificar sin problemas}
+Puede observarse que hay una cierta cantidad de datos en el programa paralelo que no son perdidos y en el serial s\'i. Esto se debe principalmente a que en el proceso 1 la diferencia con los resultados parciales no son tan grandes con respecto a los nuevos valores que se van sumando como para que se produzcan tales p\'erdidas. Observando los datos se vi\'o que la mayor diferencia se daba generalmente contra el valor inicial de RMM, que en muchas ocasiones pose\'ia un valor mayor al de los \'atomos que se suman posteriormente.
+%{\Huge ok, si pones esto, indica en el grafico cual es la zona donde se produce este fenomeno, recuadrala o lo que sea, pero que se pueda identificar sin problemas}
 
 Finalmente de la observaci\'on de los datos se lleg\'o a una soluci\'on alternativa al problema.La misma consisti\'o en agregar en cada uno de los procesos un valor determinado de forma tal que en cada sumatoria se ocasione una p\'erdida similar a la ocurrida en el programa serial, y luego finalmente restarle ese valor al total. Por ejemplo, si en el programa serial se realizaba una suma entre el vector RMM original m\'as los \'atomos del 1 al 7, en el paralelo se suma por un lado el vector RMM m\'as los \'atomos 1,2 y 3 y en el otro, aunque deber\'ian sumarse s\'olo los \'atomos 4 a 7, se le agrega un valor inicial que luego es finalmente restado antes de unir ambos procesos.
 
@@ -828,7 +850,7 @@ peroxinitrito exhibe una gran toxicidad por su capacidad de formar radicales lib
 \end{figure}
 
 Con la primera entrada utilizada se intenta determinar es el mecanismo de reacción del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on, en primer lugar la alta concentración del CO2 en medios fisiol\'ogicos y en segundo lugar la alta velocidad con que ocurre esta
-reacci\'on. Un esquema de la misma se puede ver en la figura \ref{fig:peroxinitrito4}. 
+reacci\'on. Un esquema de la misma se puede ver en la figura \ref{fig:peroxinitrito4}.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -862,7 +884,7 @@ Finalmente la investigaci\'on correspondiente a la segunda entrada se utiliza se
 
 \section{Implementaci\'on de precisi\'on extendida}
 
-Una vez implementado el algoritmo con precisi\'on exendida se realizaron corridas en una m\'aquina SMP Xeon Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}. 
+Una vez implementado el algoritmo con precisi\'on exendida se realizaron corridas en una m\'aquina SMP Xeon Dual, obteni\'endose los resultados de la tabla \ref{tab:TiemposEjecucion1}.
 
 La misma puede observarse de mejor manera en la figura \ref{fig:Papita128}. Se utiliz\'o la entrada de 7 \'atomos variando la cantidad de pasos a realizarse.
 
@@ -935,7 +957,7 @@ A continuaci\'on se muestran gr\'aficos de eficiencia, overhead y speedup de est
 No fueron realizadas corridas con otro tipo de entradas o en otras m\'aquinas con esta versi\'on debido a la limitaci\'on de performance comentada con anterioridad.
 
 
-\section{Implementaci\'on con reordenamiento de c\'alculo}
+\section{Implementaci\'on con reordenamiento de c\'alculo }
 
 En segunda instancia se implement\'o la soluci\'on de reordenamiento de c\'alculo mencionada en la secci\'on \ref{reordenamiento}. Para esta implementaci\'on inicialmente se realizaron diversas corridas en la m\'aquina SMP Xeon Dual para corroborar que los resultados obtenidos se correspondan a los del programa serial. Estas corridas iniciales fueron realizadas con una entrada de 4 \'atomos y variando la cantidad de pasos de ejecuci\'on. Los tiempos de ejecuci\'on de estas corridas y otros valores de performance pueden observarse en las tablas \ref{tab:Tiempos4Atomos} y \ref{tab:SEO4Atomos}.
 
@@ -965,7 +987,7 @@ En segunda instancia se implement\'o la soluci\'on de reordenamiento de c\'alcul
 \hline
 \texttt{Eficiencia}  & 0.6304 & 0.6428 & 0.6256 & 0.6386 \\
 \hline
-\texttt{Paralelo}  & 36.95\% & 35.71\% & 37.43\% & 36.13\% \\
+\texttt{Overhead}  & 36.95\% & 35.71\% & 37.43\% & 36.13\% \\
 \hline
 \end{tabular}
 \end{center}
@@ -998,7 +1020,7 @@ Finalmente, una vez verificados los resultados se procedi\'o a realizar corridas
 \label{fig:Papita}
 \end{figure}
 
-Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que de la de 128 bits debido a que no se utiliza emulaci\'on por software para realizar las operaciones. Tambi\'en puede observarse como la brecha de tiempos entre el programa serial y el paralelo tambi\'en se va abriendo conforme se agranda el dominio del problema. En las figuras \ref{fig:Speedup}, \ref{fig:Eficiencia}, \ref{fig:Overhead} y \ref{fig:OverheadP} se muestran diversas variables de performance asociadas a estas corridas.
+Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 128 bits debido a que no se utiliza emulaci\'on por software para realizar las operaciones. Tambi\'en puede observarse como la brecha de tiempos entre el programa serial y el paralelo tambi\'en se va abriendo conforme se agranda el dominio del problema. En las figuras \ref{fig:Speedup}, \ref{fig:Eficiencia}, \ref{fig:Overhead} y \ref{fig:OverheadP} se muestran diversas variables de performance asociadas a estas corridas.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -1032,10 +1054,10 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que de la d
 \label{fig:OverheadP}
 \end{figure}
 
-Puede observarse en los gr\'aficos que cuando se realiz\'o la medici\'on con una ejecuci\'on de 10000 pasos el overhead en practicamente un 2\%. A pesar de que el gr\'afico porduce la sensaci\'on de que esta variaci\'on es muy grande no lo es realmente. Esta situaci\'on puede deberse al hecho de que la m\'aquina en la cual fueron realizadas las corridas tambi\'en es utilizada espor\'adicamente para realizar otros trabajos. Si bien se intent\'o que la m\'aquina no fuera utilizada por otras personas es posible que no haya sido este el caso y se haya corrido algun proceso corto que haya modificado los tiempos de ejecuci\'on del programa. A\'un as\'i, el speedup y la eficiencia medidas no son para nada despreciables y demuestran una ganancia en performance m\'as que interesante a los fines de la investigaci\'on futura de sistema de part\'iculas mayores. Por otro lado cabe aclarar que la utilizaci\'on por parte de otros usuarios de la SMP Xeon Dual no afecta el programa serial dado que el mismo es corrido en un solo procesador, mientras que los procesos de usuarios pueden correrse en el otro. En cambio, si afecta al programa paralelo dado que el mismo utiliza ambos procesadores, y si uno se retrasa debido al uso, el otro tambi\'en lo har\'a debido a la mensajer\'ia bloqueante y a la interacci\'on de ambos procesos.
+Puede observarse en los gr\'aficos que cuando se realizaron las mediciones el overhead vari\'o aproximadamente un 2\% cuando se hicieron 10000 pasos con respecto a las otras corridas. A pesar de que el gr\'afico produce la sensaci\'on de que esta variaci\'on es muy grande no lo es realmente. Esta situaci\'on puede deberse al hecho de que la m\'aquina en la cual fueron realizadas las corridas tambi\'en es utilizada espor\'adicamente para realizar otros trabajos. Si bien se intent\'o que la m\'aquina no fuera utilizada por otras personas es posible que no haya sido este el caso y se haya corrido algun proceso corto que haya modificado los tiempos de ejecuci\'on del programa. A\'un as\'i, el speedup y la eficiencia medidas no son despreciables y demuestran una ganancia en performance interesante a los fines de la investigaci\'on futura de sistemas de part\'iculas mayores. Por otro lado cabe aclarar que la utilizaci\'on por parte de otros usuarios de la SMP Xeon Dual no afecta el programa serial dado que el mismo es corrido en un solo procesador, mientras que los procesos de usuarios pueden correrse en el otro. En cambio, s\'i afecta al programa paralelo dado que el mismo utiliza ambos procesadores, y si uno se retrasa debido al uso, el otro tambi\'en lo har\'a debido a la mensajer\'ia bloqueante y a la interacci\'on de ambos procesos.
 
 Luego fueron realizadas mediciones en el cluster $FIUPG$, sito en el estado de Florida, Estados Unidos . El mismo est\'a compuesto por 17 nodos Intel SMP Xeon duales.
-Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura 
+Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura
 \ref{fig:FIUPGTiempos1}.
 
 \begin{table}
@@ -1097,12 +1119,27 @@ Una vez obtenidos los datos de las ejecuciones del sistema en distintas configur
 \end{figure}
 
 
-Puede observarse que conforme el dominio del problema crece la brecha entre los tiempos del sistema serial y los del paralelo se vuelven mayores. Quedar\'a a futuro la ejecuci\'on de un sistema de mayores dimensiones para completar el estudio sobre performance del sistema paralelizado para observar cual es l\'imite de procesamiento del nuevo programa con fines pr\'acticos. A simple vista puede observarse que para mayores dominios del problema los tiempos ahorrados por el sistema paralelo crecen significativamente con respecto al serial.
+Puede observarse que conforme el dominio del problema crece la brecha entre los tiempos del sistema serial y los del paralelo se vuelven mayores. Quedar\'a a futuro la ejecuci\'on de un sistema de mayores dimensiones para completar el estudio sobre performance del sistema paralelizado para observar cual es el l\'imite de procesamiento del nuevo programa con fines pr\'acticos. A simple vista puede observarse que para mayores dominios del problema los tiempos ahorrados por el sistema paralelo crecen significativamente con respecto al serial.
 
-En contraparte a los resultados obtenidos puede observarse el gran overhead introducido en la versi\'on paralela del programa debido al pasaje de mensajes, lo cual hace que el $Speedup$ no sea lineal con respecto a la cantidad de procesos utilizados. Esto quiere decir que si el $Speedup$ fuera lineal, utilizando dos procesos el c\'alculo deber\'ia tardar la mitad de tiempo. \'Esta situaci\'on no se esta cumpliendo debido a que como muestran los gr\'aficos, el overhead var\'ia entre poco m\'as del 30\% y el 50\% del tiempo total, y a futuro queda una investigaci\'on m\'as profunda para intentar reducir el mismo. El overhead se produce no solo debido a la comunicaci\'on entre procesos sino tambi\'en al agregado de operaciones utilizadas para particionar el dominio del problema y posteriormente volver a unirlo. Sin embargo los costos de comunicaci\'on son mucho mayores a los de procesamiento, por lo cual generalmente se desprecian los \'ultimos. Sin embargo, en este caso en particular se ha podido observar que al tratar con grandes cantidades de datos, las operaciones agregadas produc\'ian un aumento significativo en el tiempo total de ejecuci\'on del programa paralelo y es por eso que se debi\'o analizar como reducir las mismas al m\'inimo posible. Por otra parte los costos de comunicaci\'on en un cluster como \emph{Rocky} son mayores a los presentes en una SMP Xeon Dual debido a que el primero posee buses externos de comunicaci\'on (l\'ease por ejemplo cables) que son m\'as lentos que los buses internos utilizados en la segunda.
+En contraparte a los resultados obtenidos puede observarse el gran overhead introducido en la versi\'on paralela del programa debido al pasaje de mensajes, lo cual hace que el $Speedup$ no sea lineal con respecto a la cantidad de procesos utilizados. Esto quiere decir que si el $Speedup$ fuera lineal, utilizando dos procesos el c\'alculo deber\'ia tardar la mitad de tiempo. \'Esta situaci\'on no se esta cumpliendo debido a que como muestran los gr\'aficos, el overhead var\'ia entre cerca del 25\% y el 60\% del tiempo total, y a futuro queda una investigaci\'on m\'as profunda para intentar reducir el mismo. El overhead se produce no solo debido a la comunicaci\'on entre procesos sino tambi\'en al agregado de operaciones utilizadas para particionar el dominio del problema y posteriormente volver a unirlo. Sin embargo los costos de comunicaci\'on son mucho mayores a los de procesamiento, por lo cual generalmente se desprecian los \'ultimos. En este caso en particular se ha podido observar que al tratar con grandes cantidades de datos, las operaciones agregadas produc\'ian un aumento significativo en el tiempo total de ejecuci\'on del programa paralelo y es por eso que se debi\'o analizar como reducir las mismas al m\'inimo posible. Por otra parte los costos de comunicaci\'on en un cluster como \emph{FIUPG} son mayores a los presentes en una SMP Xeon Dual debido a que el primero posee buses externos de comunicaci\'on (l\'ease por ejemplo cables) que son m\'as lentos que los buses internos utilizados en la segunda.
 
-Finalmente, para demostrar la utilidad final del programa fueron realizadas corridas totalmente nuevas en diversos clusters y en la SMP Xeon Dual para contribuir con el procesamiento de datos a la investigaci\'on qu\'imica para la cual se hizo el programa serial. Estas corridas fueron desarrolladas por el grupo de qu\'imica inorg\'anica que provey\'o el programa serial y fueron supervisadas por los mismos mientras se realizaban para verificar la correctitud de los datos obtenidos.
+Finalmente, para demostrar la utilidad final del programa fueron realizadas corridas totalmente nuevas en \emph{FIUPG} y en la SMP Xeon Dual para contribuir con el procesamiento de datos a la investigaci\'on qu\'imica para la cual se hizo el programa serial. Estas corridas fueron desarrolladas por el grupo de qu\'imica inorg\'anica que provey\'o el programa serial y fueron supervisadas por los mismos mientras se realizaban para verificar la correctitud de los datos obtenidos. Mediante este tipo de corridas se contribuye a obtener informaci\'on sobre la interacci\'on molecular y obtener gr\'aficos como los de las figuras \ref{fig:Espectro1,fig:Espectro2}
 
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Espectro1}
+\end{center}
+\caption[Espectro vibracional obtenido a partir de la simulaci\'on PBE-TIP4P, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en rojo, OONO tors., NO3O4 flex. en verde oscuro.]{\small{Espectro vibracional obtenido a partir de la simulaci\'on PBE-TIP4P, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en rojo, OONO tors., NO3O4 flex. en verde oscuro.}}
+\label{fig:Espectro1}
+\end{figure}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=14cm]{Espectro2}
+\end{center}
+\caption[Espectro vibracional obtenido a partir de la simulaci\'on BP86-TIP4P, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en rojo, OONO tors., NO3O4 flex. en verde oscuro.]{\small{Espectro vibracional obtenido a partir de la simulaci\'on BP86-TIP4P, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en rojo, OONO tors., NO3O4 flex. en verde oscuro.}}
+\label{fig:Espectro2}
+\end{figure}
 
 Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura.
 
@@ -1135,7 +1172,7 @@ Esto es posible gracias a que la p\'erdida existente no es significativa, y los 
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
 
 El programa paralelo obtenido abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica.
-Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes. 
+Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes.
 
 Por otra parte pudo observarse que el pico de eficiencia del programa paralelo se obtuvo en una m\'aquina sin buses externos, debido a que los costos de comunicaci\'on afectan la performance.
 Es por este motivo que para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria.
@@ -1177,6 +1214,8 @@ Ver cap\'itulo \ref{Introduccion}.
 \item \textbf{Ecuaci\'on de Schr\"odinger}: desarrollada por el f\'isico austr\'iaco Erwin Rudolf Josef Alexander Schrödinger en 1925, describe la dependencia temporal de los sistemas mecanocu\'anticos. Es de importancia central en la teor\'ia de la mec\'anica cu\'antica, donde representa un papel an\'alogo a las leyes de Newton en la mec\'anica cl\'asica.
 
 \item \textbf{Hamiltoniano}: En mec\'anica cu\'antica es el operador que retorna total de energ\'ia de un sistema en forma de un Eigen-valor. Ver cap\'itulo \ref{Metodologia}.
+
+\item \textbf{Espectro Vibracional}: Las espectroscopias vibracionales son herramientas experimentales que brindan, en muchos casos, informaci\'on microsc\'opica sobre un sistema dado. Estas herramientas no siempre son concluyentes y requieren a menudo de c\'alculos te\'oricos para ser interpretadas. La obtenci\'on del espectro vibracional por m\'etodos convencionales de estructura electr\'onica en vac\'io permite obtener s\'olo frecuencias de vibraci\'on dentro del contexto de la aproximaci\'on armónica. Por ello se utilizan tambi\'en simulaciones de din\'amica molecular h\'ibrida QM-MM para obtener el espectro vibracional, ya que con este esquema se tiene en cuenta efectos de solvente (expl\'icito) y de anarmonicidad.Ver cap\'itulo \ref{ResultadosDiscucion}.
 
 \end{itemize}
 
