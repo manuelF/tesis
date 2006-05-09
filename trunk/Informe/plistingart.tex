@@ -111,16 +111,17 @@ Por otra parte, la simulaci\'on num\'erica ha crecido de forma considerable en l
 
 Las metodolog\'ias utilizadas en simulaci\'on en qu\'imica var\'ian seg\'un el problema a tratar.
 En general, se dividen en dos grandes ramas, la llamada rama \emph{cl\'asica} y la llamada \emph{cu\'antica}.
+
 La mec\'anica que rige el comportamiento de part\'iculas peque\~nas (como los electrones) es la llamada mec\'anica cu\'antica, que fue desarrollada a principios del siglo pasado por f\'isicos ilustres como Einstein, Planck, Bhor y otros.
 
 Lamentablemente, no existe una forma exacta de resolver las ecuaciones asociadas a esta mec\'anica, y las soluciones aproximadas accesibles son muy demandantes desde el punto de vista computacional.
 Esta elevada demanda hace prohibitivo el uso de esta t\'ecnica a sistemas con un n\'umero elevado de \'atomos.
 
-Por otro lado la mec\'anica cl\'asica, menos demandante, es incapaz de representar electrones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia.
-No es posible, entonces, tratar reacciones qu\'imicas (donde la distribuci\'on electr\'onica cambia considerablemente).
+Por otro lado la mec\'anica cl\'asica, menos demandante, es incapaz de representar electrones, por lo que solo puede utilizarse si la distribuci\'on de los mismos no cambia considerablemente.
+No es posible, entonces, tratar reacciones qu\'imicas.
 
-Si se quieren tratar reacciones en soluci\'on, se encuentra el problema de que el n\'umero de \'atomos es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica.
-Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{Diaz2001,Nemukhin2002,Kesavan2003}, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica, mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
+Si se quieren tratar reacciones en soluci\'on, se encuentra el problema de que el n\'umero de \'atomos necesarios para representar correctamente el sistema es demasiado grande como para tratarlo con rigurosidad cu\'antica, sin embargo, al haber reacci\'on qu\'imica, no se puede utilizar una metodolog\'ia totalmente cl\'asica.
+Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{Diaz2001,Nemukhin2002,Kesavan2003}, donde a una peque\~na porci\'on del sistema (la parte reactiva), se la trata con la metodolog\'ia cu\'antica (con detalle electr\'onico), mientras que al resto se lo trata como un campo de fuerzas cl\'asico.
 
 \section{Teor\'ia de los funcionales de la densidad (DFT)}
 
@@ -128,7 +129,7 @@ Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{Diaz2001,Nemukhi
 
 En esta tesis se utiliza la teor\'ia del funcional de la densidad (DFT) para el c\'alculo de la estructura electr\'onica en el esquema h\'ibrido cu\'antico-cl\'asico, por este motivo surge la necesidad de realizar una peque\~na rese\~na la misma \cite{Cramer}.
 
-La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{Cramer, MCGLPHD}, el cual es equivalente en qu\'imica computacional a la aproximaci\'on de orbitales moleculares de enorme utilidad conceptual para los qu\'imicos. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64} que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
+La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{Cramer, MCGLPHD}. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64} que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
 
 Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad electr\'onica, sin embargo no preve\'ia la manera de calcular una u otra. En el a\~no 1965 Kohn y Sham \cite{Kohn65} introdujeron una aproximaci\'on para la forma funcional de la energ\'ia cin\'etica a trav\'es de la cual se hizo posible evaluar la densidad y obtener la energ\'ia total. Este m\'etodo, denominado de Kohn-Sham, es el que permiti\'o utilizar a DFT como un instrumento de c\'alculo de estructura electr\'onica eficiente. La enorme importancia que adquiri\'o la teor\'ia del funcional de la densidad en qu\'imica se vio reflejada en el otorgamiento del premio Nobel al profesor Kohn en 1998.
 
@@ -137,22 +138,15 @@ Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad el
 Los m\'etodos tradicionales en la teor\'ia de estructura electr\'onica, en particular Hartree-Fock y sus descendientes, est\'an basadas en una complicada funci\'on de onda para varios electrones \cite{Becke88,Parr89,Koch2002}.
 El objetivo principal de la DFT es reemplazar esta funci\'on de onda por la densidad electr\'onica como base. Mientras que la funci\'on de onda depende de $3N$ variables (tres variables espaciales por cada uno de los N electrones), la densidad es solo funci\'on de tres variables que es mucho m\'as simple para trabajar tanto conceptual como pr\'acticamente.
 
-A pesar de que la DFT tiene sus ra\'ices en el modelo de Thomas-Fermi, como hemos mencionado con anterioridad, no se utiliz\'o realmente hasta que Hohenberg-Kohn propusieron dos teoremas. El primero de ellos demuestra la existencia de un mapeo uno a uno entre la densidad del estado fundamental del electr\'on y la funci\'on de onda del estado fundamental de un sistema con m\'ultiples part\'iculas. En f\'isica, el estado fundamental de un sistema es su estado cu\'antico de menor energ\'ia. El segundo teorema prueba que la densidad del estado fundamental minimiza la energ\'ia electr\'onica total del sistema. Los teoremas originales se mantienen solo para el estado fundamental en ausencia de un campo magn\'etico, aunque los mismos han sido generalizados. El primero de los teoremas es solo uno existencial, aseverando que el mapeo existe, pero no provee ninguno en particular.
-
-Como se menciona anteriormente, la implementaci\'on m\'as com\'un de la DFT es mediante el m\'etodo de Kohn-Sham. Mediante el mismo, el problema \emph{n-body} de electrones que interact\'uan en un potencial est\'atico externo se ve reducido a un problema de electrones que no interact\'uan y se mueven en un potencial efectivo. Este \'ultimo incluye un potencial externo y los efectos de las interacciones de Coulomb entre los electrones.
+A pesar de que la DFT tiene sus ra\'ices en el modelo de Thomas-Fermi, como hemos mencionado con anterioridad, no se utiliz\'o realmente hasta que Hohenberg-Kohn propusieron dos teoremas.
+El primero de ellos demuestra la existencia de una relaci\'on biun\'ivoca entre la densidad del estado fundamental (de menor energ\'ia) del sistema y la funci\'on de onda del estado fundamental de un sistema con m\'ultiples part\'iculas. Esta relaci\'on consiste en que la funci\'on de onda (y por lo tanto la energ\'ia y cualquier otro observable) se hallan un\'ivocamente determinados por la densidad electr\'onica. Esta densidad da cuenta de la
+probabilidad de encontrar a un electr\'on en un lugar dado del espacio.
+El segundo teorema prueba que la densidad del estado fundamental minimiza la energ\'ia electr\'onica total del sistema. Los teoremas originales se mantienen solo para el estado fundamental en ausencia de un campo magn\'etico, aunque los mismos han sido generalizados. El primero de los teoremas solo garantiza que la relaci\'on entre densidad y funci\'on de onda del estado fundamental existe pero no provee de herramientas para calcular
+ninguna de las dos.
 
 DFT se ha convertido en un m\'etodo muy popular desde la d\'ecada del 70 para c\'alculos de estado s\'olido debido a su relaci\'on de costo-calidad sobre otros m\'etodos de resolver el problema \emph{n-body} en mec\'anica cu\'antica. Sin embargo no fue considerado suficientemente preciso en qu\'imica cu\'antica hasta la d\'ecada del 90 cuando se refinaron las aproximaciones de los mapeos para mejorar el modelado de las interacciones.
 
-DFT es actualmente el m\'etodo m\'as ampliamente utilizado para estructuras electr\'onicas \cite{Estrin,Perdew86,Becke93}. A pesar de las mejoras que ha ido sufriendo todav\'ia existen dificultades para describir adecuadamente algunas interacciones intermoleculares.
-
-
-\subsection{El modelo Thomas-Fermi}
-
-Como hemos venido mencionando, el predecesor del DFT fue el modelo Thomas-Fermi, que se desarroll\'o en la d\'ecada del 20. Thomas y Fermi calcularon la energ\'ia de un \'atomo representando su energ\'ia cin\'etica como una funci\'on de la densidad electr\'onica, combinando esto con la expresi\'on cl\'asica para las interacciones n\'ucleo-electr\'on y electr\'on-electr\'on.
-
-Aunque este modelo fue un primer paso importante, la ecuaci\'on de Thomas-Fermi ten\'ia una precisi\'on limitada, porque no intentaba representar energ\'ia de canje de un \'atomo predicha por la teor\'ia de Hartree-Fock. Dirac agreg\'o al modelo un funcional de esta energ\'ia reci\'en en 1928.
-
-Sin embargo, la teor\'ia de Thomas-Fermi-Dirac se mantuvo imprecisa para la mayor\'ia de sus aplicaciones. Su mayor causa de error se debi\'o a la representaci\'on de la energ\'ia cin\'etica, seguido por los errores en el intercambio de energ\'ia, y finalmente debido a no tomar en cuenta las correlaciones electr\'onicas.
+DFT es actualmente uno de los m\'etodos m\'as utilizados para estructuras electr\'onicas \cite{Estrin96,Perdew86,Becke93}. A pesar de las mejoras que ha ido sufriendo todav\'ia existen dificultades para describir adecuadamente algunas interacciones intermoleculares.
 
 \subsection{Aplicaciones de DFT}
 
@@ -160,7 +154,36 @@ La teor\'ia de Kohn-Sham se puede aplicar de dos formas distintas, las cuales de
 
 En los estados l\'iquido y gaseoso, el gas de electrones es un mal modelo para el comportamiento de \'atomos y mol\'eculas discretas. Para tratar estos casos se ha desarrollado una enorme variedad de funcionales para aplicaciones qu\'imicas. Algunos de estos funcionales son totalmente inconsistentes con la aproximaci\'on del gas electr\'onico uniforme. A pesar de que los resultados obtenidos con estos funcionales suelen ser suficientemente precisos para la mayor\'ia de las aplicaciones, no existe forma de mejorarlos. Por lo tanto no es posible estimar el error de los c\'alculos sin realizar comparaciones con otros m\'etodos o experimentos, lo cual significa que igualmente deben utilizarse otras t\'ecnicas para comparar con el consiguiente costo que esto significa.
 
+\section{\strut M\'etodos Cl\'asicos}
 
+Describir con detalle electr\'onico un sistema qu\'imico es, muchas veces, imposible y/o innecesario. Existen muchos fen\'omenos que pueden simularse con modelos m\'as crudos, en particular en procesos en los
+cuales la estructura electr\'onica no cambia considerablemente. En estos modelos las mol\'eculas (o \'atomos) pueden ser representadas por masas puntuales, generalmente provistas de carga, que interact\'uan a trav\'es de un campo de fuerza cl\'asico \cite{Leach96}. Para construir este campo de fuerza suelen utilizase los Potenciales Coul\'ombicos (de interacciones entre cargas, dipolos y, eventualmente, multipolos), para describir la interacci\'on entre sitios cargados, de Lennard-Jones para describir las interacciones dispersivas y repulsivas de corto alcance, y potenciales arm\'onicos para describir los t\'erminos intramoleculares (distancia y \'angulos de enlace)\cite{MCGLPHD}. En el sistema utilizado para la realizaci\'on de esta tesis se emplean fundamentalmente modelos cl\'asicos para describir el solvente en soluciones acuosas.
+
+\subsection{Modelos de agua}
+
+Un gran n\'umero de las reacciones qu\'imicas de inter\'es ocurren en soluci\'on acuosa. Dentro de los ingredientes utilizados para modelar al agua se encuentran cargas puntuales fijas, cargas fluctuantes, dipolos puntuales, potenciales tipo Lennard-Jones, potenciales arm\'onicos de enlace y otros. La utilizaci\'n de dichos ingredientes, as\'i como la parametrizaci\'on de los mismos, dependen en buena medida de qu\'e propiedad interesa reproducir y con qu\'e nivel de precisi\'on en relaci\'on al costo computacional asociado \cite{Leach96}.
+
+Los modelos de agua utilizados por el sistema serial son el TIP4P y el TIP4P-FQ.
+
+\begin{itemize}
+
+\item En el modelo TIP4P se representa a la mol\'ecula de agua como un cuerpo r\'igido (sin grados de libertad internos) con cuatro centros, uno centrado en cada \'atomo y uno extra en el eje $C_{2v}$ situado en la bisectriz del \'angulo H-O-H (ver figura \ref{fig:TIP4P}). Las mol\'eculas de agua TIP4P interact\'uan entre s\'i mediante interacciones Coul\'ombicas entre cargas situadas en los hidr\'ogenos y el sitio \texttt{M} y mediante un potencial de tipo Lennard-Jones centrado en el \'atomo de ox\'igeno.
+
+\item En el modelo TIP4P-FQ, para incluir los efectos de la polarizaci\'on en un modelo de agua, se tiene en cuenta que el momento dipolar de cada mol\'ecula depende del campo el\'ectrico y \'este, a su vez, depende de los momentos dipolares. Para incluir estos efectos se realiza una din\'amica ficticia de las cargas.
+
+\end{itemize}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[keepaspectratio, width=8cm]{TIP4P}
+\caption[Esquema de distribuci\'on de sitios para los modelos de
+agua TIP4P y TIP4P-FQ]{\small{Esquema de distribuci\'on de sitios para los modelos de
+agua TIP4P y TIP4P-FQ.}}
+\label{fig:TIP4P}
+\end{figure}
+
+La elecci\'on de los mencionados modelos de agua se debe a su utilizaci\'on ampliamente difundida y a que
+reproducen correctamente geometr\'ias y energ\'ias de enlace de d\'imeros y tr\'imeros de agua con solutos.
 
 \section{\strut El problema \emph{n-body}}
 
@@ -205,29 +228,20 @@ En la literatura este problema se lo conoce, tambi\'en, como \emph{many-body pro
 
 Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un gran sistema. En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas.
 Por razones de costo computacional y eficiencia, generalmente estos sistemas son tratados a nivel de mec\'anica molecular (MM)\cite{Leach96,VanDerSpoel98,VanMaaren2001}.
-Sin embargo, el mayor problema que tiene la teor\'ia de MM es que no suele ser apropiada para describir procesos que incluyen generaci\'on o rompimiento de v\'inculos tales como las reacciones qu\'imicas.
-Para modelar correctamente este tipo de procesos deben utilizarse m\'etodos de mec\'anica cu\'antica (QM)\cite{Szabo89,Mahoney2001}.
+Sin embargo, el mayor problema que tiene la teor\'ia de MM es que no puede ser aplicada al modelado de procesos que incluyen la formaci\'on o la ruptura de enlaces covalentes.
+Para modelar correctamente este tipo de procesos deben utilizarse m\'etodos basados en la mec\'anica cu\'antica (QM)\cite{Szabo89,Mahoney2001}.
 
 La regi\'on del espacio a lo largo de una reacci\'on en la cual ocurren cambios significativos en la estructura electr\'onica generalmente es muy peque\~na comparado con el sistema en su totalidad.
 Por lo tanto, lo que se busca es hacer uso de las herramientas de mec\'anica cu\'antica en una regi\'on limitada para modelar el problema, mientras que el resto es modelado mediante mec\'anica molecular (ver figura \ref{fig:Hibrido}) para reducir su complejidad.
-Cuando esto ocurre se tiene un h\'ibrido de las metodolog\'ias QM/MM\cite{Cramer,MCGLPHD}.
+A estas metodolog\'ias h\'ibridas se les da el nombre QM/MM (Quantum Mecanics/molecular mecanics) \cite{Cramer,MCGLPHD}.
 
 \begin{figure}[ht!]
 \begin{center}
 \includegraphics[keepaspectratio, width=10cm]{Hibrido}
 \end{center}
 \caption[Regiones de un sistema en las cuales se deben aplicar distintas t\'ecnicas.]{\small
-{En esta figura se muestra como en sistemas grandes la generaci\'on y rompimiento de v\'inculos puede estudiarse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo (Quantum Mechanics, QM), utilizando mec\'anica molecular (Molecular Mechanics, MM) para representar el resto. En este caso no hay relaci\'on entre los elementos de ambos subsistemas y el modelado es simple.}}
+{En esta figura se muestra como en sistemas grandes la generaci\'on y ruptura de enlaces puede estudiarse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo (Quantum Mechanics, QM), utilizando mec\'anica molecular (Molecular Mechanics, MM) para representar el resto. En este caso no hay relaci\'on entre los elementos de ambos subsistemas y el modelado es simple.}}
 \label{fig:Hibrido}
-\end{figure}
-
-\begin{figure}[ht!]
-\begin{center}
-\includegraphics[keepaspectratio, width=10cm]{Hibrido2}
-\end{center}
-\caption[Regiones de un sistema en las cuales se deben aplicar distintas t\'ecnicas.]{\small
-{Este sistema se representa de manera similar al se\~nalado en la figura \ref{fig:Hibrido} pero presenta la complicaci\'on de tener \'atomos de ambos subsistemas que interact\'uan entre s\'i.}}
-\label{fig:Hibrido2}
 \end{figure}
 
 En este tipo de t\'ecnicas la base consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$). En la versi\'on serial del programa modificado en esta t\'esis se utiliz\'o un m\'etodo h\'ibrido $QM/MM$ \cite{Lebrero2005}. Esta combinaci\'on de m\'etodos permite el estudio de sistemas reactivos (que no se pueden tratar con Hamiltonianos cl\'asicos) con un elevado n\'umero de \'atomos (no pueden ser tratados con metodolog\'ias puramente cu\'anticas).
@@ -243,7 +257,8 @@ Donde $E_{QM}$ denota la energ\'ia del subsistema cu\'antico, $E_{MM}$ la del su
 La energ\'ia correspondiente al subsistema cu\'antico puede calcularse con cualquier m\'etodo de estructura electr\'onica. De la misma manera cualquier campo de fuerzas cl\'asico puede aplicarse al subsistema correspondiente.
 
 El esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT) por su buena relaci\'on costo-calidad, en la cual la variable fundamental es la densidad electr\'onica.
-Esta variable, $\rho$, se expande con un conjunto de funciones base.
+
+Esta variable, $\rho$, es la relaci\'on entre densidad electr\'onica y la funci\'on de onda al cuadrado (este es uno de los postulados de la mec\'anica cu\'antica), donde la funci\'on de onda total se escribe como un producto antisimetrizado de orbitales.
 
 \begin{displaymath}
 \rho = \sum_{i=1}^N \mid X_i^{KS} \mid^{2}
@@ -251,7 +266,7 @@ Esta variable, $\rho$, se expande con un conjunto de funciones base.
 
 %{\Huge Tenes que poner que significa cada uno de las variables que introducis. Una formula donde  no decis que respresenta cada termino, no dice nada }
 
-Donde $X_i^{KS}$ representa a el orbital $i$ de Kohn y Sham el cual est\'a expresado como combinaci\'on lineal de gaussianas \cite{Kohn65}.
+Donde $X_i^{KS}$ representa a el orbital $i$ de Kohn y Sham el cual est\'a expresado como combinaci\'on lineal de gaussianas \cite{Kohn65}, por lo que la densidad queda determinada por una sumatoria de productos de las mismas.
 
 La energ\'ia total del sistema puede describirse como:
 
@@ -270,9 +285,9 @@ Donde:
 \item $r$ es una generalizaci\'on de las coordenadas.
 \end{itemize}
 
-El primer t\'ermino de la f\'ormula corresponde a la energ\'ia cin\'etica del sistema, el segundo es la atracci\'on entre n\'ucleos y electrones, el tercer t\'ermino es la interacci\'on de la densidad consigo misma y el \'ultimo es la energ\'ia de intercambio y correlaci\'on. En la teor\'ia de DFT, si se conociese el valor exacto de este \'ultimo t\'ermino, se podr\'ia conocer la estructura electr\'onica de una mol\'ecula sin problemas. Sin embargo, la dependencia de \'este con la densidad es desconocida y la calidad del c\'alculo depender\'a la aproximaci\'on utilizada para obtener este t\'ermino.
+El primer t\'ermino de la f\'ormula corresponde a la energ\'ia cin\'etica del sistema, el segundo es la atracci\'on entre n\'ucleos y electrones, el tercer t\'ermino es la interacci\'on de la densidad consigo misma y el \'ultimo es la energ\'ia de intercambio y correlaci\'on. En la teor\'ia de DFT, si se conociese el valor exacto de este \'ultimo t\'ermino, se podr\'ia conocer la estructura electr\'onica de una mol\'ecula sin problemas. Sin embargo, la dependencia de \'este con la densidad es desconocida y la calidad del c\'alculo depender\'a de la aproximaci\'on utilizada para obtener este t\'ermino.
 
-Finalmente, una clasificaci\'on importante para estos m\'etodos h\'ibridos es si el l\'imite que separa QM de MM corta alg\'un v\'inculo qu\'imico. Si esto no ocurre el modelado es simple, la uni\'on de la mec\'anica molecular y la cu\'antica puede ser realizada sin mayores inconvenientes (ver figura \ref{fig:Hibrido}). Si, por ejemplo, se presenta una situaci\'on en la cual existen al menos un par de \'atomos, uno en la parte representada cu\'anticamente y otro en la mec\'anica, que interact\'uan entre s\'i (ver figura \ref{fig:Hibrido2}), la representaci\'on puede convertirse en algo intrincado para unir ambos subespacios.
+Finalmente, una clasificaci\'on importante para estos m\'etodos h\'ibridos es si el l\'imite que separa QM de MM corta alg\'un enlace covalente. Si esto no ocurre el modelado es simple, la uni\'on de la mec\'anica molecular y la cu\'antica puede ser realizada sin mayores inconvenientes. Si, por ejemplo, se presenta una situaci\'on en la cual existen al menos un par de \'atomos, uno en la parte representada cu\'anticamente y otro en la mec\'anica, que poseen un enlace covalente entre ellos, la representaci\'on puede convertirse en algo intrincado para unir ambos subespacios.
 
 Mas informaci\'on sobre diversas simulaciones realizadas utilizando m\'etodos QM/MM puede encontrarse en \cite{Kiyohara98,Kusalik94,Svischev96,Yu2004,Stern2001}
 
@@ -852,7 +867,7 @@ peroxinitrito exhibe una gran toxicidad por su capacidad de formar radicales lib
 \label{fig:peroxinitrito}
 \end{figure}
 
-Con la primera entrada utilizada se intenta determinar es el mecanismo de reacción del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on, en primer lugar la alta concentración del CO2 en medios fisiol\'ogicos y en segundo lugar la alta velocidad con que ocurre esta
+Con la primera entrada utilizada se intenta determinar el mecanismo de reacci\'on del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on, en primer lugar la alta concentración del CO2 en medios fisiol\'ogicos y en segundo lugar la alta velocidad con que ocurre esta
 reacci\'on. Un esquema de la misma se puede ver en la figura \ref{fig:peroxinitrito4}.
 
 \begin{figure}[ht!]
@@ -874,7 +889,7 @@ En una primera etapa, como puede observarse en la figura \ref{fig:peroxinitrito4
 \label{fig:peroxinitrito3}
 \end{figure}
 
-Finalmente la investigaci\'on correspondiente a la segunda entrada se utiliza se realiza a efecto de estudiar como influye un solvente (agua) sobre el peroxinitrito. Pueden observarse algunas reacciones en la figura \ref{fig:peroxinitrito2}.
+Finalmente la investigaci\'on correspondiente a la segunda entrada se realiza a efecto de estudiar como influye un solvente (agua) sobre el peroxinitrito. Pueden observarse dimeros utilizados para observar la correctitud de los c\'alculos de las fuerzas y la energ\'ia en la figura \ref{fig:peroxinitrito2}.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -1218,7 +1233,7 @@ Ver cap\'itulo \ref{Introduccion}.
 
 \item \textbf{Hamiltoniano}: En mec\'anica cu\'antica es el operador que retorna total de energ\'ia de un sistema en forma de un Eigen-valor. Ver cap\'itulo \ref{Metodologia}.
 
-\item \textbf{Espectro Vibracional}: Las espectroscopias vibracionales son herramientas experimentales que brindan, en muchos casos, informaci\'on microsc\'opica sobre un sistema dado. Estas herramientas no siempre son concluyentes y requieren a menudo de c\'alculos te\'oricos para ser interpretadas. La obtenci\'on del espectro vibracional por m\'etodos convencionales de estructura electr\'onica en vac\'io permite obtener s\'olo frecuencias de vibraci\'on dentro del contexto de la aproximaci\'on armónica. Por ello se utilizan tambi\'en simulaciones de din\'amica molecular h\'ibrida QM-MM para obtener el espectro vibracional, ya que con este esquema se tiene en cuenta efectos de solvente (expl\'icito) y de anarmonicidad.Ver cap\'itulo \ref{ResultadosDiscucion}.
+\item \textbf{Espectro Vibracional}: El espectro vibracional representa las frecuencias caracter\'isticas de vibraci\'on de una dada mol\'ecula en un entorno. Las espectroscopias vibracionales son herramientas experimentales que brindan, en muchos casos, informaci\'on microsc\'opica sobre un sistema dado. Estas herramientas no siempre son concluyentes y requieren a menudo de c\'alculos te\'oricos para ser interpretadas. La obtenci\'on del espectro vibracional por m\'etodos convencionales de estructura electr\'onica en vac\'io permite obtener s\'olo frecuencias de vibraci\'on dentro del contexto de la aproximaci\'on armónica. Por ello se utilizan tambi\'en simulaciones de din\'amica molecular h\'ibrida QM/MM para obtener el espectro vibracional, ya que con este esquema se tiene en cuenta efectos de solvente (expl\'icito) y de anarmonicidad.Ver cap\'itulo \ref{ResultadosDiscucion}.
 
 \end{itemize}
 
