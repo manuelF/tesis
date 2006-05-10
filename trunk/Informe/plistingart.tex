@@ -127,7 +127,7 @@ Por ello se han desarrollado las metodolog\'ias h\'ibridas\cite{Diaz2001,Nemukhi
 
 \subsection{Introducci\'on a la Teor\'ia del Funcional de la Densidad}
 
-En esta tesis se utiliza la teor\'ia del funcional de la densidad (DFT) para el c\'alculo de la estructura electr\'onica en el esquema h\'ibrido cu\'antico-cl\'asico, por este motivo surge la necesidad de realizar una peque\~na rese\~na la misma \cite{Cramer}.
+En esta tesis se utiliza la teor\'ia del funcional de la densidad (DFT) para el c\'alculo de la estructura electr\'onica en el esquema h\'ibrido cu\'antico-cl\'asico, por este motivo surge la necesidad de realizar una peque\~na rese\~na de la misma \cite{Cramer}.
 
 La teor\'ia de los funcionales de la densidad permite obtener la estructura electr\'onica (o cualquier otra propiedad deseada) de un sistema de electrones y n\'ucleos. La idea original, postulada por Thomas y Fermi en la d\'ecada del 20, es contempor\'anea al nacimiento del m\'etodo Hartree-Fock \cite{Cramer, MCGLPHD}. Sin embargo debido a su inexactitud a la hora de tratar \'atomos y mol\'eculas, el m\'etodo DFT permaneci\'o relegado hasta mucho despu\'es. Reci\'en en la d\'ecada del 60 Hohenberg y Kohn propusieron dos teoremas \cite{Hohenberg64} que posibilitaron un tratamiento riguroso de la estructura electr\'onica como funcional de la densidad.
 
@@ -136,7 +136,7 @@ Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad el
 \subsection{Descripci\'on de la DFT}
 
 Los m\'etodos tradicionales en la teor\'ia de estructura electr\'onica, en particular Hartree-Fock y sus descendientes, est\'an basadas en una complicada funci\'on de onda para varios electrones \cite{Becke88,Parr89,Koch2002}.
-El objetivo principal de la DFT es reemplazar esta funci\'on de onda por la densidad electr\'onica como base. Mientras que la funci\'on de onda depende de $3N$ variables (tres variables espaciales por cada uno de los N electrones), la densidad es solo funci\'on de tres variables que es mucho m\'as simple para trabajar tanto conceptual como pr\'acticamente.
+El objetivo principal de la DFT es reemplazar esta funci\'on de onda por la densidad electr\'onica como base. Mientras que la funci\'on de onda depende de $3N$ variables (tres variables espaciales por cada uno de los $N$ electrones), la densidad es solo funci\'on de tres variables que es mucho m\'as simple para trabajar tanto conceptual como pr\'acticamente.
 
 A pesar de que la DFT tiene sus ra\'ices en el modelo de Thomas-Fermi, como hemos mencionado con anterioridad, no se utiliz\'o realmente hasta que Hohenberg-Kohn propusieron dos teoremas.
 El primero de ellos demuestra la existencia de una relaci\'on biun\'ivoca entre la densidad del estado fundamental (de menor energ\'ia) del sistema y la funci\'on de onda del estado fundamental de un sistema con m\'ultiples part\'iculas. Esta relaci\'on consiste en que la funci\'on de onda (y por lo tanto la energ\'ia y cualquier otro observable) se hallan un\'ivocamente determinados por la densidad electr\'onica. Esta densidad da cuenta de la
@@ -161,24 +161,23 @@ cuales la estructura electr\'onica no cambia considerablemente. En estos modelos
 
 \subsection{Modelos de agua}
 
-Un gran n\'umero de las reacciones qu\'imicas de inter\'es ocurren en soluci\'on acuosa. Dentro de los ingredientes utilizados para modelar al agua se encuentran cargas puntuales fijas, cargas fluctuantes, dipolos puntuales, potenciales tipo Lennard-Jones, potenciales arm\'onicos de enlace y otros. La utilizaci\'n de dichos ingredientes, as\'i como la parametrizaci\'on de los mismos, dependen en buena medida de qu\'e propiedad interesa reproducir y con qu\'e nivel de precisi\'on en relaci\'on al costo computacional asociado \cite{Leach96}.
+Un gran n\'umero de las reacciones qu\'imicas de inter\'es ocurren en soluci\'on acuosa. Dentro de los ingredientes utilizados para modelar al agua se encuentran cargas puntuales fijas, cargas fluctuantes, dipolos puntuales, potenciales tipo Lennard-Jones, potenciales arm\'onicos de enlace y otros. La utilizaci\'on de dichos ingredientes, as\'i como la parametrizaci\'on de los mismos, dependen en buena medida de qu\'e propiedad interesa reproducir y con qu\'e nivel de precisi\'on en relaci\'on al costo computacional asociado \cite{Leach96}.
 
-Los modelos de agua utilizados por el sistema serial son el TIP4P y el TIP4P-FQ.
+Los modelos de agua utilizados por el sistema serial son el \textsf{TIP4P} y el \textsf{TIP4P-FQ}.
 
 \begin{itemize}
 
-\item En el modelo TIP4P se representa a la mol\'ecula de agua como un cuerpo r\'igido (sin grados de libertad internos) con cuatro centros, uno centrado en cada \'atomo y uno extra en el eje $C_{2v}$ situado en la bisectriz del \'angulo H-O-H (ver figura \ref{fig:TIP4P}). Las mol\'eculas de agua TIP4P interact\'uan entre s\'i mediante interacciones Coul\'ombicas entre cargas situadas en los hidr\'ogenos y el sitio \texttt{M} y mediante un potencial de tipo Lennard-Jones centrado en el \'atomo de ox\'igeno.
+\item En el modelo \textsf{TIP4P} se representa a la mol\'ecula de agua como un cuerpo r\'igido (sin grados de libertad internos) con cuatro centros, uno centrado en cada \'atomo y uno extra en el eje $C_{2v}$ situado en la bisectriz del \'angulo H-O-H (ver figura \ref{fig:TIP4P}). Las mol\'eculas de agua \textsf{TIP4P} interact\'uan entre s\'i mediante interacciones Coul\'ombicas entre cargas situadas en los hidr\'ogenos y el sitio \texttt{M} y mediante un potencial de tipo Lennard-Jones centrado en el \'atomo de ox\'igeno.
 
-\item En el modelo TIP4P-FQ, para incluir los efectos de la polarizaci\'on en un modelo de agua, se tiene en cuenta que el momento dipolar de cada mol\'ecula depende del campo el\'ectrico y \'este, a su vez, depende de los momentos dipolares. Para incluir estos efectos se realiza una din\'amica ficticia de las cargas.
+\item En el modelo \textsf{TIP4P-FQ}, para incluir los efectos de la polarizaci\'on en un modelo de agua, se tiene en cuenta que el momento dipolar de cada mol\'ecula depende del campo el\'ectrico y \'este, a su vez, depende de los momentos dipolares. Para incluir estos efectos se realiza una din\'amica ficticia de las cargas.
 
 \end{itemize}
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[keepaspectratio, width=8cm]{TIP4P}
+\includegraphics[keepaspectratio, width=6cm]{TIP4P}
 \caption[Esquema de distribuci\'on de sitios para los modelos de
-agua TIP4P y TIP4P-FQ]{\small{Esquema de distribuci\'on de sitios para los modelos de
-agua TIP4P y TIP4P-FQ.}}
+agua TIP4P y TIP4P-FQ]{\small{Esquema de distribuci\'on de sitios para los modelos de agua \textsf{TIP4P} y \textsf{TIP4P-FQ}.}}
 \label{fig:TIP4P}
 \end{figure}
 
