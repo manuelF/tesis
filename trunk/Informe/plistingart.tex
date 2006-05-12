@@ -135,7 +135,7 @@ Hasta ese momento, la teor\'ia examinada vinculaba la energ\'ia y la densidad el
 
 \subsection{Descripci\'on de la DFT}
 
-Los m\'etodos tradicionales en la teor\'ia de estructura electr\'onica, en particular Hartree-Fock y sus descendientes, est\'an basadas en una complicada funci\'on de onda para varios electrones \cite{Becke88,Parr89,Koch2002}.
+Los m\'etodos tradicionales en la teor\'ia de estructura electr\'onica, en particular Hartree-Fock y los derivados del mismo, est\'an basados en una complicada funci\'on de onda para varios electrones \cite{Becke88,Parr89,Koch2002}.
 El objetivo principal de la DFT es reemplazar esta funci\'on de onda por la densidad electr\'onica como base. Mientras que la funci\'on de onda depende de $3N$ variables (tres variables espaciales por cada uno de los $N$ electrones), la densidad es solo funci\'on de tres variables que es mucho m\'as simple para trabajar tanto conceptual como pr\'acticamente.
 
 A pesar de que la DFT tiene sus ra\'ices en el modelo de Thomas-Fermi, como hemos mencionado con anterioridad, no se utiliz\'o realmente hasta que Hohenberg-Kohn propusieron dos teoremas.
@@ -163,7 +163,7 @@ cuales la estructura electr\'onica no cambia considerablemente. En estos modelos
 
 Un gran n\'umero de las reacciones qu\'imicas de inter\'es ocurren en soluci\'on acuosa. Dentro de los ingredientes utilizados para modelar al agua se encuentran cargas puntuales fijas, cargas fluctuantes, dipolos puntuales, potenciales tipo Lennard-Jones, potenciales arm\'onicos de enlace y otros. La utilizaci\'on de dichos ingredientes, as\'i como la parametrizaci\'on de los mismos, dependen en buena medida de qu\'e propiedad interesa reproducir y con qu\'e nivel de precisi\'on en relaci\'on al costo computacional asociado \cite{Leach96}.
 
-Los modelos de agua utilizados por el sistema serial son el \textsf{TIP4P} y el \textsf{TIP4P-FQ}.
+Los modelos de agua utilizados en el c\'odigo a paralelizar son el \textsf{TIP4P} y el \textsf{TIP4P-FQ}.
 
 \begin{itemize}
 
@@ -215,7 +215,7 @@ El trabajo de Poincar\'e en el problema restringido de tres cuerpos result\'o se
 El problema que se presenta en este trabajo es similar al \emph{n-body}.
 La simulaci\'on de un sistema de part\'iculas es uno de los mayores problemas computacionales tanto en f\'isica como en qu\'imica debido al tiempo que insume.
 Para analizar los movimientos de part\'iculas deben primero calcularse los potenciales del sistema en su totalidad.
-El potencial en cada punto del sistema es igual a la suma de los potenciales determinados por las part\'iculas. Como puede observarse el costo de este c\'alculo es alto y es por este motivo que se intenta mejorar los tiempos de c\'alculo mediante la paralelizaci\'on del software serial utilizado originalmente, con el objetivo final de permitir utilizarlo en problemas de magnitud creciente.
+El potencial en cada punto del sistema es igual a la suma de los potenciales determinados por las part\'iculas. 
 
 A pesar de que la problem\'atica con la que se trabaja es muy similar computacionalmente a la que se ha mencionado en esta secci\'on, no se opt\'o en esta etapa del trabajo por aplicar estas estrategias debido a que el programa serial ya estaba utilizando otra t\'ecnica de resoluci\'on y se opt\'o por no cambiar totalmente la misma debido a la incertidumbre sobre los resultados que esto generar\'ia.
 Sin embargo, existe la necesidad de mencionar que existen otras formas de resoluci\'on para situaciones similares.
@@ -225,7 +225,7 @@ En la literatura este problema se lo conoce, tambi\'en, como \emph{many-body pro
 
 \section{\strut M\'etodos H\'ibridos QM/MM}
 
-Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un gran sistema. En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas.
+Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un sistema con un gra n\'umero de part\'iculas. En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas.
 Por razones de costo computacional y eficiencia, generalmente estos sistemas son tratados a nivel de mec\'anica molecular (MM)\cite{Leach96,VanDerSpoel98,VanMaaren2001}.
 Sin embargo, el mayor problema que tiene la teor\'ia de MM es que no puede ser aplicada al modelado de procesos que incluyen la formaci\'on o la ruptura de enlaces covalentes.
 Para modelar correctamente este tipo de procesos deben utilizarse m\'etodos basados en la mec\'anica cu\'antica (QM)\cite{Szabo89,Mahoney2001}.
@@ -239,7 +239,7 @@ A estas metodolog\'ias h\'ibridas se les da el nombre QM/MM (Quantum Mecanics/mo
 \includegraphics[keepaspectratio, width=10cm]{Hibrido}
 \end{center}
 \caption[Regiones de un sistema en las cuales se deben aplicar distintas t\'ecnicas.]{\small
-{En esta figura se muestra como en sistemas grandes la generaci\'on y ruptura de enlaces puede estudiarse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo (Quantum Mechanics, QM), utilizando mec\'anica molecular (Molecular Mechanics, MM) para representar el resto. En este caso no hay relaci\'on entre los elementos de ambos subsistemas y el modelado es simple.}}
+{En esta figura se muestra como en sistemas con un gran n\'umero de part\'iculas la generaci\'on y ruptura de enlaces puede estudiarse mediante la representaci\'on cu\'antica de una peque\~na parte del mismo (Quantum Mechanics, QM), utilizando mec\'anica molecular (Molecular Mechanics, MM) para representar el resto.}}
 \label{fig:Hibrido}
 \end{figure}
 
@@ -258,6 +258,8 @@ La energ\'ia correspondiente al subsistema cu\'antico puede calcularse con cualq
 El esquema de aproximaci\'on implementado en la versi\'on serial est\'a basado en la teor\'ia del funcional de la densidad (DFT) por su buena relaci\'on costo-calidad, en la cual la variable fundamental es la densidad electr\'onica.
 
 Esta variable, $\rho$, es la relaci\'on entre densidad electr\'onica y la funci\'on de onda al cuadrado (este es uno de los postulados de la mec\'anica cu\'antica), donde la funci\'on de onda total se escribe como un producto antisimetrizado de orbitales.
+
+La densidad queda entonces determinada de la siguiente manera:
 
 \begin{displaymath}
 \rho = \sum_{i=1}^N \mid X_i^{KS} \mid^{2}
@@ -278,7 +280,7 @@ X_i^{KS}\rangle + \int v(r) \rho(r) dr + \frac{1}{2}\int \int
 %{\Huge Idem arriba.}
 Donde:
 \begin{itemize}
-\item $v(r)$ es la densidad que corresponde a los $N$ electrones del sistema interactuantes sometidos al potencial real.
+\item $\rho(r)$ es la densidad que corresponde a los $N$ electrones del sistema interactuantes sometidos al potencial real.
 \item $\nabla$ es el operador laplaciano.
 \item $r_i$ son las coordenadas del electron $i$.
 \item $r$ es una generalizaci\'on de las coordenadas.
@@ -855,7 +857,7 @@ Finalmente se realizaron diversas corridas para corroborar el buen funcionamient
 Se utilizaron dos tipos de entradas para realizar las pruebas de las distintas implementaciones realizadas.
 Una entrada de corresponde a un peroxinitrito (OONO-) m\'as un di\'oxido de carbono (CO2) cu\'anticos m\'as 498 mol\'eculas de agua. La segunda entrada utilizada de corresponde a s\'olo el peroxinitrito con las 498 mol\'eculas de agua.
 
-El peroxinitrito (OONO-) es una especie estable formada en ambientes biol\'ogicos por la reacci\'on del ani\'on radical super\'oxido (O2-) con el NO \cite{Szabo99}. Es muy estable en soluciones alcalinas \cite{Szabo89} pero no en soluciones neutras o \'acidas, ya que su \'acido conjugado (peroxinitroso) isomeriza a \'acido n\'itrico.El
+El peroxinitrito ($OONO-$) es una especie estable formada en ambientes biol\'ogicos por la reacci\'on del ani\'on radical super\'oxido ($O_{2}-$) con el NO \cite{Szabo99}. Es muy estable en soluciones alcalinas \cite{Szabo89} pero no en soluciones neutras o \'acidas, ya que su \'acido conjugado (peroxinitroso) isomeriza a \'acido n\'itrico.El
 peroxinitrito exhibe una gran toxicidad por su capacidad de formar radicales libres que oxidan grupos sulfhidrilos, fosfol\'ipidos y ADN.
 
 \begin{figure}[ht!]
@@ -866,7 +868,7 @@ peroxinitrito exhibe una gran toxicidad por su capacidad de formar radicales lib
 \label{fig:peroxinitrito}
 \end{figure}
 
-Con la primera entrada utilizada se intenta determinar el mecanismo de reacci\'on del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on, en primer lugar la alta concentración del CO2 en medios fisiol\'ogicos y en segundo lugar la alta velocidad con que ocurre esta
+Con la primera entrada utilizada se intenta determinar el mecanismo de reacci\'on del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on, en primer lugar la alta concentración del $CO_{2}$ en medios fisiol\'ogicos y en segundo lugar la alta velocidad con que ocurre esta
 reacci\'on. Un esquema de la misma se puede ver en la figura \ref{fig:peroxinitrito4}.
 
 \begin{figure}[ht!]
@@ -878,7 +880,7 @@ reacci\'on. Un esquema de la misma se puede ver en la figura \ref{fig:peroxinitr
 \end{figure}
 
 
-En una primera etapa, como puede observarse en la figura \ref{fig:peroxinitrito4}, el peroxinitrito se adiciona al CO2 formando un aducto (el nitrosoperoxicarbonato). Este aducto se descompone en los radicales carbonato y NO2 encerrados en una caja de solvente. A su vez, estos radicales pueden reacomodarse de manera tal que conforman otro aducto llamado nitrocarbonato, o bien pueden liberarse como tales.
+En una primera etapa, como puede observarse en la figura \ref{fig:peroxinitrito4}, el peroxinitrito se adiciona al $CO_{2}$ formando un aducto (el nitrosoperoxicarbonato). Este aducto se descompone en los radicales carbonato y $NO_{2}$ encerrados en una caja de solvente. A su vez, estos radicales pueden reacomodarse de manera tal que conforman otro aducto llamado nitrocarbonato, o bien pueden liberarse como tales.
 
 \begin{figure}[ht!]
 \begin{center}
