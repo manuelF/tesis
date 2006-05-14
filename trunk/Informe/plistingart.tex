@@ -628,9 +628,17 @@ Esta rutinas en s\'i consumen muy poco tiempo de ejecuci\'on, pero el problema e
 
 Por este motivo, se buscaron las rutinas desde donde \texttt{dnsg} y las otras rutinas similares eran llamadas.
 Esto ocurre en las funciones de tipo \texttt{exch} (\texttt{exchfock}, \texttt{exchnum}, \texttt{exchnum2}, \texttt{exchnum2op}).
-En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema.
+En las mismas se observ\'o que las llamadas se encontraban dentro de tres ciclos, con los cuales se armaban los puntos de la grilla para cada \'atomo del sistema como puede observarse en la figura \ref{fig:Iteraciones}.
 
-{\Huge Estaria bueno que muestres de forma grafica esta situacion: los tres loops, que se hace en cada uno y cual tomaste para paralelizar... es decir un diagrama lindo}
+%{\Huge Estaria bueno que muestres de forma grafica esta situacion: los tres loops, que se hace en cada uno y cual tomaste para paralelizar... es decir un diagrama lindo}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[keepaspectratio, width=10cm]{Iteraciones}
+\end{center}
+\caption[Explicaci\'on de las diversas iteraciones ejecutadas para completar la grilla RMM]{\small{Iteraciones ejecutadas para completar la grilla RMM. Se opt\'o por paralelizar el c\'odigo a partir de la Iteraci\'on 1, la cual ejecuta los loops internos para cada uno de los \'atomos a analizar.}}
+\label{fig:Iteraciones}
+\end{figure}
 
 Se decidi\'o paralelizar el algoritmo por el ciclo m\'as externo, que justamente es el que itera por cada \'atomo, para evitar sobrecarga de comunicaci\'on entre los nodos.
 
