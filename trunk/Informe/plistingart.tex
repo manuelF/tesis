@@ -613,8 +613,8 @@ Es en estas cinco \'ultimas rutinas es en las que se centra nuestro an\'alisis d
 Se podr\'a observar m\'as adelante que las cinco efect\'uan el mismo tipo de c\'alculo, variando s\'olo en algunos detalles internos como ser utilizaci\'on o no de una matriz resultado, o la cantidad de par\'ametros de salida que tienen.
 
 \section{Implementaci\'on}
-{\huge Esta frase es muy complicada, m\'as adelante estas diciendo que tu solucion implica modificar una rutina del medio del programa, eso definitivamente NO es caja negra}.
-La paralelizaci\'on del programa paralelo fue realizada mediante la t\'ecnica de caja negra. Esta t\'ecnica se refiere a ver un sistema en t\'erminos de sus caracter\'isticas de entradas y salidas sin tener en cuenta los procesos intermedios, es decir que se analiza el algoritmo en t\'erminos de lo que recibe y entrega.
+%{\huge Esta frase es muy complicada, m\'as adelante estas diciendo que tu solucion implica modificar una rutina del medio del programa, eso definitivamente NO es caja negra}.
+%La paralelizaci\'on del programa paralelo fue realizada mediante la t\'ecnica de caja negra. Esta t\'ecnica se refiere a ver un sistema en t\'erminos de sus caracter\'isticas de entradas y salidas sin tener en cuenta los procesos intermedios, es decir que se analiza el algoritmo en t\'erminos de lo que recibe y entrega.
 
 En primera instancia se reorganiz\'o el c\'odigo de manera de eliminar vicios de programaci\'on y lograr evitar ciertos problemas que pueden traer aparejadas algunas reglas de utilizaci\'on del fortran.
 Por ejemplo, al utilizar declaraci\'on impl\'icita de variables si el programador declara que las variables que empiecen con letras de la \texttt{A} a la \texttt{H} sean del tipo \texttt{REAL*8} pero luego ante un descuido declara otra variable \texttt{INTEGER} con alg\'un nombre que empiece entre esas letras podr\'an darse errores o diferencias en los resultados.
@@ -1031,7 +1031,8 @@ En segunda instancia se implement\'o la soluci\'on de reordenamiento de c\'alcul
 \hline
 \end{tabular}
 \end{center}
-\caption[Speedup, Eficiencia y Overhead en m\'aquina SMP Xeon Dual con reordenamiento de c\'alculo]{\small{Speedup, Eficiencia y overhead del programa en una m\'aquina SMP Xeon Dual con 4 \'atomos con reordenamiento de c\'alculo en el programa.} {\huge Indicar que el overhead es sobre el tiempo total, ya que no coincide con la definicion dada anteriormente}}
+\caption[Speedup, Eficiencia y Overhead en m\'aquina SMP Xeon Dual con reordenamiento de c\'alculo]{\small{Speedup, Eficiencia y overhead del programa en una m\'aquina SMP Xeon Dual con 4 \'atomos con reordenamiento de c\'alculo en el programa. El overhead se mide con respecto al tiempo total de ejecuci\'on.}}
+%{\huge Indicar que el overhead es sobre el tiempo total, ya que no coincide con la definicion dada anteriormente}
 \label{tab:SEO4Atomos}
 \end{table}
 
@@ -1097,8 +1098,9 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 Puede observarse en los gr\'aficos que cuando se realizaron las mediciones el overhead vari\'o aproximadamente un 2\% cuando se hicieron 10000 pasos con respecto a las otras corridas. A pesar de que el gr\'afico produce la sensaci\'on de que esta variaci\'on es muy grande no lo es realmente. Esta situaci\'on puede deberse al hecho de que la m\'aquina en la cual fueron realizadas las corridas tambi\'en es utilizada espor\'adicamente para realizar otros trabajos. Si bien se intent\'o que la m\'aquina no fuera utilizada por otras personas es posible que no haya sido este el caso y se haya corrido alg\'un proceso corto que haya modificado los tiempos de ejecuci\'on del programa. A\'un as\'i, el speedup y la eficiencia medidas no son despreciables y demuestran una ganancia en performance interesante a los fines de la investigaci\'on futura de sistemas de part\'iculas mayores. Por otro lado cabe aclarar que la utilizaci\'on por parte de otros usuarios de la SMP Xeon Dual no afecta el programa serial dado que el mismo es corrido en un solo procesador, mientras que los procesos de usuarios pueden correrse en el otro. En cambio, s\'i afecta al programa paralelo dado que el mismo utiliza ambos procesadores, y si uno se retrasa debido al uso, el otro tambi\'en lo har\'a debido a la mensajer\'ia bloqueante y a la interacci\'on de ambos procesos.
 
 Luego fueron realizadas mediciones en el cluster $FIUPG$, sito en el estado de Florida, Estados Unidos.
-El mismo est\'a compuesto por 17 nodos Intel SMP Xeon duales. {\huge Decir porque no podes usar los 17*2 procesadores que hay en el cluster y porque elegis correr un proceso por maquina.}
-Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura \ref{fig:FIUPGTiempos1}.
+El mismo est\'a compuesto por 17 nodos Intel SMP Xeon duales. 
+%{\huge Decir porque no podes usar los 17*2 procesadores que hay en el cluster y porque elegis correr un proceso por maquina.}
+Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura \ref{fig:FIUPGTiempos1}. No fueron utilizados mas procesadores del cluster debido a que cuanto mayor es la cantidad de procesos utilizados el error introducido por la aritm\'etica finita crece, de forma tal de hacer que los resultados obtenidos no sean utilizables. Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor manera el overhead introducido por los buses externos de datos de baja velocidad.
 
 \begin{table}
 \begin{center}
@@ -1170,7 +1172,7 @@ Por otra parte los costos de comunicaci\'on en un cluster como \emph{FIUPG} son 
 
 Finalmente, para demostrar la utilidad final del programa fueron realizadas corridas totalmente nuevas en \emph{FIUPG} y en la SMP Xeon Dual. Los par\'ametros para estas corridas fueron preparados por el grupo de qu\'imica inorg\'anica que provey\'o el programa serial y fueron supervisadas por los mismos mientras se realizaban para verificar la correctitud de los datos obtenidos.
 Mediante este tipo de corridas se contribuye a obtener informaci\'on sobre la interacci\'on molecular y obtener gr\'aficos como los de las figuras \ref{fig:Espectro1} y \ref{fig:Espectro2}.
-{\huge todo muy lindo, pero no es posible dar un poco mas de informacion de estos graficos}
+%{\huge todo muy lindo, pero no es posible dar un poco mas de informacion de estos graficos}
 
 \begin{figure}[ht!]
 \begin{center}
@@ -1188,15 +1190,10 @@ Mediante este tipo de corridas se contribuye a obtener informaci\'on sobre la in
 \label{fig:Espectro2}
 \end{figure}
 
-{\huge Si esto es trabajo a futuro, porque no lo pones en el capitulo correspondiente?}
+Cada una de las formas en que vibra una mol\'ecula es llamada modo normal. En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente.
 
-Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura.
+%{\huge Si esto es trabajo a futuro, porque no lo pones en el capitulo correspondiente?}
 
-Una estrategia analizada inicialmente, fue la utilizaci\'on de mensajes no bloqueantes, ya que la metodolog\'ia actual (pasaje de mensajes bloqueantes) produce un overhead en el cual los procesos se encuentran inactivos.
-Sin embargo, la implementaci\'on de mensajes no bloqueantes requiere de un an\'alisis exhaustivo del problema para poder seleccionar zonas del programa en las que puedan solaparse c\'alculo y comunicaci\'on.
-Dado que la funci\'on que ha sido elegida como blanco de optimizaci\'on no requiere sincronizaci\'on intermedia, por el momento no hemos utilizado esta modalidad.
-Por otro lado la alta inestabilidad num\'erica del programa convierte este tipo de optimizaci\'on en un problema demasiado complejo para ser tratado en el presente trabajo.
-El motivo de esta aseveraci\'on es que al utilizar mensajes no bloqueantes el orden de operaciones se ve modificado, y como hemos explicado en secciones anteriores esto es causal de resultados no deseados e incorrectos.
 
 % \pagebreak
 \chapter{Conclusiones y trabajo futuro}
@@ -1218,7 +1215,8 @@ Esta primera soluci\'on ser\'a utilizable a futuro cuando se comercialicen m\'aq
 En ese momento esta versi\'on ser\'a probablemente mejor en cuanto a performance y precisi\'on que la que finalmente fue utilizada en este trabajo.
 La versi\'on de 128 bits, como ya se explic\'o, tiene una mayor precisi\'on de variables, pero no solo eso, posee menos operaciones que la segunda soluci\'on implementada debido a que esta \'ultima utiliz\'o un reordenamiento de c\'alculo que necesit\'o de una cierta cantidad de instrucciones con su consiguiente costo computacional.
 
-Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al sistema serial que aunque no otorga resultados exactamente iguales los mismos son muy similares y aceptados por los expertos del \'area. {\huge esto no se entiende que queres decir, la perdida de precision es la ``misma'' que la producida por la versi\'on serial, no?}
+Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al sistema serial que aunque no otorga resultados exactamente iguales la perdida de precisi\'on es la misma y por lo tanto es aceptado por los expertos del \'area. 
+%{\huge esto no se entiende que queres decir, la perdida de precisi\'on es la ``misma'' que la producida por la versi\'on serial, no?}
 En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on a cambio de la posibilidad de estudiar sistemas m\'as grandes.
 Esto es posible gracias a que la p\'erdida existente no es significativa, y los resultados obtenidos est\'an dentro de los par\'ametros aceptables.
 
@@ -1233,12 +1231,20 @@ Sin embargo esto no quiere decir que a futuro no se logre una mejor performance 
 
 \section{Trabajo futuro}
 
-Como se puede observar en el profiling existen diversas rutinas que pueden intentarse paralelizar. Uno de los ejemplos puntuales son las rutinas \texttt{IntSol} e \texttt{IntSolg} que consumen alrededor del $15\%$ del tiempo total.
+Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura.
+
+Una estrategia analizada inicialmente, fue la utilizaci\'on de mensajes no bloqueantes, ya que la metodolog\'ia actual (pasaje de mensajes bloqueantes) produce un overhead en el cual los procesos se encuentran inactivos.
+Sin embargo, la implementaci\'on de mensajes no bloqueantes requiere de un an\'alisis exhaustivo del problema para poder seleccionar zonas del programa en las que puedan solaparse c\'alculo y comunicaci\'on.
+Dado que la funci\'on que ha sido elegida como blanco de optimizaci\'on no requiere sincronizaci\'on intermedia, por el momento no hemos utilizado esta modalidad.
+Por otro lado la alta inestabilidad num\'erica del programa convierte este tipo de optimizaci\'on en un problema demasiado complejo para ser tratado en el presente trabajo.
+El motivo de esta aseveraci\'on es que al utilizar mensajes no bloqueantes el orden de operaciones se ve modificado, y como hemos explicado en secciones anteriores esto es causal de resultados no deseados e incorrectos.
+
+Pudo observarse en el profiling que existen diversas rutinas que pueden intentarse paralelizar. Uno de los ejemplos puntuales son las rutinas \texttt{IntSol} e \texttt{IntSolg} que consumen alrededor del $15\%$ del tiempo total.
 
 Otras rutinas son las del tipo de la \texttt{int3} que invocan en gran n\'umero a la funci\'on \texttt{funct} lo cual produce un consumo del $5\%$ del tiempo total.
 Por otra parte queda como trabajo de desarrollo a futuro el uso de determinadas variables en memoria en vez de el c\'alculo de las mismas cada vez que son solicitadas, lo cual esta produciendo una perdida de performance importante.
 
-Finalmente como se mencion\'o con anterioridad queda pendiente el estudio de la utilizaci\'on de mensajer\'ia no bloqueante asi tambi\'en como la prueba del sistema en otras tecnolog\'ias para observar las diversas variables de performance (speedup, overhead, eficiencia).
+Finalmente, queda pendiente la prueba del sistema en otras tecnolog\'ias para observar las diversas variables de performance (speedup, overhead, eficiencia).
 
 \pagebreak
 \appendix
