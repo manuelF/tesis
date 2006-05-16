@@ -613,14 +613,11 @@ Es en estas cinco \'ultimas rutinas es en las que se centra nuestro an\'alisis d
 Se podr\'a observar m\'as adelante que las cinco efect\'uan el mismo tipo de c\'alculo, variando s\'olo en algunos detalles internos como ser utilizaci\'on o no de una matriz resultado, o la cantidad de par\'ametros de salida que tienen.
 
 \section{Implementaci\'on}
-%{\huge Esta frase es muy complicada, m\'as adelante estas diciendo que tu solucion implica modificar una rutina del medio del programa, eso definitivamente NO es caja negra}.
-%La paralelizaci\'on del programa paralelo fue realizada mediante la t\'ecnica de caja negra. Esta t\'ecnica se refiere a ver un sistema en t\'erminos de sus caracter\'isticas de entradas y salidas sin tener en cuenta los procesos intermedios, es decir que se analiza el algoritmo en t\'erminos de lo que recibe y entrega.
-
 En primera instancia se reorganiz\'o el c\'odigo de manera de eliminar vicios de programaci\'on y lograr evitar ciertos problemas que pueden traer aparejadas algunas reglas de utilizaci\'on del fortran.
 Por ejemplo, al utilizar declaraci\'on impl\'icita de variables si el programador declara que las variables que empiecen con letras de la \texttt{A} a la \texttt{H} sean del tipo \texttt{REAL*8} pero luego ante un descuido declara otra variable \texttt{INTEGER} con alg\'un nombre que empiece entre esas letras podr\'an darse errores o diferencias en los resultados.
-En etapas posteriores se fueron eliminando las declaraciones impl\'icitas de variables y se constat\'o mediante un \emph{dump} del estado del programa que no se hubiera modificado nada respecto a la versi\'on serial.
+En etapas posteriores se fueron eliminando las declaraciones impl\'icitas de variables y se constat\'o mediante un \emph{dump} del programa que no se hubiera modificado nada respecto a la versi\'on serial.
 
-La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral.
+La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral.{\huge Qu\'e integral???}
 
 Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correspondiente sus c\'alculos en forma local.
 Finalmente, como es necesario para las operaciones subsiguientes contar con el total de los datos en cada uno de los procesos, se realiza la sincronizaci\'on de cada uno de ellos contra todos los restantes.
@@ -780,8 +777,9 @@ Luego de sortear los inconvenientes de migraci\'on surgi\'o la necesidad de obte
 Ninguna librer\'ia de las revisadas (\texttt{Intel}\cite{intelMPI}, \texttt{LAM}, \texttt{MPICH}) ten\'ia implementado este tipo de datos para \texttt{Fortran}.
 Sin embargo, la librer\'ia \texttt{MPICH} ten\'ia implementado el tipo \texttt{long double} para \texttt{C/C++}.
 
-El inconveniente surgido es que en las m\'aquinas IA-32 y AMD utilizadas ese tipo de datos es de 80 bits y no de 128 como en realidad es el tipo \texttt{REAL*16}. Esto quiere decir que el tipo de datos \texttt{long double} para \texttt{C/C++} que s\'i se encuentra definido en \texttt{MPICH} y el tipo \texttt{REAL*16} de \texttt{Fortran} no son iguales, y por lo tanto el primero no pod\'ia ser utilizado para reemplazar al segundo.
-%{\Huge no se entiende cual es el incoveniente, explica un poco esta parte}
+El inconveniente surgido es que en las m\'aquinas IA-32 y AMD utilizadas ese tipo de datos es de 80 bits y no de 128 como en realidad es el tipo \texttt{REAL*16}.
+Esto quiere decir que el tipo de datos \texttt{long double} para \texttt{C/C++} que s\'i se encuentra definido en \texttt{MPICH} y el tipo \texttt{REAL*16} de \texttt{Fortran} no son iguales, y por lo tanto el primero no pod\'ia ser utilizado para reemplazar al segundo.
+
 Finalmente, se opt\'o por utilizar el tipo correspondiente a long double de \texttt{MPICH} corri\'endolo en una m\'aquina SMP Xeon Dual, \emph{Papita}, la cual fue cedida en pr\'estamo por Intel Argentina, en una AMD Opteron y en una Itanium ya que en las mismas este tipo de dato y el \texttt{Real*16} son equivalentes (128 bits).
 Se realizaron diversas pruebas para corroborar que luego de esta soluci\'on al problema de punto flotante la diferencia entre los resultados del programa serial y el paralelo no eran significativos.
 
@@ -1032,7 +1030,6 @@ En segunda instancia se implement\'o la soluci\'on de reordenamiento de c\'alcul
 \end{tabular}
 \end{center}
 \caption[Speedup, Eficiencia y Overhead en m\'aquina SMP Xeon Dual con reordenamiento de c\'alculo]{\small{Speedup, Eficiencia y overhead del programa en una m\'aquina SMP Xeon Dual con 4 \'atomos con reordenamiento de c\'alculo en el programa. El overhead se mide con respecto al tiempo total de ejecuci\'on.}}
-%{\huge Indicar que el overhead es sobre el tiempo total, ya que no coincide con la definicion dada anteriormente}
 \label{tab:SEO4Atomos}
 \end{table}
 
@@ -1099,8 +1096,9 @@ Puede observarse en los gr\'aficos que cuando se realizaron las mediciones el ov
 
 Luego fueron realizadas mediciones en el cluster $FIUPG$, sito en el estado de Florida, Estados Unidos.
 El mismo est\'a compuesto por 17 nodos Intel SMP Xeon duales. 
-%{\huge Decir porque no podes usar los 17*2 procesadores que hay en el cluster y porque elegis correr un proceso por maquina.}
-Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura \ref{fig:FIUPGTiempos1}. No fueron utilizados mas procesadores del cluster debido a que cuanto mayor es la cantidad de procesos utilizados el error introducido por la aritm\'etica finita crece, de forma tal de hacer que los resultados obtenidos no sean utilizables. Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor manera el overhead introducido por los buses externos de datos de baja velocidad.
+Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura \ref{fig:FIUPGTiempos1}.
+No fueron utilizados m\'as procesadores del cluster debido a que cuanto mayor es la cantidad de procesos utilizados el error introducido por la aritm\'etica finita crece, de forma tal de hacer que los resultados obtenidos no sean utilizables.{\huge esto que decis aca lo comprobaste? Estas seguro que no usaste mas procesadores por una cuestion de error o porque el problema no era lo suficientemente grande?}
+Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor manera el overhead introducido por los buses externos de datos de baja velocidad.
 
 \begin{table}
 \begin{center}
@@ -1170,9 +1168,9 @@ Sin embargo los costos de comunicaci\'on son mucho mayores a los de procesamient
 En este caso en particular se ha podido observar que al tratar con grandes cantidades de datos, las operaciones agregadas produc\'ian un aumento significativo en el tiempo total de ejecuci\'on del programa paralelo y es por eso que se debi\'o analizar como reducir las mismas al m\'inimo posible.
 Por otra parte los costos de comunicaci\'on en un cluster como \emph{FIUPG} son mayores a los presentes en una SMP Xeon Dual debido a que el primero posee buses externos de comunicaci\'on que son m\'as lentos que los buses internos utilizados en la segunda.
 
-Finalmente, para demostrar la utilidad final del programa fueron realizadas corridas totalmente nuevas en \emph{FIUPG} y en la SMP Xeon Dual. Los par\'ametros para estas corridas fueron preparados por el grupo de qu\'imica inorg\'anica que provey\'o el programa serial y fueron supervisadas por los mismos mientras se realizaban para verificar la correctitud de los datos obtenidos.
+Finalmente, para demostrar la utilidad final del programa fueron realizadas corridas totalmente nuevas en \emph{FIUPG} y en la SMP Xeon Dual.
+Los par\'ametros para estas corridas fueron preparados por el grupo de qu\'imica inorg\'anica que provey\'o el programa serial y fueron supervisadas por los mismos para verificar la correctitud de los datos obtenidos.
 Mediante este tipo de corridas se contribuye a obtener informaci\'on sobre la interacci\'on molecular y obtener gr\'aficos como los de las figuras \ref{fig:Espectro1} y \ref{fig:Espectro2}.
-%{\huge todo muy lindo, pero no es posible dar un poco mas de informacion de estos graficos}
 
 \begin{figure}[ht!]
 \begin{center}
@@ -1191,9 +1189,7 @@ Mediante este tipo de corridas se contribuye a obtener informaci\'on sobre la in
 \end{figure}
 
 Cada una de las formas en que vibra una mol\'ecula es llamada modo normal. En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente.
-
-%{\huge Si esto es trabajo a futuro, porque no lo pones en el capitulo correspondiente?}
-
+{\huge no queda más nada que decir sobre estos gráficos que esta frase, la corrida indica algo, da alguna pista interesante, se parece a alg\'un resultado ya obtenido o algo experimental?}
 
 % \pagebreak
 \chapter{Conclusiones y trabajo futuro}
@@ -1215,15 +1211,15 @@ Esta primera soluci\'on ser\'a utilizable a futuro cuando se comercialicen m\'aq
 En ese momento esta versi\'on ser\'a probablemente mejor en cuanto a performance y precisi\'on que la que finalmente fue utilizada en este trabajo.
 La versi\'on de 128 bits, como ya se explic\'o, tiene una mayor precisi\'on de variables, pero no solo eso, posee menos operaciones que la segunda soluci\'on implementada debido a que esta \'ultima utiliz\'o un reordenamiento de c\'alculo que necesit\'o de una cierta cantidad de instrucciones con su consiguiente costo computacional.
 
-Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al sistema serial que aunque no otorga resultados exactamente iguales la perdida de precisi\'on es la misma y por lo tanto es aceptado por los expertos del \'area. 
-%{\huge esto no se entiende que queres decir, la perdida de precisi\'on es la ``misma'' que la producida por la versi\'on serial, no?}
+Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al programa serial que aunque no otorga resultados exactamente iguales la p\'erdida de precisi\'on es la misma y por lo tanto es aceptado por los expertos del \'area. 
 En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on a cambio de la posibilidad de estudiar sistemas m\'as grandes.
+{\huge La perdida de precision sembrada te ayuda a que puedas estudiar cualquier sistema en paralelo, sino la cosa no anda. Si lo que queres decir es que te permite la posibilidad de, como se ejecuta en paralelo, correr cosas m\'as grandes, deber\'ias decir eso.}
 Esto es posible gracias a que la p\'erdida existente no es significativa, y los resultados obtenidos est\'an dentro de los par\'ametros aceptables.
 
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
 
 El programa paralelo obtenido abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica.
-Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes.
+Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes. {\huge otra vez lo mismo que dec\'is hace dos parrafos, reforma para decir las cosas una sola vez...}
 
 Por otra parte pudo observarse que el pico de eficiencia del programa paralelo se obtuvo en una m\'aquina sin buses externos, debido a que los costos de comunicaci\'on afectan la performance.
 Es por este motivo que para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria.
