@@ -617,7 +617,8 @@ En primera instancia se reorganiz\'o el c\'odigo de manera de eliminar vicios de
 Por ejemplo, al utilizar declaraci\'on impl\'icita de variables si el programador declara que las variables que empiecen con letras de la \texttt{A} a la \texttt{H} sean del tipo \texttt{REAL*8} pero luego ante un descuido declara otra variable \texttt{INTEGER} con alg\'un nombre que empiece entre esas letras podr\'an darse errores o diferencias en los resultados.
 En etapas posteriores se fueron eliminando las declaraciones impl\'icitas de variables y se constat\'o mediante un \emph{dump} del programa que no se hubiera modificado nada respecto a la versi\'on serial.
 
-La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral.{\huge Qu\'e integral???}
+La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral presente en el tercer t\'ermino de la ecuaci\'on \ref{energia}.
+%{\huge Qu\'e integral???}
 
 Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correspondiente sus c\'alculos en forma local.
 Finalmente, como es necesario para las operaciones subsiguientes contar con el total de los datos en cada uno de los procesos, se realiza la sincronizaci\'on de cada uno de ellos contra todos los restantes.
@@ -1097,7 +1098,9 @@ Puede observarse en los gr\'aficos que cuando se realizaron las mediciones el ov
 Luego fueron realizadas mediciones en el cluster $FIUPG$, sito en el estado de Florida, Estados Unidos.
 El mismo est\'a compuesto por 17 nodos Intel SMP Xeon duales. 
 Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura \ref{fig:FIUPGTiempos1}.
-No fueron utilizados m\'as procesadores del cluster debido a que cuanto mayor es la cantidad de procesos utilizados el error introducido por la aritm\'etica finita crece, de forma tal de hacer que los resultados obtenidos no sean utilizables.{\huge esto que decis aca lo comprobaste? Estas seguro que no usaste mas procesadores por una cuestion de error o porque el problema no era lo suficientemente grande?}
+No fueron utilizados m\'as procesadores del cluster debido a que cuanto mayor es la cantidad de procesos utilizados el error introducido por la aritm\'etica finita crece, de forma tal de hacer que los resultados obtenidos no sean utilizables.
+%{\huge esto que decis aca lo comprobaste? Estas seguro que no usaste mas procesadores por una cuestion de error o porque el problema no era lo suficientemente grande?}
+%Esto lo comprobe, hice corridas cortas cada vez con mas procesos, ya con 4 procesos los resultados obtenidos no eran iguales a los de 2, y con mas los errores se propagaban
 Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor manera el overhead introducido por los buses externos de datos de baja velocidad.
 
 \begin{table}
@@ -1188,8 +1191,8 @@ Mediante este tipo de corridas se contribuye a obtener informaci\'on sobre la in
 \label{fig:Espectro2}
 \end{figure}
 
-Cada una de las formas en que vibra una mol\'ecula es llamada modo normal. En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente.
-{\huge no queda más nada que decir sobre estos gráficos que esta frase, la corrida indica algo, da alguna pista interesante, se parece a alg\'un resultado ya obtenido o algo experimental?}
+Cada una de las formas en que vibra una mol\'ecula es llamada modo normal. En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente. En ambas figuras se aprecia una gran predominancia de la frecuencia de cada modo normal. \'Esta situaci\'on indicar\'ia que dichos modos no cambian cualitativamente al pasar de vac\'io a la soluci\'on. Tambi\'en es posible observar un marcado ensanchamiento en la banda correspondiente al estiramiento $N-O_{3}$, indicando un fuerte efecto solvente para este modo en particular. \'Estos resultados obtenidos coinciden con otros valores experimentales. Los errores generales son peque\~nos as\'i como tambi\'en los errores con respecto a la sensible banda de estiramiento $N-O_{3}$. 
+%{\huge no queda más nada que decir sobre estos gráficos que esta frase, la corrida indica algo, da alguna pista interesante, se parece a alg\'un resultado ya obtenido o algo experimental?}
 
 % \pagebreak
 \chapter{Conclusiones y trabajo futuro}
@@ -1212,17 +1215,16 @@ En ese momento esta versi\'on ser\'a probablemente mejor en cuanto a performance
 La versi\'on de 128 bits, como ya se explic\'o, tiene una mayor precisi\'on de variables, pero no solo eso, posee menos operaciones que la segunda soluci\'on implementada debido a que esta \'ultima utiliz\'o un reordenamiento de c\'alculo que necesit\'o de una cierta cantidad de instrucciones con su consiguiente costo computacional.
 
 Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al programa serial que aunque no otorga resultados exactamente iguales la p\'erdida de precisi\'on es la misma y por lo tanto es aceptado por los expertos del \'area. 
-En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on a cambio de la posibilidad de estudiar sistemas m\'as grandes.
-{\huge La perdida de precision sembrada te ayuda a que puedas estudiar cualquier sistema en paralelo, sino la cosa no anda. Si lo que queres decir es que te permite la posibilidad de, como se ejecuta en paralelo, correr cosas m\'as grandes, deber\'ias decir eso.}
-Esto es posible gracias a que la p\'erdida existente no es significativa, y los resultados obtenidos est\'an dentro de los par\'ametros aceptables.
+% Esta solucionado en el siguiente parrafo
+%{\huge La perdida de precision sembrada te ayuda a que puedas estudiar cualquier sistema en paralelo, sino la cosa no anda. Si lo que queres decir es que te permite la posibilidad de, como se ejecuta en paralelo, correr cosas m\'as grandes, deber\'ias decir eso.}
+
+En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on para poder estudiar sistemas con un programa paralelo. El mismo abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica. Esto es posible gracias a que la p\'erdida existente no es significativa, y los resultados obtenidos est\'an dentro de los par\'ametros aceptables.
+Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes. 
+%{\huge otra vez lo mismo que dec\'is hace dos parrafos, reforma para decir las cosas una sola vez...}
 
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
 
-El programa paralelo obtenido abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica.
-Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes. {\huge otra vez lo mismo que dec\'is hace dos parrafos, reforma para decir las cosas una sola vez...}
-
-Por otra parte pudo observarse que el pico de eficiencia del programa paralelo se obtuvo en una m\'aquina sin buses externos, debido a que los costos de comunicaci\'on afectan la performance.
-Es por este motivo que para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria.
+Para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente en el caso de Papita, y alrededor de un $50\%$ en el caso de cada nodo del cluster \emph{FIUPG}, lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria. Se opt\'o por este tipo de m\'aquina porque los costos de comunicaci\'on mediante buses externos afectan la performance.
 Sin embargo esto no quiere decir que a futuro no se logre una mejor performance cuando la comunicaci\'on entre nodos de un cluster mejore y convenga m\'as la utilizaci\'on de varios nodos en vez de solo utilizar una m\'aquina tipo SMP.
 
 \section{Trabajo futuro}
