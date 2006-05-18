@@ -172,7 +172,8 @@ Los modelos de agua utilizados en el c\'odigo a paralelizar son el \textsf{TIP4P
 
 \item En el modelo \textsf{TIP4P} se representa a la mol\'ecula de agua como un cuerpo r\'igido (sin grados de libertad internos) con cuatro centros, uno centrado en cada \'atomo y uno extra en el eje $C_{2v}$ situado en la bisectriz del \'angulo H-O-H (ver figura \ref{fig:TIP4P}). Las mol\'eculas de agua \textsf{TIP4P} interact\'uan entre s\'i mediante interacciones Coul\'ombicas entre cargas situadas en los hidr\'ogenos y el sitio \texttt{M} y mediante un potencial de tipo Lennard-Jones centrado en el \'atomo de ox\'igeno.
 
-\item En el modelo \textsf{TIP4P-FQ}, para incluir los efectos de la polarizaci\'on en un modelo de agua, se tiene en cuenta que el momento dipolar de cada mol\'ecula depende del campo el\'ectrico y \'este, a su vez, depende de los momentos dipolares. Para incluir estos efectos se realiza una din\'amica ficticia de las cargas.
+\item El modelo \textsf{TIP4P-FQ} es muy similar al \textsf{TIP4P} con la diferencia que las cargas parciales pueden fluctuar alrededor de un valor de equlilibrio, adapt\'andose as\'i al campo el\'ectrico local. De este modo se puede modelar mol\'eculas de agua cuyo momento dipolar depende del campo el\'ectrico local.
+
 
 \end{itemize}
 
@@ -887,7 +888,13 @@ El peroxinitrito exhibe una gran toxicidad por su capacidad de formar radicales 
 \label{fig:peroxinitrito}
 \end{figure}
 
-Con la primera entrada utilizada se intenta determinar el mecanismo de reacci\'on del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on, en primer lugar la alta concentración del \chemcom{CO_2} en medios fisiol\'ogicos y en segundo lugar la alta velocidad con que ocurre esta reacci\'on.
+Con la primera entrada utilizada se intenta determinar el mecanismo de reacci\'on del peroxinitrito con dioxido de carbono. Existen dos principales razones por las cuales resulta interesante esta investigaci\'on.
+
+\begin{itemize}
+\item \'Esta es la principal reacci\'on del \chemcom{OONO^-} en medios fisiol\'ogicos (por la alta concentraci\'on del \chemcom{CO_2} y porque la misma se produce rapidamente)
+\item En vac\'io esta reacci\'on no tiene barrera de energ\'ia potencial mientras que en soluci\'on si la tiene (hay resultados experimentales que as\'i lo sugieren). Por este motivo la barrera est\'a determinada por el solvente y es ideal para este programa que simula el efecto del mismo.
+\end{itemize}
+
 Un esquema de la misma se puede ver en la figura \ref{fig:peroxinitrito4}.
 
 \begin{figure}[ht!]
@@ -910,7 +917,7 @@ A su vez, estos radicales pueden reacomodarse de manera tal que conforman otro a
 \label{fig:peroxinitrito3}
 \end{figure}
 
-Finalmente la investigaci\'on correspondiente a la segunda entrada se realiza a efecto de estudiar como influye un solvente (agua) sobre el peroxinitrito. Pueden observarse dimeros utilizados para observar la correctitud de los c\'alculos de las fuerzas y la energ\'ia en la figura \ref{fig:peroxinitrito2}.
+Finalmente la investigaci\'on correspondiente a la segunda entrada se realiza a efecto de estudiar como influye un solvente (agua) sobre el espectro vibracional del peroxinitrito. Pueden observarse dimeros utilizados para observar la correctitud de los c\'alculos de las fuerzas y la energ\'ia en la figura \ref{fig:peroxinitrito2}.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -1187,11 +1194,17 @@ Mediante este tipo de corridas se contribuye a obtener informaci\'on sobre la in
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Espectro2}
 \end{center}
-\caption[Espectro vibracional obtenido a partir de la simulaci\'on BP86-TIP4P, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en rojo, OONO tors., NO3O4 flex. en verde oscuro.]{\small{Espectro vibracional obtenido a partir de la simulaci\'on BP86-TIP4P, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en rojo, OONO tors., NO3O4 flex. en verde oscuro.}}
+\caption[Espectro vibracional obtenido a partir de la simulaci\'on PBETIP4P-FQ, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en rojo, OONO tors., NO3O4 flex. en verde oscuro.]{\small{Espectro vibracional obtenido a partir de la simulaci\'on PBETIP4P-FQ, est. NO1 en negro, flex. O1NO3, est. O3-O4 en verde, est. NO3 en
+rojo, OONO tors., NO3O4 flex. en verde oscuro.}}
 \label{fig:Espectro2}
 \end{figure}
 
-Cada una de las formas en que vibra una mol\'ecula es llamada modo normal. En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente. En ambas figuras se aprecia una gran predominancia de la frecuencia de cada modo normal. \'Esta situaci\'on indicar\'ia que dichos modos no cambian cualitativamente al pasar de vac\'io a la soluci\'on. Tambi\'en es posible observar un marcado ensanchamiento en la banda correspondiente al estiramiento $N-O_{3}$, indicando un fuerte efecto solvente para este modo en particular. \'Estos resultados obtenidos coinciden con otros valores experimentales. Los errores generales son peque\~nos as\'i como tambi\'en los errores con respecto a la sensible banda de estiramiento $N-O_{3}$. 
+Cada una de las formas en que vibra una mol\'ecula es llamada modo normal. En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente. En ambas figuras se aprecia un marcado ensanchamiento en la banda correspondiente al estiramiento $N-O3$, indicando un fuerte efecto solvente para este modo en particular. Estos resultados obtenidos coinciden con valores experimentales obtenidos\cite{Lebrero2005} y mediante este trabajo se pudo reinterpretar los mismos. Los errores generales son peque\~nos as\'i como tambi\'en los errores con respecto a la sensible banda de estiramiento $N-O_{3}$. El ensanchamiento y el solvente expl\'icito no pueden tratarse con los m\'etodos tradicionales de simulaci\'on de estos espectros.
+
+Este estudio sirvi\'o para reinterpretar el espectro experimental originalmente mal asignado, asi como para dar
+una explicaci\'on microsc\'opica del mencionado espectro y en particular del efecto del solvente en el mismo.
+
+
 %{\huge no queda más nada que decir sobre estos gráficos que esta frase, la corrida indica algo, da alguna pista interesante, se parece a alg\'un resultado ya obtenido o algo experimental?}
 
 % \pagebreak
