@@ -618,8 +618,7 @@ En primera instancia se reorganiz\'o el c\'odigo de manera de eliminar vicios de
 Por ejemplo, al utilizar declaraci\'on impl\'icita de variables si el programador declara que las variables que empiecen con letras de la \texttt{A} a la \texttt{H} sean del tipo \texttt{REAL*8} pero luego ante un descuido declara otra variable \texttt{INTEGER} con alg\'un nombre que empiece entre esas letras podr\'an darse errores o diferencias en los resultados.
 En etapas posteriores se fueron eliminando las declaraciones impl\'icitas de variables y se constat\'o mediante un \emph{dump} del programa que no se hubiera modificado nada respecto a la versi\'on serial.
 
-La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral presente en el tercer t\'ermino de la ecuaci\'on \ref{energia}.
-%{\huge Qu\'e integral???}
+La paralelizaci\'on del algoritmo se realiza a trav\'es de la descomposici\'on del dominio de la integral presente en el tercer t\'ermino de la ecuaci\'on \ref{energia} (p\'agina \pageref{energia}).
 
 Cada uno de los procesos participantes, tiene en memoria el dominio completo y realiza sobre el subdominio correspondiente sus c\'alculos en forma local.
 Finalmente, como es necesario para las operaciones subsiguientes contar con el total de los datos en cada uno de los procesos, se realiza la sincronizaci\'on de cada uno de ellos contra todos los restantes.
@@ -1102,12 +1101,11 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 
 Puede observarse en los gr\'aficos que cuando se realizaron las mediciones el overhead vari\'o aproximadamente un 2\% cuando se hicieron 10000 pasos con respecto a las otras corridas. A pesar de que el gr\'afico produce la sensaci\'on de que esta variaci\'on es muy grande no lo es realmente. Esta situaci\'on puede deberse al hecho de que la m\'aquina en la cual fueron realizadas las corridas tambi\'en es utilizada espor\'adicamente para realizar otros trabajos. Si bien se intent\'o que la m\'aquina no fuera utilizada por otras personas es posible que no haya sido este el caso y se haya corrido alg\'un proceso corto que haya modificado los tiempos de ejecuci\'on del programa. A\'un as\'i, el speedup y la eficiencia medidas no son despreciables y demuestran una ganancia en performance interesante a los fines de la investigaci\'on futura de sistemas de part\'iculas mayores. Por otro lado cabe aclarar que la utilizaci\'on por parte de otros usuarios de la SMP Xeon Dual no afecta el programa serial dado que el mismo es corrido en un solo procesador, mientras que los procesos de usuarios pueden correrse en el otro. En cambio, s\'i afecta al programa paralelo dado que el mismo utiliza ambos procesadores, y si uno se retrasa debido al uso, el otro tambi\'en lo har\'a debido a la mensajer\'ia bloqueante y a la interacci\'on de ambos procesos.
 
-Luego fueron realizadas mediciones en el cluster $FIUPG$, sito en el estado de Florida, Estados Unidos.
+Luego fueron realizadas mediciones en el cluster \emph{FIUPG}, sito en el estado de Florida, Estados Unidos.
 El mismo est\'a compuesto por 17 nodos Intel SMP Xeon duales. 
 Las corridas fueron realizadas con dos y cuatro procesos en nodos distintos, es decir a raz\'on de un proceso en cada nodo, obteni\'endose los resultados que se pueden ver en la tabla \ref{tab:TiemposEjecucion3} y en la figura \ref{fig:FIUPGTiempos1}.
 No fueron utilizados m\'as procesadores del cluster debido a que cuanto mayor es la cantidad de procesos utilizados el error introducido por la aritm\'etica finita crece, de forma tal de hacer que los resultados obtenidos no sean utilizables.
-%{\huge esto que decis aca lo comprobaste? Estas seguro que no usaste mas procesadores por una cuestion de error o porque el problema no era lo suficientemente grande?}
-%Esto lo comprobe, hice corridas cortas cada vez con mas procesos, ya con 4 procesos los resultados obtenidos no eran iguales a los de 2, y con mas los errores se propagaban
+{\huge sigo sin entender esta parte, la idea era obtener un programa escalable, ahora bien si a partir de 4 procesos el programa se cae al carajo, no se entiende de que va la cosa. No querr\'as decir que con la entrada de prueba que estas usando para esta parte no podes exigirle m\'as que 4 procesos?} 
 Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor manera el overhead introducido por los buses externos de datos de baja velocidad.
 
 \begin{table}
@@ -1171,7 +1169,7 @@ Una vez obtenidos los datos de las ejecuciones del sistema en distintas configur
 
 Puede observarse que conforme el dominio del problema crece la brecha entre los tiempos del sistema serial y los del paralelo se vuelven mayores. Quedar\'a a futuro la ejecuci\'on de un sistema de mayores dimensiones para completar el estudio sobre performance del sistema paralelizado para observar cu\'al es el l\'imite de procesamiento del nuevo programa con fines pr\'acticos. A simple vista puede observarse que para mayores dominios del problema los tiempos ahorrados por el sistema paralelo crecen significativamente con respecto al serial.
 
-En contraparte a los resultados obtenidos puede observarse el gran overhead introducido en la versi\'on paralela del programa debido al pasaje de mensajes, lo cual hace que el $Speedup$ no sea lineal con respecto a la cantidad de procesos utilizados. Esto quiere decir que si el $Speedup$ fuera lineal, utilizando dos procesos el c\'alculo deber\'ia tardar la mitad de tiempo.
+En contraparte a los resultados obtenidos puede observarse el gran overhead introducido en la versi\'on paralela del programa debido al pasaje de mensajes, lo cual hace que el \emph{Speedup} no sea lineal con respecto a la cantidad de procesos utilizados. Esto quiere decir que si el \emph{Speedup} fuera lineal, utilizando dos procesos el c\'alculo deber\'ia tardar la mitad de tiempo.
 Esta situaci\'on no se esta cumpliendo debido a que, como muestran los gr\'aficos, el overhead var\'ia entre cerca del 25\% y el 60\% del tiempo total, lo que deja a futuro la tarea de intentar reducir el mismo.
 El overhead se produce no solo debido a la comunicaci\'on entre procesos sino tambi\'en al agregado de operaciones utilizadas para particionar el dominio del problema y posteriormente volver a unirlo.
 Sin embargo los costos de comunicaci\'on son mucho mayores a los de procesamiento, por lo cual generalmente se desprecian los \'ultimos.
@@ -1199,13 +1197,14 @@ rojo, OONO tors., NO3O4 flex. en verde oscuro.}}
 \label{fig:Espectro2}
 \end{figure}
 
-Cada una de las formas en que vibra una mol\'ecula es llamada modo normal. En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente. En ambas figuras se aprecia un marcado ensanchamiento en la banda correspondiente al estiramiento $N-O3$, indicando un fuerte efecto solvente para este modo en particular. Estos resultados obtenidos coinciden con valores experimentales obtenidos\cite{Lebrero2005} y mediante este trabajo se pudo reinterpretar los mismos. Los errores generales son peque\~nos as\'i como tambi\'en los errores con respecto a la sensible banda de estiramiento $N-O_{3}$. El ensanchamiento y el solvente expl\'icito no pueden tratarse con los m\'etodos tradicionales de simulaci\'on de estos espectros.
+Cada una de las formas en que vibra una mol\'ecula es llamada \emph{modo normal}.
+En \'estas figuras pueden observarse las frecuencias correspondientes a cada modo normal de la mol\'ecula de peroxinitrito en solvente.
+En ambas figuras se aprecia un marcado ensanchamiento en la banda correspondiente al estiramiento \chemcom{N-O_3}, indicando un fuerte efecto solvente para este modo en particular.
+Estos resultados obtenidos coinciden con valores experimentales obtenidos\cite{Lebrero2005} y mediante este trabajo se pudo reinterpretar los mismos. Los errores generales son peque\~nos as\'i como tambi\'en los errores con respecto a la sensible banda de estiramiento \chemcom{N-O_3}.
+El ensanchamiento y el solvente expl\'icito no pueden tratarse con los m\'etodos tradicionales de simulaci\'on de estos espectros.
 
 Este estudio sirvi\'o para reinterpretar el espectro experimental originalmente mal asignado, asi como para dar
 una explicaci\'on microsc\'opica del mencionado espectro y en particular del efecto del solvente en el mismo.
-
-
-%{\huge no queda más nada que decir sobre estos gráficos que esta frase, la corrida indica algo, da alguna pista interesante, se parece a alg\'un resultado ya obtenido o algo experimental?}
 
 % \pagebreak
 \chapter{Conclusiones y trabajo futuro}
@@ -1217,23 +1216,21 @@ De lo estudiado en el presente trabajo se desprenden diversas observaciones.
 El programa serial es inestable num\'ericamente.
 Uno de los mayores problemas para realizar una soluci\'on paralela radic\'o en la inestabilidad num\'erica del programa original.
 Esto qued\'o demostrado al realizar diversos an\'alisis en los cuales se alteraban los \'ordenes de distintas operaciones y los resultados cambiaban radicalmente, al punto de obtener un resultado totalmente distinto, err\'oneo seg\'un los par\'ametros utilizados o directamente ninguno (error de convergencia).
-A pesar de que los autores originales del sistema ten\'ian la noci\'on de existencia de estos problemas nunca se lo hab\'ia demostrado de forma tan contundente, lo cual fue un avance para la toma de conciencia y un planteo sobre la forma de trabajo y el rumbo a seguir.
+A pesar de que los autores originales del programa ten\'ian la noci\'on de existencia de estos problemas nunca se lo hab\'ia demostrado de forma tan contundente, lo cual fue un avance para la toma de conciencia y un planteo sobre la forma de trabajo y el rumbo a seguir.
 
 Luego de consultar la problem\'atica con distintas personas y profesionales reconocidos en el \'area de m\'etodos num\'ericos se plantearon dos soluciones posibles y ambas fueron implementadas.
 
-La primera versi\'on realizada alcanz\'o los objetivos en cuanto a correctitud de los resultados y estabilidad num\'erica, sin embargo al trabajar con n\'umeros de punto flotante de precis\'on cu\'adruple la performance del programa se vi\'o afectada de forma notable.
+La primera versi\'on realizada alcanz\'o los objetivos en cuanto a correctitud de los resultados y estabilidad num\'erica, sin embargo al trabajar con n\'umeros de punto flotante de precisi\'on cu\'adruple la performance del programa se vi\'o afectada de forma notable.
 Esto se debi\'o a que no existen en la actualidad m\'aquinas que trabajen con esa precisi\'on en forma nativa sino que lo hacen por medio de emulaci\'on por software.
 Esta primera soluci\'on ser\'a utilizable a futuro cuando se comercialicen m\'aquinas con unidad de punto flotante que posean registros de 128 bits.
 En ese momento esta versi\'on ser\'a probablemente mejor en cuanto a performance y precisi\'on que la que finalmente fue utilizada en este trabajo.
 La versi\'on de 128 bits, como ya se explic\'o, tiene una mayor precisi\'on de variables, pero no solo eso, posee menos operaciones que la segunda soluci\'on implementada debido a que esta \'ultima utiliz\'o un reordenamiento de c\'alculo que necesit\'o de una cierta cantidad de instrucciones con su consiguiente costo computacional.
 
-Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al programa serial que aunque no otorga resultados exactamente iguales la p\'erdida de precisi\'on es la misma y por lo tanto es aceptado por los expertos del \'area. 
-% Esta solucionado en el siguiente parrafo
-%{\huge La perdida de precision sembrada te ayuda a que puedas estudiar cualquier sistema en paralelo, sino la cosa no anda. Si lo que queres decir es que te permite la posibilidad de, como se ejecuta en paralelo, correr cosas m\'as grandes, deber\'ias decir eso.}
+Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al programa serial que aunque no otorga resultados exactamente iguales, aunque estos resultados fueron tomados como v\'alidos por los expertos del \'area.
 
-En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on para poder estudiar sistemas con un programa paralelo. El mismo abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica. Esto es posible gracias a que la p\'erdida existente no es significativa, y los resultados obtenidos est\'an dentro de los par\'ametros aceptables.
+En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on para poder estudiar sistemas con un programa paralelo.
+Este programa abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica.
 Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes. 
-%{\huge otra vez lo mismo que dec\'is hace dos parrafos, reforma para decir las cosas una sola vez...}
 
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
 
