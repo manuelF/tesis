@@ -1225,7 +1225,7 @@ Esta primera soluci\'on ser\'a utilizable a futuro cuando se comercialicen m\'aq
 En ese momento esta versi\'on ser\'a probablemente mejor en cuanto a performance y precisi\'on que la que finalmente fue utilizada en este trabajo.
 La versi\'on de 128 bits, como ya se explic\'o, tiene una mayor precisi\'on de variables, pero no solo eso, posee menos operaciones que la segunda soluci\'on implementada debido a que esta \'ultima utiliz\'o un reordenamiento de c\'alculo que necesit\'o de una cierta cantidad de instrucciones con su consiguiente costo computacional.
 
-Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al programa serial que aunque no otorga resultados exactamente iguales, aunque estos resultados fueron tomados como v\'alidos por los expertos del \'area.
+Con la implementaci\'on que finalmente se utiliz\'o en este estudio se logr\'o una aproximaci\'on al programa serial que aunque no otorga resultados exactamente iguales, aunque fueron tomados como v\'alidos por los expertos del \'area.
 
 En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on para poder estudiar sistemas con un programa paralelo.
 Este programa abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica.
@@ -1233,14 +1233,14 @@ Adicionalmente, la performance del programa resulta razonable y el overhead prod
 
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
 
-Para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente en el caso de Papita, y alrededor de un $50\%$ en el caso de cada nodo del cluster \emph{FIUPG}, lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria. Se opt\'o por este tipo de m\'aquina porque los costos de comunicaci\'on mediante buses externos afectan la performance.
+Para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente en el caso de Papita, y alrededor de un $50\%$ {\huge estas seguro de esto, en que condiciones, aclara por que suena MUY raro que ande mejor que en una SMP} en el caso de cada nodo del cluster \emph{FIUPG}, lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria. Se opt\'o por este tipo de m\'aquina porque los costos de comunicaci\'on mediante buses externos afectan la performance.
 Sin embargo esto no quiere decir que a futuro no se logre una mejor performance cuando la comunicaci\'on entre nodos de un cluster mejore y convenga m\'as la utilizaci\'on de varios nodos en vez de solo utilizar una m\'aquina tipo SMP.
 
 \section{Trabajo futuro}
 
 Como trabajo a futuro se testear\'an dominios mayores y la ejecuci\'on de los mismos en un cluster de mayor magnitud, sin embargo esto no puede ser realizado de momento debido a falta de tiempo para realizar ejecuciones de gran envergadura.
 
-Una estrategia analizada inicialmente, fue la utilizaci\'on de mensajes no bloqueantes, ya que la metodolog\'ia actual (pasaje de mensajes bloqueantes) produce un overhead en el cual los procesos se encuentran inactivos.
+Una estrategia analizada inicialmente, fue la utilizaci\'on de mensajes no bloqueantes ya que la metodolog\'ia actual (pasaje de mensajes bloqueantes) produce un overhead en el cual los procesos se encuentran inactivos.
 Sin embargo, la implementaci\'on de mensajes no bloqueantes requiere de un an\'alisis exhaustivo del problema para poder seleccionar zonas del programa en las que puedan solaparse c\'alculo y comunicaci\'on.
 Dado que la funci\'on que ha sido elegida como blanco de optimizaci\'on no requiere sincronizaci\'on intermedia, por el momento no hemos utilizado esta modalidad.
 Por otro lado la alta inestabilidad num\'erica del programa convierte este tipo de optimizaci\'on en un problema demasiado complejo para ser tratado en el presente trabajo.
