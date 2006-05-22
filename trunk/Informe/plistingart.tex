@@ -193,7 +193,7 @@ reproducen correctamente geometr\'ias y energ\'ias de enlace de d\'imeros y tr\'
 El problema \emph{n-body} es aquel de encontrar, dada la posici\'on inicial, masas y velocidades de $n$ cuerpos, sus movimientos siguientes determinados por las leyes de la mec\'anica cl\'asica \cite{Cramer,NBodyAlgorithms,NBody}.
 
 Este problema puede referirse tanto a encontrar los movimientos de cuerpos celestes por medio de la gravedad como los de \'atomos y mol\'eculas debido al potencial el\'ectrico.
-Usualmente, se cuenta con un estado inicial, y el problema consiste en ir determinando los estados subsiguientes, para observar como interact\'uan estos cuerpos en el tiempo.
+Usualmente, se cuenta con un estado inicial, y el problema consiste en ir determinando los estados subsiguientes, para observar c\'omo interact\'uan estos cuerpos en el tiempo.
 
 Puede observarse parte de la dificultad del problema \emph{n-body} analizando inicialmente los casos m\'as sencillos del mismo.
 El problema, teniendo dos cuerpos, consiste en estudiar c\'omo interact\'uan los mismos a trav\'es del tiempo.
@@ -229,13 +229,14 @@ En la literatura este problema se lo conoce, tambi\'en, como \emph{many-body pro
 
 \section{\strut M\'etodos H\'ibridos QM/MM}
 
-Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un sistema con un gra n\'umero de part\'iculas. En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas.
+Simular reacciones qu\'imicas en soluci\'on requiere la representaci\'on de un sistema con un gran n\'umero de part\'iculas.
+En nuestro caso, como se ver\'a  m\'as adelante, se han realizado pruebas con alrededor de 500 mol\'eculas.
 Por razones de costo computacional y eficiencia, generalmente estos sistemas son tratados a nivel de mec\'anica molecular (MM)\cite{Leach96,VanDerSpoel98,VanMaaren2001}.
 Sin embargo, el mayor problema que tiene la teor\'ia de MM es que no puede ser aplicada al modelado de procesos que incluyen la formaci\'on o la ruptura de enlaces covalentes.
 Para modelar correctamente este tipo de procesos deben utilizarse m\'etodos basados en la mec\'anica cu\'antica (QM)\cite{Szabo89,Mahoney2001}.
 
 La regi\'on del espacio a lo largo de una reacci\'on en la cual ocurren cambios significativos en la estructura electr\'onica generalmente es muy peque\~na comparado con el sistema en su totalidad.
-Por lo tanto, lo que se busca es hacer uso de las herramientas de mec\'anica cu\'antica en una regi\'on limitada para modelar el problema, mientras que el resto es modelado mediante mec\'anica molecular (ver figura \ref{fig:Hibrido}) para reducir su complejidad, cuya base consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$).
+Por lo tanto, lo que se busca es hacer uso de las herramientas de mec\'anica cu\'antica en una regi\'on limitada para modelar el problema, mientras que el resto es modelado mediante mec\'anica molecular (ver figura \ref{fig:Hibrido}) para reducir su complejidad. La base de esta t\'ecnica consiste en combinar c\'alculos de estructura electr\'onica con la mec\'anica molecular cl\'asica a trav\'es de un Hamiltoniano h\'ibrido ($H_{qm-mm}$).
 A estas metodolog\'ias h\'ibridas se les da el nombre QM/MM (Quantum Mechanics/Molecular Mechanics) \cite{Cramer,MCGLPHD}.
 
 \begin{figure}[ht!]
@@ -656,7 +657,7 @@ Las flechas azules indican la transici\'on de estados y las verdes indican el in
 \label{fig:Paralelo}
 \end{figure}
 
-En esa figura se ve como, en vez de realizar la sumatoria del vector RMM original m\'as los siete \'atomos se toman dos conjuntos, se realizan las sumatorias parciales y luego se suman los resultados para obetener el valor final.
+En esa figura se ve como, en vez de realizar la sumatoria del vector RMM original m\'as los siete \'atomos se toman dos conjuntos, se realizan las sumatorias parciales y luego se suman los resultados para obtener el valor final.
 Se puede observar que, por un lado, se hacen las sumatorias parciales: por ejemplo en el proceso 0 se suman RMM m\'as los tres primeros \'atomos y por otro lado en un acumulador se guarda solamente la sumatoria de los \'atomos.
 Esto es as\'i para poder luego enviar el contenido de los acumuladores a los otros procesos y que RMM no sea sumado $N$ veces (con $N$ igual al n\'umero de procesos), sino una \'unica vez.
 
@@ -669,11 +670,10 @@ Las llamadas a rutinas de salida debieron ser eliminadas para los procesos disti
 
 \section{Problemas surgidos durante la implementaci\'on}%
 
-
 Uno de los primeros problemas surgidos durante la implementaci\'on del software paralelo fue la configuraci\'on la utilizaci\'on de la librer\'ia \texttt{MPI} bajo Fortran.
-En el archivo main.f se agregaron las instrucciones de inicializaci\'on de \texttt{MPI}, sin embargo en las subrutinas del sistema las contantes definidas en la librer\'ia \texttt{MPIF} no eran reconocidas, lo cu\'al produc\'ia errores al ejecutar el software.
+En el archivo main.f se agregaron las instrucciones de inicializaci\'on de \texttt{MPI}, sin embargo, en las subrutinas del programa las contantes definidas en la librer\'ia \texttt{MPIF} no eran reconocidas, lo cu\'al produc\'ia errores al ejecutar el software.
 
-Un ejemplo de este caso se produjo con el comunicador \texttt{MPI\_COMM\_WORLD} que se utiliza para enciar mensajes a todos los procesos involucrados en la ejecuci\'on.
+Un ejemplo de este caso se produjo con el comunicador \texttt{MPI\_COMM\_WORLD} que se utiliza para enviar mensajes a todos los procesos involucrados en la ejecuci\'on.
 Al no ser reconocido, no hab\'ia forma de enviar y recibir mensajes entre procesos lo cu\'al produc\'ia un error que produci\'ia el fin de la ejecuci\'on.
 Esta situaci\'on se solucion\'o, inicialmente, pasando el comunicador como par\'ametro a todas las rutinas que pudieran llegar a utilizarlo.
 Luego, se descubri\'o que el sistema reconoc\'ia al valor $91$ (\texttt{MPI\_COMM\_WORLD}) como variable global pero no as\'i a su nombre de alias.
@@ -697,7 +697,7 @@ Esto produc\'ia que el tiempo de ejecuci\'on del programa paralelo excediera por
 Mandar los vectores completos por medio de las instrucciones \texttt{Send/Receive} redujo los tiempos de ejecuci\'on, pero a\'un as\'i debido a la cantidad de procesos y topolog\'ias formadas entre ellos para el env\'io de mensajes, la performance estaba lejos de los esperado.
 Finalmente se utilizaron instrucciones de comunicaci\'on colectivas para reducir los tiempos de comunicaci\'on. Fueron utilizadas las instrucciones \texttt{MPI\_Bcast} y \texttt{MPI\_Allreduce}.
 
-La instruccion \texttt{MPI\_Bcast} realiza una comunicaci\'on colectiva donde un proceso env\'ia los mismos datos a todos los procesos presentes en el comunicador.
+La instrucci\'on \texttt{MPI\_Bcast} realiza una comunicaci\'on colectiva donde un proceso env\'ia los mismos datos a todos los procesos presentes en el comunicador.
 De acuerdo a la cantidad de procesos presentes en el comunicador \texttt{MPI} optimiza el env\'io de acuerdo a la topolog\'ia que puede haber.
 Por ejemplo, puede env\'iar los mensajes con una topolog\'ia de \'arbol binario, lo cual reduce el tiempo de env\'io de lineal a logar\'itmico.
 
@@ -710,9 +710,9 @@ Los resultados se ver\'an m\'as adelante en la secci\'on correspondiente.
 
 Por \'ultimo, cuando se cre\'ia que se hab\'ia logrado el objetivo de desarrollar un programa paralelo que se comporte de manera similar al serial pero con una mejor performance, se tuvo un problema que fue determinante en la realizaci\'on de este trabajo.
 El mismo surgi\'o cuando se observ\'o que los resultados obtenidos en la matriz \texttt{RMM} difer\'ian en el programa paralelo con respecto al serial.
-Esto pudo ser observado por medio de la realizaci\'on de una rutina que permite guardar mediante un archivo de texto una cantidad de variables que cre\'imos convenientes analizar para determinar la correctitud de los c\'alculos, lo que se denomina como \emph{dump}  o \emph{estado} del programa.
+Esto pudo ser observado por medio de la realizaci\'on de una rutina que permite guardar mediante un archivo de texto una cantidad de variables que cre\'imos convenientes analizar para determinar la correctitud de los c\'alculos, lo que denominaremos como \emph{dump}  o \emph{estado} del programa.
 
-En un principio se pens\'o que el problema ser\'ia debido a un error en la manera de realizar el c\'alculo, pero luego de un an\'alisis se confirm\'o que el mismo era correcto.
+En un principio se pens\'o que el problema era debido a un error en la manera de realizar el c\'alculo, pero luego de un an\'alisis se confirm\'o que el mismo era correcto.
 Para tal efecto se fueron guardando los diversos t\'erminos participantes en las sumatorias y los mismos fueron sumados ``a mano''.
 A partir de la confirmaci\'on de la correctitud de c\'alculo se intuy\'o que el problema podr\'ia corresponder al redondeo realizado sobre n\'umeros de punto flotante, debido a que la diferencia era de unos pocos decimales.
 Para corroborar si el problema era de redondeo se implementaron y realizaron una bater\'ia de tests.
@@ -1071,7 +1071,7 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Speedup}
 \end{center}
-\caption[Speedup del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Speedup del programa con reordenamiento de c\'alculo en 2 procesos.}}
+\caption[Speedup del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Speedup del programa con reordenamiento de c\'alculo en 2 procesos.} {\huge poner alg\'un dato de la corrida, recorda que la figura debe entederse solo con mirar el caption.}}
 \label{fig:Speedup}
 \end{figure}
 
@@ -1079,7 +1079,7 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Eficiencia}
 \end{center}
-\caption[Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos.}}
+\caption[Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos.} {\huge idem.}}
 \label{fig:Eficiencia}
 \end{figure}
 
@@ -1087,7 +1087,7 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Overhead}
 \end{center}
-\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos.}}
+\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos.}{\huge idem.}}
 \label{fig:Overhead}
 \end{figure}
 
@@ -1095,7 +1095,7 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{OverheadP}
 \end{center}
-\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos.}}
+\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos.}{\huge idem.}}
 \label{fig:OverheadP}
 \end{figure}
 
@@ -1119,7 +1119,7 @@ Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor ma
 \hline
 \end{tabular}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa en 2 y 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 y 4 procesos.}}
+\caption[Tiempos de ejecuci\'on total del programa en 2 y 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 y 4 procesos.} {\huge aca hay tres filas, aunque el caption diga que hay dos cosas. Ademas podr\'ias poner qu\'e corriste.}}
 \label{tab:TiemposEjecucion3}
 \end{table}
 
@@ -1127,7 +1127,7 @@ Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor ma
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{FIUPG}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa en 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 4 procesos.}}
+\caption[Tiempos de ejecuci\'on total del programa en 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 4 procesos.} {\huge De nuevo, hay tres cosas graficadas... pone info de qu\'e corrida estas hablando.}}
 \label{fig:FIUPGTiempos1}
 \end{figure}
 
@@ -1202,7 +1202,7 @@ En ambas figuras se aprecia un marcado ensanchamiento en la banda correspondient
 Estos resultados obtenidos coinciden con valores experimentales obtenidos\cite{Lebrero2005} y mediante este trabajo se pudo reinterpretar los mismos. Los errores generales son peque\~nos as\'i como tambi\'en los errores con respecto a la sensible banda de estiramiento \chemcom{N-O_3}.
 El ensanchamiento y el solvente expl\'icito no pueden tratarse con los m\'etodos tradicionales de simulaci\'on de estos espectros.
 
-Este estudio sirvi\'o para reinterpretar el espectro experimental originalmente mal asignado, asi como para dar
+Este estudio sirvi\'o para reinterpretar el espectro experimental originalmente mal asignado, as\'i como para dar
 una explicaci\'on microsc\'opica del mencionado espectro y en particular del efecto del solvente en el mismo.
 
 % \pagebreak
