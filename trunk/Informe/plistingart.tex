@@ -1071,7 +1071,8 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Speedup}
 \end{center}
-\caption[Speedup del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Speedup del programa con reordenamiento de c\'alculo en 2 procesos.} {\huge poner alg\'un dato de la corrida, recorda que la figura debe entederse solo con mirar el caption.}}
+\caption[Speedup del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.]{\small{Speedup del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.}}
+%{\huge poner alg\'un dato de la corrida, recorda que la figura debe entederse solo con mirar el caption.}}
 \label{fig:Speedup}
 \end{figure}
 
@@ -1079,7 +1080,8 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Eficiencia}
 \end{center}
-\caption[Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos.} {\huge idem.}}
+\caption[Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.]{\small{Eficiencia del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.}}
+%{\huge idem.}}
 \label{fig:Eficiencia}
 \end{figure}
 
@@ -1087,7 +1089,8 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{Overhead}
 \end{center}
-\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos.}{\huge idem.}}
+\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.}}
+%{\huge idem.}}
 \label{fig:Overhead}
 \end{figure}
 
@@ -1095,7 +1098,8 @@ Como puede observarse, esta implementaci\'on es mucho m\'as r\'apida que la de 1
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{OverheadP}
 \end{center}
-\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos.}{\huge idem.}}
+\caption[Overhead del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.]{\small{Overhead del programa con reordenamiento de c\'alculo en 2 procesos en una m\'aquina SMP Xeon Dual, Papita, con una entrada de 7 \'atomos.}}
+%{\huge idem.}}
 \label{fig:OverheadP}
 \end{figure}
 
@@ -1119,7 +1123,8 @@ Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor ma
 \hline
 \end{tabular}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa en 2 y 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 2 y 4 procesos.} {\huge aca hay tres filas, aunque el caption diga que hay dos cosas. Ademas podr\'ias poner qu\'e corriste.}}
+\caption[Tiempos de ejecuci\'on total del programa serial y el paralelo en 2 y 4 procesos con una entrada de 7 \'atomos]{\small{Tiempos de ejecuci\'on total del programa serial y el paralelo en 2 y 4 procesos con una entrada de 7 \'atomos.}}
+%{\huge aca hay tres filas, aunque el caption diga que hay dos cosas. Ademas podr\'ias poner qu\'e corriste.}}
 \label{tab:TiemposEjecucion3}
 \end{table}
 
@@ -1127,7 +1132,8 @@ Por otra parte se eligi\'o utilizar nodos distintos para poder medir de mejor ma
 \begin{center}
 \includegraphics[keepaspectratio, width=14cm]{FIUPG}
 \end{center}
-\caption[Tiempos de ejecuci\'on total del programa en 4 procesos]{\small{Tiempos de ejecuci\'on total del programa en 4 procesos.} {\huge De nuevo, hay tres cosas graficadas... pone info de qu\'e corrida estas hablando.}}
+\caption[Tiempos de ejecuci\'on total del programa serial y el paralelo en 2 y 4 procesos con una entrada de 7 \'atomos.]{\small{Tiempos de ejecuci\'on total del programa serial y el paralelo en 2 y 4 procesos con una entrada de 7 \'atomos.}}
+%{\huge De nuevo, hay tres cosas graficadas... pone info de qu\'e corrida estas hablando.}}
 \label{fig:FIUPGTiempos1}
 \end{figure}
 
@@ -1233,7 +1239,9 @@ Adicionalmente, la performance del programa resulta razonable y el overhead prod
 
 Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
 
-Para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente en el caso de Papita, y alrededor de un $50\%$ {\huge estas seguro de esto, en que condiciones, aclara por que suena MUY raro que ande mejor que en una SMP} en el caso de cada nodo del cluster \emph{FIUPG}, lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria. Se opt\'o por este tipo de m\'aquina porque los costos de comunicaci\'on mediante buses externos afectan la performance.
+Para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente en el caso de Papita, y alrededor de un $50\%$ (esto debido a que el cluster \emph{FIUPG} fue utilizado en exclusividad y posee m\'aquinas mas potentes, y Papita era utilizada aleatoriamente por otros usuarios)
+%{\huge estas seguro de esto, en que condiciones, aclara por que suena MUY raro que ande mejor que en una SMP} 
+en el caso de cada nodo del cluster \emph{FIUPG}, lo cual reduc\'ia los tiempos de investigaci\'on de forma notoria. Se opt\'o por este tipo de m\'aquina porque los costos de comunicaci\'on mediante buses externos afectan la performance.
 Sin embargo esto no quiere decir que a futuro no se logre una mejor performance cuando la comunicaci\'on entre nodos de un cluster mejore y convenga m\'as la utilizaci\'on de varios nodos en vez de solo utilizar una m\'aquina tipo SMP.
 
 \section{Trabajo futuro}
