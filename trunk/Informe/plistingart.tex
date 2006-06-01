@@ -30,7 +30,7 @@ Universidad de Buenos Aires\\
 Facultad de Ciencias Exactas y Naturales\\
 Departamento de Computaci\'on\\
 \vspace{10mm}
-\Huge\textbf{Computaci\'on de alto rendimiento en el estudio de reacciones qu\'imicas en soluciones a trav\'es de m\'etodos cl\'asicos y cu\'anticos.}
+\Huge\textbf{Computaci\'on de alto rendimiento en el estudio de reacciones qu\'imicas en solucion a trav\'es de m\'etodos h\'ibridos cl\'asico-cu\'anticos.}
 \vspace{10mm}
 }
 
@@ -198,7 +198,7 @@ Usualmente, se cuenta con un estado inicial, y el problema consiste en ir determ
 Puede observarse parte de la dificultad del problema \emph{n-body} analizando inicialmente los casos m\'as sencillos del mismo.
 El problema, teniendo dos cuerpos, consiste en estudiar c\'omo interact\'uan los mismos a trav\'es del tiempo.
 
-Si se considera que el centro com\'un de masa de los dos cuerpos esta en reposo, cada cuerpo viaja en una secci\'on c\'onica cuyo foco est\'a en el centro de masa del sistema.
+En el caso de estudio de dos cuerpos celestes que se encuentran bajo acci\'on gravitatoria, si se considera que el centro com\'un de masa de los dos cuerpos esta en reposo, cada cuerpo viaja en una secci\'on c\'onica cuyo foco est\'a en el centro de masa del sistema.
 
 Si ambos cuerpos est\'an ligados, ambos describir\'an elipses en sus trayectorias. La energ\'ia potencial relativa al estar alejados (cuyo valor siempre es negativo) tiene un valor absoluto menor que el total de energ\'ia cin\'etica del sistema (no esta siendo tenida en cuenta la energ\'ia de rotaci\'on sobre sus ejes de los cuerpos).
 
@@ -598,7 +598,7 @@ En la figura \ref{fig:Profiling} se detallan los porcentajes de procesamiento qu
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[keepaspectratio, width=14cm]{Profiling2}
+\includegraphics[keepaspectratio, width=14cm]{ProfilingColor}
 \caption[Porcentajes de tiempo consumidos por las rutinas]{\small{Porcentajes de tiempo consumidos por las rutinas.}}
 \label{fig:Profiling}
 \end{figure}
@@ -670,7 +670,7 @@ Las llamadas a rutinas de salida debieron ser eliminadas para los procesos disti
 
 \section{Problemas surgidos durante la implementaci\'on}%
 
-Uno de los primeros problemas surgidos durante la implementaci\'on del software paralelo fue la configuraci\'on la utilizaci\'on de la librer\'ia \texttt{MPI} bajo Fortran.
+Uno de los primeros problemas surgidos durante la implementaci\'on del software paralelo fue la configuraci\'on y utilizaci\'on de la librer\'ia \texttt{MPI} bajo Fortran.
 En el archivo main.f se agregaron las instrucciones de inicializaci\'on de \texttt{MPI}, sin embargo, en las subrutinas del programa las contantes definidas en la librer\'ia \texttt{MPIF} no eran reconocidas, lo cu\'al produc\'ia errores al ejecutar el software.
 
 Un ejemplo de este caso se produjo con el comunicador \texttt{MPI\_COMM\_WORLD} que se utiliza para enviar mensajes a todos los procesos involucrados en la ejecuci\'on.
@@ -722,7 +722,7 @@ En todos los casos de test se utiliz\'o un entorno con 4 \'atomos.
 \item Se corri\'o el algoritmo serial y el paralelo, y se realiz\'o una comparaci\'on entre los dumps generados por ambos. As\'i se detect\'o una inconsistencia en los valores del vector RMM.
 
 \item Se guardaron los valores de RMM calculados por el algoritmo serial pero separados en los atomos 1-2 y 3-4. O sea, inicialmente se calcularon con el programa serial las primeras dos iteraciones.
-Luego se realiz\'o la corrida con los 4 \'atomos pero solo guardando el resultado de las iteraciones 3 y 4.
+Luego se realiz\'o la corrida con los 4 \'atomos pero solo guardando el resultado de los \'atomos 3 y 4.
 
 \item Se guard\'o el estado calculado por el algoritmo paralelo (corrido en 2 procesos) correspondiente al proceso 0 que calcula los atomos 1-2 y al proceso 1 que calcula 3-4.
 
@@ -731,7 +731,7 @@ Luego se realiz\'o la corrida con los 4 \'atomos pero solo guardando el resultad
 
 De esta manera se concluy\'o que el problema radicaba en la uni\'on de los resultados obtenidos en los distintos procesos del programa paralelo.
 
-Una vez reducido el \'area donde pod\'ia ocurrir el problema se procedieron a realizar otros tests para determinar finalmente el problema. Para tal efecto se realiz\'o una modificacion al programa serial para que calcule en RMM el resultado de las 2 primeras iteraciones, y las \'ultimas dos las guarde en un acumulador. Finalmente se uni\'o el vector RMM con el acumulador por medio de sumas. Esto hizo que el programa serial diera el mismo resultado que el paralelo. De esta manera se demostr\'o que el problema se debe a la limitaci\'on generada por la finitud de los n\'umeros representados en la computadora, lo cual es un problema ampliamente conocido en los m\'etodos num\'ericos. Ver figura \ref{fig:Redondeo}
+Una vez reducido el \'area donde pod\'ia ocurrir el problema se procedieron a realizar otros tests para determinar finalmente el problema. Para tal efecto se realiz\'o una modificacion al programa serial para que calcule en RMM el resultado de los 2 primeros \'atomos, y los \'ultimos dos los guarde en un acumulador. Finalmente se uni\'o el vector RMM con el acumulador por medio de sumas. Esto hizo que el programa serial diera el mismo resultado que el paralelo. De esta manera se demostr\'o que el problema se debe a la limitaci\'on generada por la finitud de los n\'umeros representados en la computadora, lo cual es un problema ampliamente conocido en los m\'etodos num\'ericos. Ver figura \ref{fig:Redondeo}
 
 \begin{figure}[ht!]
 \begin{center}
@@ -1231,7 +1231,7 @@ En esta implementaci\'on se opt\'o por ocasionar una p\'erdida de precisi\'on pa
 Este programa abre un abanico de posibilidades para poder resolver sistemas intratables hasta el momento, he aqu\'i su mejor caracter\'istica.
 Adicionalmente, la performance del programa resulta razonable y el overhead producido se ve compensado por la ventaja de poder tratar sistemas cada vez m\'as grandes. 
 
-Como pudo observarse, el algoritmo paralelo se vuelve m\'as efectivo conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
+Como pudo observarse, el algoritmo paralelo se vuelve m\'as eficiente conforme el dominio del problema crece. Esto se debe a que el overhead producido por la comunicaci\'on entre procesos se ve compensado por la cantidad de instrucciones ejecutadas en cada uno de los nodos.
 
 Para diversas corridas nuevas se utiliz\'o una SMP Xeon Dual debido a que la ganancia de la misma era de un $15\%$ aproximadamente en el caso de Papita, y alrededor de un $50\%$ (esto debido a que el cluster \emph{FIUPG} fue utilizado en exclusividad y posee m\'aquinas mas potentes, y Papita era utilizada aleatoriamente por otros usuarios) en el caso de cada nodo del cluster \emph{FIUPG}, lo cual reduc\'ia los tiempos de cada corrida de forma notoria.
 Se opt\'o por este tipo de m\'aquina porque los costos de comunicaci\'on mediante buses externos afectan la performance.
