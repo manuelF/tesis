@@ -1,0 +1,35 @@
+Esquema de tesis
+================
+
+Intro
+a. Introduccion al problema
+b. Motivacion de optimizacion
+
+Arquitectura target
+c. Arquitectura GPGPU
+d. Funcionamiento de GPGPU
+e. Idoneidad para el problema
+
+Desarrollo
+f. Estructura inicial del problema
+g. Cuellos de botella iniciales - Limitantes estructurales
+h. Cambios en el threading (from funcion -> to punto)
+i. Cambios en la memoria compartida - DENSITY_BLOCK_SIZE
+j. Cambios en los accesos globales thru textures
+k. Cambios en la reduccion
+l. Cambios en los pasajes intrawarp shuffle
+
+
+Experimentos
+m. Corridas base contra varias placas
+n. Corridas pasos (h->l)
+o. Comparaciones contra CPU unicore Actual
+p. Comparaciones contra CPU multicore OpenMP
+q. Comparaciones contra XeonPhi
+
+
+Conclusiones
+r. Importancia del problema
+s. Importancia de las arquitecturas
+t. Trabajo futuro
+
