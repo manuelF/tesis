@@ -1,8 +1,50 @@
 
 \subsection{Estructura inicial del programa}
+
+El programa originalmente estaba concebido para ser corrido en GPU nVidia GTX8800.
+Luego, las cosas que se usaron para este desarrollo consistieron en la libreria CUDA version
+2, para arquitecturas a lo sumo SM20.
+
+La estructura del programa era la siguiente:
+\begin{enumerate}
+\item Se determinan los mallados del sistema
+\item Se clasifican en cubos y esferas
+\item Para cada elemento, se resuelve el sistema
+\item Esto se repite hasta que converga a lo sumo en una cantidad limitada de pasos, o diverga
+\end{enumerate}
+
+La resoluci\'on del sistema en si esta compuesta de varios pasos:
+\begin{enumerate}
+\item Se obtiene el valor de la funcion de onda en cada punto de la malla
+\item Se generan las matrices con los gradientes y los hessianos de cada funcion
+\item Se calculan las densidades y el producto matricial por bloques por funcion
+\item Se obtienen las derivadas de la densidad calculada antes
+\end{enumerate}
+
+
 \subsection{Cuellos de botellas originales, limitantes estructurales}
+
+El cuello de bottella principal que presentaba este codigo era en la 
+resoluci\'on del sistema, especificamente en el codigo que calculaba las densidades. 
+En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas grandes estaba
+en el orden de minutos. Los problemas principales que mostraba esta funcion fueron:
+\begin{itemize}
+\item Cantidad de accesos a memoria global
+\item Falta de accesos coalescentes
+\item Sobreuso de la memoria compartida
+\item Subsaturacion de los SM
+\end{itemize}
+
+
 \subsection{Cambios en el threading}
+Cambiamos de blocks por funcion, a blocks por puntos
 \subsection{Cambios en las memorias compartidas}
+Accesos por bloque
 \subsection{Cambios en los accesos globales}
+A traves de textura, un acceso menos
 \subsection{Cambios en la reduccion}
+Hubo que agregar reduccion de suma a nivel punto porque ya no se comparten mas la info
 \subsection{Cambios en los pasajes de informacion intrawarp}
+Los shuffles que no anduvieron salvo en function
+\subsection{Cambios en las operaciones matem\'aticas}
+Cambiar los vec\_type4 por 3 en los accesos a la shared es mucho mejor, no hace falta alinear ahi
