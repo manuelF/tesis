@@ -1,0 +1,39 @@
+\subsection{Intro}
+\begin{enumerate}
+ \item Introduccion al problema
+ \item Motivacion de optimizacion
+\end{enumerate}
+\subsection{Arquitectura target}
+\begin{enumerate}
+ \item Arquitectura GPGPU
+ \item Funcionamiento de GPGPU
+ \item Idoneidad para el problema
+\end{enumerate}
+\subsection{Desarrollo}
+\begin{enumerate}
+ \item Estructura inicial del problema
+ \item Cuellos de botella iniciales \- Limitantes estructurales
+ \item Cambios en el threading (from funcion $\rightarrow$ to punto)
+ \item Cambios en la memoria compartida \- DENSITY\_BLOCK\_SIZE
+ \item Cambios en los accesos globales thru textures
+ \item Cambios en la reduccion
+ \item Cambios en los pasajes intrawarp shuffle
+\end{enumerate}
+
+\subsection{Experimentos}
+\begin{enumerate}
+ \item Corridas base contra varias placas
+ \item Corridas de los cambios de hechos
+ \item Comparaciones contra CPU unicore Actual
+ \item Comparaciones contra CPU multicore OpenMP
+ \item Comparaciones contra XeonPhi
+\end{enumerate}
+
+\subsection{Conclusiones}
+\begin{enumerate}
+ \item Importancia del problema
+ \item Importancia de las arquitecturas
+ \item Trabajo futuro
+\end{enumerate}
+
+
