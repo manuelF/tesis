@@ -37,7 +37,31 @@ en el orden de minutos. Los problemas principales que mostraba esta funcion fuer
 
 
 \subsection{Cambios en el threading}
-Cambiamos de blocks por funcion, a blocks por puntos
+%Cambiamos de blocks por puntos, a blocks por funcion.
+Originalmente el codigo generabla un bloque por cada punto en el grupo de puntos
+que teniamos que solucionar, con una sola dimension por thread.
+Como este era el kernel que insumia el 94\% del tiempo de todo el proceso, decidimos
+atacarlo de raiz, cambiando la paralelizaci\'on. A pesar de que el profiler de CUDA nos indicaba
+que tenia una buena occupancy, decidimos cambiar de fondo el encare del problema.
+
+El cuello de botella fundamental radicaba en como se distribuia el trabajo de computo
+entre los kernels. Una cosa que se nota que este mecanismo de paralelizacion cuenta con
+la ventaja de que casi no se compartian los datos entre los distintos threads, lo cual,
+a priori, deberia haber ocasionado que no hubiera mucho mejor forma de realizar el computo.
+
+Sin embargo, con un detalle mas fino, es posible notar que este mecanismo hacia que 
+muchos threads hicieran cuentas innecesarias, que no contribuian a la reduccion total.
+Esto daba una alta occupancy ficticia, que buscamos acercar a la real. Adem\'as, a pesar
+de que se compartian muy poca informacion por la memoria compartida, tambien habia muchos
+puntos de sincronización a nivel bloque. 
+
+
+
+Finalmente, cambiamos a tener block_height bloques por cada punto, y estos se operan
+con una sola dimension de thread, donde block_height es un parametro que se calcula
+para cada grupo, y es el resultado de dividir la cantidad de funciones que se van
+a calcular por punto por la 2*DBS.
+
 
 \subsection{Cambios en las memorias compartidas}
 Accesos por bloque
@@ -171,7 +195,9 @@ Esto presenta grandes ventajas a la hora de hacer transferencias de memoria en l
 
 Sin embargo, este criterio no aplica a las memorias shared de la GPGPU. Como los accesos
 a estas memorias se realizan de a 4 bytes y no de a 16/32, entonces no tiene ninguna ventaja
-en particular realizar el alineamiento. Mas a\'un, se presentan un ahorro del 25\% de los
-recursos en contencion, sin ninguna desventaja a la hora de acceder a estos. Principalmente
+en particular realizar el alineamiento. Adicionalmente, como el cuarto valor no tiene forma de marcarse
+como algo mas alla de padding, todavia se opera normalmente con el, por lo que nos ahorramos una
+operacion de calculo. Mas a\'un, se presentan un ahorro del 25\% de los recursos de la memoria compartida 
+en contencion, sin ninguna desventaja a la hora de acceder a estos. Principalmente
 esta mejora permite aumentar la cantidad de bloques corriendo concurrentemente en los multiprocesadores,
 sin estas limitados por el uso individual de las memorias compartidas.
