@@ -24,8 +24,8 @@ La resoluci\'on del sistema en si esta compuesta de varios pasos:
 
 \subsection{Cuellos de botellas originales, limitantes estructurales}
 
-El cuello de bottella principal que presentaba este codigo era en la 
-resoluci\'on del sistema, especificamente en el codigo que calculaba las densidades. 
+El cuello de botella principal que presentaba este codigo era en la 
+resoluci\'on del sistema, especificamente en el codigo que calculaba la matriz de Kohn-Sham.
 En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas grandes estaba
 en el orden de minutos. Los problemas principales que mostraba esta funcion fueron:
 \begin{itemize}
@@ -41,7 +41,51 @@ Cambiamos de blocks por funcion, a blocks por puntos
 \subsection{Cambios en las memorias compartidas}
 Accesos por bloque
 \subsection{Cambios en los accesos globales}
-A traves de textura, un acceso menos
+La arquitectura de las placas de video estan pensadas entorno al poder de computo.
+Las decisiones tomadas por los diseñadores de las GPGPU se concentran alrededor
+de paralelismo a lo ancho, poniendo un gran enfasis en la cantidad de nucleos. Luego,
+se dispone de menor cantidad de espacio disponible en el die para las memorias. 
+
+Esta decision implica que la amplia mayoria de la memoria de la GPGPU se encuentra
+localizada externa al procesador.  No solo esta fisicamente mas lejos, sino que
+adem\'as la latencia para accederla es altisima. Es decir, el paradigma de
+programaci\'on de las GPGPU gira entorno a esconder la gran latencia de los accesos
+a las memorias globales.
+
+Una de las memorias intermedias entre entre el procesador y la memoria global es
+la memoria de textura. La memoria de textura es un cach\'e sobre la memoria global, 
+que esta focalizado alrededor de los accesos a memoria en varias dimensiones.
+Estas memorias reciben su nombre de su funcion principal, que es en el area de los
+sistemas de video. Los mapas de textura suelen ser grandes matrices que definen
+tanto los colores sobre las superficies de los poligonos como los relieves.
+El detalle crucial de estas memorias es que un miss en estas cache, provoca
+que se traigan datos no solo contiguos en memoria, como pasa en las caches de 
+CPU normalmente, sino que ademas se traigan los datos en posiciones logicas contiguas,
+es decir, variando las distintas dimensiones de la matriz subyacente. 
+
+Las memorias de textura se ajustan bien a los problemas de GPGPU, porque se relacionan
+intimamente con los los mecanismos de paralelismo de CUDA. Como los problemas se pueden
+dividir en bloques con threads en $x$, $y$, $z$, entonces tiene mucho sentido pensar
+que las estructuras de datos subyacentes se van a acceder usando indices multidimensionales.
+
+En nuestro problema, la memoria de textura se presenta como una solucion para
+los accesos bidimensionales de la matriz de RMM para el grupo de puntos. 
+Como esta matriz debe ser multiplicada por todos los valores de las funciones,
+derivadas primeras y segundas, se va a acceder a toda la matriz de RMM mas de
+una vez por cada thread. Adem\'as, como se va a usar toda la matriz, y esta suele
+tener un tamaño intermedio (es muy grande para memoria constante), el problema
+suele entrar casi completamente en la memoria de textura.
+La lectura bidimensional en este caso, se ajusta muy bien a los accesos por filas
+y por columnas a la matriz.
+
+El uso de la memoria de texturas agrega un recurso mas que tenemos que tener en
+cuenta a la hora de profilear el codigo. Para administrar los accesos a 
+la memoria de textura, cada multiprocesador tiene multiples "Unidades de textura".
+Cuando dependemos de sobremanera de la memoria de textura para esconder la latencia,
+se presentan contenciones sobre el acceso a las unidades de textura. Esto es
+uno de los motivos por los cuales el procesador stallea los bloques hasta poder
+ejecutarlos, cuando se liberan un poco mas los recursos.
+
 \subsection{Cambios en la reduccion}
 Hubo que agregar reduccion de suma a nivel punto porque ya no se comparten mas la info
 \subsection{Cambios en los pasajes de informacion intrawarp}
