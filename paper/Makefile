@@ -1,4 +1,4 @@
-all: clean
+paper.pdf: *.tex
 	pdflatex paper.tex
 	pdflatex paper.tex
 
