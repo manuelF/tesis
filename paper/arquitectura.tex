@@ -10,14 +10,78 @@ un conjunto de elementos a procesar y se elije una manera de dividirlos entre di
 procesadores mediante distintas keywords del lenguaje. 
 
 El paralelismo principalmente se divide en varios niveles:
--Thread LEvel
+-Thread Level
 -Block Level
 -Board level
 
-El paralelismo a nivel de thread permite comunicaciones internas entre las
-distintas uniddes de ejecucion.
+El paralelismo a nivel de thread permite comunicaciones internas las distintas ALU, pero
+manteniendose dentro del mismo bloque de ejecucion.
 
+El paralelismo a nivel de bloque permite agrupar una cantidad de threads de manera
+que se procesen todos simultaneamente en el mismo procesador fisicamente, y que
+cuando algunos de esos threads se bloquea por alguna razon, el bloque cesa de ejecutar
+y es reemplazador por otro listo para ejecutar.
 
+El paralelismo a nivel de placa consiste en poder distribuir la carga entre distintas
+GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM comun. 
+
+La GPGPU cuenta a su vez con multiples clases de memorias que se adaptan de maneras
+diferentes a los distintos procesos. Estas incluyen:
+
+-Registros
+-Memoria Global
+-Memoria local
+-Memoria Compartida
+
+Los registros son la unidad basica de almacenamiento de los kernels de ejecucion.
+Cada thread de ejecucion cuenta con una cantidad limitada de registros de punto flotante de
+acceso instantaneo. 
+
+La memoria global es la memoria principal de la GPGPU. Esta es ilimitada en tama\~no 
+y es compartida por todos los procesadores de la GPGPU y los CPU que integran el 
+sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones de la libreria
+para poder transferir datos de y hacia la memoria RAM.
+
+La memoria compartida es una memoria que es visible para todos los threads dentro
+de un bloque, pero es independiente entre bloques. Cada thread puede escribir en cualquier
+parte de la memoria compartida de su bloque y puede ser leido por cualquier otro thread
+de su bloque. Es una memoria muy rapida, que tarda una peque\~na cantidad de ciclos 
+en poder ser leidos. Esta memoria es limitada y cuenta con una cantidad maxima del orden de los
+Kb que debe ser compartido por todos los bloques.
+
+La memoria local es un renombre de la memoria global, que es manejada por el compilador
+de manera automatica y sirve para poder tener mas memoria interna al kernel de ejecucion
+pero que sobrepase la cantidad de registros que cuenta ese thread para ejecutar.
+
+La GPGPU cuenta con multiples niveles de memorias cache para poder aminorar el hecho
+de que el principal cuello de botella del computo es la latencia en los accesos a memoria 
+global.
+
+-Cache L1
+-Cache L2
+-Cache de textura
+
+CacheL1??
+
+La cache L2 es automatica. La seccion de la memoria que esta dedicada a la cache L2
+tambien esta dedicada a la memoria compartida, por lo que es posible en tiempo de ejecucion
+darle directivas a la GPGPU que prioritice una memoria sobre la otra, permitiendo 
+mayor concurrencia o mayor hit rate de cache.
+
+La cache de textura es una cache que presenta no solo localidad espacial, como la mayoria
+de las caches de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino que se le
+puede agregar el concepto de dimensiones, para poder modelar datos en mas de una dimension.
+Esto la convierte en una herramienta clave a la hora de minimizar los accesos a matrices
+no solo por filas sino por columnas. Esta memoria se debe definir en momento de compilacion,
+en el codigo y no es automatica, porque esta cache tiene limites espaciales (necesarios
+para poder definir areas de memoria sobre la cual operar) y a su vez se debe acceder
+a los dayos subyacentes a traves de funciones especificas.
+ 
 \subsection{Funcionamiento de un GPGPU}
+El procesador se encarga de levantar codigo de la RAM, ponerlo en la I$ de la GPGPU
+y de poner a correr todos los bloques en cada procesador
+
+
+
 
 \subsection{Idoneidad para el problema}
