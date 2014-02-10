@@ -1,4 +1,3 @@
-
 \subsection{Estructura inicial del programa}
 
 El programa originalmente estaba concebido para ser corrido en GPU nVidia GTX8800.
@@ -35,6 +34,19 @@ en el orden de minutos. Los problemas principales que mostraba esta funcion fuer
 \item Subsaturacion de los SM
 \end{itemize}
 
+\subsubsection{Accesos a memoria global}
+\subsubsection{Falta de accesos coalescentes
+\subsubsection{Sobreuso de la memoria compartida}
+\subsubsection{Subsaturacion de los SM}
+La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
+codigo pero que no puedan hacerlo porque tienen contencion en algunos de sus recursos.
+Este problema es dificil de rastrear, porque hay principalmentre tres recursos que, 
+en un principio, parecen ilimitados pero en realidad son finitos y compartidos por 
+los procesadores de la GPGPU. Estos son:
+\begin{itemize}
+\item Cantidad total de threads por bloque
+\item Cantidad de memoria compartida por bloque
+\end{itemize}
 
 \subsection{Cambios en el threading}
 %Cambiamos de blocks por puntos, a blocks por funcion.
