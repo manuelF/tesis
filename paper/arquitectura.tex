@@ -1,4 +1,22 @@
 \subsection{Arquitectura GPGPU}
+La arquitectura de las GPGPU esta enfocada a procesamiento de grandes cantidades de datos
+de puntos flotante. El procesador de GPGPU cuenta con cientos de ALU sincronizadas
+por bloques, permitiendo un paralelismo adaptativo a distintos problemas.
+
+El procesamiento GPGPU es similar al procesamiento vectorial 
+realizado por las supercomputadoras Cray y IBM que surgio en los 1960's.
+El procesamiento consiste en en un hibrido entre compilador y procesador. Se determina
+un conjunto de elementos a procesar y se elije una manera de dividirlos entre distintos
+procesadores mediante distintas keywords del lenguaje. 
+
+El paralelismo principalmente se divide en varios niveles:
+-Thread LEvel
+-Block Level
+-Board level
+
+El paralelismo a nivel de thread permite comunicaciones internas entre las
+distintas uniddes de ejecucion.
+
 
 \subsection{Funcionamiento de un GPGPU}
 
