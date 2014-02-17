@@ -1,4 +1,6 @@
-\subsection{Arquitectura GPGPU}
+\subsection{Arquitectura y features GPGPU}
+
+
 La arquitectura de las GPGPU esta enfocada a procesamiento de grandes cantidades de datos
 de puntos flotante. El procesador de GPGPU cuenta con cientos de ALU sincronizadas
 por bloques, permitiendo un paralelismo adaptativo a distintos problemas.
@@ -82,6 +84,52 @@ El procesador se encarga de levantar codigo de la RAM, ponerlo en la I$ de la GP
 y de poner a correr todos los bloques en cada procesador
 
 
+\subsection{Diferencia entre CPU y GPU - Procesadores especulativos}
+Viendo la historia de CPU, podemos hacer un recorrido de los problemas que los disen~nadores fueron
+enfrentandose a lo largo del tiempo mirando los componentes que fueron agregando en los procesadores.
 
+(insertar foto de die de nehalem)
+
+caches - Pipelines - predictores - mas cache - memory controllers - many issues
+
+Lo mas importante aca es observar el patron: "no desechemos algo que podramos necesitar pronto", 
+"intentemos predecir el futuro de los condicionales", "intentemos correr dos instrucciones a la vez 
+porque nos podemos llegar a bloquear"
+
+Todos estos problemas convierten al CPU en una maquina que gira alrededor de la especulacion, 
+de los valores futuros que van a tener las ejecuciones, del probable reuso de datos.
+Podemos observar entonces que las unidades que verdaderamente hacen la ejecucion de las operaciones,
+las ALU, son muy pocas en comparacion con la cantidad de dispositivos de soporte que estan
+sobre el die del CPU. 
+
+\ref{http://www.nvidia.com/content/PDF/fermi_white_papers/P.Glaskowsky_NVIDIAFermi-TheFirstCompleteGPUComputingArchitecture.pdf}
+
+En contraste, las arquitecturas GPGPU son verdaderas maquinas de computo masivo. Estan dise\~nadas para
+resolver una y otra vez operaciones muy bien definidas (transformaciones de punto flotante en su mayoria).
+Comparativamente con un CPU, las ALU de las GPU son bastante pobres y lentas. No funcionan a las mismas 
+velocidades de clock y deben estar sincronizadas entre si. Pero la gran ventaja esta en la cantidad. 
+Un CPU cuenta con una ALU por core (alrededor de 16 cores por die de x86 es el state of the art), un GPU 
+cuenta con miles de ALUs en total (mas de 3000 CUDA Cores en Tesla K20). En contraste, un GPU dispone 
+de pocas unidades de soporte del procesamiento. No tiene pipelines especulativos, el tama\~no de las caches
+estan a ordendes de magnitud de las de CPU, la latencia a las memorias principales de la GPU estan a 
+decenas de clocks de distancia, etc. Basicamente buscaron resolver el problema del computo masivo pensando
+en hacer mas cuentas a la vez y recalcular datos viejos de ser necesario, a diferencia del CPU que esta
+pensado en hacer el menor trabajo posible y intentar mantener todos los datos que pueda en las memorias caches
+gigantescas.
+ 
+
+Como los CPU tienen que poder soportar cualquier aplicacion, no pueden avocarse de lleno a una sola
+problematica. El hecho de no tener que dise\~nar un procesador de proposito general permitio un cambio radical
+a la hora de pensar como concebir una arquitectura de gran throughput auxiliar al procesador, no reemplazandolo
+pero mas bien adicionando poder de computo.
+
+Las arquitecturas Fermi (y agregar AMD) han concebido el dise\~no de un procesador de alto desempe\~no. 
+Su meta principal es poder soportar grandes cantidades de paralelismo, mediante el uso de procesadores
+simetricos, pero tomando la fuerte restriccion de "no siempre tiene que andar bien". Es decir, ellos
+mismos asumen que el codigo que van a correr esta bien adaptado a la arquitectura y no disponen
+casi de mecanismos para dar "free lunch". Esta fuerte restriccion les permitio romper con el modelo
+de computo de CPU y definir nuevas estrategias de paralelismo, que no siempre se adaptan bien a todos
+los problemas, pero para un subconjunto de los desafios que se presentan en el area de HPC y de videojuegos
+han probado ser un cambio paradigmatico.
 
 \subsection{Idoneidad para el problema}
