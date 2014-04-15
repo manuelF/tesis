@@ -35,7 +35,7 @@ en el orden de minutos. Los problemas principales que mostraba esta funcion fuer
 \end{itemize}
 
 \subsubsection{Accesos a memoria global}
-\subsubsection{Falta de accesos coalescentes
+\subsubsection{Falta de accesos coalescentes}
 \subsubsection{Sobreuso de la memoria compartida}
 \subsubsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
@@ -69,8 +69,8 @@ puntos de sincronización a nivel bloque.
 
 
 
-Finalmente, cambiamos a tener block_height bloques por cada punto, y estos se operan
-con una sola dimension de thread, donde block_height es un parametro que se calcula
+Finalmente, cambiamos a tener block\_height bloques por cada punto, y estos se operan
+con una sola dimension de thread, donde block\_height es un parametro que se calcula
 para cada grupo, y es el resultado de dividir la cantidad de funciones que se van
 a calcular por punto por la 2*DBS.
 
