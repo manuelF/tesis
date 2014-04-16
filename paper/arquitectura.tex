@@ -11,9 +11,11 @@ un conjunto de elementos a procesar y se elije una manera de dividirlos entre di
 procesadores mediante distintas keywords del lenguaje. 
 
 El paralelismo principalmente se divide en varios niveles:
--Thread Level
--Block Level
--Board level
+\begin{enumerate}
+  \item Thread Level
+  \item Block Level
+  \item Board level
+\end{enumerate}
 
 El paralelismo a nivel de thread permite comunicaciones internas las distintas ALU, pero
 manteniendose dentro del mismo bloque de ejecucion.
@@ -29,10 +31,12 @@ GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM comun.
 La GPGPU cuenta a su vez con multiples clases de memorias que se adaptan de maneras
 diferentes a los distintos procesos. Estas incluyen:
 
--Registros
--Memoria Global
--Memoria local
--Memoria Compartida
+\begin{enumerate}
+  \item Registros
+  \item Memoria Global
+  \item Memoria local
+  \item Memoria Compartida
+\end{enumerate}
 
 Los registros son la unidad basica de almacenamiento de los kernels de ejecucion.
 Cada thread de ejecucion cuenta con una cantidad limitada de registros de punto flotante de
@@ -58,9 +62,11 @@ La GPGPU cuenta con multiples niveles de memorias cache para poder aminorar el h
 de que el principal cuello de botella del computo es la latencia en los accesos a memoria 
 global.
 
--Cache L1
--Cache L2
--Cache de textura
+\begin{enumerate}
+  \item Cache L1
+  \item Cache L2
+  \item Cache de textura
+\end{enumerate}
 
 CacheL1??
 
@@ -77,7 +83,59 @@ no solo por filas sino por columnas. Esta memoria se debe definir en momento de 
 en el codigo y no es automatica, porque esta cache tiene limites espaciales (necesarios
 para poder definir areas de memoria sobre la cual operar) y a su vez se debe acceder
 a los dayos subyacentes a traves de funciones especificas.
- 
+
+\subsection{Requerimientos de un problema para GPGPU}
+En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
+calcular cualquier cosa. Sin embargo, hay altos costos en los que se incurren antes de
+poder ejecutar fragmentos de codigo. Un problema debe exhibir las siguientes caracteristicas
+para que valga la pena poder pensar en correrlo para GPGPU.
+\begin{enumerate}
+  \item El problema debe tener una gran parte paralelizable.
+  \item El problema debe consistir mayormente de operaciones numericas de punto flotante.
+  \item El problema debe poder ser modelado mayormente en arreglos o matrices.
+  \item El tiempo de computo debe ser muy superior al tiempo de transferencia de datos.
+\end{enumerate}
+
+Item \ref{req_paralelo} se refiere a que debe existir alguna forma de partir el problema
+en subproblemas que puedan realizarse simultaneamente, sin que haya dependencias de 
+resultados entre si. Si el problema requere partes seriales, lo ideal es que se las
+pueda concebir las partes paralelas sean etapas de un pipeline de procesos, donde 
+cada una de estas exhiba caracteristicas fuertemente paralelas.
+
+Item \ref{req_float} habla de que el m\'etodo de resoluci\'on de los problemas debe
+consistir del uso de metodos numericos. El set de instrucciones de las arquitecturas
+de GPGPU estan fuertemente influenciados por las aplicaciones 3D que las impulsaron
+en un principio. Estas consisten mayormente de transformaciones de algebra lineal
+para modelar luces, hacer renders o mover puntos de vistas. Todos estos problemas
+son inherentemente de punto flotante, por lo cual el set de instrucciones, las ALUs
+internas y los registros tienen optimizado para este caso de uso. Las operaciones
+en numeros enteros no son el fuerte de esta arquitectura y suelen ser realizados
+mas eficientemente por procesadores de proposito general.
+
+Item \ref{req_matrix} menciona que los problemas que mejor se pueden tratar en esta
+arquitectura se pueden representar como operaciones entre arreglos o matrices de
+dos, tres o cuatro dimensiones. Las estructuras de datos que no estan secuenciales
+en memoria pueden incurrir en multiples accesos a esta para recorrerlas, y en las
+arquitecturas GPGPU son estos los que generan el mayor cuello de botella. Ademas,
+son dificiles de paralelizar en multiples subproblemas. Tener como parametros de 
+entrada matrices o arreglos que se puedan partir facilmente incurre en minimos
+overheads de computo y permite aprovechar mejor las caches y las herramientas de
+prefetching que brinda la arquitectura.
+
+Item \ref{req_transf} ataca uno de los puntos criticos de esta arquitectura. Para poder
+operar con datos, se requiere que estos esten en la memoria de la placa, no la memoria
+de proposito general de la computadora. Esto quiere decir, que se deben hacer copias
+explicitas entre las memorias, ya que ambas tienen espacios de direcciones independentientes.
+Esta copia se realiza a traves de buses que, a pesar de tener un enorme throughput de
+datos, tambien tienen una gran latencia (orden de milisegundos). Por lo tanto, para minimizar
+el tiempo de ejecucion de un programa usando las GPGPU, se debe considerar tambien el
+tiempo de transferencia de datos a la hora de determinar si el beneficio de computar en
+menor tiempo lo justifica. 
+
+Estas caracteristicas limitan enormemente la clase de problemas que una GPGPU puede
+afrontar, y suelen ser una buena heuristica para determinar de antemano si vale la pena
+invertir el tiempo necesario de la implementacion y ajuste fino.
+
 \subsection{Funcionamiento de un GPGPU}
 El procesador se encarga de levantar codigo de la RAM, ponerlo en la I\$ de la GPGPU
 y de poner a correr todos los bloques en cada procesador
@@ -89,11 +147,11 @@ fueron enfrentandose a lo largo del tiempo mirando los componentes que fueron ap
 
 (insertar foto de die de nehalem)
 
-caches - Pipelines - predictores - mas cache - memory controllers - many issues
+Caches - Pipelines - Predictores - Mas cache - Mas controladores de memoria - Multiple issues
 
-Lo mas importante aca es observar el patron: "no desechemos algo que podramos necesitar pronto", 
-"intentemos predecir el futuro de los condicionales", "intentemos correr multiples instrucciones a la vez 
-porque nos podemos llegar a bloquear en alguna de ellas."
+Lo importante ac\'a es observar el patron: "no desechar algo que podramos necesitar pronto", 
+"intentar predecir el futuro de los condicionales", "intentar correr multiples instrucciones a la vez 
+porque puede llegar a bloquear en alguna de ellas."
 
 Todos estos problemas convierten al CPU en una maquina que gira alrededor de la especulacion, 
 de los valores futuros que van a tener las ejecuciones, del probable reuso de datos.
@@ -141,7 +199,7 @@ pueden ser paralelizadas por columnas y por filas. Estos problemas estan fuertem
 en la literatura, ya que lso problemas de algebra lineal los requieren constantemente. 
 En nuestro caso, se requieren para un sistema cientas de estas multiplicaciones, algunas con matrices de mas de
 $500^2$ elementos. Al consistir este proyecto un sistema de resolucion num\'erico de las f\'ormulas de QM/MM,
-los problemas enfrentados eran casi en su totoalidad de operaciones de punto flotante. Luego, dados las
+los problemas enfrentados eran casi en su totalidad de operaciones de punto flotante. Luego, dados las
 caracteristicas de contar con un fuerte nivel de paralelismo en los cuellos de botella y de ser operaciones
 mayormente de punto flotante, determinamos que el uso de las GPGPU era idoneo, en comparacion con arquitecturas
 de proposito general con menos GFLOPS.
