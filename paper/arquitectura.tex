@@ -166,28 +166,29 @@ resolver una y otra vez operaciones muy bien definidas (intrucciones de punto fl
 Comparativamente con un CPU, las ALU de las GPU son bastante pobres y lentas. No funcionan a las mismas 
 velocidades de clock y deben estar sincronizadas entre si. Pero la gran ventaja esta en la cantidad. 
 Un CPU cuenta con unas pocas ALU por core, dependiendo de su algoritmo de scheduling interno 
-(alrededor de 16 cores por die de x86 es el state of the art). Un GPU cuenta con miles de ALUs en total 
-(m\'as de 3000 CUDA Cores en Tesla K20). En contraste, un GPU dispone 
-de pocas unidades de soporte del procesamiento. No tiene pipelines especulativos, el tama\~no de las caches
+(alrededor de 16 cores por die de x86 es el tope de linea ofrecido actualmente). Un GPU cuenta con miles de ALUs en total 
+(m\'as de 3000 CUDA Cores en Tesla K20). 
+En contraste, un GPU dispone de pocas unidades de soporte del procesamiento. No tiene pipelines especulativos, el tama\~no de las caches
 estan a ordenes de magnitud de las de CPU, la latencia a las memorias principales de la GPU estan a 
-decenas de clocks de distancia, etc. Basicamente buscaron resolver el problema del computo masivo pensando
-en hacer mas cuentas a la vez y recalcular datos viejos de ser necesario, a diferencia del CPU que esta
-pensado en hacer el menor trabajo posible y intentar mantener todos los datos que pueda en las memorias caches
-gigantescas.
+decenas de clocks de distancia, etc. Basicamente durante del disen\~no de la arquitectura GPGPU
+buscaron resolver el problema del computo masivo pensando en hacer m\'as cuentas a la vez y 
+recalcular datos viejos de ser necesario. Esto es una marcada diferencia contra los CPU, que estan
+pensado en rehacer el menor trabajo posible y intentar mantener todos los datos que pueda en 
+las memorias caches gigantescas.
  
 Como los CPU tienen que poder soportar cualquier aplicacion, no pueden avocarse de lleno a una sola
 problematica. El hecho de no tener que dise\~nar un procesador de proposito general permitio un cambio radical
 a la hora de pensar como concebir una arquitectura de gran throughput auxiliar al procesador, no reemplazandolo
-pero mas bien adicionando poder de computo.
+sino mas bien adicionando poder de computo.
 
 Las arquitecturas Fermi (y agregar AMD) han concebido el dise\~no de un procesador de alto desempe\~no. 
 Su meta principal es poder soportar grandes cantidades de paralelismo, mediante el uso de procesadores
 simetricos, pero tomando la fuerte restriccion de "no siempre tiene que andar bien". Es decir, ellos
 mismos asumen que el codigo que van a correr esta bien adaptado a la arquitectura y no disponen
-casi de mecanismos para dar "free lunch". Esta fuerte restriccion les permitio romper con el modelo
-de computo de CPU y definir nuevas estrategias de paralelismo, que no siempre se adaptan bien a todos
-los problemas, pero para un subconjunto de los desafios que se presentan en el area de HPC y de videojuegos
-han probado ser un cambio paradigmatico.
+casi de mecanismos para dar optimizaciones post compilacion, o \"free lunch\". Relajar esta restricci\'on 
+les permitio romper con el modelo de computo de CPU y definir nuevas estrategias de paralelismo, 
+que no siempre se adaptan bien a todos los problemas, pero para un subconjunto de los desafios que se 
+presentan en el area de HPC y de videojuegos han probado ser un cambio paradigmatico.
 
 \subsection{Idoneidad para el problema}
 El problema de QM/MM enfrentado en este trabajo cuenta con mutiples operaciones matematicas de gran
