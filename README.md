@@ -1,4 +1,4 @@
-tesis_cuda
+tesis
 ==========
 
-Tesis de cuda
+Tesis de Optimizaciones sobre LIO
