@@ -1,0 +1,43 @@
+La arquitectura del Xeon Phi, parte de la linea de Intel Many Core Architecture (MIC), esta esquematizada
+en la figura~\ref{fig:xeon_phi_arch}. Cada procesador esta esquematizado en~\ref{fig:xeon_phi_core}
+
+La base de esta arquitectura consiste en 61 procesadores SMP (Symmetric Multiprocessing), con lo cual todos
+ellos comparten la misma memoria. Cada uno de estos procesadores tiene un \textit{clock rate} de 1009 MHz, 
+con una arquitectura basada en el set de instrucciones de Intel IA x86. Las principales diferencias con este
+set de instrucciones son el soporte para direccionamiento a 64 bits y nuevas instrucciones de vectorización. 
+
+Cada procesador tiene además soporte para 4 threads por hardware. Adicionalmente, cada core tiene una unidad
+de vectorización (VPU, \textit{Vector processing unit}). Esta unidad tiene 32 registros SIMD (Single Instruction
+Multiple Data) de 512 bits. Para utilizar estos registros se dispone del set de instrucciones especial de vectorización, 
+que es imcompatible con sets de instrucciones anteriores como por ejemplo SSE (Streaming SIMD Extensions) y AVX (Advanced
+Vector Extensions) de x86-64.
+
+Además de la unidad de vectorización y la unidad escalar, cada procesador cuenta con 32 Kb de cache L1 y 512 Kb de cache
+L2. Estas caches son asociativas \textit{8-way} y su linea de cache tiene 64 bytes. La coherencia de caché se mantiene
+mediante un directorio distribuido de \textit{tags} (véase figura~\ref{fig:xeon_phi_arch}) dividido en 64 pedazos e implementado
+por hardware. La memoria principal consiste de memoria RAM GDDR5, de 8 GB con velocidad de transferencia de 5.5 GT/s. 
+Cada procesador, de acuerdo a [Fang], puede realizar pedidos de memoria separados sin que la memoria se convierta en un cuello
+de botella importante. Sin embargo, los 4 \textit{threads} dentro de un \textit{core} ven sus accesos a memoria serializados.
+
+Adicionalmente los procesadores están conectados por dos anillos bidireccionales que les permite comunicarse. La velocidad de
+comunicación es suficiente, de acuerdo a los microbenchmarks realizados en [Fang], para considerar que todos los procesadores son
+simétricos entre si. 
+
+Por último, cada procesador tiene un \textit{in-order pipeline} de corta longitud, diferencia importante con los cores de un procesador
+estandar de Intel. El \textit{pipeline} corto implica que las operaciones escalares no tienen latencia y las vectoriales tienen baja latencia,
+y el costo por \textit{branch misprediction} es bajo. Este punto diferencia fuertemente al Xeon Phi de aceleradores de computo como las GPU
+(Graphic Processing Unit), que tienen alto costo en las bifuraciones de decisiones. Sin embargo, el Xeon Phi no ejecuta instrucciones de manera
+\textit{out-of-order}, lo cual implica que muchas operaciones de paralelismo a nivel instrucción usuales en arquitecturas como IA32 o x86-64 no son
+aplicables.
+
+El Xeon Phi es un coprocesador, lo cual implica que necesita ser instalado en un \textit{host}. La comunicación con este host
+ocurre a través de un bus PCI Express. Existen dos métodos para acceder al Xeon.
+
+\begin{enumerate}
+    \item Nativo: El Xeon Phi permite correr código directamente, mediante el uso de SSH (Secure SHell). Esto es gracias al
+    uso de BusyBox Linux como sistema operativo, lo cual da soporte de sistema de archivos y entorno de ejecución. Si bien no
+    tiene acceso a \textit{storage} permanente esto puede resolverse gracias al \textit{stack} TCP/IP disponible en BusyBox.
+    \item Offloading: El \textit{host} puede delegar la ejecución de ciertas porciones de código al coprocesador. Esto requiere
+    que los datos necesarios para el cómputo sean copiados del \textit{host} al Xeon Phi, lo cual puede implicar que el bus puede
+    ser un cuello de botella importante.
+\end{enumerate}
