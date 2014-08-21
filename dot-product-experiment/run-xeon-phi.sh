@@ -1,7 +1,9 @@
 #!/bin/bash
+set -euo pipefail
+
 module purge
 module load icc-mic vtune
-icc -vec-report3 -O3 -openmp -o dot_product_xeon_phi dot_product.c -lrt 2> log-xeon-phi.txt
+icc -vec-report6 -O3 -openmp -g -std=gnu99 -o dot_product_xeon_phi dot_product.c -lirc -lrt 2> log-xeon-phi.txt
 scp run-inside.sh root@mic0:
 export SINK_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 micnativeloadex dot_product_xeon_phi -l | python deps-xeon.py | while read dep
