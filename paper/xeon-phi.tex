@@ -1,39 +1,38 @@
 TODO: PONER REFERENCIAS!!
 
 La última de las arquitecturas examinadas en este trabajo es un desarrollo relativamente reciente
-por parte de Intel, el coprocesador Xeon Phi. A pesar de haber ingresado en la escena de HPC hace 
-menos de 3 años, se ha visto una apuesta muy fuerte a esta tecnología, como puede verse en el papel 
+por parte de Intel, el coprocesador Xeon Phi. Desde su introduccion al mercado en el a\~no 2012, se ha visto implementaciones de gran magnitud con esta tecnología, como puede verse en el papel
 que juega dentro de supercomputadoras como la Tianhe-2 de la Universidad de Sun Yat-Sen en China,
 listada en TOP 500 como la supercomputadora más rápida del mundo en Junio 2013, Noviembre 2013 y
-Junio 2014. Esta supercomputadora de 16000 nodos, cada uno de los cuales consiste de dos Intel 
+Junio 2014. Esta supercomputadora de 16000 nodos, cada uno de los cuales consiste de dos Intel
 Ivy Bridge Xeon en combinación con 3 coprocesadores Xeon Phi, es teóricamente capaz de alcanzar los
-54.9 petaflops de computo, y superó por casi el doble de Teraflps a su competidor más cercano en
+54.9 petaflops de computo, y superó por casi el doble de flops a su competidor más cercano en
 Junio de 2013.
 
-Esta apuesta no solo es virtud de las características técnicas del coprocesador, que promete una
-capacidad de computo de 1000 GFLOPs y 240 GB/s de transferencia, sino que además ha de considerarse
-que, a diferencia de su competidor directo NVIDIA CUDA y OpenCL, el esfuerzo de portar la aplicación a utilizar
+Los principales puntos fuertes de esta nueva arquitectura no son solo sus especificaciones tecnicas, que prometen una
+capacidad de computo de 1 TFLOPs y 240 GB/s de transferencia de memoria, sino que además ha de considerarse
+que, a diferencia de sus competidores directos NVIDIA CUDA y OpenCL, el esfuerzo de portar la aplicación a utilizar
 el Xeon Phi es presentado como mucho menor por parte de Intel. Esta combinación de performance y portabilidad
 presenta al Xeon Phi como una alternativa muy interesante en el campo de aplicaciones intensivas en cómputo.
 
-Para lograr esto, Intel apostó al uso de una nueva arquitectura de muchos procesadores (Many Integrated Core Architecture, MIC) de
-tipo SMP (Symmetric MultiProcessing), bajo el nombre en código \textit{Knights Corner}. El coprocesador dispone de 60 cores basados 
-en el procesador Intel Pentium, con una ISA (Instruction Set Architecture) muy similar al set de instrucciones IA 32. Además de su cantidad 
+Para lograr esto, Intel desarroll\'o una nueva arquitectura de muchos procesadores (Many Integrated Core Architecture, MIC) de
+tipo SMP (Symmetric MultiProcessing), bajo el nombre en código \textit{Knights Corner} y similar a desarrollos anteriores como \textit{Larrabee}. El coprocesador dispone de 60 cores basados
+en el dise\~no del Intel Pentium, con una ISA (Instruction Set Architecture) muy similar al set de instrucciones IA-32, mas no compatible con el mismo. Además de su cantidad
 numérica, estos cores disponen de registros SIMD (Single Instruction Multiple Data) de 512 bits (el doble de tamaño que los registros de 256
-bits que disponen los procesadores de Intel basados en el set de instrucciones AVX, como el Xeon). Esto implica que programas
-que ya explotan fuertemente el paralelismo a nivel datos y a nivel \textit{threads} de computo debieran poder hacer uso de 
-estas impresionantes facilidades con una recompilación. Adicionalmente el coprocesador puede usarse para que el
-\textit{host} delege calculos intensivos en el coprocesador (con el cual esta conectado por un bus
-PCI Express de alta velocidad) y luego obtenga los resultados del mismo. Ambos modos son soportados por el \textit{toolchain} que provee
-Intel, que consiste no solo de compiladores de C, C++ y Fortran, sino que también de librerías especialmente optimizadas para uso del Xeon Phi 
-como lo es la Intel MKL (Math Kernel Library). 
+bits que disponen los procesadores de Intel existentes en el set de instrucciones AVX de x86). Esto implica que programas
+que ya explotan fuertemente el paralelismo a nivel datos y a nivel \textit{threads} de computo debieran poder hacer uso de
+estas nuevas prestaciones con una recompilación del c\'odigo de la aplicaci\'on. Adicionalmente el coprocesador puede usarse para que el
+\textit{host} delege calculos intensivos en el mismo (con el cual esta conectado por un bus
+PCI Express de alta velocidad) y luego obtenga los resultados del mismo. Este patr\'on de uso es similar a los aceleradores de computo como las GPGPU modernas. Ambos modos son soportados por el \textit{toolchain} que provee
+Intel para desarrollo de software, que consiste no solo de compiladores de C, C++ y Fortran, sino que también de librerías especialmente optimizadas para uso del Xeon Phi
+como lo es la Intel MKL (Math Kernel Library).
 
 Sin embargo, factores diversos hacen que si bien el esfuerzo de portar una aplicación ya existente para aprovechar el Xeon Phi es menor en principio
-a otras opciones como NVIDIA CUDA, el mismo no es insignificante. La cantidad de cores se ve compensada por su relativa baja velocidad de clock 
-(aproximadamente 1.0 GHz), lo cual requiere mas esfuerzo por parte del programador para hacer buen uso de la escalabilidad tanto en cores como en 
-paralelismo en uso de los datos (vectorización), entre otros aspectos. 
+a otras opciones como NVIDIA CUDA, el mismo no es insignificante. La cantidad de cores se ve compensada por su relativa baja velocidad de clock
+(aproximadamente 1.0 GHz), lo cual requiere mas esfuerzo por parte del programador para hacer buen uso de la escalabilidad tanto en cores como en
+paralelismo en uso de los datos (vectorización), entre otros aspectos.
 
-Los detalles particulares de esta arquitectura y su impacto serán descriptos y analizados en capítulos posteriores. 
-A pesar de su juventud, esta plataforma ha inspirado trabajos relacionados como por ejemplo [TODO: PONER CITAS DE MATERIAL SOBRE XEON PHI]. Estos trabajos
-buscan dar números finos en benchmarks con el propósito de guiar al programador en su afán de explotar la performance del coprocesador. En este trabajo buscamos
-poner estos pasos en contexto de otras opciones, y considerar otros aspectos relevantes al trabajo de portar \textit{software} de computo científico.
+Los detalles particulares de esta arquitectura y su impacto serán descriptos y analizados en capítulos posteriores.
+La literatura con respecto a esta plataforma en Q3 de 2014 es existente, aunque aun escasa. [TODO: PONER CITAS DE MATERIAL SOBRE XEON PHI]. Estos trabajos
+exploratorios buscan analizar distintos aspectos del uso del coprocesador a trav\'es de  modelos sencillos (microbenchmarks, optimizar aplicaciones de peque\~no tama\~no). En este trabajo buscamos
+poner las recetas y consejos obtenidos para el uso del Xeon Phi en contexto de tecnolog\'ias competidoras ya establecidas, dentro del marco de portar una aplicaci\'on cient\'ifica de mediano tama\~no ya en uso.
