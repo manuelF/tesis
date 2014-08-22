@@ -19,9 +19,11 @@ timespec diff(timespec start, timespec end)
 	return temp;
 }
 
+#define alloc_floats(n) _mm_malloc((n) * sizeof(float), 64)
+
 float * random_array(int numbers)
 {
-    float * data = memalign(64, numbers * sizeof(float));
+    float * data = alloc_floats(numbers);
     int i;
     for(i = 0; i < numbers; ++i){
         float denom = 0;
@@ -31,25 +33,28 @@ float * random_array(int numbers)
     return data;
 }
 
-void dowork(float * data1, float * data2, float * data3, int numbers)
+void dowork(float *restrict data1, float *restrict data2, float *restrict data3, int numbers)
 {
-    int i;
-
-    #pragma omp parallel for 
-    #pragma ivdep
-    for(i = 0; i < numbers; i++) {
-        data3[i] = data1[i] * data2[i];
+    int i, chunksize = numbers / 128;
+    #pragma omp parallel for
+    for(int chunk = 0; chunk < numbers; chunk += chunksize){
+        #pragma ivdep
+        #pragma vector aligned nontemporal 
+        for(i = chunk; i < chunk+chunksize; i++) {
+            data3[i] = data1[i] * data2[i];
+        }
     }
 }
 
 int main(int argc, const char * argv[])
 {
     srand(time(NULL)); 
-    int numbers = (argc > 1) ? atoi(argv[1]) : 512000000;
+    unsigned int numbers = (argc > 1) ? atoi(argv[1]) : 64000000;
+    printf("%lf\n", numbers * sizeof(float));
+    int try, tries = (argc > 2) ? atoi(argv[2]) : 15;
     float * data1 = random_array(numbers);
     float * data2 = random_array(numbers);
-    float * data3 = memalign(64, numbers * sizeof(float));
-    int try, tries = (argc > 2) ? atoi(argv[2]) : 10;
+    float * data3 = alloc_floats(numbers);
     for(try = 0; try < tries; ++try){
         volatile timespec start, end;
 
@@ -65,8 +70,5 @@ int main(int argc, const char * argv[])
 	    res += data3[i];
     }
     printf("%lf\n",res);
-    free(data1);
-    free(data2);
-    free(data3);
     return 0;
 }
