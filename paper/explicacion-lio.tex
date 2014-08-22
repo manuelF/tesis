@@ -1,0 +1,87 @@
+El software que servirá como caso de estudio para este trabajo es un software de 
+din\'amica molecular denominado LIO. Este software ha sido objeto de otros 
+trabajos de investigación~\cite{PaperNitscheManu}~\cite{TesisNitsche} y ha sido 
+usado en trabajos de simulaci\'on en din\'amica molecular.
+
+A continuaci\'on presentaremos un breve res\'umen de los aspectos te\'oricos detr\'as de
+la herramienta, de manera de servir de base para entender las distintas partes optimizadas
+del mismo.
+
+El prop\'osito de este \textit{software} es realizar simulaciones de las propiedaes
+de sistemas qu\'imicos complejos (solutos en soluci\'on, prote\'inas, etc.). Estas
+propiedades est\'an estudiadas dentro del marco te\'orico de la mec\'anica cu\'antica
+modelando el sistema como un conjunto de part\'iculas.
+
+En principio todas las propiedades de un sistema de part\'iculas livianas
+(como los electr\'ones) pueden ser obtenidas a partir de la funci\'on de onda $\Phi$,
+la cual obedece la ecuaci\'on de onda de Schr\"odinger \textit{dependiente del tiempo},
+
+\begin{equation}
+    \label{schro_time_dep}
+    -\hbar\frac{\partial \Psi}{\partial t} (\mathbf{r},t) = \frac{-\hbar^2}{2\mu}\nabla^2 \Psi(\mathbf{r},t) + V(\mathbf{r},t) \Psi(\mathbf{r},t)
+\end{equation}
+
+donde $\mathbf{r} = (r_1,\dots,r_n)$ es el vector de todas las posiciones de las part\'iculas del sistema,
+$m$ es la masa de una part\'icula cualquiera, $V$ es un campo externo que afecta a las part\'iculas y
+$\hbar$ es la constante de Planck divida por $2\pi$. En esta versi\'on, el campo $V$ depende del tiempo; si
+esto no ocurre se puede simplificar utilizando el operador Hamiltoniano
+
+\begin{equation*}
+    \hat{H} =  -\frac{\hbar^2}{m} \nabla^2 + \hat{V}
+\end{equation*}
+
+a la ecuaci\'on de Sch\"odinger \textit{independiente del tiempo}
+
+\begin{equation}
+    \label{schro_time_indep}
+    \hat{H} \Psi(\mathbf{r}) = E \Psi(\mathbf{r})
+\end{equation}
+
+Donde $E$ es la energ\'ia asociada a la funci\'on de onda $\Psi$.
+
+Ahora, resolver esta ecuaci\'on diferencial no se puede hacer de manera exacta para sistemas que involucran m\'as
+de una part\'icula, por lo cual se utilizan m\'etodos aproximados. Estos m\'etodos son computacionalmente muy caros
+(del \'orden c\'ubico o mayor) por lo cual otro enfoque es necesario para resolver el problema.
+
+El enfoque de LIO esta dentro del marco de t\'ecnicas de simulaci\'on h\'ibrida denominadas QM/MM 
+(\textit{Quantum Mechanical}/\textit{Molecular Mechanical}). Este enfoque consiste en resolver la ecuaci\'on de
+Schr\"odinger en la porci\'on activa del sistema (por ejemplo el soluto) y modelar el resto (el solvente por
+ejemplo) mediante din\'amica cl\'asica. De esta manera se obtiene, con un costo moderado, el comportamiento de
+la porci\'on activa modulado por el comportamiento del resto del sistema.
+
+Para resolver num\'ericamente~\ref{schro_time_indep} en la porci\'on activa del sistema se utiliza el m\'etodo
+de DFT (\textit{Density Functional Theory}). La base de este m\'etodo consiste en la introducci\'on de la
+\textit{densidad electr\'onica} $\rho$, que viene a representar la probabilidad de encontrar un electr\'on en
+el espacio dado un estado de la configuraci\'on del sistema. $\rho$ y $\Phi$ (y por lo tanto $E$) se encuentran relacionadas por
+
+\begin{equation}
+    \label{honenberg_kohn}
+    \rho(\vec{r}_i) = \int \Psi^{\dagger}(\vec{r}_1, \dots, \vec{r}_n) \Psi(\vec{r}_1, \dots, \vec{r}_n) d\vec{r}_1 \dots d\vec{r}_n \qquad i \in [1,n]
+\end{equation}
+
+Donde $\Psi^{\dagger}$ es el conjugado de $\Psi$. La energ\'ia entonces es un \textit{funcional} de la densidad, $E[\rho]$. Otros trabajos de DFT dan m\'as
+detalles a esta relaci\'on. Uno de los principales resultados de DFT es la siguiente ecuaci\'on para la relaci\'on entre $E$ y $\rho$:
+
+\begin{equation}
+    \label{honenberg_kohn} 
+    E[\rho] = T_s[\rho] + V_{ne}[\rho] + \frac{1}{2} \int \int \frac{\rho(\vec{r}_1) \rho(\vec{r}_2)}{r_{12}} d\vec{r}_1 d\vec{r_2} + E_{xc}[\rho]
+\end{equation}
+
+Donde $T_s[\rho]$ es la energ\'ia cin\'etica asociada con la densidad, $V_{ne}[\rho]$ es la energ\'ia potencial producto de la interacci\'on entre los
+electr\'ones (la densidad) y los n\'ucleos, el tercer t\'ermino es el resultado de la repulsi\'on de Coulomb entre eletrones y $E_{xc}[\rho$ es la
+energ\'ia de intercambio y correlacci\'on.
+
+Para este trabajo, debido a su costo computacional~\cite{PaperNitscheManu}, nos interesar\'a sobre todo el computo de la energ\'ia de intercambio y correlacci\'on ($E_{xc}$).
+Esta energ\'ia es calculada mediante 
+
+\begin{equation}
+    E_{XC} = \int \rho(r) \epsilon_{xc}(\rho(r)) dr
+\end{equation}
+
+que es integrada numericamente en una grilla, mediante la suma
+
+\begin{equation}
+    E_{XC} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
+\end{equation}
+
+TODO: CONTINUAR ESTO.
