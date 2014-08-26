@@ -78,10 +78,48 @@ Esta energ\'ia es calculada mediante
     E_{XC} = \int \rho(r) \epsilon_{xc}(\rho(r)) dr
 \end{equation}
 
-que es integrada numericamente en una grilla, mediante la suma
+que es integrada n\'umericamente en una grilla (cuya forma definiremos posteriormente y por ahora ser\'a asumida como dada), mediante la suma
 
 \begin{equation}
+    \label{approx_excenergy}
     E_{XC} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
 \end{equation}
 
-TODO: CONTINUAR ESTO.
+El t\'ermino $\epsilon_{xc}$ corresponde a un \textit{funcional de intercambio y correlaci\'on} que depende de la densidad local y
+se aproxima (utilizando un concepto denominado \textit{Local density approximation}) a la energ\'ia de intercambio y correlaci\'on de 
+un gas de electrones de la misma densidad:
+
+\begin{equation}
+    \epsilon_{xc}(\rho(\vec{r})) = -\frac{3}{4} (\frac{3 \rho(\vec{r})}{\phi})^{\frac{1}{3}} + \epsilon_{C}(\rho(\vec{r}))
+\end{equation}
+
+Para el t\'ermino $\epsilon_{C}$ se conocen buenas aproximaciones num\'ericas~\cite{Vosko}.
+
+Tenemos entonces que para calcular~\ref{approx_excenergy} es necesario conocer el valor de la densidad en la grilla.
+El m\'etodo, denominado m\'etodo de \textit{Khon Sham}~\cite{KohnSham}, para calcular esta densidad es usando la matriz densidad:
+
+\begin{equation}
+    \rho(\vec{r}) = \sum_{i = 1}^{m} \sum_{j \geq i}^{m} p_{ij} \chi_i(\vec{r}) \chi_j(\vec{r})
+\end{equation}
+
+Con $m$ la cantidad de funciones base con valor no despreciable, donde $\chi_i$ es una base de funciones de $\vec{r} = (x,y,z)$ gaussianas de la forma:
+
+\begin{equation}
+    \chi_i(x,y,z) = (x - x_0)^{n_x^k} (y - y_0)^{n_y^k} (z - z_0) ^{n_z^k} \sum_j k_j^k e^{-\alpha_j \| \vec{r} - \vec{r_0} \| }
+\end{equation}
+
+El valor de los coeficientes $p_{ij}$ se calcula mediante
+
+\begin{equation}
+    p_{ij} = \sum_{k = 1}^n C_i^k \times C_j^k
+\end{equation}
+
+Siendo $C$ una matriz de coeficientes. Determinar esta matriz se realiza mediante un procedimiento iterativo basado en
+la matriz de \textit{Kohn-Sham}, que se encuentra asociada a la energ\'ia de intercambio y correlacci\'on (Y por tanto, a $C$).
+La relaci\'on entre esta matriz $\Gamma$ y $C$ puede verse a partir del sistema
+
+\begin{align}
+    \Gamma_{ij / i < j} & = \sum_{k,g} \Gamma'_{ij}(k,g) \
+    \Gamma'_{ij}(k,g) & = \phi_i(\vec{r}_{k,g})\phi_j(\vec{r}_{k,g})p_k(\vec{r}_{k,g}) \omega'_g y \
+    y & = f(\epsilon_{xc}(\rho(\vec{r}_k,g)))
+\end{align}
