@@ -165,8 +165,14 @@ a la densidad. Por el \textit{Teorema de Variaci\'on de Hohenberg y Kohn}, cuand
 estas iteraciones convergen se tiene la mejor aproximaci\'on posible para la
 densidad $\rho$ y su energ\'ia $E[\rho]$.
 
-Esto describe a grandes rasgos los c\'alculos realizados por la secci\'on m\'as
-intensiva computacionalmente. Existen varias optimizaciones, por ejemplo el uso de
+Esto describe a grandes rasgos los c\'alculos realizados por el paquete de DFT
+LIO. Existen varias optimizaciones que no describiremos aqu\'i, por ejemplo el uso de
 puntos de corte (\textit{cutoff}) de funciones de manera que las funciones de la
 base Gaussiana que tienen un valor negligible en ciertos puntos de la grilla no
 sean calculadas en esos lugares, como esta descripto en~\cite{PaperNitscheManu}.
+
+El resto de los computos de \textit{QM/MM} son delegados al paquete de din\'amica
+molecular Amber~\cite{Amber}, con algunos cambios menores. El prop\'osito de LIO es
+entonces permitir una implementaci\'on lo m\'as eficiente posible de los c\'omputos
+m\'as intensivos. Las distintas herramientas para implementar estos c\'omputos y
+su performance relativa es el prop\'osito de este trabajo.
