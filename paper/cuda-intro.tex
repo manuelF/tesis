@@ -1,0 +1,60 @@
+La siguiente arquitectura analizada en este trabajo es la arquitectura GPGPU desarrollada por NVIDIA, CUDA.
+CUDA surge naturalmente de la aplicaci\'on de los pipelines desarrollados para
+graficos aplicados a computo cientifico.
+
+Desde fines de los 90 que se pronosticaba el fin de la ley de Moore ~\cite{MooreLaw}. Las velocidades obtenidas
+entre 1970 y el 2000 en termino de procesadores se dio de acuerdo a dos grandes tecnicas: la miniaturizacion
+y el aumento de velocidad de procesador (en Mhz). Alrededor del a\~no 2002, ya no se pudo aumentar
+la velocidad de los procesadores sin que el calor generado fuera indisipable. Esto fuerza al modelo
+CPU a adoptar multiples cores como la solucion para mantener el aumento de ``performance'', aunque esta
+ya no depende de un procesador individual. Cuando esto pas\'o, los desarrolladores de GPU ya tenian
+procesadores de multiples nucleos andando hace a\~nos. En los a\~nos sucesivos, algunos investigadores
+lograron modelar sus problemas de HPC como aplicaciones de algebra lineal aplicadas a gr\'aficos, que es
+lo \'unico que sabian resolver las placas de video. En el 2006, NVIDIA introduce la arquitectura G80,
+que es la primera placa de video que deja de resolver \'unicamente problemas especializados a gr\'aficos
+para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los
+tipos de operaciones que realiza (geometria, vertex y pixelshaders) ~\cite{cudaHandbook}. Como subproducto de esto,
+deja de tener pipelines especializados y pasa a tener procesadores simetricos m\'as sencillos, m\'as
+faciles de construir. Esta arquitectura es la que se ha mantenido y mejorado en el tiempo, permitiendo
+a las GPU escalar masivamente en procesadores sencillos, de un bajo clock con una disipacion termica
+manejable.
+
+Los puntos fuertes de las GPGPU modernas consisten en poder atacar los problemas de paralelismo
+de manera pseudo-explicita, y con esto poder escalar ``facilmente'' si solamente se corre en una
+placa mas r\'apida. ~\cite{} Tecnicamente esta arquitectura cuenta cientos a miles de procesadores
+especializados en cuentas de punto flotante, que trabajan de a bloques de manera sincronica
+ que procesan cada uno un \textit{thread}. Cada thread a su vez cuenta con
+64 a 256 registros ~\cite{NvidiaFermi} ~\cite{NvidiaKepler}, como porcion de un register file de 64kb.
+Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de
+su dise\~no fundamental para gr\'aficos). No poseen instrucciones SIMD, ya que su dise\~no primario
+esta basado en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los
+bloques sincronicos de procesadores. De este modo, las placas modernas como la K40 alcanzan
+poder de computo de 4.3 TFLOPs de precision simple, 1.7 TFLOPs de precision doble y 288GB/sec de
+transferencia, usando 2880 CUDA Cores ~\cite{NvidiaKeplerDatasheet}. Para poner en escala, esto haria
+que usando solo dos de estas placas la supercomputadora m\'as grande del mundo en Noviembre
+2001 ~\cite{Top500November2001}.
+
+Para poder correr programas explotando la arquitectura CUDA, se deben escribir de manera que
+el problema se particione usando el modelo de grilla de bloques de threads. Esto implica una
+reescritura completa de los c\'odigos actuales en CPU y un cambio de paradigma importante, al
+dejar de tener vectorizaci\'on, paralelizacion automatica y otras t\'ecnicas tradicionales
+de optimizaci\'on en CPU. Sin embargo, este trabajo ha rendido sus frutos en muchos casos:
+en los \'ultimos 6 a\~nos, la literatura de HPC con aplicaciones en GPU ha explotado con
+desarrollos nuevos basados en la aceleracion de algoritmos num\'ericos (su principal uso).
+% ~\cite{meter refs a gpu montecarlos}
+Adem\'as, no todas las aplicaciones deben reescribirse de manera completa. Con la introducci\'on
+de las librerias CuBLAS y CuFFT, se han buscado reemplazar con minimos cambios las historicas
+librerias BLAS y FFTw, piedras fundamentales del computo HPC. ~\cite{cublas} ~\cite{cufft}.
+
+Nuevas soluciones para la portabilidad se siguen desarrollando: las librerias como Thrust ~\cite{thrust},
+OpenMP4.0 ~\cite{OpenMPspec} y OpenACC 2.0 ~\cite{OpenACCSpec} son herramientas que buscan hacer el
+c\'odigo agnostico al acelerador de computo que usen. Estas permiten definir las operaciones de
+manera gen\'erica y dejan el trabajo pesado al compilador para que parta el problema de la manera
+que el acelerador (CPU, GPU, MIC) necesite. Obviamente, los ajustes finos siempre quedan pendiente para
+el programador especializado, pero estas herramientas representan un avance fundamental al uso
+m\'asivo de t\'ecnicas de paralelizaci\'on autom\'aticas, necesarias hoy dia e imprescindible en el
+futuro.
+
+Los detalles internos de la arquitectura CUDA seran explorados y descriptos en las siguientes secciones,
+donde se analizar\'a el impacto de las distintas caracteristicas del dise\~no de las implementaciones
+de CUDA en funci\'on de la performance de la aplicaci\'on LIO.
