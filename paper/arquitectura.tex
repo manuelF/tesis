@@ -1,0 +1,271 @@
+\subsection{Arquitectura y features CUDA}
+
+La arquitectura CUDA esta enfocada a procesamiento de grandes cantidades de datos
+de puntos flotante. El procesador GPGPU cuenta con cientos de ALU sincronizadas
+por bloques, permitiendo un paralelismo adaptativo a distintos problemas.
+
+El procesamiento GPGPU es similar al procesamiento vectorial
+realizado por las supercomputadoras Cray y IBM que surgio en los 1960's, pero
+en vez de usar VLIW para procesamiento masivo, CUDA usa multiples hilos de ejecuci\'on
+que trabajan simultaneamente sobre los datos.
+El procesamiento consiste en en un hibrido entre compilador y procesador. Se determina
+un conjunto de elementos a procesar y se elije una manera de dividirlos entre distintos
+procesadores mediante distintas keywords del lenguaje.
+
+El paralelismo en CUDA principalmente se divide en varios niveles:
+\begin{itemize}
+  \item Block Level
+  \item Grid Level
+  \item Board level
+\end{itemize}
+
+El paralelismo a nivel de block agrupa de a bloques 32 threads (llamados \texttt{warp} en CUDA).
+Cada uno de estos threads va a contar con el mismo blockId y su propio threadId, identificandolos univocamente.
+Estos threads van a correr simultaneamente en el mismo SM (\texttt{Streaming Multiprocessor}) y
+van a ser puestos o sacados de ejecuci\'on dinamicamente por el scheduler del CUDA.
+
+El paralelismo a nivel de grid determina un arreglo de bloques de ejecuci\'on que particiona
+el dominio del problema. Los SM van a correr poner distintos bloques a ejecutar y en cuanto
+se bloquea alguno (por stall en alguna unidad), se va a hacer cambio de contexto y poner
+otro bloque del grid a ejecutar.
+
+El paralelismo a nivel de placa consiste en poder distribuir la carga entre distintas
+GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM comun.
+
+Para realizar el computo, esta arquitecturaa su vez con multiples clases de memorias
+que se adaptan de maneras diferentes a los distintos procesos. Estas incluyen:
+
+\begin{itemize}
+  \item Registros
+  \item Memoria global
+  \item Memoria local
+  \item Memoria Compartida
+\end{itemize}
+
+Los registros son la unidad basica de almacenamiento de los kernels de ejecuci\'on.
+Cada thread de ejecuci\'on cuenta con una cantidad limitada de registros de punto flotante de
+acceso instantaneo.
+
+La memoria global es la memoria principal de la GPGPU. Esta es ilimitada en tama\~no
+y es compartida por todos los procesadores de la GPGPU y los CPU que integran el
+sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones de la libreria
+para poder transferir datos de y hacia la memoria RAM.
+
+La memoria compartida es una memoria que es visible para todos los threads dentro
+de un bloque, pero es independiente entre bloques. Cada thread puede escribir en cualquier
+parte de la memoria compartida de su bloque y puede ser leido por cualquier otro thread
+de su bloque. Es una memoria muy rapida, que tarda una peque\~na cantidad de ciclos
+en poder ser leidos. Esta memoria es limitada y cuenta con una cantidad maxima del orden de los
+Kb que debe ser compartido por todos los bloques.
+
+La memoria local es un renombre de la memoria global, que es manejada por el compilador
+de manera automatica y sirve para poder tener mas memoria interna al kernel de ejecuci\'on
+pero que sobrepase la cantidad de registros que cuenta ese thread para ejecutar.
+
+La GPGPU cuenta con multiples niveles de memorias cache para poder aminorar el hecho
+de que el principal cuello de botella del computo es la latencia en los accesos a memoria
+global. Estas se dividen en tres:
+
+\begin{itemize}
+  \item Cache L1
+  \item Cache L2
+  \item Cache de textura
+\end{itemize}
+
+La cache L1 es dedicada por SM. Esta cache fue introducida en Fermi y su dise\~no hace que
+tambien esta dedicada a la memoria compartida, por lo que es posible en tiempo de ejecuci\'on
+darle directivas a la GPGPU que asigne m\'as memoria cache o m\'as memoria compartida,
+permitiendo a los kernels mayor concurrencia o mayor hit rate de cache.
+
+La cache L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en NVIDIA, todos
+los accesos de lectura y escritura a memoria global y textura pasan a traves de esta. ~\cite{NvidiaFermi}
+
+La cache de textura es una cache que presenta no solo localidad espacial, como la mayoria
+de las caches de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino que se le
+puede agregar el concepto de dimensiones, para poder modelar datos en mas de una dimension.
+Esto la convierte en una herramienta clave a la hora de minimizar los accesos a matrices
+no solo por filas sino por columnas. Esta memoria se debe definir en momento de compilacion,
+en el codigo y no es automatica, porque esta cache tiene limites espaciales (necesarios
+para poder definir areas de memoria sobre la cual operar) y a su vez se debe acceder
+a los dayos subyacentes a traves de funciones especificas. Una caracteristica adicional
+de esta cach\'e es que como necesita resolver estos accesos extra\~nos a la memoria, cuenta
+con una unidad propia de resoluci\'on. Esta unidad tiene limitantes a cuanto podemos
+exigirle, ya que no posee un ancho de banda suficiente como para resolver todos los
+accesos a memoria que nos podria servir, asi que hay que usarla judiciosamente.
+
+Para soportar una arquitectura masivamente paralela, se debe usar una ISA
+(\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA
+debe poder soportar conceptos fundamentales del computo GPGPU: grandes cantidades de registros,
+operaciones en punto flotante de precision simple y doble y fused multiply-add. Ademas,
+el c\'odigo compilado para GPGPU debe ser agnostico al dispositivo que lo va a correr, por
+lo cual la paralelizaci\'on no debe estar demasiado atada a este, sino que el dispatching
+lo debe poder determinar la placa en tiempo de ejecuci\'on, de modo que la paralelizaci\'on
+sea la m\'as apropiada en cada dispositivo, sin importar la generaci\'on que sea. Un ultimo
+requerimiento clave de esta ISA es que debe poder soportar un minimo de \texttt{tuneo} manual,
+para poder construir partes claves de ciertas librerias sumamente usadas (como las BLAS)~\cite{NvidiaFermi}.
+
+
+\subsection{Requerimientos de un problema para GPGPU}
+En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
+calcular cualquier cosa. Sin embargo, hay altos costos en los que se incurren antes de
+poder ejecutar fragmentos de codigo. Un problema debe exhibir las siguientes caracteristicas
+para que valga la pena poder pensar en correrlo para GPGPU.
+\begin{enumerate}
+  \item \label{req:paralelo} El problema debe tener una gran parte paralelizable.
+  \item \label{req:float} El problema debe consistir mayormente de operaciones numericas de punto flotante.
+  \item \label{req:matrix} El problema debe poder ser modelado mayormente en arreglos o matrices.
+  \item \label{req:transf} El tiempo de computo debe ser muy superior al tiempo de transferencia de datos.
+\end{enumerate}
+
+Item \ref{req:paralelo} se refiere a que debe existir alguna forma de partir el problema
+en subproblemas que puedan realizarse simultaneamente, sin que haya dependencias de
+resultados entre si. Si el problema requere partes seriales, lo ideal es que se las
+pueda concebir las partes paralelas sean etapas de un pipeline de procesos, donde
+cada una de estas exhiba caracteristicas fuertemente paralelas. Como las arquitecturas
+masivamente paralelas tienen como desventaja una menor eficiencia por core, si el
+problema no se puede dividir para maximizar la ocupancia de todos los cores, no
+va a ser posible superar en eficiencia a los procesadores seriales.
+
+Item \ref{req:float} habla de que el m\'etodo de resoluci\'on de los problemas debe
+consistir del uso de metodos numericos. El set de instrucciones de las arquitecturas
+de GPGPU estan fuertemente influenciados por las aplicaciones 3D que las impulsaron
+en un principio. Estas consisten mayormente de transformaciones de algebra lineal
+para modelar luces, hacer renders o mover puntos de vistas. Todos estos problemas
+son inherentemente de punto flotante, por lo cual el set de instrucciones, las ALUs
+internas y los registros tienen optimizado para este caso de uso. Las operaciones
+en numeros enteros no son el fuerte de esta arquitectura y suelen ser realizados
+mas eficientemente por procesadores de proposito general.
+
+Item \ref{req:matrix} menciona que los problemas que mejor se pueden tratar en esta
+arquitectura se pueden representar como operaciones entre arreglos o matrices de
+dos, tres o cuatro dimensiones. Las estructuras de datos que no estan secuenciales
+en memoria pueden incurrir en multiples accesos a esta para recorrerlas, y en las
+arquitecturas GPGPU son estos los que generan el mayor cuello de botella. Ademas,
+son dificiles de paralelizar en multiples subproblemas. Tener como parametros de
+entrada matrices o arreglos que se puedan partir facilmente incurre en minimos
+overheads de computo y permite aprovechar mejor las caches y las herramientas de
+prefetching que brinda la arquitectura.
+
+Item \ref{req:transf} ataca uno de los puntos criticos de esta arquitectura. Para poder
+operar con datos, se requiere que estos esten en la memoria de la placa, no la memoria
+de proposito general de la computadora. Esto quiere decir, que se deben hacer copias
+explicitas entre las memorias, ya que ambas tienen espacios de direcciones independentientes.
+Esta copia se realiza a traves de buses que, a pesar de tener un enorme throughput de
+datos, tambien tienen una gran latencia (orden de milisegundos). Por lo tanto, para minimizar
+el tiempo de ejecuci\'on de un programa usando las GPGPU, se debe considerar tambien el
+tiempo de transferencia de datos a la hora de determinar si el beneficio de computar en
+menor tiempo lo justifica. Las nuevas versiones de CUDA buscan brindar nuevas herramientas
+para simplificar este requerimiento, proveyendo espacio de direccionamiento unico \ref{CUDA4} y
+memoria unificada \ref{CUDA6}, pero siguen siendo copias de memoria a traves de los
+buses (aunque asincronicas).
+
+Estas caracteristicas limitan enormemente la clase de problemas que una GPGPU puede
+afrontar, y suelen ser una buena heuristica para determinar de antemano si vale la pena
+invertir el tiempo necesario de la implementaci\'ony ajuste fino.
+
+\subsection{Funcionamiento de un GPGPU}
+
+El c\'odigo escrito para CUDA se puede compilar a dos targets distintos; uno es
+el codigo binario nativo de la placa target donde se va a correr y el otro es un
+codigo intermedio, llamado c\'odigo PTX, que se JIT compila por el driver CUDA
+antes de enviar a la placa, de modo que sea portable entre placas y arquitecturas
+(retrocompatibles).
+
+Cuando se lanza un kernel de ejecuci\'on, este c\'odigo binario se carga en la DRAM propia
+de la placa. Este codigo va a ser ejecutado por todos los bloques que se hayan definido cuando
+se lanz\'o el kernel. El ``Thread Engine'' del GPGPU se encarga de repartir los bloques a los
+SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a bloques de 32 threads, cada uno
+de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp,
+el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP, evitando asi
+perder tiempo en los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
+Estos threads a su vez obtienen sus registros de un register file comun a todos los SP. Un scoreboard
+es mantenido por cada dispatcher de warps para poder determinar cuales estan listos para correr. En Kepler
+este scoreboard es simplificado ya que las latencias de las operaciones matematicas es conocido, por
+lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
+
+Todos los SP de un GPGPU son simetricos y cuentan todos con las mismas unidades de FP y de Enteros,
+y entre varios cores comparten una o dos unidades de precision doble y una unidad de funciones especiales.
+En Fermi no se pueden ejecutar simultaneamente instrucciones de precision doble y simple, y como
+las de doble requerien ambos pipelines, suelen disminuir considerablemente el aprovechamiento
+de los cores. En Kepler, al usar 4 unidades de despacho de warp, puede elegir una mejor
+combinaci\'on para poder ejecutar simultaneamente instrucciones que no dependan de las mismas
+unidades funcionales en el pipeline. ~\cite{NvidiaKepler}
+
+Como estos procesadores implementan el estandar IEEE754-2008, cuentan con precision simple y
+doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instrucciones FMA
+(Fused multiply-add) que no pierden precisci\'on en etapas intermedias de redondeo.
+
+%Como el c\'odigo se ejecuta de manera sincr\'onica entre todos los threads del warp, las instrucciones
+%condicionales proveen un problema para esta arquitectura. Como las distintas ramas del condicional
+%son instrucciones excluyentes, no las deben ejecutar todos los threads simultaneamentes. El procesador
+%deshabilitaba los cores que manejaban los threads de las ramas que no se ejecutaban del
+%condicional~\cite{NvidiaTesla}. Para disminuir la cantidad de instrucciones de condicionales
+%que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
+
+\subsection{Diferencia entre CPU y GPU - Procesadores especulativos}
+Viendo la historia de CPU, podemos hacer un recorrido de los problemas que los dise\~nadores de procesadores
+fueron enfrentandose a lo largo del tiempo mirando los componentes que fueron apareciendo.
+
+(insertar foto de die de nehalem)
+
+Caches - Pipelines - Predictores - M\'as cache - M\'as controladores de memoria - Multiple issues
+
+Lo importante ac\'a es observar el patron: ``no desechar algo que podramos necesitar pronto'',
+``intentar predecir el futuro de los condicionales'', ``intentar correr multiples instrucciones a la vez
+porque puede llegar a bloquear en alguna de ellas.''
+
+Todos estos problemas convierten al CPU en una maquina que gira alrededor de la especulacion,
+de los valores futuros que van a tener las ejecuciones, del probable reuso de datos.
+Podemos observar entonces que las unidades que verdaderamente hacen la ejecuci\'on de las operaciones,
+las ALU, son muy pocas en comparaci\'oncon la cantidad de dispositivos de soporte que estan
+sobre el die del CPU.
+
+En contraste, las arquitecturas GPGPU son verdaderas maquinas de computo masivo. Estan dise\~nadas para
+resolver una y otra vez operaciones muy bien definidas (intrucciones de punto flotante en su mayoria).
+Comparativamente con un CPU, las ALU de las GPU son bastante pobres y lentas. No funcionan a las mismas
+velocidades de clock y deben estar sincronizadas entre si. Pero la gran ventaja esta en la cantidad.
+Un CPU cuenta con unas pocas ALU por core, dependiendo de su algoritmo de scheduling interno
+(alrededor de 16 cores por die de x86 es el tope de linea ofrecido actualmente). Un GPU cuenta con miles de ALUs en total
+(m\'as de 2500 CUDA Cores en Tesla K20).
+En contraste, un GPU dispone de pocas unidades de soporte del procesamiento. No tiene pipelines especulativos, el tama\~no de las caches
+estan a ordenes de magnitud de las de CPU, la latencia a las memorias principales de la GPU estan a
+decenas de clocks de distancia, etc. La arquitectura asume que siempre va a tener m\'as trabajo
+para hacer, por lo cual en vez de intentar solucionar los pitfalls de un grupo de threads, directamente
+los reschedulea para m\'as adelante y continua procesando otro warp de threads. Basicamente durante del
+disen\~no de la arquitectura GPGPU buscaron resolver el problema del computo masivo pensando en hacer
+m\'as cuentas a la vez y recalcular datos viejos de ser necesario. Esto es una marcada diferencia contra
+los CPU, que estan pensado en rehacer el menor trabajo posible y intentar mantener todos los datos que pueda en
+las memorias caches gigantescas.
+
+Como los CPU tienen que poder soportar cualquier aplicacion, no pueden avocarse de lleno a una sola
+problematica. El hecho de no tener que dise\~nar un procesador de proposito general permitio un cambio radical
+a la hora de pensar como concebir una arquitectura de gran throughput auxiliar al procesador, no reemplazandolo
+sino mas bien adicionando poder de computo.~\cite{GlaskowskyFermi}
+
+Las arquitecturas Fermi (y agregar AMD) han concebido el dise\~no de un procesador de alto desempe\~no.
+Su meta principal es poder soportar grandes cantidades de paralelismo, mediante el uso de procesadores
+simetricos, pero tomando la fuerte restricci\'on de ``no siempre tiene que andar bien''. Es decir, ellos
+mismos asumen que el codigo que van a correr esta bien adaptado a la arquitectura y no disponen
+casi de mecanismos para dar optimizaciones post-compilacion. Relajar esta restricci\'on
+les permitio romper con el modelo de computo de CPU y definir nuevas estrategias de paralelismo,
+que no siempre se adaptan bien a todos los problemas, pero para el subconjunto de los desafios que se
+presentan en el area de HPC y de videojuegos han probado ser un cambio paradigm\'atico.
+
+\subsection{Idoneidad para el problema}
+El problema de QM/MM enfrentado en este trabajo cuenta con mutiples operaciones matematicas de gran
+volumen de calculos. En particular, las operaciones matriciales son los cuellos de botella en este
+problema.
+Para obtener los valores numericos de densidad buscados en los puntos, se deben obtener las derivadas primeras
+y segundas, lo cual implica hacer multiples operaciones de multiplicaci\'onmatricial. Estas multiplicaciones
+pueden ser paralelizadas por columnas y por filas. Estos problemas estan fuertemente estudiados como paralelizarlos
+en la literatura, ya que los problemas de algebra lineal los requieren constantemente.
+En nuestro caso, se requieren para un sistema cientas de estas multiplicaciones, algunas con matrices de mas de
+$500^2$ elementos. Al consistir este proyecto un sistema de resoluci\'on num\'erico de las f\'ormulas de QM/MM,
+los problemas enfrentados eran casi en su totalidad de operaciones de punto flotante. Luego, dados las
+caracteristicas de contar con un fuerte nivel de paralelismo en los cuellos de botella y de ser operaciones
+mayormente de punto flotante, determinamos que el uso de las GPGPU era idoneo, en comparaci\'on con arquitecturas
+de proposito general con menos GFLOPS.
+
+\subsection{Arquitectura y features Xeon Phi}
+
+\input{arquitectura-xeon-phi}
