@@ -40,14 +40,16 @@ exponenciaci\'on, y operaciones m\'as relacionadas con la memoria como por ejemp
 mejor el ancho de banda que tiene la arquitectura.
 
 El Xeon Phi es un coprocesador, lo cual implica que necesita ser instalado sobre una computadora que sirva de \textit{host}. La comunicaci\'on con este host
-ocurre a trav\'es de un bus PCI Express, no comparten ni memoria ni otros perif\'ericos como por ejemplo disco duro. Existen dos m\'etodos para acceder al Xeon:
+ocurre a trav\'es de un bus PCI Express, no comparten ni memoria ni otros perif\'ericos como por ejemplo disco duro. Existen dos m\'etodos para acceder al Xeon~\cite{BookXeonPhi}
 
 \begin{enumerate}
     \item Nativo: El Xeon Phi permite correr c\'odigo directamente, mediante el uso de SSH (Secure SHell). Esto es gracias a la presencia de BusyBox Linux como sistema operativo,
     lo cual da soporte de sistema de archivos y entorno de ejecuci\'on. La interfaz utiliza TCP/IP virtualizado mediante el bus PCI Express. Si bien el coprocesador no tiene acceso a \textit{storage} persistente (puesto que el sistema operativo esta montado sobre la memoria) esto puede resolverse utilizando un sistema de archivos remoto montado en la memoria del host.
     \item Offloading: El \textit{host} puede delegar la ejecuci\'on de ciertas porciones de c\'odigo al coprocesador. Esto requiere que los datos necesarios para el c\'omputo sean copiados del \textit{host} al Xeon Phi, lo cual puede implicar que el bus puede ser un cuello de botella importante (puesto que los datos de entrada, y la salida deben ser movido al Xeon Phi y traidos de vuelta al finalizar el c\'omputo).
+    \item Simétrico: En este modo de ejecuci\'on se piensa al Xeon Phi y su host como dos nodos en un \textit{cluster} de c\'omputo, y al bus PCIe como una red de alta velocidad.
+Este modo es especialmente interesante si se dispone de m\'as de un Xeon Phi en un mismo host, y se utiliza una interfaz de pasado de mensajes entre ellos como por ejemplo MPI (\textit{Message Passing Interface}).
 \end{enumerate}
 
 Por \'ultimo, en pos de simplificar el trabajo de adaptar una aplicaci\'on a usar el Xeon Phi, el mismo provee una unidad de monitoreo de \textit{performance} (\textit{Performance
 Monitoring Tool}, PMU). Esta unidad permite la colecci\'on de informaci\'on del coprocesador, aunque no tiene soporte para ciertas caracter\'isticas com\'unes a los procesadores
-de lineas m\'as est\'andar de Intel (por ejemplo: \textit{sampling} preciso de eventos por \textit{hardware}, como por ejemplo ciclos sin haltear o \textit{misses} de cache).
+de lineas m\'as est\'andar de Intel (por ejemplo: \textit{sampling} preciso de eventos por \textit{hardware}, como por ejemplo ciclos por instrucci\'on o \textit{misses} de cache).
