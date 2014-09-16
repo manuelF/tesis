@@ -1,0 +1,216 @@
+\subsection{Estructura inicial del programa}
+
+El programa originalmente estaba concebido para ser corrido en GPU nVidia GTX8800.
+Luego, las cosas que se usaron para este desarrollo consistieron en la libreria CUDA version
+2, para arquitecturas a lo sumo SM20.
+
+La estructura del programa era la siguiente:
+\begin{enumerate}
+\item Se determinan los mallados del sistema
+\item Se clasifican en cubos y esferas
+\item Para cada elemento, se resuelve el sistema
+\item Esto se repite hasta que converga a lo sumo en una cantidad limitada de pasos, o diverga
+\end{enumerate}
+
+La resoluci\'on del sistema en si esta compuesta de varios pasos:
+\begin{enumerate}
+\item Se obtiene el valor de la funci\'on de onda en cada punto de la malla
+\item Se generan las matrices con los gradientes y los hessianos de cada funci\'on
+\item Se calculan las densidades y el producto matricial por bloques por funci\'on
+\item Se obtienen las derivadas de la densidad calculada antes
+\end{enumerate}
+
+
+\subsection{Cuellos de botellas originales, limitantes estructurales}
+
+El cuello de botella principal que presentaba este c\'odigo era en la
+resoluci\'on del sistema, especificamente en el c\'odigo que calculaba la matriz de Kohn-Sham.
+En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas grandes estaba
+en el orden de minutos. Los problemas principales que mostraba esta funci\'on fueron:
+\begin{itemize}
+\item Cantidad de accesos a memoria global
+\item Falta de accesos coalescentes
+\item Sobreuso de la memoria compartida
+\item Subsaturacion de los SM
+\end{itemize}
+
+\subsubsection{Accesos a memoria global}
+\subsubsection{Falta de accesos coalescentes}
+\subsubsection{Sobreuso de la memoria compartida}
+\subsubsection{Subsaturacion de los SM}
+La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
+c\'odigo pero que no puedan hacerlo porque tienen contencion en algunos de sus recursos.
+Este problema es dificil de rastrear, porque hay principalmentre tres recursos que,
+en un principio, parecen ilimitados pero en realidad son finitos y compartidos por
+los procesadores de la GPGPU. Estos son:
+\begin{itemize}
+\item Cantidad total de threads por bloque.
+\item Cantidad de memoria compartida por bloque.
+\item Cantidad total de registros usados por warp.
+\end{itemize}
+
+\subsection{Cambios en el threading}
+%Cambiamos de blocks por puntos, a blocks por funci\'on.
+Originalmente el c\'odigo generabla un bloque por cada punto en el grupo de puntos
+que teniamos que solucionar, con una sola dimension por thread.
+Como este era el kernel que insumia el 94\% del tiempo de todo el proceso, decidimos
+atacarlo de raiz, cambiando la paralelizaci\'on. A pesar de que el profiler de CUDA nos indicaba
+que tenia una buena occupancy, decidimos cambiar de fondo el encare del problema.
+
+El cuello de botella fundamental radicaba en como se distribuia el trabajo de computo
+entre los kernels. Una cosa que se nota que este mecanismo de paralelizacion cuenta con
+la ventaja de que casi no se compartian los datos entre los distintos threads, lo cual,
+a priori, deberia haber ocasionado que no hubiera mucho mejor forma de realizar el computo.
+
+Sin embargo, con un detalle mas fino, es posible notar que este mecanismo hacia que
+muchos threads hicieran cuentas innecesarias, que no contribuian a la reducci\'on total.
+Esto daba una alta occupancy ficticia, que buscamos acercar a la real. Adem\'as, a pesar
+de que se compartian muy poca informaci\'on por la memoria compartida, tambien habia muchos
+puntos de sincronización a nivel bloque.
+
+Finalmente, cambiamos a tener block\_height bloques por cada punto, y estos se operan
+con una sola dimension de thread, donde block\_height es un parametro que se calcula
+para cada grupo, y es el resultado de dividir la cantidad de funci\'ones que se van
+a calcular por punto por la 2*DBS.
+
+
+\subsection{Cambios en las memorias compartidas}
+Accesos por bloque
+
+\subsection{Cambios en los accesos globales}
+La arquitectura de las placas de video estan pensadas entorno al poder de computo.
+Las decisiones tomadas por los diseñadores de las GPGPU se concentran alrededor
+de paralelismo a lo ancho, poniendo un gran enfasis en la cantidad de nucleos. Luego,
+se dispone de menor cantidad de espacio disponible en el die para las memorias.
+
+Esta decision implica que la amplia mayoria de la memoria de la GPGPU se encuentra
+localizada externa al procesador.  No solo esta fisicamente mas lejos, sino que
+adem\'as la latencia para accederla es altisima. Es decir, el paradigma de
+programaci\'on de las GPGPU gira entorno a esconder la gran latencia de los accesos
+a las memorias globales.
+
+Una de las memorias intermedias entre entre el procesador y la memoria global es
+la memoria de textura. La memoria de textura es un cach\'e sobre la memoria global,
+que esta focalizado alrededor de los accesos a memoria en varias dimensiones.
+Estas memorias reciben su nombre de su funci\'on principal, que es en el area de los
+sistemas de video. Los mapas de textura suelen ser grandes matrices que definen
+tanto los colores sobre las superficies de los poligonos como los relieves.
+El detalle crucial de estas memorias es que un miss en estas cache, provoca
+que se traigan datos no solo contiguos en memoria, como pasa en las caches de
+CPU normalmente, sino que ademas se traigan los datos en posiciones logicas contiguas,
+es decir, variando las distintas dimensiones de la matriz subyacente.
+
+Las memorias de textura se ajustan bien a los problemas de GPGPU, porque se relacionan
+intimamente con los los mecanismos de paralelismo de CUDA. Como los problemas se pueden
+dividir en bloques con threads en $x$, $y$, $z$, entonces tiene mucho sentido pensar
+que las estructuras de datos subyacentes se van a acceder usando indices multidimensionales.
+
+En nuestro problema, la memoria de textura se presenta como una solucion para
+los accesos bidimensionales de la matriz de RMM para el grupo de puntos.
+Como esta matriz debe ser multiplicada por todos los valores de las funci\'ones,
+derivadas primeras y segundas, se va a acceder a toda la matriz de RMM mas de
+una vez por cada thread. Adem\'as, como se va a usar toda la matriz, y esta suele
+tener un tamaño intermedio (es muy grande para memoria constante), el problema
+suele entrar casi completamente en la memoria de textura.
+La lectura bidimensional en este caso, se ajusta muy bien a los accesos por filas
+y por columnas a la matriz.
+
+El uso de la memoria de texturas agrega un recurso mas que tenemos que tener en
+cuenta a la hora de profilear el c\'odigo. Para administrar los accesos a
+la memoria de textura, cada multiprocesador tiene multiples "Unidades de textura".
+Cuando dependemos de sobremanera de la memoria de textura para esconder la latencia,
+se presentan contenciones sobre el acceso a las unidades de textura. Esto es
+uno de los motivos por los cuales el procesador stallea los bloques hasta poder
+ejecutarlos, cuando se liberan un poco mas los recursos.
+
+%http://www.realworldtech.com/gt200/10/   << detalles sobre texture cache invalidation
+
+\subsection{Cambios en la reducci\'on}
+%Hubo que agregar reducci\'on de suma a nivel punto porque ya no se comparten mas la info
+
+La unidad de GPGPU presenta grandes ventajas a la hora del computo masivamente distribuido.
+Si logramos dividir el problema en pequeños kernels de ejecucion, podemos garantizar que
+todos los multiprocesadores van a poder ejecutar constantemente bloques de threads, teniendo
+siempre nuevos bloques listos para poder ponerlos a correr para poder esconder la latencia de uso.
+
+El problema que se presenta al dividir tanto el computo, es que en algun momento se deberia juntar
+todos los bloques independientes de ejecucion. Este proceso se conoce como reducci\'on, es decir,
+aplicar una operacion a un vector de elementos tal que se obtenga un \'unico valor finalmente
+como resultado de la cuenta.
+
+En nuestro caso, al haber cambiado la paralelizacion de un bloque por punto, a un bloque
+de funci\'ones, aparece una reducci\'on que antes no necesitabamos realizar. La reducci\'on que
+necesitamos es una suma de todos los elementos de toda la columna que acabamos de procesar.
+Como cada instancia del kernel pertenece a una columna de la matriz, y toda una columna se
+procesa por un bloque, \textcolor{blue}{---REVISAR---}, entonces se puede compartir los datos
+a nivel de bloque. Es decir, podemos hacer la reducci\'on reutilizando la memoria compartida
+que usamos antes para pasarnos los distintos valores de cada fila de las funci\'ones y sus derivadas.
+
+La reducci\'on eficiente es un tema ya muy estudiado en la bibliografia \textcolor{blue}{insertar cita a
+reducci\'on y reducci\'on en cuda}. La reducci\'on en memoria compartida es fundamentalmente
+una t\'ipica reducci\'on en \'arbol. Un detalle importante en este caso es que, a pesar de que
+se reducen a lo sumo DENSITY\_BLOCK\_SIZE threads, es necesario hacer la reducci\'on en arbol
+para poder maximizar la cantidad de threads ejecutando en paralelo la reducci\'on. Esta reducci\'on
+binaria se realiza $\log_2{DBS}$ veces.
+
+Este mecanismo de reducci\'on es generico y se puede emplear cualquier operacion binaria que
+totalice las cuentas.
+
+
+
+\subsection{Cambios en los pasajes de informaci\'on intrawarp}
+%Los shuffles que no anduvieron salvo en function
+La arquitectura SM35, junto con CUDA5, trajeron aparejadas una herramienta interesante
+para el manejo interno de los pasajes de informaci\'on intra-warp durante la ejecuci\'on.
+Las instrucciones de shuffle, como asi las denomina NVIDIA, son instrucciones que facilitan
+el pasaje directo de un registro de un thread en un warp, a otro, en un solo ciclo de ejecuci\'on.
+Estas instrucciones existen en diversas maneras, con distintos propositos. Principalmente se
+utilizan para pasar de un thread al siguiente (modulo el warp size) un registro para poder seguir
+operando. Otro uso que puede tener mucho interes proximamente son las instrucciones de votaci\'on,
+donde se evalua un predicado para todos los threads, y se setea o limpia un bit en el resultado
+de respuesta si se cumplio el predicado para ese thread. Con esta herramienta, no es necesario
+acceder a memoria compartida para poder pasar minima informaci\'on dentro de cada warp.
+
+Nuestro uso de las funci\'ones de shuffle consistio en intentar eliminar lo mas que podiamos
+los accesos a la memoria compartida, fuente de bloqueos porque, a pesar de que ya corre
+todos los bloques concurrentemente, leer elementos de ahi toman 4 ciclos en vez de uno solo
+como en las funci\'ones de shuffle.
+
+Probamos pasar de a un elemento y de a uno o dos vectores de 3 elementos, para comparar
+cuan notable era el impacto del acceso mas veloz.
+
+Finalmente concluimos que era una opcion valida para el pasaje de los valores de la funci\'on,
+pero que el overhead de uso para cosas como los hessianos de la funci\'on no justifica el uso.
+Adem\'as, como estas funci\'ones de shuffle solo estan presentes en las ultimas placas Kepler,
+consideramos que el aprovechamiento marginal de los recursos no era lo suficientemente meritorio
+de romper compatibilidad con las placas de la generacion Fermi anterior.
+
+
+
+
+
+
+\subsection{Cambios en las operaciones matem\'aticas}
+%Cambiar los vec\_type4 por 3 en los accesos a la shared es mucho mejor, no hace falta alinear ahi
+Otro de los problemas existentes del c\'odigo que quisimos atacar fue el mejor empleo de las
+memorias shared. Estas son un recurso finito y muy importante, ya que son un limitante de
+la ocupancia de los multiprocesadores. Como pueden correr una cantidad de bloques que, a lo sumo,
+no superen los 48Kb de memoria shared entre todos, es imprescindible minimizar el consumo real
+de la memoria shared de modo que no estemos subutilizando los multiprocesadores.
+
+Una cosa que probamos, con un grado de exito variante, fue disminuir el tamaño de los vectores
+donde almacenamos las derivadas direccionales. Como nuestro problema es en tres dimensiones,
+y los vectores estaban configurados para tener 4 valores por cada derivada, probamos llevarlos a
+3, para que se ajusten a su consumo real de memoria. Este acercamiento no consider\'o el porque
+se hizo asi de esta manera originalmente. Tener 4 valores consecutivos en memoria fuerza
+al compilador a alinearlos a 16/32 bytes (simple y doble precision).
+Esto presenta grandes ventajas a la hora de hacer transferencias de memoria en los accesos.
+
+Sin embargo, este criterio no aplica a las memorias shared de la GPGPU. Como los accesos
+a estas memorias se realizan de a 4 bytes y no de a 16/32, entonces no tiene ninguna ventaja
+en particular realizar el alineamiento. Adicionalmente, como el cuarto valor no tiene forma de marcarse
+como algo mas alla de padding, todavia se opera normalmente con el, por lo que nos ahorramos una
+operacion de calculo. Mas a\'un, se presentan un ahorro del 25\% de los recursos de la memoria compartida
+en contencion, sin ninguna desventaja a la hora de acceder a estos. Principalmente
+esta mejora permite aumentar la cantidad de bloques corriendo concurrentemente en los multiprocesadores,
+sin estas limitados por el uso individual de las memorias compartidas.
