@@ -25,8 +25,8 @@ La resoluci\'on del sistema en si esta compuesta de varios pasos:
 
 El cuello de botella principal que presentaba este c\'odigo era en la
 resoluci\'on del sistema, especificamente en el c\'odigo que calculaba la matriz de Kohn-Sham.
-En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas grandes estaba
-en el orden de minutos. Los problemas principales que mostraba esta funci\'on fueron:
+En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas de gran cantidad
+de puntos, estaba en el orden de minutos. Los problemas principales que mostraba esta funci\'on fueron:
 \begin{itemize}
 \item Cantidad de accesos a memoria global
 \item Falta de accesos coalescentes
@@ -209,8 +209,8 @@ ejecutarlos, cuando se liberan un poco mas los recursos.
 
 La unidad de GPGPU presenta grandes ventajas a la hora del computo masivamente distribuido.
 Si logramos dividir el problema en pequeños kernels de ejecucion, podemos garantizar que
-todos los multiprocesadores van a poder ejecutar constantemente bloques de threads, teniendo
-siempre nuevos bloques listos para poder ponerlos a correr para poder esconder la latencia de uso.
+todos los multiprocesadores van a poder ejecutar constantemente grupos de threads, teniendo
+siempre nuevos grupos listos para poder ponerlos a correr para poder esconder la latencia de uso.
 
 El problema que se presenta al dividir tanto el computo, es que en algun momento se deberia juntar
 todos los bloques independientes de ejecucion. Este proceso se conoce como reducci\'on, es decir,
@@ -219,7 +219,7 @@ como resultado de la cuenta.
 
 En nuestro caso, al haber cambiado la paralelizacion de un bloque por punto, a un bloque
 de funci\'ones, aparece una reducci\'on que antes no necesitabamos realizar. La reducci\'on que
-necesitamos es una suma de todos los elementos de toda la columna que acabamos de procesar.
+requerida es una suma de todos los elementos de toda la columna que acabamos de procesar.
 Como cada instancia del kernel pertenece a una columna de la matriz, y toda una columna se
 procesa por un bloque, \textcolor{blue}{---REVISAR---}, entonces se puede compartir los datos
 a nivel de bloque. Es decir, podemos hacer la reducci\'on reutilizando la memoria compartida
@@ -234,7 +234,6 @@ binaria se realiza $\log_2{DBS}$ veces.
 
 Este mecanismo de reducci\'on es generico y se puede emplear cualquier operacion binaria que
 totalice las cuentas.
-
 
 
 \subsection{Cambios en los pasajes de informaci\'on intrawarp}
