@@ -35,8 +35,20 @@ en el orden de minutos. Los problemas principales que mostraba esta funci\'on fu
 \end{itemize}
 
 \subsubsection{Accesos a memoria global}
+
 \subsubsection{Falta de accesos coalescentes}
+Asi como a los CPU les interesa realizar accesos alineados a memoria, a los GPU les
+interesa aun mas. El termino coalescencia de memoria se aplica a GPU mediante
+la organizacion de los accesos a memoria de manera ordenada y predecible. La l\'ogica
+detras de esto es que cuando el GPU accede a memoria de manera alineada, puede traer
+entre 16 y 64 bytes en una sola lectura, mientras que si debe acceder de manera no
+alineada a memoria, o con threads que no acceden de manera predecible a esta, entonces
+se deberan serializar los accesos y separar en m\'ultiples accesos a memoria global para leer
+esta informaci\'on. Este problema solamente se agrava si se debe hacer muy frecuentemente
+por cientos de threads, como es el caso de los bloques con gran nivel de paralelismo explicito.
+
 \subsubsection{Sobreuso de la memoria compartida}
+
 \subsubsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
 c\'odigo pero que no puedan hacerlo porque tienen contencion en algunos de sus recursos.
@@ -45,9 +57,41 @@ en un principio, parecen ilimitados pero en realidad son finitos y compartidos p
 los procesadores de la GPGPU. Estos son:
 \begin{itemize}
 \item Cantidad total de threads por bloque.
+\item Cantidad total de registros usados por thread.
 \item Cantidad de memoria compartida por bloque.
-\item Cantidad total de registros usados por warp.
 \end{itemize}
+
+El mecanismo de scheduling de los SM funciona asignando un bloque a cada SM, que
+va a correr hasta que terminen todos sus threads asignados. Idealmente, cada
+bloque cuenta con una cantidad de threads suficiente para poder esconder la latencia
+de las ejecuciones mediante un cambio de contexto. La arquitectura GPGPU esta dise\~nada
+para este fin, por lo cual se cuenta con un cambio de contexto de costo cero para
+poder empezar a correr los threads de un warp diferente, del mismo bloque.
+Si el bloque no cuenta con suficiente cantidad de threads para poner a correr de manera
+concurrente, el SM va a forzosamente esperar que finalicen las operaciones de alta latencia
+de estos warps sin nada que hacer mientras tanto. Si, por el contrario, se contasen con
+miles de threads por bloque, entonces es posible que las operaciones que sirvan
+para sincronizar los threads de todo un bloque en un punto espec\'ifico antes de proseguir
+(un barrier) sean excesivamente costosas.
+
+La arquitectura GPGPU de NVIDIA organiza los registros de todos los threads en un unico
+register file, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
+los computos intermedios, NVIDIA decidio unficarlos, ya que es muy variable la cantidad que va a usar
+cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
+registros por thread. Mientras que Fermi permitia hasta 63 registros, Kepler permite hasta 255. Esto
+es una ventaja pero aumenta la presion sobre el register file. Cuando se lanzan muchos threads
+que puedan estar corriendo paralelamente entre todos los SM de la GPU, es posible que se supere
+la cantidad m\'axima de registros presentes en el register file. Esto fuerza a que el scheduler
+no pueda poner a ejecutar m\'as bloques que los que pueda soportar este recurso, dejando SM ociosos.
+
+Finalmente, al igual que con los registros, la memoria compartida es un recurso limitado. Como
+solamente se cuenta con hasta 48Kb (Fermi-Kepler) de memoria de este tipo para ser repartida entre
+todos los bloques que esten corriendo en todos los SM, el scheduler debera decidir no poner a ejecutar
+m\'as bloques simultanemante que los que pueda soportar la cantidad de memoria compartida.
+
+El problema tratado dentro de esta tesis cont\'o con todos estos limitantes. Afortunadamente,
+las herramientas de profiling usadas remarca estos limitantes constamente, haciendolos
+fundamentales a la hora de evaluar como proseguir en la busqueda de optimizaciones de c\'odigo.
 
 \subsection{Cambios en el threading}
 %Cambiamos de blocks por puntos, a blocks por funci\'on.
