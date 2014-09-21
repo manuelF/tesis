@@ -17,7 +17,7 @@ La resoluci\'on del sistema en si esta compuesta de varios pasos:
 \item Se obtiene el valor de la funci\'on de onda en cada punto de la malla
 \item Se generan las matrices con los gradientes y los hessianos de cada funci\'on
 \item Se calculan las densidades y el producto matricial por bloques por funci\'on
-\item Se obtienen las derivadas de la densidad calculada antes
+\item Se calcula la matriz de coeficientes de las fuerzas entre las particulas
 \end{enumerate}
 
 
@@ -48,6 +48,9 @@ esta informaci\'on. Este problema solamente se agrava si se debe hacer muy frecu
 por cientos de threads, como es el caso de los bloques con gran nivel de paralelismo explicito.
 
 \subsubsection{Sobreuso de la memoria compartida}
+Los SM cuentan con una memoria compartida entre todos los threads, la memoria shared. Esta
+tiene un bus de baja latencia con conexionado especifico dentro de cada SM.
+
 
 \subsubsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
@@ -106,16 +109,48 @@ entre los kernels. Una cosa que se nota que este mecanismo de paralelizacion cue
 la ventaja de que casi no se compartian los datos entre los distintos threads, lo cual,
 a priori, deberia haber ocasionado que no hubiera mucho mejor forma de realizar el computo.
 
-Sin embargo, con un detalle mas fino, es posible notar que este mecanismo hacia que
+Sin embargo, con un detalle m\'as fino, es posible notar que este mecanismo hacia que
 muchos threads hicieran cuentas innecesarias, que no contribuian a la reducci\'on total.
 Esto daba una alta occupancy ficticia, que buscamos acercar a la real. Adem\'as, a pesar
 de que se compartian muy poca informaci\'on por la memoria compartida, tambien habia muchos
 puntos de sincronización a nivel bloque.
 
-Finalmente, cambiamos a tener block\_height bloques por cada punto, y estos se operan
+XXXXXXXXX cambiamos a tener block\_height bloques por cada punto, y estos se operan
 con una sola dimension de thread, donde block\_height es un parametro que se calcula
 para cada grupo, y es el resultado de dividir la cantidad de funci\'ones que se van
 a calcular por punto por la 2*DBS.
+
+XXXXXXXXX Otro cambio importante que estudiamos con respecto al threading, es intentar realizar
+mas de un punto por thread. Esto sirve para aprovechar un par de lecturas que son comunes
+entre dos funciones. Con este cambio, se pueden ocultar algunas latencias de acceso, pero
+cada grupo de threads lleva m\'as tiempo y usan m\'as registros. Esta estrategia es similar
+a un loop unrolling manual, aplicado a la arquitectura GPU.
+
+Un punto de intensa discusion es en el tema\~no de la particion de bloques para el calculo
+de esta densidad. Para nuestro problema, decidimos utilizar una partici\'on por bloque
+unidimensional, que sea multiplo de el tama\~no de un warp (32 threads). Esto permite
+estudiar como afectan en el tiempo de procesamiento contar con uno o m\'as warps por
+bloque. Una ventaja de usar bloques de 32 threads, es que el costo de la sincronizaci\'on
+es exactamente cero. No se precisa sincronizar nada puesto que los threads trabajan
+en lock-step sincronizados por warp. Un bloque chico ademas nos permite usar mas memoria compartida
+por thread, dado que hay una cantidad fija de memoria por bloque (entre 32Kb y 64Kb).
+Cuando se cuentan con muchos mas threads, se debe reducir este uso por thread de modo que
+todos puedan ejecutar concurrentemente.
+
+Dicho esto, la literatura \cite{NVIDIA_OPTIMIZATIONS} sugiere siempre que sea posible
+usar bloques grandes y con threads lo m\'as independientes posibles. Una gran cantidad de threads
+en un bloque permite tener muchos mas warps para schedulear de modo de esconder las latencias de
+operaciones y de a accesos globales. Sin embargo, contar con muchos threads hace que las
+sincronizaciones sean mucho m\'as costosas. Ademas, como cada SM no cuenta con pre-emption
+de bloques, contar con muchos threads por bloque hace que los recursos se mantengan
+por largos periodos.
+
+Inicialmente, este tama\~no se habia fijado en 128 threads por bloque, 4 warps. Sin embargo,
+al haber cambiado el threading a que realice dos cuentas por thread si puede, se aument\'o
+el tiempo de ejecuci\'on de cada warp en promedio, pero menos que duplicar las cuentas.
+Mostramos que tener solo un warp es bueno, pero mucho mejor a\'un es tener dos warps, porque
+esto permite, con costo cero, poner a correr el otro para ocultar la latencia sin agrandar
+demasiado el costo de la sincronizacion.
 
 
 \subsection{Cambios en las memorias compartidas}
