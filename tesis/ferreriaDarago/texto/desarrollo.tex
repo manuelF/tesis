@@ -35,8 +35,20 @@ en el orden de minutos. Los problemas principales que mostraba esta funci\'on fu
 \end{itemize}
 
 \subsubsection{Accesos a memoria global}
+
 \subsubsection{Falta de accesos coalescentes}
+Asi como a los CPU les interesa realizar accesos alineados a memoria, a los GPU les
+interesa aun mas. El termino coalescencia de memoria se aplica a GPU mediante
+la organizacion de los accesos a memoria de manera ordenada y predecible. La l\'ogica
+detras de esto es que cuando el GPU accede a memoria de manera alineada, puede traer
+entre 16 y 64 bytes en una sola lectura, mientras que si debe acceder de manera no
+alineada a memoria, o con threads que no acceden de manera predecible a esta, entonces
+se deberan serializar los accesos y separar en m\'ultiples accesos a memoria global para leer
+esta informaci\'on. Este problema solamente se agrava si se debe hacer muy frecuentemente
+por cientos de threads, como es el caso de los bloques con gran nivel de paralelismo explicito.
+
 \subsubsection{Sobreuso de la memoria compartida}
+
 \subsubsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
 c\'odigo pero que no puedan hacerlo porque tienen contencion en algunos de sus recursos.
@@ -76,6 +88,10 @@ Finalmente, al igual que con los registros, la memoria compartida es un recurso 
 solamente se cuenta con hasta 48Kb (Fermi-Kepler) de memoria de este tipo para ser repartida entre
 todos los bloques que esten corriendo en todos los SM, el scheduler debera decidir no poner a ejecutar
 m\'as bloques simultanemante que los que pueda soportar la cantidad de memoria compartida.
+
+El problema tratado dentro de esta tesis cont\'o con todos estos limitantes. Afortunadamente,
+las herramientas de profiling usadas remarca estos limitantes constamente, haciendolos
+fundamentales a la hora de evaluar como proseguir en la busqueda de optimizaciones de c\'odigo.
 
 \subsection{Cambios en el threading}
 %Cambiamos de blocks por puntos, a blocks por funci\'on.
