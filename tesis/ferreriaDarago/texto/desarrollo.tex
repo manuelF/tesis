@@ -17,7 +17,7 @@ La resoluci\'on del sistema en si esta compuesta de varios pasos:
 \item Se obtiene el valor de la funci\'on de onda en cada punto de la malla
 \item Se generan las matrices con los gradientes y los hessianos de cada funci\'on
 \item Se calculan las densidades y el producto matricial por bloques por funci\'on
-\item Se obtienen las derivadas de la densidad calculada antes
+\item Se calcula la matriz de coeficientes de las fuerzas entre las particulas
 \end{enumerate}
 
 
@@ -25,8 +25,8 @@ La resoluci\'on del sistema en si esta compuesta de varios pasos:
 
 El cuello de botella principal que presentaba este c\'odigo era en la
 resoluci\'on del sistema, especificamente en el c\'odigo que calculaba la matriz de Kohn-Sham.
-En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas grandes estaba
-en el orden de minutos. Los problemas principales que mostraba esta funci\'on fueron:
+En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas de gran cantidad
+de puntos, estaba en el orden de minutos. Los problemas principales que mostraba esta funci\'on fueron:
 \begin{itemize}
 \item Cantidad de accesos a memoria global
 \item Falta de accesos coalescentes
@@ -35,8 +35,23 @@ en el orden de minutos. Los problemas principales que mostraba esta funci\'on fu
 \end{itemize}
 
 \subsubsection{Accesos a memoria global}
+
 \subsubsection{Falta de accesos coalescentes}
+Asi como a los CPU les interesa realizar accesos alineados a memoria, a los GPU les
+interesa aun mas. El termino coalescencia de memoria se aplica a GPU mediante
+la organizacion de los accesos a memoria de manera ordenada y predecible. La l\'ogica
+detras de esto es que cuando el GPU accede a memoria de manera alineada, puede traer
+entre 16 y 64 bytes en una sola lectura, mientras que si debe acceder de manera no
+alineada a memoria, o con threads que no acceden de manera predecible a esta, entonces
+se deberan serializar los accesos y separar en m\'ultiples accesos a memoria global para leer
+esta informaci\'on. Este problema solamente se agrava si se debe hacer muy frecuentemente
+por cientos de threads, como es el caso de los bloques con gran nivel de paralelismo explicito.
+
 \subsubsection{Sobreuso de la memoria compartida}
+Los SM cuentan con una memoria compartida entre todos los threads, la memoria shared. Esta
+tiene un bus de baja latencia con conexionado especifico dentro de cada SM.
+
+
 \subsubsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
 c\'odigo pero que no puedan hacerlo porque tienen contencion en algunos de sus recursos.
@@ -45,9 +60,41 @@ en un principio, parecen ilimitados pero en realidad son finitos y compartidos p
 los procesadores de la GPGPU. Estos son:
 \begin{itemize}
 \item Cantidad total de threads por bloque.
+\item Cantidad total de registros usados por thread.
 \item Cantidad de memoria compartida por bloque.
-\item Cantidad total de registros usados por warp.
 \end{itemize}
+
+El mecanismo de scheduling de los SM funciona asignando un bloque a cada SM, que
+va a correr hasta que terminen todos sus threads asignados. Idealmente, cada
+bloque cuenta con una cantidad de threads suficiente para poder esconder la latencia
+de las ejecuciones mediante un cambio de contexto. La arquitectura GPGPU esta dise\~nada
+para este fin, por lo cual se cuenta con un cambio de contexto de costo cero para
+poder empezar a correr los threads de un warp diferente, del mismo bloque.
+Si el bloque no cuenta con suficiente cantidad de threads para poner a correr de manera
+concurrente, el SM va a forzosamente esperar que finalicen las operaciones de alta latencia
+de estos warps sin nada que hacer mientras tanto. Si, por el contrario, se contasen con
+miles de threads por bloque, entonces es posible que las operaciones que sirvan
+para sincronizar los threads de todo un bloque en un punto espec\'ifico antes de proseguir
+(un barrier) sean excesivamente costosas.
+
+La arquitectura GPGPU de NVIDIA organiza los registros de todos los threads en un unico
+register file, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
+los computos intermedios, NVIDIA decidio unficarlos, ya que es muy variable la cantidad que va a usar
+cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
+registros por thread. Mientras que Fermi permitia hasta 63 registros, Kepler permite hasta 255. Esto
+es una ventaja pero aumenta la presion sobre el register file. Cuando se lanzan muchos threads
+que puedan estar corriendo paralelamente entre todos los SM de la GPU, es posible que se supere
+la cantidad m\'axima de registros presentes en el register file. Esto fuerza a que el scheduler
+no pueda poner a ejecutar m\'as bloques que los que pueda soportar este recurso, dejando SM ociosos.
+
+Finalmente, al igual que con los registros, la memoria compartida es un recurso limitado. Como
+solamente se cuenta con hasta 48Kb (Fermi-Kepler) de memoria de este tipo para ser repartida entre
+todos los bloques que esten corriendo en todos los SM, el scheduler debera decidir no poner a ejecutar
+m\'as bloques simultanemante que los que pueda soportar la cantidad de memoria compartida.
+
+El problema tratado dentro de esta tesis cont\'o con todos estos limitantes. Afortunadamente,
+las herramientas de profiling usadas remarca estos limitantes constamente, haciendolos
+fundamentales a la hora de evaluar como proseguir en la busqueda de optimizaciones de c\'odigo.
 
 \subsection{Cambios en el threading}
 %Cambiamos de blocks por puntos, a blocks por funci\'on.
@@ -62,16 +109,48 @@ entre los kernels. Una cosa que se nota que este mecanismo de paralelizacion cue
 la ventaja de que casi no se compartian los datos entre los distintos threads, lo cual,
 a priori, deberia haber ocasionado que no hubiera mucho mejor forma de realizar el computo.
 
-Sin embargo, con un detalle mas fino, es posible notar que este mecanismo hacia que
+Sin embargo, con un detalle m\'as fino, es posible notar que este mecanismo hacia que
 muchos threads hicieran cuentas innecesarias, que no contribuian a la reducci\'on total.
 Esto daba una alta occupancy ficticia, que buscamos acercar a la real. Adem\'as, a pesar
 de que se compartian muy poca informaci\'on por la memoria compartida, tambien habia muchos
 puntos de sincronización a nivel bloque.
 
-Finalmente, cambiamos a tener block\_height bloques por cada punto, y estos se operan
+XXXXXXXXX cambiamos a tener block\_height bloques por cada punto, y estos se operan
 con una sola dimension de thread, donde block\_height es un parametro que se calcula
 para cada grupo, y es el resultado de dividir la cantidad de funci\'ones que se van
 a calcular por punto por la 2*DBS.
+
+XXXXXXXXX Otro cambio importante que estudiamos con respecto al threading, es intentar realizar
+mas de un punto por thread. Esto sirve para aprovechar un par de lecturas que son comunes
+entre dos funciones. Con este cambio, se pueden ocultar algunas latencias de acceso, pero
+cada grupo de threads lleva m\'as tiempo y usan m\'as registros. Esta estrategia es similar
+a un loop unrolling manual, aplicado a la arquitectura GPU.
+
+Un punto de intensa discusion es en el tema\~no de la particion de bloques para el calculo
+de esta densidad. Para nuestro problema, decidimos utilizar una partici\'on por bloque
+unidimensional, que sea multiplo de el tama\~no de un warp (32 threads). Esto permite
+estudiar como afectan en el tiempo de procesamiento contar con uno o m\'as warps por
+bloque. Una ventaja de usar bloques de 32 threads, es que el costo de la sincronizaci\'on
+es exactamente cero. No se precisa sincronizar nada puesto que los threads trabajan
+en lock-step sincronizados por warp. Un bloque chico ademas nos permite usar mas memoria compartida
+por thread, dado que hay una cantidad fija de memoria por bloque (entre 32Kb y 64Kb).
+Cuando se cuentan con muchos mas threads, se debe reducir este uso por thread de modo que
+todos puedan ejecutar concurrentemente.
+
+Dicho esto, la literatura \cite{NVIDIA_OPTIMIZATIONS} sugiere siempre que sea posible
+usar bloques grandes y con threads lo m\'as independientes posibles. Una gran cantidad de threads
+en un bloque permite tener muchos mas warps para schedulear de modo de esconder las latencias de
+operaciones y de a accesos globales. Sin embargo, contar con muchos threads hace que las
+sincronizaciones sean mucho m\'as costosas. Ademas, como cada SM no cuenta con pre-emption
+de bloques, contar con muchos threads por bloque hace que los recursos se mantengan
+por largos periodos.
+
+Inicialmente, este tama\~no se habia fijado en 128 threads por bloque, 4 warps. Sin embargo,
+al haber cambiado el threading a que realice dos cuentas por thread si puede, se aument\'o
+el tiempo de ejecuci\'on de cada warp en promedio, pero menos que duplicar las cuentas.
+Mostramos que tener solo un warp es bueno, pero mucho mejor a\'un es tener dos warps, porque
+esto permite, con costo cero, poner a correr el otro para ocultar la latencia sin agrandar
+demasiado el costo de la sincronizacion.
 
 
 \subsection{Cambios en las memorias compartidas}
@@ -130,8 +209,8 @@ ejecutarlos, cuando se liberan un poco mas los recursos.
 
 La unidad de GPGPU presenta grandes ventajas a la hora del computo masivamente distribuido.
 Si logramos dividir el problema en pequeños kernels de ejecucion, podemos garantizar que
-todos los multiprocesadores van a poder ejecutar constantemente bloques de threads, teniendo
-siempre nuevos bloques listos para poder ponerlos a correr para poder esconder la latencia de uso.
+todos los multiprocesadores van a poder ejecutar constantemente grupos de threads, teniendo
+siempre nuevos grupos listos para poder ponerlos a correr para poder esconder la latencia de uso.
 
 El problema que se presenta al dividir tanto el computo, es que en algun momento se deberia juntar
 todos los bloques independientes de ejecucion. Este proceso se conoce como reducci\'on, es decir,
@@ -140,7 +219,7 @@ como resultado de la cuenta.
 
 En nuestro caso, al haber cambiado la paralelizacion de un bloque por punto, a un bloque
 de funci\'ones, aparece una reducci\'on que antes no necesitabamos realizar. La reducci\'on que
-necesitamos es una suma de todos los elementos de toda la columna que acabamos de procesar.
+requerida es una suma de todos los elementos de toda la columna que acabamos de procesar.
 Como cada instancia del kernel pertenece a una columna de la matriz, y toda una columna se
 procesa por un bloque, \textcolor{blue}{---REVISAR---}, entonces se puede compartir los datos
 a nivel de bloque. Es decir, podemos hacer la reducci\'on reutilizando la memoria compartida
@@ -155,7 +234,6 @@ binaria se realiza $\log_2{DBS}$ veces.
 
 Este mecanismo de reducci\'on es generico y se puede emplear cualquier operacion binaria que
 totalice las cuentas.
-
 
 
 \subsection{Cambios en los pasajes de informaci\'on intrawarp}

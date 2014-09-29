@@ -8,9 +8,9 @@ El procesamiento GPGPU es similar al procesamiento vectorial
 realizado por las supercomputadoras Cray y IBM que surgio en los 1960's, pero
 en vez de usar VLIW para procesamiento masivo, CUDA usa multiples hilos de ejecuci\'on
 que trabajan simultaneamente sobre los datos.
-El procesamiento consiste en en un hibrido entre compilador y procesador. Se determina
-un conjunto de elementos a procesar y se elije una manera de dividirlos entre distintos
-procesadores mediante distintas keywords del lenguaje.
+El procesamiento consiste en un funcionamiento hibrido entre compilador y procesador. Se determina
+un conjunto de elementos a procesar y se elije de manera explicita una manera de particionar el
+problema a la hora de ser enviado para procesado a la placa.
 
 El paralelismo en CUDA principalmente se divide en varios niveles:
 \begin{itemize}
@@ -22,45 +22,51 @@ El paralelismo en CUDA principalmente se divide en varios niveles:
 El paralelismo a nivel de block agrupa de a bloques 32 threads (llamados \texttt{warp} en CUDA).
 Cada uno de estos threads va a contar con el mismo blockId y su propio threadId, identificandolos univocamente.
 Estos threads van a correr simultaneamente en el mismo SM (\texttt{Streaming Multiprocessor}) y
-van a ser puestos o sacados de ejecuci\'on dinamicamente por el scheduler del CUDA.
+van a ser puestos y sacados de ejecuci\'on dinamicamente por el scheduler de hardware que cuenta la GPU.
 
 El paralelismo a nivel de grid determina un arreglo de bloques de ejecuci\'on que particiona
-el dominio del problema. Los SM van a correr poner distintos bloques a ejecutar y en cuanto
-se bloquea alguno (por stall en alguna unidad), se va a hacer cambio de contexto y poner
-otro bloque del grid a ejecutar.
+el dominio del problema. El block scheduler va a ejecutar los distintos bloques a ejecutar hasta
+el final de la ejecuci\'on de todos los threads. Cuando este bloque termine, y si se cuentan con
+los recursos apropiados, se pondr\'a a correr el siguiente bloque disponible.
 
 El paralelismo a nivel de placa consiste en poder distribuir la carga entre distintas
-GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM comun.
+GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un. CUDA no cuenta con un
+modelo implicito de paralelismo entre distintas placas, pero es posible hacerlo manualmente.
 
-Para realizar el computo, esta arquitecturaa su vez con multiples clases de memorias
+Para realizar el computo, esta arquitectura cuent a su vez con multiples clases de memorias
 que se adaptan de maneras diferentes a los distintos procesos. Estas incluyen:
 
 \begin{itemize}
-  \item Registros
   \item Memoria global
+  \item Registros
   \item Memoria local
-  \item Memoria Compartida
+  \item Memoria compartida
 \end{itemize}
+
+La memoria global es la memoria principal fuera del chip del GPGPU. Esta es de gran tama\~no
+y es compartida por todos los procesadores de la GPGPU y los CPU que integran el
+sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones del driver CUDA
+para poder transferir datos entre la placa y la memoria RAM. Esta memoria es extremadamente
+lenta en comparaci\'on con el procesador, por lo cual se debe siempre intentar recurrir
+a las demas memoria que componen la jerarquia del GPGPU antes que acceder seguido a la memoria
+global.
+
 
 Los registros son la unidad basica de almacenamiento de los kernels de ejecuci\'on.
 Cada thread de ejecuci\'on cuenta con una cantidad limitada de registros de punto flotante de
-acceso instantaneo.
-
-La memoria global es la memoria principal de la GPGPU. Esta es ilimitada en tama\~no
-y es compartida por todos los procesadores de la GPGPU y los CPU que integran el
-sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones de la libreria
-para poder transferir datos de y hacia la memoria RAM.
+32 bits con latencia de un par de ciclos de clock. A su vez, existen una cantidad finita de
+registros totales que cuenta un chip (oscilan entre 16.535 y 65.535 registros).
 
 La memoria compartida es una memoria que es visible para todos los threads dentro
 de un bloque, pero es independiente entre bloques. Cada thread puede escribir en cualquier
 parte de la memoria compartida de su bloque y puede ser leido por cualquier otro thread
-de su bloque. Es una memoria muy rapida, que tarda una peque\~na cantidad de ciclos
-en poder ser leidos. Esta memoria es limitada y cuenta con una cantidad maxima del orden de los
-Kb que debe ser compartido por todos los bloques.
+de su bloque. Es una memoria muy r\'apida, que tarda una peque\~na cantidad de ciclos
+de acceso de lectura. Esta memoria es compartida con la cach\'e nivel 1. Es limitada en
+tama\~no y cuenta con una capacidad de entre 32Kb y 64kb que debe ser compartida por todos los bloques.
 
-La memoria local es un renombre de la memoria global, que es manejada por el compilador
-de manera automatica y sirve para poder tener mas memoria interna al kernel de ejecuci\'on
-pero que sobrepase la cantidad de registros que cuenta ese thread para ejecutar.
+La memoria local es una memoria propia de cada thread, que se encuentra localizada dentro de la
+memoria global. Esta memoria es usada automaticamente por el compilador y sirve como area de spilling
+de registros cuando se acaban. Cuenta con las mismas desventajas que la memoria global.
 
 La GPGPU cuenta con multiples niveles de memorias cache para poder aminorar el hecho
 de que el principal cuello de botella del computo es la latencia en los accesos a memoria
@@ -72,10 +78,10 @@ global. Estas se dividen en tres:
   \item Cache de textura
 \end{itemize}
 
-La cache L1 es dedicada por SM. Esta cache fue introducida en Fermi y su dise\~no hace que
+La cache L1 es dedicada por SM. Esta cach\'e fue introducida en Fermi y su dise\~no hace que
 tambien esta dedicada a la memoria compartida, por lo que es posible en tiempo de ejecuci\'on
 darle directivas a la GPGPU que asigne m\'as memoria cache o m\'as memoria compartida,
-permitiendo a los kernels mayor concurrencia o mayor hit rate de cache.
+permitiendo a los bloques tener mayores espacios de memorias compartidas o mayores hit rate de cach\'es.
 
 La cache L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en NVIDIA, todos
 los accesos de lectura y escritura a memoria global y textura pasan a traves de esta. ~\cite{NvidiaFermi}
@@ -85,24 +91,24 @@ de las caches de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino q
 puede agregar el concepto de dimensiones, para poder modelar datos en mas de una dimension.
 Esto la convierte en una herramienta clave a la hora de minimizar los accesos a matrices
 no solo por filas sino por columnas. Esta memoria se debe definir en momento de compilacion,
-en el codigo y no es automatica, porque esta cache tiene limites espaciales (necesarios
+en el codigo y no es automatica, porque esta cach\'e tiene limites espaciales (necesarios
 para poder definir areas de memoria sobre la cual operar) y a su vez se debe acceder
 a los dayos subyacentes a traves de funciones especificas. Una caracteristica adicional
 de esta cach\'e es que como necesita resolver estos accesos extra\~nos a la memoria, cuenta
 con una unidad propia de resoluci\'on. Esta unidad tiene limitantes a cuanto podemos
 exigirle, ya que no posee un ancho de banda suficiente como para resolver todos los
-accesos a memoria que nos podria servir, asi que hay que usarla judiciosamente.
+accesos a memoria globales podria servir, asi que hay que usarla judiciosamente.
 
 Para soportar una arquitectura masivamente paralela, se debe usar una ISA
 (\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA
 debe poder soportar conceptos fundamentales del computo GPGPU: grandes cantidades de registros,
 operaciones en punto flotante de precision simple y doble y fused multiply-add. Ademas,
-el c\'odigo compilado para GPGPU debe ser agnostico al dispositivo que lo va a correr, por
+el c\'odigo compilado para GPGPU debe ser agn\'ostico al dispositivo que lo va a correr, por
 lo cual la paralelizaci\'on no debe estar demasiado atada a este, sino que el dispatching
-lo debe poder determinar la placa en tiempo de ejecuci\'on, de modo que la paralelizaci\'on
-sea la m\'as apropiada en cada dispositivo, sin importar la generaci\'on que sea. Un ultimo
-requerimiento clave de esta ISA es que debe poder soportar un minimo de \texttt{tuneo} manual,
-para poder construir partes claves de ciertas librerias sumamente usadas (como las BLAS)~\cite{NvidiaFermi}.
+lo debe poder determinar la placa en tiempo de ejecuci\'on. De este modo, la paralelizaci\'on
+deberia ser la m\'as apropiada en cada dispositivo, sin importar la generaci\'on que sea. Un \'ultimo
+requerimiento clave de esta ISA es que debe poder soportar un m\'inimo de \texttt{tuneo} manual,
+para poder construir partes claves de ciertas librerias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
 
 \subsection{Requerimientos de un problema para GPGPU}
@@ -174,17 +180,17 @@ antes de enviar a la placa, de modo que sea portable entre placas y arquitectura
 Cuando se lanza un kernel de ejecuci\'on, este c\'odigo binario se carga en la DRAM propia
 de la placa. Este codigo va a ser ejecutado por todos los bloques que se hayan definido cuando
 se lanz\'o el kernel. El ``Thread Engine'' del GPGPU se encarga de repartir los bloques a los
-SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a bloques de 32 threads, cada uno
-de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp,
-el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP, evitando asi
-perder tiempo en los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
+SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a grupos de 32 threads, cada uno
+de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp
+(de acuerdo a la generaci\'on de los chips), el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP,
+escondiendo la latencia de los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
 Estos threads a su vez obtienen sus registros de un register file comun a todos los SP. Un scoreboard
 es mantenido por cada dispatcher de warps para poder determinar cuales estan listos para correr. En Kepler
-este scoreboard es simplificado ya que las latencias de las operaciones matematicas es conocido, por
+este scoreboard es simplificado ya que las latencias de las operaciones matem\'aticas es conocido, por
 lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
 
-Todos los SP de un GPGPU son simetricos y cuentan todos con las mismas unidades de FP y de Enteros,
-y entre varios cores comparten una o dos unidades de precision doble y una unidad de funciones especiales.
+Todos los SP de un GPGPU son sim\'etricos y cuentan todos con las mismas unidades de FP y de Enteros,
+y entre varios cores comparten una o dos unidades de precisi\'on doble y una unidad de funciones especiales.
 En Fermi no se pueden ejecutar simultaneamente instrucciones de precision doble y simple, y como
 las de doble requerien ambos pipelines, suelen disminuir considerablemente el aprovechamiento
 de los cores. En Kepler, al usar 4 unidades de despacho de warp, puede elegir una mejor
