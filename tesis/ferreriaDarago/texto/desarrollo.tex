@@ -249,8 +249,8 @@ donde se evalua un predicado para todos los threads, y se setea o limpia un bit 
 de respuesta si se cumplio el predicado para ese thread. Con esta herramienta, no es necesario
 acceder a memoria compartida para poder pasar minima informaci\'on dentro de cada warp.
 
-Nuestro uso de las funci\'ones de shuffle consistio en intentar eliminar lo m\'as que podiamos
-los accesos a la memoria compartida, una fuente de bloqueos porque, a pesar de que ya corre
+Nuestro uso de las funci\'ones de shuffle consistio en intentar eliminar lo mas que podiamos
+los accesos a la memoria compartida, fuente de bloqueos porque, a pesar de que ya corre
 todos los bloques concurrentemente, leer elementos de ahi toman 4 ciclos en vez de uno solo
 como en las funci\'ones de shuffle.
 
@@ -264,43 +264,8 @@ consideramos que el aprovechamiento marginal de los recursos no era lo suficient
 de romper compatibilidad con las placas de la generacion Fermi anterior.
 
 
-\subsection{Cambios en el almacenamiento de matrices temporales}
-Una de las principales limitaciones de las GPGPU es la cantidad fija de memoria. Esta no es
-expandible dado que esta soldada a la placa. Esto era aun m\'as notable cuando las placas
-contaban con menos de 1Gb de memoria (A\~nos 2007-2008).
-Para problemas de calculo num\'erico, esto era un limitante muy serio; los problemas que
-normalmente entraban en la memoria principal de un CPU, no entraban completos en las GPU.
-La decisi\'on tomada por muchas aplicaciones de entonces es compensar esto calculando
-datos intermedios y tirandolos al final; teniendo que ser recalculados en las proximas iteraciones.
 
-Esta estrategia es claramente impractica en CPU, puesto que se cuenta con mucha mas memoria
-de uso general. En GPU era necesario por el faltante de memoria, pero no es tan notorio como en CPU,
-puesto que estas cuentas se pueden hacer bastante m\'as rapido en GPU.
 
-Cuando la aplicacion original se concibio, no habia siquiera placas Tesla de GPGPU apuntadas a HPC, con
-m\'as memoria disponible que los modelos de consumidores. Aprovechando estos recursos actuales,
-desarrollamos un m\'etodos para poder almacenar estos resultados temporales, de manera dinamica
-durante la ejecuci\'on de la aplicaci\'on, para poder aprovechar este recurso que originalmente
-era limitante pero ya no.
-
-Para poder determinar que cosas van a ser guardadas en mem\'oria y que no, se determin\'o una heuristica
-que define el orden de las particiones a solucionar. Esta heuristica estima que tama\~no van a
-tener las matrices temporales a almacenar y ordena las particiones de menor a mayor. Esto
-esta basado en el criterio de que, si bien es proporcional el tiempo de computo de estas matrices
-temporales a la cantidad de funciones por grupo y cantidad de puntos (lo que determina el tama\~no
-de la partici\'on), la constante es elevada. Determinamos entonces que es m\'as conveniente
-aprovechar la memoria de la placa que almacena muchas matrices temporales de particiones chicas
-a que almacene solamente un par de las grandes.
-
-Para controlar la administracion de memoria, se realiza la estimaci\'on si la placa cuenta
-con la suficiente memoria libre para guardar los datos a calcular, y si puede, se guardan de manera
-permanente (hasta la liberaci\'on de recursos al finalizar el programa). Esto ademas es configurable
-de modo que una corrida pueda usar un porcentaje de la memoria con la que cuenta la placa, para
-poder correr multiples procesos de simulaci\'on concurrentemente.
-
-Esta sencilla mejora permite explotar el hecho de que las placas hayan aumentado dramaticamente su
-capacidad de almacenamiento, un recurso que hasta ahora venia siendo un limitante podemos
-convertirlo en una aceleraci\'on notoria.
 
 
 \subsection{Cambios en las operaciones matem\'aticas}
@@ -327,75 +292,3 @@ operacion de calculo. Mas a\'un, se presentan un ahorro del 25\% de los recursos
 en contencion, sin ninguna desventaja a la hora de acceder a estos. Principalmente
 esta mejora permite aumentar la cantidad de bloques corriendo concurrentemente en los multiprocesadores,
 sin estas limitados por el uso individual de las memorias compartidas.
-
-\subsection{Cambios en los condicionales}
-La arquitectura CUDA representa un m\'odelo de computo pensado en el procesamiento secuencial masivo
-de datos de punto flotante. Esto es herencia de su legado de placa gr\'aficas, que era un stream
-constante de datos. Al generalizar la arquitectura para que sea de proposito general, entonces
-surge el problema de ejecuci\'on condicional. Como el resultado de la evaluaci\'on puede ser distinto
-para cada thread, entonces surge el problema de como ejecutar un warp en lockstep cuando algunos threads
-correran la rama \texttt{true} y otros la rama \texttt{false}. La soluci\'on que adopta CUDA es la
-serializaci\'on implicita. Los threads que no ejecutan el \texttt{true} correr\'an \texttt{NOP}
-y lo mismo se hara en el caso del \texttt{false}, al reves.
-
-Esto trae aparejado una penalidad importante. Si esa bifurcacion contiene mucho c\'odigo no trivial,
-entonces es evidente que se subutilizan importantemente los recursos disponibles.
-
-Habiendo varios de estos casos en los kernels presentes, decidimos utilizar una t\'ecnica sugerida
-por NVIDIA. Esta consiste en hacer las operaciones normalmente, como si todos los threads cumplieran
-las condiciones del condicional y multiplicar por 1 o por 0 el resultado antes de acumular.
-Esto hace que las cuentas que no se ejecutaban antes ahora lo hagan pero que simplemente no aporten
-a la reducci\'on. Esta t\'ecnica elimina la existencia de la rama falsa de los condicionales, pero
-trae dos problemas no triviales.
-
-Uno de ellos es como solucionar el problema de los accesos a memoria.
-Usualmente las guardas condicionales estan puestas para que el programa, si cumple ciertas condiciones,
-no acceda a memoria que no esta definida. Por ejemplo, si \texttt{threadId > arraySize}, entonces claramente
-no deberia acceder a \texttt{array[threadId]}, puesto que seria memoria invalida. Si eliminamos la guarda
-entonces los accesos a memoria no pueden quedar igual. Una soluci\'on consiste en multiplicar tambien
-por 1 o por 0 la direccion a la cual se va a acceder. Como CUDA maneja los arreglos de memoria
-como C (es decir, basados en 0 como primer direcci\'on), esta t\'ecnica es v\'alida para hacer
-siempre accesos correcto a memoria. El problema luego es en la coalescencia; como ahora algunos
-threads de un warp van a acceder a una posicion de memoria muy distinta a otros, entonces el procesado
-va a partir esos accesos en m\'ultiples transacciones. Esto puede hacer que la cuenta no solo no mejore
-la performance, sino que puede que la empeore sustancialmente. Se debe hacer un profiling caso
-por caso para poder estudiar el impacto en el kernel.
-
-El otro problema es en cuentas que pueden dar NaN (como el tipico caso de division por cero).
-Como, por estandar IEEE 754, los NaN hacen que todas las operaciones con ellos den NaN,
-entonces pueden propagarse por la cuenta, incluso en con multiplicaci\'on con cero del resultado.
-La soluci\'on m\'as evidante seria comprobar si son NaN antes de reducirlas, y si lo fueran, reemplazarlos
-por cero. Esto puede llegar a ser inevitable en muchos casos, pero en el nuestro, si replanteamos
-las cuentas, podemos evitar esos casos.
-
-\subsection{Escalando m\'as all\'a de un GPU}
-Una vez que fueron solucionados muchos limitantes de performance en los kernels del computo
-de la densidad electr\'onica y del c\'alculo de la matriz RMM, nos encontramos en un punto donde
-no fue posible determinar mejoras significativas en el c\'alculo para reducir tiempos.
-Decidimos subir un nivel m\'as el paralelismo, de modo de poder solucionar multiples particiones
-simultaneamente. Dado que es independiente el computo de cada partici\'on (salvo la acumulaci\'on
-en la matriz RMM de salida y en la matriz de fuerzas interat\'omicas), nos pareci\'o que seria
-interesante ver como escala distribuir el computo a lo largo de multiples GPU.
-
-Para dividir el problema entre varios dispositivos usamos, al igual que en CPU, OpenMP. Definimos
-una seccion paralela dentro del loop principal donde se soluciona cada grupo de modo que se
-ejecutaran tantos threads como placas haya en la maquina. Cada
-uno de los threads en el host se configurar\'a para una placa solamente. Esto se realiza con
-una instrucci\'on del driver de CUDA (CudaSetDevice) que permite que durante toda la vida del
-thread, todas las llamadas a kernels se realicen automaticamente al mismo dispositivo.
-
-CUDA permite que trabajar con multiples placas de esta manera sea bastante sencillo. Las variables
-definidas como \texttt{\_\_device\_\_}, que residen plenamente en la GPU, son automaticamente instanciadas
-por cada dispositivo presente. De esta manera, es implicito cual variable usa cada kernel; la que
-esta definida para su dispositivo actual. Esto puede ser un problema si queremos lograr comunicaciones entre placas,
-pero si las cuentas son independientes, es paralelismo gratuito de costo cero.
-
-El principal problema que surge de uso de m\'ultiples dispositivos radica, al igual que en
-CPU, en como distribuir la carga de los threads de modo tal que haya una cantidad de trabajo
-similar, para minimizar los tiempos de idle. Este problema no es tan grave siempre y cuando
-se utilicen placas identicas dentro de la configuraci\'on del sistema ya que seria
-el mismo tiempo si se corre en una o en otra. Un trabajo adicional de inter\'es ac\'a
-radicaria en el uso de t\'ecnicas de estimacion de poder de computo para poder
-distribuir el trabajo de manera equitativa entre modelos de placas heterog\'eneas, con distintas
-configuraci\'ones de memoria, cantidad de SM y anchos de banda.
-
