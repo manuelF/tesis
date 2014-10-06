@@ -1,10 +1,46 @@
 \subsection{CUDA}
 
 \subsubsection{Organizacion de procesadores}
+
+El c\'odigo escrito para CUDA se puede compilar a dos targets distintos; uno es
+el codigo binario nativo de la placa target donde se va a correr y el otro es un
+codigo intermedio, llamado c\'odigo PTX, que se JIT compila por el driver CUDA
+antes de enviar a la placa, de modo que sea portable entre placas y arquitecturas
+(retrocompatibles).
+
+Cuando se lanza un kernel de ejecuci\'on, este c\'odigo binario se carga en la DRAM propia
+de la placa. Este codigo va a ser ejecutado por todos los bloques que se hayan definido cuando
+se lanz\'o el kernel. El ``Thread Engine'' del GPGPU se encarga de repartir los bloques a los
+SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a grupos de 32 threads, cada uno
+de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp
+(de acuerdo a la generaci\'on de los chips), el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP,
+escondiendo la latencia de los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
+Estos threads a su vez obtienen sus registros de un register file com\'un a todos los SP. Un scoreboard
+es mantenido por cada dispatcher de warps para poder determinar que threads estan listos para correr. En Kepler
+este scoreboard es simplificado ya que las latencias de las operaciones matem\'aticas es conocido, por
+lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
+
+Todos los SP de un GPGPU son sim\'etricos y cuentan todos con las mismas unidades de FP y de Enteros,
+y entre varios cores comparten una o dos unidades de precisi\'on doble y una unidad de funciones especiales.
+En Fermi no se pueden ejecutar simultaneamente instrucciones de precision doble y simple, y como
+las de doble requerien ambos pipelines, suelen disminuir considerablemente el aprovechamiento
+de los cores. En Kepler, al usar 4 unidades de despacho de warp, puede elegir una mejor
+combinaci\'on para poder ejecutar simultaneamente instrucciones que no dependan de las mismas
+unidades funcionales en el pipeline. ~\cite{NvidiaKepler}
+
+Como estos procesadores implementan el estandar IEEE754-2008, cuentan con precision simple y
+doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instrucciones FMA
+(Fused multiply-add) que no pierden precisci\'on en etapas intermedias de redondeo.
+
+%Como el c\'odigo se ejecuta de manera sincr\'onica entre todos los threads del warp, las instrucciones
+%condicionales proveen un problema para esta arquitectura. Como las distintas ramas del condicional
+%son instrucciones excluyentes, no las deben ejecutar todos los threads simultaneamentes. El procesador
+%deshabilitaba los cores que manejaban los threads de las ramas que no se ejecutaban del
+%condicional~\cite{NvidiaTesla}. Para disminuir la cantidad de instrucciones de condicionales
+%que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
+
+
 \subsubsection{Niveles de memoria}
-\subsubsection{Niveles de paralelismo}
-\subsubsection{Diferencias entre Tesla, Fermi, Kepler}
-\subsubsection{Herrmientas de desarrollo, profiling, exploracion}
 
 La arquitectura CUDA esta enfocada a procesamiento de grandes cantidades de datos
 de puntos flotante. El procesador GPGPU cuenta con cientos de ALU sincronizadas
@@ -18,27 +54,6 @@ El procesamiento consiste en un funcionamiento hibrido entre compilador y proces
 un conjunto de elementos a procesar y se elije de manera explicita una manera de particionar el
 problema a la hora de ser enviado para procesado a la placa.
 
-El paralelismo en CUDA principalmente se divide en varios niveles:
-\begin{itemize}
-  \item Block Level
-  \item Grid Level
-  \item Board level
-\end{itemize}
-
-El paralelismo a nivel de block agrupa de a bloques 32 threads (llamados \texttt{warp} en CUDA).
-Cada uno de estos threads va a contar con el mismo blockId y su propio threadId, identificandolos univocamente.
-Estos threads van a correr simultaneamente en el mismo SM (\texttt{Streaming Multiprocessor}) y
-van a ser puestos y sacados de ejecuci\'on dinamicamente por el scheduler de hardware que cuenta la GPU.
-
-El paralelismo a nivel de grid determina un arreglo de bloques de ejecuci\'on que particiona
-el dominio del problema. El block scheduler va a ejecutar los distintos bloques a ejecutar hasta
-el final de la ejecuci\'on de todos los threads. Cuando este bloque termine, y si se cuentan con
-los recursos apropiados, se pondr\'a a correr el siguiente bloque disponible.
-
-El paralelismo a nivel de placa consiste en poder distribuir la carga del problema entre distintas
-GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un como si fuera un software
-multithreaded tradicional. CUDA no cuenta con un modelo implicito de paralelismo entre distintas placas,
-pero es posible hacerlo manualmente eligiendo de manera explicita que dispositivo usar.
 
 Para realizar el computo, esta arquitectura cuenta a su vez con multiples clases de memorias
 que se adaptan de maneras diferentes a los distintos procesos. Estas incluyen:
@@ -118,7 +133,34 @@ requerimiento clave de esta ISA es que debe poder soportar poder realizar ajuste
 para poder construir partes claves de ciertas librerias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
 
-\subsection{Requerimientos de un problema para GPGPU}
+\subsubsection{Niveles de paralelismo}
+El paralelismo en CUDA principalmente se divide en varios niveles:
+\begin{itemize}
+  \item Block Level
+  \item Grid Level
+  \item Board level
+\end{itemize}
+
+El paralelismo a nivel de block agrupa de a bloques 32 threads (llamados \texttt{warp} en CUDA).
+Cada uno de estos threads va a contar con el mismo blockId y su propio threadId, identificandolos univocamente.
+Estos threads van a correr simultaneamente en el mismo SM (\texttt{Streaming Multiprocessor}) y
+van a ser puestos y sacados de ejecuci\'on dinamicamente por el scheduler de hardware que cuenta la GPU.
+
+El paralelismo a nivel de grid determina un arreglo de bloques de ejecuci\'on que particiona
+el dominio del problema. El block scheduler va a ejecutar los distintos bloques a ejecutar hasta
+el final de la ejecuci\'on de todos los threads. Cuando este bloque termine, y si se cuentan con
+los recursos apropiados, se pondr\'a a correr el siguiente bloque disponible.
+
+El paralelismo a nivel de placa consiste en poder distribuir la carga del problema entre distintas
+GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un como si fuera un software
+multithreaded tradicional. CUDA no cuenta con un modelo implicito de paralelismo entre distintas placas,
+pero es posible hacerlo manualmente eligiendo de manera explicita que dispositivo usar.
+
+\subsubsection{Diferencias entre Tesla, Fermi, Kepler}
+
+\subsubsection{Herramientas de desarrollo, profiling, exploracion}
+
+\subsubsection{Requerimientos de un problema para GPGPU}
 En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
 calcular cualquier cosa. Sin embargo, hay altos costos en los que se incurren antes de
 poder ejecutar c\'odigo. Un problema debe exhibir al menos las siguientes caracteristicas
@@ -176,46 +218,8 @@ Estas caracteristicas limitan enormemente la clase de problemas que una GPGPU pu
 afrontar, y suelen ser una buena heuristica para determinar de antemano si vale la pena
 invertir el tiempo necesario de la implementaci\'ony ajuste fino.
 
-\subsection{Funcionamiento de un GPGPU}
 
-El c\'odigo escrito para CUDA se puede compilar a dos targets distintos; uno es
-el codigo binario nativo de la placa target donde se va a correr y el otro es un
-codigo intermedio, llamado c\'odigo PTX, que se JIT compila por el driver CUDA
-antes de enviar a la placa, de modo que sea portable entre placas y arquitecturas
-(retrocompatibles).
-
-Cuando se lanza un kernel de ejecuci\'on, este c\'odigo binario se carga en la DRAM propia
-de la placa. Este codigo va a ser ejecutado por todos los bloques que se hayan definido cuando
-se lanz\'o el kernel. El ``Thread Engine'' del GPGPU se encarga de repartir los bloques a los
-SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a grupos de 32 threads, cada uno
-de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp
-(de acuerdo a la generaci\'on de los chips), el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP,
-escondiendo la latencia de los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
-Estos threads a su vez obtienen sus registros de un register file com\'un a todos los SP. Un scoreboard
-es mantenido por cada dispatcher de warps para poder determinar que threads estan listos para correr. En Kepler
-este scoreboard es simplificado ya que las latencias de las operaciones matem\'aticas es conocido, por
-lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
-
-Todos los SP de un GPGPU son sim\'etricos y cuentan todos con las mismas unidades de FP y de Enteros,
-y entre varios cores comparten una o dos unidades de precisi\'on doble y una unidad de funciones especiales.
-En Fermi no se pueden ejecutar simultaneamente instrucciones de precision doble y simple, y como
-las de doble requerien ambos pipelines, suelen disminuir considerablemente el aprovechamiento
-de los cores. En Kepler, al usar 4 unidades de despacho de warp, puede elegir una mejor
-combinaci\'on para poder ejecutar simultaneamente instrucciones que no dependan de las mismas
-unidades funcionales en el pipeline. ~\cite{NvidiaKepler}
-
-Como estos procesadores implementan el estandar IEEE754-2008, cuentan con precision simple y
-doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instrucciones FMA
-(Fused multiply-add) que no pierden precisci\'on en etapas intermedias de redondeo.
-
-%Como el c\'odigo se ejecuta de manera sincr\'onica entre todos los threads del warp, las instrucciones
-%condicionales proveen un problema para esta arquitectura. Como las distintas ramas del condicional
-%son instrucciones excluyentes, no las deben ejecutar todos los threads simultaneamentes. El procesador
-%deshabilitaba los cores que manejaban los threads de las ramas que no se ejecutaban del
-%condicional~\cite{NvidiaTesla}. Para disminuir la cantidad de instrucciones de condicionales
-%que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
-
-\subsection{Diferencia entre CPU y GPU - Procesadores especulativos}
+\subsubsection{Diferencia entre CPU y GPU - Procesadores especulativos}
 Viendo la historia de CPU, podemos hacer un recorrido de los problemas que los dise\~nadores de procesadores
 fueron enfrentandose a lo largo del tiempo mirando los componentes que fueron apareciendo.
 
@@ -239,13 +243,13 @@ Comparativamente con un CPU, las ALU de las GPU son bastante pobres y lentas. No
 velocidades de clock y deben estar sincronizadas entre si. Pero la gran ventaja esta en la cantidad.
 Un CPU cuenta con unas pocas ALU por core, dependiendo de su algoritmo de scheduling interno
 (alrededor de 16 cores por die de x86 es el tope de linea ofrecido actualmente). Un GPU cuenta con miles de ALUs en total
-(m\'as de 2500 CUDA Cores en Tesla K20).
-En contraste, un GPU dispone de pocas unidades de soporte del procesamiento. No tiene pipelines especulativos, el tama\~no de las caches
+(m\'as de 2500 CUDA Cores en Tesla K20). Un GPU, en cambio, dispone de pocas unidades de soporte del procesamiento.
+No cuenta con pipelines especulativos, el tama\~no de las caches
 estan a ordenes de magnitud de las de CPU, la latencia a las memorias principales de la GPU estan a
 decenas de clocks de distancia, etc. La arquitectura asume que siempre va a tener m\'as trabajo
 para hacer, por lo cual en vez de intentar solucionar los pitfalls de un grupo de threads, directamente
-los reschedulea para m\'as adelante y continua procesando otro warp de threads. Basicamente durante del
-disen\~no de la arquitectura GPGPU buscaron resolver el problema del computo masivo pensando en hacer
+los reschedulea para m\'as adelante y continua procesando otro warp de threads. Se puede notar que durante del
+dise\~no de la arquitectura GPGPU buscaron resolver el problema del computo masivo pensando en hacer
 m\'as cuentas a la vez y recalcular datos viejos de ser necesario. Esto es una marcada diferencia contra
 los CPU, que estan pensado en rehacer el menor trabajo posible y intentar mantener todos los datos que pueda en
 las memorias caches gigantescas.
@@ -264,7 +268,7 @@ les permitio romper con el modelo de computo de CPU y definir nuevas estrategias
 que no siempre se adaptan bien a todos los problemas, pero para el subconjunto de los desafios que se
 presentan en el area de HPC y de videojuegos han probado ser un cambio paradigm\'atico.
 
-\subsection{Idoneidad para el problema}
+\subsubsection{Idoneidad para el problema}
 El problema de QM/MM enfrentado en este trabajo cuenta con mutiples operaciones matematicas de gran
 volumen de calculos. En particular, las operaciones matriciales son los cuellos de botella en este
 problema.
