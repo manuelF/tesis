@@ -29,11 +29,12 @@ el dominio del problema. El block scheduler va a ejecutar los distintos bloques 
 el final de la ejecuci\'on de todos los threads. Cuando este bloque termine, y si se cuentan con
 los recursos apropiados, se pondr\'a a correr el siguiente bloque disponible.
 
-El paralelismo a nivel de placa consiste en poder distribuir la carga entre distintas
-GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un. CUDA no cuenta con un
-modelo implicito de paralelismo entre distintas placas, pero es posible hacerlo manualmente.
+El paralelismo a nivel de placa consiste en poder distribuir la carga del problema entre distintas
+GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un como si fuera un software
+multithreaded tradicional. CUDA no cuenta con un modelo implicito de paralelismo entre distintas placas,
+pero es posible hacerlo manualmente eligiendo de manera explicita que dispositivo usar.
 
-Para realizar el computo, esta arquitectura cuent a su vez con multiples clases de memorias
+Para realizar el computo, esta arquitectura cuenta a su vez con multiples clases de memorias
 que se adaptan de maneras diferentes a los distintos procesos. Estas incluyen:
 
 \begin{itemize}
@@ -51,13 +52,12 @@ lenta en comparaci\'on con el procesador, por lo cual se debe siempre intentar r
 a las demas memoria que componen la jerarquia del GPGPU antes que acceder seguido a la memoria
 global.
 
-
 Los registros son la unidad basica de almacenamiento de los kernels de ejecuci\'on.
 Cada thread de ejecuci\'on cuenta con una cantidad limitada de registros de punto flotante de
 32 bits con latencia de un par de ciclos de clock. A su vez, existen una cantidad finita de
 registros totales que cuenta un chip (oscilan entre 16.535 y 65.535 registros).
 
-La memoria compartida es una memoria que es visible para todos los threads dentro
+La memoria compartida, o \textit{shared} es una memoria que es visible para todos los threads dentro
 de un bloque, pero es independiente entre bloques. Cada thread puede escribir en cualquier
 parte de la memoria compartida de su bloque y puede ser leido por cualquier otro thread
 de su bloque. Es una memoria muy r\'apida, que tarda una peque\~na cantidad de ciclos
@@ -66,28 +66,29 @@ tama\~no y cuenta con una capacidad de entre 32Kb y 64kb que debe ser compartida
 
 La memoria local es una memoria propia de cada thread, que se encuentra localizada dentro de la
 memoria global. Esta memoria es usada automaticamente por el compilador y sirve como area de spilling
-de registros cuando se acaban. Cuenta con las mismas desventajas que la memoria global.
+de registros cuando se acaban. Cuenta con las mismas desventajas que la memoria global, incluyendo
+su tiempo de acceso.
 
-La GPGPU cuenta con multiples niveles de memorias cache para poder aminorar el hecho
-de que el principal cuello de botella del computo es la latencia en los accesos a memoria
-global. Estas se dividen en tres:
+Adicionalmente, la GPGPU cuenta con multiples niveles de memorias cach\'e para poder aminorar el hecho
+de que el principal cuello de botella del computo es la latencia en los accesos a memoria global.
+Estas se dividen en tres:
 
 \begin{itemize}
-  \item Cache L1
-  \item Cache L2
-  \item Cache de textura
+  \item Cach\'e L1
+  \item Cach\'e L2
+  \item Cach\'e de textura
 \end{itemize}
 
-La cache L1 es dedicada por SM. Esta cach\'e fue introducida en Fermi y su dise\~no hace que
+La cach\'e L1 es dedicada por SM. Esta cach\'e fue introducida en Fermi y su dise\~no hace que
 tambien esta dedicada a la memoria compartida, por lo que es posible en tiempo de ejecuci\'on
-darle directivas a la GPGPU que asigne m\'as memoria cache o m\'as memoria compartida,
+darle directivas a la GPGPU que asigne m\'as memoria cach\'e o m\'as memoria compartida,
 permitiendo a los bloques tener mayores espacios de memorias compartidas o mayores hit rate de cach\'es.
 
-La cache L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en NVIDIA, todos
+La cach\'e L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en NVIDIA, todos
 los accesos de lectura y escritura a memoria global y textura pasan a traves de esta. ~\cite{NvidiaFermi}
 
-La cache de textura es una cache que presenta no solo localidad espacial, como la mayoria
-de las caches de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino que se le
+La cach\'e de textura es una cach\'e que presenta no solo localidad espacial, como la mayoria
+de las cach\'es de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino que se le
 puede agregar el concepto de dimensiones, para poder modelar datos en mas de una dimension.
 Esto la convierte en una herramienta clave a la hora de minimizar los accesos a matrices
 no solo por filas sino por columnas. Esta memoria se debe definir en momento de compilacion,
@@ -102,19 +103,19 @@ accesos a memoria globales podria servir, asi que hay que usarla judiciosamente.
 Para soportar una arquitectura masivamente paralela, se debe usar una ISA
 (\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA
 debe poder soportar conceptos fundamentales del computo GPGPU: grandes cantidades de registros,
-operaciones en punto flotante de precision simple y doble y fused multiply-add. Ademas,
+operaciones en punto flotante de precision simple y doble y fused multiply-add. Adem\'as,
 el c\'odigo compilado para GPGPU debe ser agn\'ostico al dispositivo que lo va a correr, por
 lo cual la paralelizaci\'on no debe estar demasiado atada a este, sino que el dispatching
-lo debe poder determinar la placa en tiempo de ejecuci\'on. De este modo, la paralelizaci\'on
+lo debe poder determinar el driver de la placa en tiempo de ejecuci\'on. De este modo, la paralelizaci\'on
 deberia ser la m\'as apropiada en cada dispositivo, sin importar la generaci\'on que sea. Un \'ultimo
-requerimiento clave de esta ISA es que debe poder soportar un m\'inimo de \texttt{tuneo} manual,
+requerimiento clave de esta ISA es que debe poder soportar poder realizar ajustes manuales,
 para poder construir partes claves de ciertas librerias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
 
 \subsection{Requerimientos de un problema para GPGPU}
 En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
 calcular cualquier cosa. Sin embargo, hay altos costos en los que se incurren antes de
-poder ejecutar fragmentos de codigo. Un problema debe exhibir las siguientes caracteristicas
+poder ejecutar c\'odigo. Un problema debe exhibir al menos las siguientes caracteristicas
 para que valga la pena poder pensar en correrlo para GPGPU.
 \begin{enumerate}
   \item \label{req:paralelo} El problema debe tener una gran parte paralelizable.
@@ -127,29 +128,29 @@ Item \ref{req:paralelo} se refiere a que debe existir alguna forma de partir el 
 en subproblemas que puedan realizarse simultaneamente, sin que haya dependencias de
 resultados entre si. Si el problema requere partes seriales, lo ideal es que se las
 pueda concebir las partes paralelas sean etapas de un pipeline de procesos, donde
-cada una de estas exhiba caracteristicas fuertemente paralelas. Como las arquitecturas
+cada una de estas exhiban caracteristicas fuertemente paralelas. Como las arquitecturas
 masivamente paralelas tienen como desventaja una menor eficiencia por core, si el
-problema no se puede dividir para maximizar la ocupancia de todos los cores, no
-va a ser posible superar en eficiencia a los procesadores seriales.
+problema no se puede dividir para maximizar la ocupancion de todos los cores disponibles,
+va a ser muy dificil superar en eficiencia a los procesadores seriales.
 
 Item \ref{req:float} habla de que el m\'etodo de resoluci\'on de los problemas debe
-consistir del uso de metodos numericos. El set de instrucciones de las arquitecturas
+consistir del uso de m\'etodos numericos. El set de instrucciones de las arquitecturas
 de GPGPU estan fuertemente influenciados por las aplicaciones 3D que las impulsaron
-en un principio. Estas consisten mayormente de transformaciones de algebra lineal
+en un principio. Estas consisten mayormente de transformaciones de \'algebra lineal
 para modelar luces, hacer renders o mover puntos de vistas. Todos estos problemas
 son inherentemente de punto flotante, por lo cual el set de instrucciones, las ALUs
-internas y los registros tienen optimizado para este caso de uso. Las operaciones
+internas y los registros estan optimizados para este caso de uso. Las operaciones
 en numeros enteros no son el fuerte de esta arquitectura y suelen ser realizados
-mas eficientemente por procesadores de proposito general.
+m\'as eficientemente por procesadores de proposito general.
 
 Item \ref{req:matrix} menciona que los problemas que mejor se pueden tratar en esta
 arquitectura se pueden representar como operaciones entre arreglos o matrices de
 dos, tres o cuatro dimensiones. Las estructuras de datos que no estan secuenciales
 en memoria pueden incurrir en multiples accesos a esta para recorrerlas, y en las
 arquitecturas GPGPU son estos los que generan el mayor cuello de botella. Ademas,
-son dificiles de paralelizar en multiples subproblemas. Tener como parametros de
+suelen ser dificiles de paralelizar en m\'ultiples subproblemas. Tener como parametros de
 entrada matrices o arreglos que se puedan partir facilmente incurre en minimos
-overheads de computo y permite aprovechar mejor las caches y las herramientas de
+overheads de computo y permite aprovechar mejor las memorias caches y las herramientas de
 prefetching que brinda la arquitectura.
 
 Item \ref{req:transf} ataca uno de los puntos criticos de esta arquitectura. Para poder
@@ -184,8 +185,8 @@ SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a grupos de 32 th
 de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp
 (de acuerdo a la generaci\'on de los chips), el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP,
 escondiendo la latencia de los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
-Estos threads a su vez obtienen sus registros de un register file comun a todos los SP. Un scoreboard
-es mantenido por cada dispatcher de warps para poder determinar cuales estan listos para correr. En Kepler
+Estos threads a su vez obtienen sus registros de un register file com\'un a todos los SP. Un scoreboard
+es mantenido por cada dispatcher de warps para poder determinar que threads estan listos para correr. En Kepler
 este scoreboard es simplificado ya que las latencias de las operaciones matem\'aticas es conocido, por
 lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
 
@@ -214,7 +215,7 @@ fueron enfrentandose a lo largo del tiempo mirando los componentes que fueron ap
 
 (insertar foto de die de nehalem)
 
-Caches - Pipelines - Predictores - M\'as cache - M\'as controladores de memoria - Multiple issues
+Caches - Pipelines - Predictores - M\'as cach\'e - M\'as controladores de memoria - Multiple issues
 
 Lo importante ac\'a es observar el patron: ``no desechar algo que podramos necesitar pronto'',
 ``intentar predecir el futuro de los condicionales'', ``intentar correr multiples instrucciones a la vez
