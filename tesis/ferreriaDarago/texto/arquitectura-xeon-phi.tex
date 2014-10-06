@@ -1,3 +1,14 @@
+
+\subsection{XeonPhi}
+   \subsubsection{Memory bus ring}
+   \subsubsection{Disenio de procesadores}
+   \subsubsection{Conexion Host - Board}
+   \subsubsection{Modos: offloading, nativo, hibrido MPI}
+   \subsubsection{Consumo}
+   \subsubsection{Herramientas de desarrollo y profiling}
+
+
+
 \subsubsection{Hardware}
 
 La arquitectura del Xeon Phi, parte de la linea de Intel Many Core Architecture (MIC), est\'a esquematizada
@@ -30,8 +41,8 @@ cualquier otro con un \textit{overhead} despreciable)~\cite{Fang}.
 
 Por \'ultimo, cada procesador tiene un \textit{in-order pipeline} de corta longitud, diferencia importante con los cores de un procesador
 estandar de la arquitectura x86. El \textit{pipeline} corto implica que las operaciones escalares no tienen latencia y las vectoriales tienen baja latencia,
-y el costo por \textit{branch misprediction} es bajo~\cite{IntelXeonWhitePaper}. Este punto diferencia fuertemente al Xeon Phi de aceleradores de computo como las GPGPU, 
-que tienen alto costo en las bifuraciones de decisiones. Sin embargo, el Xeon Phi no ejecuta instrucciones de manera \textit{out-of-order}, lo cual implica que muchas 
+y el costo por \textit{branch misprediction} es bajo~\cite{IntelXeonWhitePaper}. Este punto diferencia fuertemente al Xeon Phi de aceleradores de computo como las GPGPU,
+que tienen alto costo en las bifuraciones de decisiones. Sin embargo, el Xeon Phi no ejecuta instrucciones de manera \textit{out-of-order}, lo cual implica que muchas
 t\'ecnicas de optimizaci\'on que explotan el paralelismo a nivel instrucci\'on usuales en arquitecturas como x86-64 no son aplicables.
 
 La otra diferencia es nuevas instrucciones de vectorizaci\'on, incompatibles con sets de vectorizaci\'on anteriores de Intel (por ejemplo AVX o SSE 4.1).
