@@ -1,8 +1,8 @@
 Con la aparici\'on de las computadoras en el \'ambito de la ciencias experimentales, han
 ganado tracci\'on los desarrollos en m\'etodos de simulaci\'on como manera de exploraci\'on
 de modelos matem\'aticos. Con el apoyo de estas nuevas t\'ecnicas se hace posible no solo
-complementar la experimentaci\'on sino tambi\'en explorarla teor\'ia de fondo de maneras que
-no son posibles o convenientes mediante enfoques m\'as cl\'asicos. 
+complementar la experimentaci\'on sino tambi\'en explorar la teor\'ia de fondo de maneras que
+no son posibles o convenientes mediante enfoques m\'as cl\'asicos.
 
 Un ejemplo es el estudio, dentro del marco de la qu\'imica, de los comportamientos de las 
 part\'iculas peque\~nas (como por ejemplo los electrones) predichos por la f\'isica. En este \'area las
@@ -37,44 +37,24 @@ a la ecuaci\'on de Sch\"odinger \textit{independiente del tiempo}
 Donde $E$ es la energ\'ia asociada a la funci\'on de onda $\Psi$.
 
 Ahora, si bien resolver esta ecuaci\'on diferencial ser\'ia suficiente para determinar todas las propiedades del sistema, esto no puede hacerse de 
-manera exacta cuando hay m\'as de una part\'icula en el mismo. Por este motivo, para problemas de mayor tama\~no se utilizan aproximaciones de las
-ecuaciones de la mec\'anica cu\'antica.
+manera exacta cuando hay m\'as de una part\'icula en el mismo. Por este motivo, para problemas de mayor tama\~no se utilizan aproximaciones num\'ericas
+para obtener una soluci\'on de~\ref{schro_time_indep}.
 
-Estos m\'etodos son computacionalmente muy caros (del \'orden c\'ubico o mayor) con lo cual son impr\'acticos para n\'umeros de part\'iculas de 
-tama\~no incluso mediano. La alternativa de utilizar aproximaciones basadas en los postulados de la mec\'anica cl\'asica no modela correctamente el
-comportamiento de electrones cuando su distribuci\'on es din\'amica, como ocurre en las reacciones qu\'imicas. Por esto, otro enfoque es necesario 
-para resolver el problema en sistemas cuyo tama\~no hace estos m\'etodos inviables (como lo es por ejemplo un soluto en soluci\'on).
+Existen diversos m\'etodos aproximados para resolver esta ecuaci\'on, los cuales intercambian costo computacional (es decir, cantidad de operaciones a realizar)
+por precisi\'on de la respuesta obtanida. Debido a su buena relaci\'on costo/calidad, para resolver numericamente~\ref{schro_time_indep}, utilizamos el modelo propuesto por la
+DFT (\textit{Density Functional Theory}). 
 
-Uno de esto enfoques, y el utilizado en este trabajo, esta dentro de las t\'ecnicas de simulaci\'on h\'ibrida denominadas QM/MM 
-(\textit{Quantum Mechanical}/\textit{Molecular Mechanical}). Este enfoque consiste en resolver la ecuaci\'on de
-Schr\"odinger en una porci\'on del sistema donde se producen las reacciones que requieren detalle electr\'onico (por ejemplo el soluto), 
-y modelar el resto (el solvente por ejemplo) mediante un campo de fuerzas cl\'asico. De esta manera se obtiene, con un costo moderado, 
-el comportamiento de la parte reactiva del sistema, modulado por el comportamiento del resto del mismo.
-
-La base de este m\'etodo consiste en dividir la energ\'ia del sistema en tres partes:
+La base de este m\'etodo consiste en dos teoremas publicados por Hohenberg y Kohn en 1964~\cite{HohenbergKohn}. El primero introduce de la \textit{densidad electr\'onica} $\rho$, que viene a representar la probabilidad de encontrar un electr\'on en
+el espacio dado un estado de la configuraci\'on del sistema. El resultados te\'oricos que provee el primer teorema es entonces que 
+$\rho$ y $\Psi$ (y por lo tanto $E$) se encuentran relacionadas por la siguiente ecuaci\'on:
 
 \begin{equation}
-    \label{qmmm-eq}
-    E = E_{QM} + E_{QM-MM} + E_{MM} 
-\end{equation}
-
-Donde $E_{QM}$ corresponde a la energ\'ia de del subsistema cu\'antico (modelada mediante los m\'etodos se\~nalados arriba) donde la estructura
-electr\'onica cambia mucho, $E_{MM}$ es la parte modelada mediante mec\'anica cl\'asica (utilizando simulaciones de \textit{n-body} de los campos de
-fuerza cl\'asicos). La principal para esta tesis (debido a su costo computacional) es $E_{QM}$, la cual detallamos a continuaci\'on.
-
-Para resolver las aproximaciones de $E_{QM}$, se utilizar\'a en el este trabajo el modelo propuesto por la
-DFT (\textit{Density Functional Theory}), especialmente en base a dos teoremas publicados por Hohenberg y Kohn en 1964. La base de este m\'etodo consiste en la introducci\'on de la
-\textit{densidad electr\'onica} $\rho$, que viene a representar la probabilidad de encontrar un electr\'on en
-el espacio dado un estado de la configuraci\'on del sistema en el estado de menor energ\'ia del sistema. Uno de los principales resultados te\'oricos que dan base a DFT es que 
-$\rho$ y $\Psi$ (y por lo tanto $E$) se encuentran relacionadas por
-
-\begin{equation}
-    \label{honenberg_kohn}
+    \label{hohenberg_kohn}
     \rho(\vec{r}_i) = \int \Psi^{\dagger}(\vec{r}_1, \dots, \vec{r}_n) \Psi(\vec{r}_1, \dots, \vec{r}_n) d\vec{r}_1 \dots d\vec{r}_n \qquad i \in [1,n]
 \end{equation}
 
-Donde $\Psi^{\dagger}$ es el conjugado de $\Psi$. La energ\'ia entonces es un \textit{funcional} de la densidad, $E[\rho]$. Los detalles de esta relaci\'on se encuentran
-en~\cite{HohenbergKohn}. Uno de los principales resultados de DFT es la siguiente ecuaci\'on para la relaci\'on entre $E$ y $\rho$:
+Donde $\Psi^{\dagger}$ es el conjugado de $\Psi$. La energ\'ia entonces es un \textit{funcional} de la densidad, $E[\rho]$. 
+La siguiente ecuaci\'on rige la relaci\'on entre $E$ y $\rho$:
 
 \begin{equation}
     \label{honenberg_kohn} 
@@ -86,100 +66,56 @@ electr\'ones (la densidad) y los n\'ucleos, el tercer t\'ermino es el resultado 
 energ\'ia de intercambio y correlacci\'on.
 
 Para este trabajo, debido a su costo computacional~\cite{PaperNitscheManu}, nos interesar\'a sobre todo el computo de la energ\'ia de intercambio y correlacci\'on ($E_{xc}$).
-Esta energ\'ia es calculada mediante 
+Esta energ\'ia se define matem\'aticamente mediante
 
 \begin{equation}
     E_{XC} = \int \rho(r) \epsilon_{xc}\left( \rho(r) \right ) dr
 \end{equation}
 
-que es integrada n\'umericamente en una grilla (cuya forma definiremos posteriormente y por ahora ser\'a asumida como dada), mediante la suma
+y es aproximada mediante una integral \'umerica utilizando una grilla de puntos con peso.
 
 \begin{equation}
     \label{approx_excenergy}
     E_{XC} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
 \end{equation}
 
-El t\'ermino $\epsilon_{xc}$ corresponde a un \textit{funcional de intercambio y correlaci\'on} que depende de la densidad local y
-se aproxima (utilizando un concepto denominado \textit{Local density approximation}) a la energ\'ia de intercambio y correlaci\'on de 
-un gas de electrones de la misma densidad:
+Este valor puede aproximarse de diversas maneras, con distintos resultados num\'ericos y costo
+asociado, debido a que para el c\'alculo del t\'ermino $E_{XC}$ se puede considerar el gradiente
+y el hessiano de la energ\'ia de intercambio y correlaci\'on (necesitando entonces calcular
+estos valores para cada punto). 
+
+Otro aspecto importante de esta teor\'ia es que provee una manera de calcular la densidad $\rho$,
+el denominado m\'etodod e Kohn-Sham~\cite{KohnSham}. Este m\'etodo se basa en el segundo teorema
+de Hohenberg y Khon, que establece que la densidad electr\'onica es la funci\'on que
+cumple que $\int rho(r) dr = N$, la cantidad de atomos del sistema, $rho(r) \geq 0$ y que
+minimiza la energ\'ia $E[\rho]$ descripta en la ecuaci\'on~\ref{hohenberg_kohn}. Esto nos da
+un m\'etodo iterativo para, empezando con una aproximaci\'on inicial a la densidad electr\'onica,
+iterar el calculo de la misma (usando una matriz de coeficientes denominada \textit{Matriz de Kohn Sham}), hasta
+alcanzar un m\'inimo para $E$.
+
+Esto resume la resoluci\'on del modelo basado en mec\'anica cu\'antica utilizando DFT. El
+valor de la misma para el estudio de las propiedades de la materia le vali\'o a Kohn el Premio Nobel
+de Qu\'imica en 1998.
+
+Si bien la relaci\'on costo calidad de este m\'etodo es muy buena, ya que la aproximaci\'on escala de manera lineal 
+en cantidad de \'atomos, para sistemas de inter\'es (como por ejemplo soluto en solvente) sigue siendo inviable. Los
+modelos basados en f\'isica cl\'asica pueden aproximar bien el comportamiento cuando no ocurre la creaci\'on y ruptura
+de enlaces covalentes, con lo cual cuando ocurren reacciones qu\'imicas no es posible usarlos ya que no proveen un
+detalle electr\'onico. 
+
+Para resolver esto, en este trabajo se utiliza DFT dentro de un modelo h\'ibrido QM/MM (\textit{Quantum Mechanical / Molecular Mechanical}). 
+En este modelo, se resuelve la ecuaci\'on~\ref{schro_time_indep} en la parte reactiva del sistema (donde la estructura
+electr\'onica cambia), modulando este comportamiento mediante una simulaci\'on basada en din\'amica
+cl\'asica del resto del sistema. Para esto se divide la energ\'ia en tres partes:
 
 \begin{equation}
-    \epsilon_{xc}(\rho(\vec{r})) = -\frac{3}{4} \left (\frac{3 \rho(\vec{r})}{\phi} \right )^{\frac{1}{3}} + \epsilon_{C}(\rho(\vec{r}))
+    E = E_{QM} + E_{QM-MM} + E_{MM}
 \end{equation}
 
-Para el t\'ermino $\epsilon_{C}$ se conocen buenas aproximaciones num\'ericas~\cite{Vosko}.
+Donde la energ\'ia $E_{QM}$ se obtiene mediante el m\'etodo DFT visto m\'as arriba, y la energ\'ia
+$E_{MM}$ proviene de simular el campo de fuerzas cl\'asico de atracci\'on electroest\'atica de
+Coulomb (por ejemplo usando \textit{n-body}).
 
-Tenemos entonces que para calcular~\ref{approx_excenergy} es necesario conocer el valor de la densidad en la grilla.
-El m\'etodo utilizado en este trabajo para realizar este calculo se conoce como m\'etodo de \textit{Kohn-Sham}. En primera instancia
-se relaciona la densidad electr\'onica con los orbitales mediante la ecuaci\'on
-
-\begin{equation}
-    \rho(\vec{r}) = \sum_{i = 1}^{N_{oc}} \mid \phi_i(\vec{r}) \mid ^2
-\end{equation}
-
-con $N_{oc}$ la cantidad de orbitales ocupados por al menos un electr\'on. Los orbitales $\phi$ se construyen expandi\'endolos en una
-base de contracciones $\{ \chi_1, \dots, \chi_n \}$:
-
-\begin{equation}
-    \phi_i(x,y,z) = \sum_{k = 1}^n C_{ik} \chi_k
-\end{equation}
-
-que tienen la forma de funciones gaussianas:
-
-\begin{equation}
-    \chi_k = (x - x_0)^{n_x^k} (y - y_0)^{n_y^k} (z - z_0)^{n_z^k} \sum_j k_j^k e^{-\alpha_j \|(x,y,z) - (x_0,y_0,z_0) \|^2 }
-\end{equation}
-
-Resta entonces definir la grilla de integraci\'on y como se determina la matriz de coeficientes $C$. 
-
-La grilla de integraci\'on consiste de dos partes: los puntos en si y los pesos de integraci\'on asignados a cada punto. Para el 
-desarrollo posterior, los puntos se eligen a partir de capas conc\'entricas centradas en los \'atomos del sistema, de la siguiente
-manera:
-
-\begin{align}
-    \vec{r} & = \vec{s}_j \lambda_i + \vec{a} \\
-    \lambda_i & = r_m \left ( \frac{1 + x_i}{1 - x_i} \right), i \in [1, k] \\
-    x_i & = cos \left ( \frac{\pi i }{k + 1} \right )
-\end{align}
-
-Donde $\vec{s}_j$ es un punto de una grilla base definida por Lebedev en sus estudios de 1975~\cite{Lebedev1} y 1976~\cite{Lebedev2},
-$k$ es la cantidad de capas y $r_m$ es la mitad del \textit{Radio de Slater}. Estos dos \'ultimos par\'ametros dependen del elemento qu\'imico
-estudiado.
-
-Los pesos son elegidos de acuerdo al m\'etodo de Becke~\cite{Becke}, que divide los
-pesos $\omega_i$ en una serie $\omega_g'$d de pesos fijos y una serie $p_k$,
-
-\begin{align}
-    p_k(\vec{r}_{k,g}) & = \frac{w_k(\vec{r}_{k,g})}{\sum_j^K w_j(\vec{r}_{j,g})} \\
-    w_k(\vec{r}_{k,g}) & = \prod_{i \neq k}^K s(\mu_{ki}) \\
-    \mu_{ki} & = \frac{\mid \vec{a}_k - \vec{r}_{k,g} \mid - \mid \vec{a}_i - \vec{r}_{i,g} \mid }{ \mid \vec{a}_k - \vec{a}_i \mid }
-\end{align}
-
-donde $w_k(\vec{r}_k,g)$ corresponde al peso parcial del punto $g$ perteneciente al
-\'atomo $k$ cuya posici\'on es $\vec{a}_k$, y $K$ es la cantidad de \'atomos del
-sistema. $s$ es un polinomio dentro del rango $[0,1]$.
-
-Estos pesos no solo se utilizan para la grilla sino tambi\'en para definir el m\'etodo
-iterativo con el que se calcula la matriz de coeficientes $C$.
-
-Esta matriz se determina indirectamente mediante la matriz de \textit{Kohn-Sham}. La
-relaci\'on entre esta matriz $\Gamma$ y $C$ se determina indirectamente usando $\rho$
-y un conjunto de ecuaciones denominadas \textit{Ecuaciones de Roothaan}:
-
-\begin{align}
-    \label{roothaan}
-    \Gamma_{ij/ i < j} & = \sum_{k,g} \Gamma'_{ij}(k,g) \\
-    \Gamma'_{ij} (k,g) & = \phi_i (\vec{r}_{k,g}) \phi_j (\vec{r}_{k,g}) p_k(\vec{r}_{k,g}) \omega'_g y \\
-    y & = f(\epsilon_{xc}(\rho(\vec{r}_{k,g}))) 
-\end{align}
-
-Inicialmente se toma un valor de $C$ aproximado y luego se repiten varias iteraciones
-del sistema~\ref{roothaan} hasta lograr minimizar la energ\'ia $E[\rho]$ asociada
-a la densidad. Por el \textit{Teorema de Variaci\'on de Hohenberg y Kohn}, cuando
-estas iteraciones convergen se tiene la mejor aproximaci\'on posible para la
-densidad $\rho$ y su energ\'ia $E[\rho]$.
-
-Esto resume el c\'alculo de la energ\'ia $E_{QM}$ de la ecuaci\'on~\ref{qmmm-eq} utilizando DFT.
 La contribuci\'on $E_{QM-MM}$ en este trabajo, se calcula mediante la ecuaci\'on
 
 \begin{equation}
@@ -191,14 +127,7 @@ elect¶\'nica, y el segundo t\'ermino representa la interacci\'on entre los n\'u
 con los cu\'anticos mediante un potencial de Lennard-Jones y la interacci\'on Coulombica entre
 las cargas.
 
-Por \'ultimo, para el t\'ermino $E_{MM}$ se utiliza modelos de soluci\'on basado en
-agua denominados \texttt{TIP4P} y \texttt{TIP4P-FQ}. Estos modelos no ser\'an de inter\'es
-para el desarrollo siguiente de nuestro trabajo, por lo cual referimos al lector a
-referencias como \todo[author=JP]{Referencias a esto}.
-
-La implementaci\'on de los c\'alculos previamente explicados para realizarse de manera
-eficiente, explotando las ventajas de procesadores paralelos y vectoriales modernos, es
-la base de este trabajo. Como base se tom\'o el paquete de computo de estructura electr\'onica
-LIO. Trabajo previo realizado en este \textit{software} puede encontrarse en~\cite{PaperNitscheManu},
-~\cite{TesisNitsche} utilizando trabajos previos de din\'amica molecular en DFT como~\cite{Yasuda}.
-\todo[author=JP]{Agregar mas referencias}.
+El c\'alculo de $E_{QM}$ y $E_{QM-MM}$ son realizados por el paquete de \textit{software} LIO~\cite{PaperNitscheManu}~\cite{TesisNitsche}, el cual fue optimizado para este trabajo para el uso de distintas arquitecturas de CPU y GPGPU. Esta librer\'ia
+se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el calculo
+de $E_{MM}$. Nos concentraremos en las partes m\'as intensivas computacionalmente de LIO, que corresponden a la
+implementaci\'on de los c\'alculos que hemos introducido en esta secci\'on.
