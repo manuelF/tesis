@@ -1,8 +1,8 @@
-paper.pdf: *.tex bibliografia.bib
-	pdflatex paper.tex
-	bibtex paper.aux
-	pdflatex paper.tex
-	pdflatex paper.tex
+tesis.pdf: *.tex bibliografia.bib
+	pdflatex tesis.tex
+	bibtex tesis.aux
+	pdflatex tesis.tex
+	pdflatex tesis.tex
 
 clean:
-	rm -f paper.pdf *.aux *.toc *.log *.out *.idx *.bbl *.bcf *.blg
+	rm -f tesis.pdf *.aux *.toc *.log *.out *.idx *.bbl *.bcf *.blg
