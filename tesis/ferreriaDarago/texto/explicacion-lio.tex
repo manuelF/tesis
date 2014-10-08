@@ -54,25 +54,27 @@ el comportamiento de la parte reactiva del sistema, modulado por el comportamien
 La base de este m\'etodo consiste en dividir la energ\'ia del sistema en tres partes:
 
 \begin{equation}
+    \label{qmmm-eq}
     E = E_{QM} + E_{QM-MM} + E_{MM} 
 \end{equation}
 
-Donde $E_{QM}$ corresponde a la energ\'ia de la parte reactiva del sistema (modelada mediante los m\'etodos se\~nalados arriba) donde la estructura
+Donde $E_{QM}$ corresponde a la energ\'ia de del subsistema cu\'antico (modelada mediante los m\'etodos se\~nalados arriba) donde la estructura
 electr\'onica cambia mucho, $E_{MM}$ es la parte modelada mediante mec\'anica cl\'asica (utilizando simulaciones de \textit{n-body} de los campos de
-fuerza cl\'asicos).
+fuerza cl\'asicos). La principal para esta tesis (debido a su costo computacional) es $E_{QM}$, la cual detallamos a continuaci\'on.
 
-Para resolver esta contribuci\'on $E_{QM-MM}$ se utiliza el m\'etodo
-de DFT (\textit{Density Functional Theory}). La base de este m\'etodo consiste en la introducci\'on de la
+Para resolver las aproximaciones de $E_{QM}$, se utilizar\'a en el este trabajo el modelo propuesto por la
+DFT (\textit{Density Functional Theory}), especialmente en base a dos teoremas publicados por Hohenberg y Kohn en 1964. La base de este m\'etodo consiste en la introducci\'on de la
 \textit{densidad electr\'onica} $\rho$, que viene a representar la probabilidad de encontrar un electr\'on en
-el espacio dado un estado de la configuraci\'on del sistema. $\rho$ y $\Psi$ (y por lo tanto $E$) se encuentran relacionadas por
+el espacio dado un estado de la configuraci\'on del sistema en el estado de menor energ\'ia del sistema. Uno de los principales resultados te\'oricos que dan base a DFT es que 
+$\rho$ y $\Psi$ (y por lo tanto $E$) se encuentran relacionadas por
 
 \begin{equation}
     \label{honenberg_kohn}
     \rho(\vec{r}_i) = \int \Psi^{\dagger}(\vec{r}_1, \dots, \vec{r}_n) \Psi(\vec{r}_1, \dots, \vec{r}_n) d\vec{r}_1 \dots d\vec{r}_n \qquad i \in [1,n]
 \end{equation}
 
-Donde $\Psi^{\dagger}$ es el conjugado de $\Psi$. La energ\'ia entonces es un \textit{funcional} de la densidad, $E[\rho]$. Otros trabajos de DFT dan m\'as
-detalles a esta relaci\'on~\cite{HohenbergKohn}. Uno de los principales resultados de DFT es la siguiente ecuaci\'on para la relaci\'on entre $E$ y $\rho$:
+Donde $\Psi^{\dagger}$ es el conjugado de $\Psi$. La energ\'ia entonces es un \textit{funcional} de la densidad, $E[\rho]$. Los detalles de esta relaci\'on se encuentran
+en~\cite{HohenbergKohn}. Uno de los principales resultados de DFT es la siguiente ecuaci\'on para la relaci\'on entre $E$ y $\rho$:
 
 \begin{equation}
     \label{honenberg_kohn} 
@@ -130,8 +132,8 @@ que tienen la forma de funciones gaussianas:
 
 Resta entonces definir la grilla de integraci\'on y como se determina la matriz de coeficientes $C$. 
 
-La grilla de integraci\'on consiste de dos partes: los puntos en si y los pesos de integraci\'on asignados a cada punto. En este
-\textit{software} los puntos se eligen a partir de capas conc\'entricas centradas en los \'atomos del sistema, de la siguiente
+La grilla de integraci\'on consiste de dos partes: los puntos en si y los pesos de integraci\'on asignados a cada punto. Para el 
+desarrollo posterior, los puntos se eligen a partir de capas conc\'entricas centradas en los \'atomos del sistema, de la siguiente
 manera:
 
 \begin{align}
@@ -177,14 +179,26 @@ a la densidad. Por el \textit{Teorema de Variaci\'on de Hohenberg y Kohn}, cuand
 estas iteraciones convergen se tiene la mejor aproximaci\'on posible para la
 densidad $\rho$ y su energ\'ia $E[\rho]$.
 
-Esto describe a grandes rasgos los c\'alculos realizados por el paquete de DFT
-LIO. Existen varias optimizaciones que no describiremos aqu\'i, por ejemplo el uso de
-puntos de corte (\textit{cutoff}) de funciones de manera que las funciones de la
-base Gaussiana que tienen un valor despreciable en ciertos puntos de la grilla no
-sean calculadas en esos lugares, como esta descripto en~\cite{PaperNitscheManu}.
+Esto resume el c\'alculo de la energ\'ia $E_{QM}$ de la ecuaci\'on~\ref{qmmm-eq} utilizando DFT.
+La contribuci\'on $E_{QM-MM}$ en este trabajo, se calcula mediante la ecuaci\'on
 
-El resto de los computos de \textit{QM/MM} son delegados al paquete de din\'amica
-molecular Amber~\cite{Amber}, con algunos cambios menores. El prop\'osito de LIO es
-entonces permitir una implementaci\'on lo m\'as eficiente posible de los c\'omputos
-m\'as intensivos. Las distintas herramientas para implementar estos c\'omputos y
-su performance relativa es el prop\'osito de este trabajo.
+\begin{equation}
+    E_{QM-MM} = \sum_{l = 1}^{N_c} q_l \int \frac{\rho(r)}{\mid r - R_l \mid} + \sum_{l = 1}^{N_c}\sum_{\alpha = 1}^{N_q} [ v_{LJ} ( \mid R_l - \tau_\alpha \mid ) + \frac{q_l z_\alpha}{\mid R_l - \tau_\alpha \mid} ]
+\end{equation}
+
+Donde el primer t\'ermino relaciona una carga puntual del sistema cl\'asico con la densidad
+elect¶\'nica, y el segundo t\'ermino representa la interacci\'on entre los n\'ucleos cl\'asicos
+con los cu\'anticos mediante un potencial de Lennard-Jones y la interacci\'on Coulombica entre
+las cargas.
+
+Por \'ultimo, para el t\'ermino $E_{MM}$ se utiliza modelos de soluci\'on basado en
+agua denominados \texttt{TIP4P} y \texttt{TIP4P-FQ}. Estos modelos no ser\'an de inter\'es
+para el desarrollo siguiente de nuestro trabajo, por lo cual referimos al lector a
+referencias como \todo[author=JP]{Referencias a esto}.
+
+La implementaci\'on de los c\'alculos previamente explicados para realizarse de manera
+eficiente, explotando las ventajas de procesadores paralelos y vectoriales modernos, es
+la base de este trabajo. Como base se tom\'o el paquete de computo de estructura electr\'onica
+LIO. Trabajo previo realizado en este \textit{software} puede encontrarse en~\cite{PaperNitscheManu},
+~\cite{TesisNitsche} utilizando trabajos previos de din\'amica molecular en DFT como~\cite{Yasuda}.
+\todo[author=JP]{Agregar mas referencias}.
