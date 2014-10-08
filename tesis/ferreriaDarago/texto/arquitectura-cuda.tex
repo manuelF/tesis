@@ -238,8 +238,9 @@ exigirle, ya que no posee un ancho de banda suficiente como para resolver todos 
 accesos a memoria globales podria servir, asi que hay que usarla judiciosamente.
 
 
-\subsection{Niveles de paralelismo}
-El paralelismo en CUDA principalmente se divide en varios niveles:
+\subsection{Esquema de paralelismo}
+Al ser una arquitectura masivamente paralela desde su concepci\'on, CUDA presenta varios niveles de paralelismo, para
+agrupar logicamente el computo y poder dividir fisicamente su distribuci\'on. Los principales son:
 \begin{itemize}
   \item Bloques de threads
   \item Grilla de bloques
@@ -247,25 +248,26 @@ El paralelismo en CUDA principalmente se divide en varios niveles:
   \item Multiples placas
 \end{itemize}
 
-El paralelismo a nivel de bloque instancia una cantidad de threads, subdivididos logicamente en 1D, 2D o 3D.
+El paralelismo a nivel de bloque instancia una cantidad de threads, subdivididos l\'ogicamente en 1D, 2D o 3D.
 Los threads internamente se agrupan de a 32 threads (un \textit{warp}).
 Cada uno de estos threads va a contar su propio threadId y con el mismo blockId, identificandolos univocamente.
-Estos threads van a correr simultaneamente en el mismo SM y van a ser puestos y sacados de ejecuci\'on
-dinamicamente por el scheduler de hardware que cuenta la GPU. Para compartir informaci\'on entre
-ellos, se puede utilizar la memoria shared o las instrucciones de comunicacion de threads intrawarp.
+Estos threads van a correr simultaneamente en el mismo SM y van a ser puestos y sacados de ejecuci\'on de a un warp
+dinamicamente por el scheduler de hardware que cuenta cada SM. Para compartir informaci\'on entre
+ellos, se puede utilizar la memoria shared o las instrucciones de comunicaci\'on de threads intrawarp.
 
 El paralelismo a nivel de grid determina una matriz de bloques de ejecuci\'on que particiona
-el dominio del problema. El GigaThread Scheduler va a poner a ejecutar cada bloque en un SM hasta
-el final de la ejecuci\'on de todos los threads. Los bloques entre si no comparten informaci\'on
+el dominio del problema. El GigaThread Scheduler va a ejecutar cada bloque en un SM hasta
+el final de la ejecuci\'on de todos los threads de este. Los bloques entre si no comparten informaci\'on
 sino a traves de la memoria global. Como no se garantiza ningun orden de ejecucion no se puede
-confiar en sincronizar entre si.
+confiar en sincronizar entre si, ya que si hay m\'as bloques que SM y no hay pre-emption en los SM,
+puede haber deadlock.
 
-El paralelismo de stream es una herramienta empleada para hacer trabajo multithreaded usando una
-sola placa. Esta t\'ecnica permite que multiples threads encolen kerneles o copias de memoria
-independientes, para que el driver pueda schedulearlas simultaneamente si se estan subutilizando
-los recursos. Los streams permiten kernels concurrentes pero cuentan con importantes restricciones
-que generan sincronizaci\'on implicita, lo cual hay que tener presente si se desea mantener el trabajo
-de forma paralela.
+El paralelismo de stream es una herramienta empleada para hacer trabajos concurrentes usando una
+sola placa. Esta t\'ecnica permite que multiples kerneles o copias de memoria independientes esten
+encolados, para que el driver pueda schedulearlas simultaneamente si se estan subutilizando
+los recursos de forma de minimizar tiempo ocioso del dispositivo. Los streams permiten kernels
+concurrentes pero cuentan con importantes restricciones que generan sincronizaci\'on implicita,
+lo cual hay que tener presente si se desea mantener el trabajo de forma paralela.
 
 El paralelismo a nivel de placa consiste en poder distribuir la carga del problema entre distintas
 GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un como si fuera un software
@@ -275,8 +277,8 @@ se pueden comunicar asincronamente entre si, tanto accediendo a las memorias glo
 como ejecutando c\'odigo remotamente. En las versiones modernas del driver de CUDA, tambien pueden
 directamente comunicarse las placas entre si a traves de la red, permitiendo escalar multinodo facilmente.
 
-Un algoritmo en GPGPU debe considerar todos estos niveles de paralelismo para poder maximizar la
-performance empleando todos los recurosos con los que cuentan estos dispositivos.
+Los algoritmos de GPGPU deben considerar todos estos niveles de paralelismo para poder maximizar la
+performance, empleando asi todos los recursos con los que cuentan estas arquitecturas.
 
 \subsection{Diferencias entre Tesla, Fermi, Kepler}
 
@@ -285,30 +287,39 @@ arquitectura dise\~nada por Nvidia que era GPGPU. Fermi es la evoluci\'on de Tes
 construida para desacoplar a\'un mas los conceptos de gr\'aficos de modo de hacerla
 un procesador m\'as escalable y de proposito general.
 
+
+% Please add the following required packages to your document preamble:
 \begin{table}[h]
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    Caracter\'isticas        & Tesla (GT200)   & Fermi (GF100)   & Kepler (GK110)   \\ \midrule
+    A\~no introducci\'on     & 2006            & 2010            & 2012             \\
+    Transistores             & 1400 millones   & 3000 millones   & 3500 millones    \\
+    Tecnologia fabricaci\'on & 65 nm           & 40 nm           & 28 nm            \\
+    SMs                      & 30              & 16              & 15               \\
+    SP / SM                  & 8               & 32              & 192              \\
+    Cach\'e L1               & -               & 16 - 48Kb       & 16 - 32 - 48Kb   \\
+    Cache L2                 & -               & 768Kb           & 1536Kb           \\
+    Mem\'oria Shared/SM      & 16Kb            & 16 - 48Kb       & 16 - 32 - 48Kb   \\
+    Registros/Thread         & 63              & 63              & 255              \\
+    Pico Precision Simple    & 240 MAD / clock & 512 FMA / clock & 2880 FMA / clock \\ \bottomrule
+  \end{tabular}
 \caption{Tabla comparativa de las features mas prominentes de las tres arquitecturas de CUDA}
-\label{tab:CudaGenerations}
-\begin{tabular}{lllll}
-                 & Tesla (GT200) & Fermi (GF100) & Kepler (GK110) &  \\
-A\~no            &               &               &                &  \\
-SMs              &               &               &                &  \\
-Cores/SM         &               &               &                &  \\
-Cache L1         &               &               &                &  \\
-Cache L2         &               &               &                &  \\
-Registros/Thread &               &               &                &  \\
-Tecnologia de fabricaci\'on &    &               &                &  \\
-                 &               &               &                &  \\
-                 &               &               &                &
-\end{tabular}
+\label{tabla:CudaGenerations}
 \end{table}
 
 En la tabla \ref{tab:CudaGenerations} vemos una comparaci\'on de las recursos que estan m\'as directamente
-relacionadas a la performance de un c\'odigo en GPGPU. En esta podemos apreciar como muchos recursos
-aumentaron drasticamente gracias a las tecnologias de fabricaci\'on, que permitieron aumentar la
+relacionadas a la performance de un dispositivo GPGPU. Se puede apreciar como muchos recursos
+crecieron drasticamente gracias a las tecnologias de fabricaci\'on, que permitieron aumentar la
 cantidad de transistores. Tambien podemos comprobar que, a diferencia de los CPU, las arquitecturas GPGPU
 decidieron utilizar esos nuevos transistores disponibles para mas nucleos de procesamiento, en vez
 de dedicarlas a aumentar las memorias cach\'e, que crecieron minimamente.
 
+Una de las diferencias mas notables entre Tesla y Fermi es la presencia de FMA (\textit{Fused Multiply-Add})
+contra el MAD (\textit{Multiply - Add}). El MAD realiza la multiplicaci\'on y la acumulaci\'on
+en dos pasos (pero m\'as rapidos que hacerlos independientemente por tener hardware dedicado en los SP)
+debe redondear entre los pasos, perdiendo precisi\'on y haciendo que respete plenamente el IEEE754-2008. El FMA,
+en cambio, lo hace en una sola operaci\'on, y sin redondeos intermedios.
 
 \subsubsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
 
@@ -318,25 +329,34 @@ debe poder soportar conceptos fundamentales del computo GPGPU: grandes cantidade
 operaciones en punto flotante de precision simple y doble y fused multiply-add. Adem\'as,
 el c\'odigo compilado para GPGPU debe ser agn\'ostico al dispositivo que lo va a correr, por
 lo cual la paralelizaci\'on no debe estar demasiado atada a este, sino que el dispatching
-lo debe poder determinar el driver de la placa en tiempo de ejecuci\'on. De este modo, la paralelizaci\'on
-deberia ser la m\'as apropiada en cada dispositivo, sin importar la generaci\'on que sea. Un \'ultimo
+lo debe poder determinar el driver de la placa en tiempo de ejecuci\'on.  Un \'ultimo
 requerimiento clave de esta ISA es que debe poder soportar poder realizar ajustes manuales,
 para poder construir partes claves de ciertas librerias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
 El lenguaje que desarrollo Nvidia para poder programar estos dispositivos a un nivel m\'as alto
-que el assembler especifico de la placa es CUDA. Este lenguaje es una extension de C++, con ciertas
-features agregadas para poder expresar la subdivision de los kernels en threads y bloques.
-Este c\'odigo se compila usando el \texttt{nvcc}, una variante del \texttt{GNU gcc} que se
+que el assembler especifico del procesador es CUDA. Este lenguaje es una extension de C++, con ciertas
+features agregadas para poder expresar la subdivision de los kernels en threads y bloques, junto
+con poder especificar que variables y funciones van a ejecutarse en el GPGPU y en el CPU. Una caracteristica
+de CUDA es que todas las llamadas a los kernels de ejecuci\'on son asincronicas, por lo que es relativamente
+sencillo solapar c\'odigo en GPU y CPU. A su vez se cuenta con m\'ultiples funciones opcionales, con distinta
+granularidad, que permiten esperar a que todas las llamadas asincronas a GPU finalicen, agregando determinismo
+en forma de barreras al lenguaje.
+
+El c\'odigo CUDA compila usando \texttt{nvcc}, una variante del \texttt{GNU gcc} que se
 encarga de generar el c\'odigo PTX para las funciones marcadas como que se van a ejecutar
-en los dispositivos. Esto despues se linkea normalmente y se genera un binario ejecutable.
+en los GPGPU. Este codigo objeto despues se linkea normalmente con el resto del c\'odigo que corre en CPU
+y se genera un binario ejecutable.
 
 Nvidia, ademas, provee herramientas de profiling para explorar como se estan utilizando los
-recursos durante la ejecuci\'on. Estas son imprescindibles para optimizar, puesto que los limitantes
+recursos durante la ejecuci\'on. Estas son escenciales para optimizar, puesto que los limitantes
 de GPU son sumamente distintos a los de CPU, presentando dificultades incluso para programadores
 experimentados. Las herramientas de profiling no solo muestran runtime, sino que sirven para
 ver donde hay accesos a memoria excesivos, puntos de sincronizaci\'on costosos, limitantes
-en los registros.
+en los registros y como se superponen las llamadas asincronicas.
 
+El uso de todas estas herramientas fue vital para poder entender como funciona la arquitectura por dentro,
+como medir performance y utilizaci\'on y como nuestros cambios impactan en las distintas generaciones
+de dispositivos.
 
 \subsection{Requerimientos de un problema para GPGPU}
 En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
@@ -398,8 +418,10 @@ invertir el tiempo necesario de la implementaci\'ony ajuste fino.
 
 
 \subsection{Diferencia entre CPU y GPU - Procesadores especulativos}
-Viendo la historia de CPU, podemos hacer un recorrido de los problemas que los dise\~nadores de procesadores
-fueron enfrentandose a lo largo del tiempo mirando los componentes que fueron apareciendo.
+Hasta ahora, solo consideramos GPGPU de forma aislada, viendo las prestaciones del hardware y un minimo
+de como se escriben los programas para esta arquitectura. La escencia de GPGPU se puede apreciar mejor
+comparandola contra los motivos de la evoluci\'on de CPU, y los problemas que se fueron enfrentando
+los dise\~nos siguiendo la historia de los componentes que fueron apareciendo en estos.
 
 (insertar foto de die de nehalem)
 
@@ -409,35 +431,39 @@ Lo importante ac\'a es observar el patron: ``no desechar algo que podramos neces
 ``intentar predecir el futuro de los condicionales'', ``intentar correr multiples instrucciones a la vez
 porque puede llegar a bloquear en alguna de ellas.''
 
-Todos estos problemas convierten al CPU en una maquina que gira alrededor de la especulacion,
-de los valores futuros que van a tener las ejecuciones, del probable reuso de datos.
-Podemos observar entonces que las unidades que verdaderamente hacen la ejecuci\'on de las operaciones,
-las ALU, son muy pocas en comparaci\'oncon la cantidad de dispositivos de soporte que estan
-sobre el die del CPU.
+Todos estos problemas convierten al CPU en dispositivo que gira alrededor de la especulaci\'on,
+de los valores futuros que pueden tener las ejecuciones, del probable reuso de datos.
+Podemos observar entonces que las unidades que verdaderamente operaciones aritmeticas,
+las ALU, son muy pocas en comparaci\'on con la cantidad de dispositivos de soporte que estan
+sobre el silicio del CPU.
 
-En contraste, las arquitecturas GPGPU son verdaderas maquinas de computo masivo. Estan dise\~nadas para
-resolver una y otra vez operaciones muy bien definidas (intrucciones de punto flotante en su mayoria).
+En contraste, las arquitecturas GPGPU son verdaderas procesadores de computo masivo. Estan dise\~nadas para
+resolver constantemente operaciones muy bien definidas (intrucciones de punto flotante en su mayoria).
 Comparativamente con un CPU, las ALU de las GPU son bastante pobres y lentas. No funcionan a las mismas
-velocidades de clock y deben estar sincronizadas entre si. Pero la gran ventaja esta en la cantidad.
-Un CPU cuenta con unas pocas ALU por core, dependiendo de su algoritmo de scheduling interno
-(alrededor de 16 cores por die de x86 es el tope de linea ofrecido actualmente). Un GPU cuenta con miles de ALUs en total
-(m\'as de 2500 CUDA Cores en Tesla K20). Un GPU, en cambio, dispone de pocas unidades de soporte del procesamiento.
-No cuenta con pipelines especulativos, el tama\~no de las caches
-estan a ordenes de magnitud de las de CPU, la latencia a las memorias principales de la GPU estan a
-decenas de clocks de distancia, etc. La arquitectura asume que siempre va a tener m\'as trabajo
+velocidades de clock (rara vez superan 1.1Ghz) y sus SP deben estar sincronizados entre si. Pero la gran ventaja esta en la cantidad.
+Un CPU cuenta con pocas ALU por core, dependiendo de la cantidad de cores y del tama\~no de sus operaciones SIMD
+(alrededor de 16 cores por die de x86 es el tope de linea ofrecido actualmente, procesando de a 32 bytes simultaneamente).
+Un GPU cuenta con miles de ALUs en total (m\'as de 2500 CUDA Cores en Tesla K20). El dise\~no de esta
+arquitecturas concibe la escalabilidad cuantitativa de los unidades de computo como la caracteristica escencial a tener,
+tanto por su enf\'asis fundamental, las aplicaciones gr\'aficas, como para su aspecto de coprocesador num\'erico
+de proposito general.
+
+Por contrapartida, los GPU disponen de pocas unidades de soporte del procesamiento. Estos no disponen pipelines
+especulativos, el tama\~no de las caches estan a ordenes de magnitud de las de CPU, la latencia a las memorias
+principales de la GPU estan a centenas de clocks de distancia, etc. La arquitectura asume que siempre va a tener m\'as trabajo
 para hacer, por lo cual en vez de intentar solucionar los pitfalls de un grupo de threads, directamente
 los reschedulea para m\'as adelante y continua procesando otro warp de threads. Se puede notar que durante del
 dise\~no de la arquitectura GPGPU buscaron resolver el problema del computo masivo pensando en hacer
-m\'as cuentas a la vez y recalcular datos viejos de ser necesario. Esto es una marcada diferencia contra
+m\'as cuentas a la vez y recalcular datos, si fuera necesario. Esto es una marcada diferencia contra
 los CPU, que estan pensado en rehacer el menor trabajo posible y intentar mantener todos los datos que pueda en
-las memorias caches gigantescas.
+las memorias caches masivas.
 
-Como los CPU tienen que poder soportar cualquier aplicacion, no pueden avocarse de lleno a una sola
-problematica. El hecho de no tener que dise\~nar un procesador de proposito general permitio un cambio radical
-a la hora de pensar como concebir una arquitectura de gran throughput auxiliar al procesador, no reemplazandolo
-sino mas bien adicionando poder de computo.~\cite{GlaskowskyFermi}
+Nuevamente, aca se ve el legado historico de los CPU. Al tener que poder soportar cualquier aplicacion, no pueden
+avocarse de lleno a una sola problematica. Para las arquitecturas GPGPU, el hecho de no tener que dise\~nar un
+procesador de proposito general retrocompatible permitio un cambio radical a la hora de concebir
+una arquitectura de gran throughput auxiliar al procesador, no reemplazandolo sino mas bien adicionando poder de computo.~\cite{GlaskowskyFermi}
 
-Las arquitecturas Fermi (y agregar AMD) han concebido el dise\~no de un procesador de alto desempe\~no.
+Las arquitecturas Tesla, Fermi y Kepler (y agregar AMD) han concebido el dise\~no de un procesador de alto desempe\~no.
 Su meta principal es poder soportar grandes cantidades de paralelismo, mediante el uso de procesadores
 simetricos, pero tomando la fuerte restricci\'on de ``no siempre tiene que andar bien''. Es decir, ellos
 mismos asumen que el codigo que van a correr esta bien adaptado a la arquitectura y no disponen
