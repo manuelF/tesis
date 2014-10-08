@@ -141,7 +141,7 @@ por thread, dado que hay una cantidad fija de memoria por bloque (entre 32Kb y 6
 Cuando se cuentan con muchos mas threads, se debe reducir este uso por thread de modo que
 todos puedan ejecutar concurrentemente.
 
-Dicho esto, la literatura \cite{NVIDIA_OPTIMIZATIONS} sugiere siempre que sea posible
+Dicho esto, la literatura ~\cite{farberCuda} sugiere siempre que sea posible
 usar bloques grandes y con threads lo m\'as independientes posibles. Una gran cantidad de threads
 en un bloque permite tener muchos mas warps para schedulear de modo de esconder las latencias de
 operaciones y de a accesos globales. Sin embargo, contar con muchos threads hace que las

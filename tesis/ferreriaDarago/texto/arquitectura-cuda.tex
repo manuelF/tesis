@@ -83,7 +83,7 @@ cuando se lo necesita. ~\cite{CudaOverview}
     \centering
     \includegraphics[width=\textwidth]{images/fermi-sm.pdf}
     \caption{Diagrama de bloques del SM de GF100 Fermi. Tomado de~\cite{NvidiaFermi}}
-    \label{fermi_gpu_block}
+    \label{fermi_sm}
 \end{figure}
 
 Los SM son unidades completas de ejecucion. Estos tienen 32 SPs interconectados entre si, que operan sobre
@@ -305,7 +305,7 @@ un procesador m\'as escalable y de proposito general.
     Pico Precision Simple    & 240 MAD / clock & 512 FMA / clock & 2880 FMA / clock \\ \bottomrule
   \end{tabular}
 \caption{Tabla comparativa de las features mas prominentes de las tres arquitecturas de CUDA}
-\label{tabla:CudaGenerations}
+\label{tab:CudaGenerations}
 \end{table}
 
 En la tabla \ref{tab:CudaGenerations} vemos una comparaci\'on de las recursos que estan m\'as directamente
@@ -408,8 +408,8 @@ datos, tambien tienen una gran latencia (orden de milisegundos). Por lo tanto, p
 el tiempo de ejecuci\'on de un programa usando las GPGPU, se debe considerar tambien el
 tiempo de transferencia de datos a la hora de determinar si el beneficio de computar en
 menor tiempo lo justifica. Las nuevas versiones de CUDA buscan brindar nuevas herramientas
-para simplificar este requerimiento, proveyendo espacio de direccionamiento unico \ref{CUDA4} y
-memoria unificada \ref{CUDA6}, pero siguen siendo copias de memoria a traves de los
+para simplificar este requerimiento, proveyendo espacio de direccionamiento \'unico y
+memoria unificada ~\cite{farberCuda}, pero siguen siendo copias de memoria a traves de los
 buses (aunque asincronicas).
 
 Estas caracteristicas limitan enormemente la clase de problemas que una GPGPU puede
