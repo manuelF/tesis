@@ -55,9 +55,12 @@ tiene un bus de baja latencia con conexionado especifico dentro de cada SM.
 \subsubsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
 c\'odigo pero que no puedan hacerlo porque tienen contencion en algunos de sus recursos.
-Este problema es dificil de rastrear, porque hay principalmentre tres recursos que,
-en un principio, parecen ilimitados pero en realidad son finitos y compartidos por
-los procesadores de la GPGPU. Estos son:
+La m\'etrica usada para determinar esta saturaci\'on es la ocupancia de los SP.
+Esta es la proporci\'on de threads activos sobre el total de threads disponibles de un bloque.
+
+Existen en esta arquitectura principalmentre tres recursos que, en un principio, parecen
+ilimitados pero en realidad son finitos y compartidos por los procesadores de la GPGPU.
+Estos son:
 \begin{itemize}
 \item Cantidad total de threads por bloque.
 \item Cantidad total de registros usados por thread.
@@ -65,10 +68,10 @@ los procesadores de la GPGPU. Estos son:
 \end{itemize}
 
 El mecanismo de scheduling de los SM funciona asignando un bloque a cada SM, que
-va a correr hasta que terminen todos sus threads asignados. Idealmente, cada
+va a correr sin preemption hasta que terminen todos sus threads asignados. Idealmente, cada
 bloque cuenta con una cantidad de threads suficiente para poder esconder la latencia
 de las ejecuciones mediante un cambio de contexto. La arquitectura GPGPU esta dise\~nada
-para este fin, por lo cual se cuenta con un cambio de contexto de costo cero para
+para este fin, por lo cual se cuenta con un mecanismo de cambio de contexto de costo cero~\cite{NvidiaFermi} para
 poder empezar a correr los threads de un warp diferente, del mismo bloque.
 Si el bloque no cuenta con suficiente cantidad de threads para poner a correr de manera
 concurrente, el SM va a forzosamente esperar que finalicen las operaciones de alta latencia
@@ -79,13 +82,14 @@ para sincronizar los threads de todo un bloque en un punto espec\'ifico antes de
 
 La arquitectura GPGPU de NVIDIA organiza los registros de todos los threads en un unico
 register file, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
-los computos intermedios, NVIDIA decidio unficarlos, ya que es muy variable la cantidad que va a usar
+los computos intermedios, NVIDIA decidio unificarlos, ya que es muy variable la cantidad que va a usar
 cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
 registros por thread. Mientras que Fermi permitia hasta 63 registros, Kepler permite hasta 255. Esto
-es una ventaja pero aumenta la presion sobre el register file. Cuando se lanzan muchos threads
+es positivo para poder correr bloques de pocos threads pero gran cantidad de registros. Por otro lado,
+aumenta la presion sobre el register file. Cuando se lanzan muchos threads
 que puedan estar corriendo paralelamente entre todos los SM de la GPU, es posible que se supere
 la cantidad m\'axima de registros presentes en el register file. Esto fuerza a que el scheduler
-no pueda poner a ejecutar m\'as bloques que los que pueda soportar este recurso, dejando SM ociosos.
+no pueda poner a ejecutar m\'as bloques que los que pueda soportar este recurso, dejando SP ociosos.
 
 Finalmente, al igual que con los registros, la memoria compartida es un recurso limitado. Como
 solamente se cuenta con hasta 48Kb (Fermi-Kepler) de memoria de este tipo para ser repartida entre
@@ -93,12 +97,12 @@ todos los bloques que esten corriendo en todos los SM, el scheduler debera decid
 m\'as bloques simultanemante que los que pueda soportar la cantidad de memoria compartida.
 
 El problema tratado dentro de esta tesis cont\'o con todos estos limitantes. Afortunadamente,
-las herramientas de profiling usadas remarca estos limitantes constamente, haciendolos
+las herramientas de profiling usadas remarca estos limitantes constamente, haciendolas
 fundamentales a la hora de evaluar como proseguir en la busqueda de optimizaciones de c\'odigo.
 
 \subsection{Cambios en el threading}
 %Cambiamos de blocks por puntos, a blocks por funci\'on.
-Originalmente el c\'odigo generabla un bloque por cada punto en el grupo de puntos
+Originalmente el c\'odigo generaba un bloque por cada punto en el grupo de puntos
 que teniamos que solucionar, con una sola dimension por thread.
 Como este era el kernel que insumia el 94\% del tiempo de todo el proceso, decidimos
 atacarlo de raiz, cambiando la paralelizaci\'on. A pesar de que el profiler de CUDA nos indicaba
@@ -111,7 +115,7 @@ a priori, deberia haber ocasionado que no hubiera mucho mejor forma de realizar 
 
 Sin embargo, con un detalle m\'as fino, es posible notar que este mecanismo hacia que
 muchos threads hicieran cuentas innecesarias, que no contribuian a la reducci\'on total.
-Esto daba una alta occupancy ficticia, que buscamos acercar a la real. Adem\'as, a pesar
+Esto daba una alta ocupancia ficticia, que buscamos acercar a la real. Adem\'as, a pesar
 de que se compartian muy poca informaci\'on por la memoria compartida, tambien habia muchos
 puntos de sincronización a nivel bloque.
 
@@ -264,8 +268,43 @@ consideramos que el aprovechamiento marginal de los recursos no era lo suficient
 de romper compatibilidad con las placas de la generacion Fermi anterior.
 
 
+\subsection{Cambios en el almacenamiento de matrices temporales}
+Una de las principales limitaciones de las GPGPU es la cantidad fija de memoria. Esta no es
+expandible dado que esta soldada a la placa. Esto era aun m\'as notable cuando las placas
+contaban con menos de 1Gb de memoria (A\~nos 2007-2008).
+Para problemas de calculo num\'erico, esto era un limitante muy serio; los problemas que
+normalmente entraban en la memoria principal de un CPU, no entraban completos en las GPU.
+La decisi\'on tomada por muchas aplicaciones de entonces es compensar esto calculando
+datos intermedios y tirandolos al final; teniendo que ser recalculados en las proximas iteraciones.
 
+Esta estrategia es claramente impractica en CPU, puesto que se cuenta con mucha mas memoria
+de uso general. En GPU era necesario por el faltante de memoria, pero no es tan notorio como en CPU,
+puesto que estas cuentas se pueden hacer bastante m\'as rapido en GPU.
 
+Cuando la aplicacion original se concibio, no habia siquiera placas Tesla de GPGPU apuntadas a HPC, con
+m\'as memoria disponible que los modelos de consumidores. Aprovechando estos recursos actuales,
+desarrollamos un m\'etodos para poder almacenar estos resultados temporales, de manera dinamica
+durante la ejecuci\'on de la aplicaci\'on, para poder aprovechar este recurso que originalmente
+era limitante pero ya no.
+
+Para poder determinar que cosas van a ser guardadas en mem\'oria y que no, se determin\'o una heuristica
+que define el orden de las particiones a solucionar. Esta heuristica estima que tama\~no van a
+tener las matrices temporales a almacenar y ordena las particiones de menor a mayor. Esto
+esta basado en el criterio de que, si bien es proporcional el tiempo de computo de estas matrices
+temporales a la cantidad de funciones por grupo y cantidad de puntos (lo que determina el tama\~no
+de la partici\'on), la constante es elevada. Determinamos entonces que es m\'as conveniente
+aprovechar la memoria de la placa que almacena muchas matrices temporales de particiones chicas
+a que almacene solamente un par de las grandes.
+
+Para controlar la administracion de memoria, se realiza la estimaci\'on si la placa cuenta
+con la suficiente memoria libre para guardar los datos a calcular, y si puede, se guardan de manera
+permanente (hasta que la partici\'on se mueva a otro dispositivo o la liberaci\'on de recursos al
+finalizar el programa). Esto ademas es configurable de modo que una corrida pueda usar un porcentaje
+de la memoria con la que cuenta la placa, para poder correr multiples procesos de simulaci\'on concurrentemente.
+
+Esta sencilla mejora permite explotar el hecho de que las placas hayan aumentado dramaticamente su
+capacidad de almacenamiento, un recurso que hasta recientemente venia siendo un limitante podemos
+convertirlo en una aceleraci\'on notoria.
 
 
 \subsection{Cambios en las operaciones matem\'aticas}
@@ -282,16 +321,16 @@ y los vectores estaban configurados para tener 4 valores por cada derivada, prob
 3, para que se ajusten a su consumo real de memoria. Este acercamiento no consider\'o el porque
 se hizo asi de esta manera originalmente. Tener 4 valores consecutivos en memoria fuerza
 al compilador a alinearlos a 16/32 bytes (simple y doble precision).
-Esto presenta grandes ventajas a la hora de hacer transferencias de memoria en los accesos.
+Esto presenta grandes ventajas a la hora de hacer transferencias de memoria global en los accesos.
 
 Sin embargo, este criterio no aplica a las memorias shared de la GPGPU. Como los accesos
 a estas memorias se realizan de a 4 bytes y no de a 16/32, entonces no tiene ninguna ventaja
 en particular realizar el alineamiento. Adicionalmente, como el cuarto valor no tiene forma de marcarse
 como algo mas alla de padding, todavia se opera normalmente con el, por lo que nos ahorramos una
-operacion de calculo. Mas a\'un, se presentan un ahorro del 25\% de los recursos de la memoria compartida
+operaci\'on de c\'alculo. Mas a\'un, se presentan un ahorro del 25\% de los recursos de la memoria compartida
 en contencion, sin ninguna desventaja a la hora de acceder a estos. Principalmente
 esta mejora permite aumentar la cantidad de bloques corriendo concurrentemente en los multiprocesadores,
-sin estas limitados por el uso individual de las memorias compartidas.
+sin estar limitados por el uso individual de las memorias compartidas.
 
 \subsection{Cambios en los condicionales}
 La arquitectura CUDA representa un m\'odelo de computo pensado en el procesamiento secuencial masivo
@@ -378,7 +417,7 @@ de la suma de $P$ y $n$ la cantidad de elementos de $P$. Como nuestra m\'etrica 
 particiones es el runtime de estas expresados con precision de microsegundo, el costo computacional
 de este algoritmo puede ser elevado en sistemas con cientos de particiciones de miles de puntos.
 La principal desventaja de usar unicamente este algoritmo es que no contempla, o no al menos
-en sus versiones m\'as directas, el uso de recursos asimetricos. Es decir, resolver la partici\'on
+en sus versiones m\'as directas, el uso de recursos asim\'etricos. Es decir, resolver la partici\'on
 optima del problema de particiones cuando se sabe que el costo de resolver $P_i$ en el dispositivo
 $A$ es distinto a resolverlo en el dispositivo $B$. Por este motivo, no podemos particionarlo estaticamente
 usando este algoritmo y decidimos usar una soluci\'on h\'ibrida estatica y dinamica, reutilizando
@@ -449,13 +488,14 @@ $penalidad\_migracion$ es un coeficiente que agrega un costo al migrar el grupo 
 a tener que recalcular las matrices que ya se guardaba en memoria. Cuando cambie de placa, va a tener
 que desalojarlas ya que, si bien es posible que entre las placas se accedan mutuamente a memoria global,
 no vale la pena la latencia introducida, que se adicionar\'a a lo largo de todas las iteraciones de la resoluci\'on.
+Este coeficiente es equivalente a definir una penalidad por romper la \textit{afinidad de las caches} en CPU.
 
 Adicionalmente, el algoritmo \ref{ThreadBalancing} agrega dos contadores para este balanceo. El contador de
 $ronda\_threads$ es el que sirve para balancear threads de a pares, necesario si hay mas de dos dispositivos.
 El contador de $ronda\_trabajos$ es el que balancea, para el thread m\'as r\'apido y el m\'as lento, los
 trabajos que van a migrar de un lado al otro. Es necesario agregar este contador por varios motivos. Por
-un lado, si se mueven demasiados trabajos de un momento a otro, tal vez la estimaci\'on final no sea realista, por
-lo que no tiene sentido seguir moviendo sin tener m\'as informaci\'on de otra corrida. Por otro lado, esta
+un lado, si se mueven demasiados trabajos de un momento a otro, tal vez la estimaci\'on final deje de sear realista,
+por lo que no tiene sentido seguir moviendo sin tener m\'as informaci\'on de otra corrida. Por otro lado, esta
 heuristica puede ciclar infinitamente si no se cumple la condicion de que se puedan balancear los tiempos
 con menos de diferencia $k$. En ninguno de nuestros casos de prueba nos hemos topado con que suceda esto, pero
 consideramos que es correcto dejarlo.
