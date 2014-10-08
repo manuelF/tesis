@@ -1,4 +1,4 @@
-\subsection{CUDA}
+\section{CUDA}
 
 \subsubsection{Introduccion}
 
@@ -62,7 +62,7 @@ el programador especializado, pero estas herramientas representan un avance fund
 m\'asivo de t\'ecnicas de paralelizaci\'on autom\'aticas, necesarias hoy dia y potencialmente
 imprescindibles en el futuro.
 
-\subsubsection{Organizacion de procesadores}
+\subsection{Organizacion de procesadores}
 
 Los procesadores GPGPU dise\~nados por NVIDIA han sido reorganizados a lo largo de su
 existencia multiples veces pero mayormente tienen una distribucion similar. Vamos a describir a continuacion
@@ -156,7 +156,7 @@ doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instr
 %que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
 
 
-\subsubsection{Organizacion de la memoria}
+\subsection{Organizacion de la memoria}
 
 %La arquitectura CUDA esta enfocada a procesamiento de grandes cantidades de datos
 %de puntos flotante. El procesador GPGPU cuenta con cientos de ALU sincronizadas
@@ -238,7 +238,7 @@ exigirle, ya que no posee un ancho de banda suficiente como para resolver todos 
 accesos a memoria globales podria servir, asi que hay que usarla judiciosamente.
 
 
-\subsubsection{Esquema de paralelismo}
+\subsection{Esquema de paralelismo}
 El paralelismo en CUDA principalmente se divide en varios niveles:
 \begin{itemize}
   \item Bloques de threads
@@ -278,7 +278,7 @@ directamente comunicarse las placas entre si a traves de la red, permitiendo esc
 Un algoritmo en GPGPU debe considerar todos estos niveles de paralelismo para poder maximizar la
 performance empleando todos los recurosos con los que cuentan estos dispositivos.
 
-\subsubsection{Diferencias entre Tesla, Fermi, Kepler}
+\subsection{Diferencias entre Tesla, Fermi, Kepler}
 
 Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda
 arquitectura dise\~nada por Nvidia que era GPGPU. Fermi es la evoluci\'on de Tesla,
@@ -310,7 +310,7 @@ decidieron utilizar esos nuevos transistores disponibles para mas nucleos de pro
 de dedicarlas a aumentar las memorias cach\'e, que crecieron minimamente.
 
 
-\subsubsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
+\subsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
 
 Para soportar una arquitectura masivamente paralela, se debe usar una ISA
 (\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA, conocida como PTX,
@@ -338,7 +338,7 @@ ver donde hay accesos a memoria excesivos, puntos de sincronizaci\'on costosos, 
 en los registros.
 
 
-\subsubsection{Requerimientos de un problema para GPGPU}
+\subsection{Requerimientos de un problema para GPGPU}
 En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
 calcular cualquier cosa. Sin embargo, hay altos costos en los que se incurren antes de
 poder ejecutar c\'odigo. Un problema debe exhibir al menos las siguientes caracteristicas
@@ -397,7 +397,7 @@ afrontar, y suelen ser una buena heuristica para determinar de antemano si vale 
 invertir el tiempo necesario de la implementaci\'ony ajuste fino.
 
 
-\subsubsection{Diferencia entre CPU y GPU - Procesadores especulativos}
+\subsection{Diferencia entre CPU y GPU - Procesadores especulativos}
 Viendo la historia de CPU, podemos hacer un recorrido de los problemas que los dise\~nadores de procesadores
 fueron enfrentandose a lo largo del tiempo mirando los componentes que fueron apareciendo.
 
@@ -446,7 +446,7 @@ les permitio romper con el modelo de computo de CPU y definir nuevas estrategias
 que no siempre se adaptan bien a todos los problemas, pero para el subconjunto de los desafios que se
 presentan en el area de HPC y de videojuegos han probado ser un cambio paradigm\'atico.
 
-\subsubsection{Idoneidad para el problema}
+\subsection{Idoneidad para el problema}
 El problema de QM/MM enfrentado en este trabajo cuenta con mutiples operaciones matematicas de gran
 volumen de calculos. En particular, las operaciones matriciales son los cuellos de botella en este
 problema.
