@@ -253,8 +253,8 @@ donde se evalua un predicado para todos los threads, y se setea o limpia un bit 
 de respuesta si se cumplio el predicado para ese thread. Con esta herramienta, no es necesario
 acceder a memoria compartida para poder pasar minima informaci\'on dentro de cada warp.
 
-Nuestro uso de las funci\'ones de shuffle consistio en intentar eliminar lo mas que podiamos
-los accesos a la memoria compartida, fuente de bloqueos porque, a pesar de que ya corre
+Nuestro uso de las funci\'ones de shuffle consistio en intentar eliminar lo m\'as que podiamos
+los accesos a la memoria compartida, una fuente de bloqueos porque, a pesar de que ya corre
 todos los bloques concurrentemente, leer elementos de ahi toman 4 ciclos en vez de uno solo
 como en las funci\'ones de shuffle.
 
@@ -330,7 +330,7 @@ como algo mas alla de padding, todavia se opera normalmente con el, por lo que n
 operaci\'on de c\'alculo. Mas a\'un, se presentan un ahorro del 25\% de los recursos de la memoria compartida
 en contencion, sin ninguna desventaja a la hora de acceder a estos. Principalmente
 esta mejora permite aumentar la cantidad de bloques corriendo concurrentemente en los multiprocesadores,
-sin estar limitados por el uso individual de las memorias compartidas.
+sin estas limitados por el uso individual de las memorias compartidas.
 
 \subsection{Cambios en los condicionales}
 La arquitectura CUDA representa un m\'odelo de computo pensado en el procesamiento secuencial masivo
