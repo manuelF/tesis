@@ -1,27 +1,124 @@
 \section{CUDA}
 
-\subsection{Organizacion de procesadores}
+\subsubsection{Introduccion}
 
-El c\'odigo escrito para CUDA se puede compilar a dos targets distintos; uno es
-el codigo binario nativo de la placa target donde se va a correr y el otro es un
-codigo intermedio, llamado c\'odigo PTX, que se JIT compila por el driver CUDA
-antes de enviar a la placa, de modo que sea portable entre placas y arquitecturas
-(retrocompatibles).
+Una de las arquitectura analizadas en este trabajo es la arquitectura GPGPU desarrollada por NVIDIA, conocida
+como CUDA por las siglas en ingles de \textit{Compute Unified Device Architecture}.
+CUDA surge naturalmente de la aplicaci\'on del hardware desarrollado gr\'aficos, pero aplicados al computo cient\'ifico.
 
-Cuando se lanza un kernel de ejecuci\'on, este c\'odigo binario se carga en la DRAM propia
-de la placa. Este codigo va a ser ejecutado por todos los bloques que se hayan definido cuando
-se lanz\'o el kernel. El ``Thread Engine'' del GPGPU se encarga de repartir los bloques a los
-SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a grupos de 32 threads, cada uno
-de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp
-(de acuerdo a la generaci\'on de los chips), el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP,
-escondiendo la latencia de los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
-Estos threads a su vez obtienen sus registros de un register file com\'un a todos los SP. Un scoreboard
-es mantenido por cada dispatcher de warps para poder determinar que threads estan listos para correr. En Kepler
-este scoreboard es simplificado ya que las latencias de las operaciones matem\'aticas es conocido, por
-lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
+Las placas de video aparecen en 1978 con la introducci\'on de Intel del iSBX 275, permitiendo dibujar lineas,
+arcos y bitmaps y comunicada por DMA al procesador principal. En 1985, la Commodore Amiga incluia un coprocesador
+gr\'afico que podria ejecutar instrucciones independientemente del CPU, un paso importante en la separaci\'on
+y especializaci\'on de las tareas. En la decada del 90, m\'ultiples
+avances surgieron en la aceleraci\'on 2D para dibujar las interfaces gr\'aficas de los sistemas operativos,
+y para mediados de la d\'ecada, muchos fabricantes estaban incursionando en las aceleradoras 3D como
+add-ons a las placas gr\'aficas tradicionales 2D. A principios de la d\'ecada del 2000, se agregaron los
+\textit{shaders} a las placas, peque\~nos programas independientes que corrian nativo en el GPU,
+y se podian encadenar entre si, uno por pixel en la pantalla.~\cite{CG} Este paralelismo es el desarrollo fundamental
+que llevaba a las GPU a poder procesar operaciones gr\'aficas ordenes de magnitud m\'as rapidas que el CPU.
 
-Todos los SP de un GPGPU son sim\'etricos y cuentan todos con las mismas unidades de FP y de Enteros,
-y entre varios cores comparten una o dos unidades de precisi\'on doble y una unidad de funciones especiales.
+En el 2006, NVIDIA introduce la arquitectura G80,
+que es la primera placa de video que deja de resolver \'unicamente problemas especializados a gr\'aficos
+para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los
+tipos de operaciones que realiza (geometria, vertex y pixel shaders) ~\cite{cudaHandbook}. Como subproducto de esto,
+el GPU deja de tener pipelines especializados y pasa a tener procesadores sim\'etricos m\'as sencillos y m\'as
+faciles de construir. Esta arquitectura es la que se ha mantenido y mejorado en el tiempo, permitiendo
+a las GPU escalar masivamente en procesadores simples, de un bajo clock de una disipaci\'on t\'ermica
+manejable.
+
+Los puntos fuertes de las GPGPU modernas consisten en poder atacar los problemas de paralelismo
+de manera pseudo-explicita, y con esto poder escalar ``facilmente'' si solamente se corre en una
+placa mas r\'apida. ~\cite{} Te\'cnicamente esta arquitectura cuenta entre cientos y miles de procesadores
+especializados en c\'alculo de punto flotante, procesando cada uno un \textit{thread} distinto pero
+trabajando de manera sincr\'onica agrupados en bloques. Cada procesador a su vez cuenta con entre
+64 a 256 registros ~\cite{NvidiaFermi}~\cite{NvidiaKepler}, como porci\'on de un register file de 64kb.
+Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de
+su dise\~no fundamental para gr\'aficos). Estos no poseen instrucciones SIMD, ya que su dise\~no primario
+esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los
+bloques sincronicos de procesadores. De este modo, las placas modernas como la K40 alcanzan
+poder de computo de 4.3 TFLOPs de precision simple, 1.7 TFLOPs de precision doble y 288GB/sec de
+transferencia, usando 2880 CUDA Cores ~\cite{NvidiaKeplerDatasheet}. Para poner en escala la concentraci\'on
+de poder de calculo, estas prestaciones harian de una computadora usando solo dos de estas placas
+la supercomputadora m\'as potente del mundo en Noviembre 2001 ~\cite{Top500November2001}.
+
+Para poder correr programas explotando la arquitectura CUDA, se deben escribir de manera que
+el problema se particione usando el modelo de grilla de bloques de threads. Esto implica una
+reescritura completa de los c\'odigos actuales en CPU y un cambio de paradigma importante, al
+dejar de tener vectorizaci\'on, paralelizaci\'on automatica y otras t\'ecnicas tradicionales
+de optimizaci\'on en CPU. Sin embargo, este trabajo ha rendido sus frutos en muchos casos:
+en los \'ultimos 6 a\~nos, la literatura de HPC con aplicaciones en GPU ha explotado con
+desarrollos nuevos basados en la aceleraci\'on de algoritmos num\'ericos (su principal uso).
+% ~\cite{meter refs a gpu montecarlos}
+Adem\'as, no todas las aplicaciones deben reescribirse de manera completa. Con la introducci\'on
+de las librerias CuBLAS y CuFFT, se han buscado reemplazar con minimos cambios las historicas
+librerias BLAS y FFTw, piedras fundamentales del computo HPC. ~\cite{cublas} ~\cite{cufft}.
+
+Nuevas soluciones para la portabilidad se siguen desarrollando: las librerias como Thrust ~\cite{thrust},
+OpenMP4.0 ~\cite{OpenMPspec} y OpenACC 2.0 ~\cite{OpenACCSpec} son herramientas que buscan hacer el
+c\'odigo agnostico al acelerador de computo que usen. Estas permiten definir las operaciones de
+manera gen\'erica y dejan el trabajo pesado al compilador para que subdivida el problema de la manera
+que el acelerador (CPU, GPU, MIC) necesite. Obviamente, los ajustes finos siempre quedan pendiente para
+el programador especializado, pero estas herramientas representan un avance fundamental al uso
+m\'asivo de t\'ecnicas de paralelizaci\'on autom\'aticas, necesarias hoy dia y potencialmente
+imprescindibles en el futuro.
+
+\subsubsection{Organizacion de procesadores}
+
+Los procesadores GPGPU dise\~nados por NVIDIA han sido reorganizados a lo largo de su
+existencia multiples veces pero mayormente tienen una distribucion similar. Vamos a describir a continuacion
+la organizaci\'on definida en la arquitectura Fermi y luego analizaremos las diferencias con Kepler.
+
+La arquitectura GPGPU dise\~nada por NVIDIA se centra en el uso de una cantidad escable de procesadores
+multithreaded denominados \textit{Streaming Multiprocessors (SMs)}. Un multiprocesador esta dise\~nado
+para ejecutar cientos de threads concurrentemente, usando sus unidades aritmeticas llamadas \textit{Streaming
+Processors (SPs)}. Para manejar esa cantidad de threads, se concibio una nueva entrada a la taxonomia de Flynn,
+SIMT (Single instruction, Multiple thread). Las instrucciones se encadenan para aprovechar el paralelismo
+a nivel instrucci\'on (ILP) dentro de un mismo threads, y funcionando en conjunto con el paralelismo
+a nivel de thread, usado de manera extensa a traves del multithreading por hardware. Todas las instrucciones
+son ejecutadas en orden y no hay prediccion de saltos ni ejecuci\'on especulativa, todo se ejecuta solamente
+cuando se lo necesita. ~\cite{CudaOverview}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/fermi-sm.pdf}
+    \caption{Diagrama de bloques del SM de GF100 Fermi. Tomado de~\cite{NvidiaFermi}}
+    \label{fermi_gpu_block}
+\end{figure}
+
+Los SM son unidades completas de ejecucion. Estos tienen 32 SPs interconectados entre si, que operan sobre
+un register file com\'un a todos ellos. Los SM cuentan adicionalmente con multiples unidades de Load/Store,
+que permiten realizar accesos a memoria independientes. Existen 4 unidades de SFU (\textit{Special Function
+Unit}) por SM, para realizar rapidamente operaciones matematicas trascendentales (trigonometricas, potencias,
+raices, etc.). Cada SM ejecuta simultaneamente una cantidad fija de threads, llamado \textit{warp}
+con cada thread corriendo en un SP. Las unidades de envios de warps se encargan de mantener registro de que
+threads estan disponibles para correr en un momento dado y permiten realizar cambios de contexto por hardware
+muy eficientemente (alrededor 20-25 $\mu$segundos ~\cite{PattersonFermi}). Con esto, pueden ejecutar
+concurrentemente dos warps distintos para esconder la latencia de las operaciones. En precision doble,
+esto no se puede, asi que hay solamente un warp corriendo a la vez.
+
+Un SM cuenta con una memoria com\'un de 64kb que se puede usar de forma autom\'atica tanto como memoria
+compartida com\'un a todos los threads como cach\'e L1 para todos los accesos a memoria.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/fermi-gpu-block.png}
+    \caption{Diagrama de bloques de GF100 Fermi. Tomado de~\cite{NvidiaFermi}}
+    \label{fermi_gpu_block}
+\end{figure}
+
+
+Por motivos de como funciona un pipeline grafico, los SM se agrupan de 4, en un GPC (\textit{Graphics
+Processing Cluster}). Cada GPC se encarga de ejecutar los distintos pasos del pipeline gr\'afico,
+cargando a los SM con las tareas que tienen que realizar para rasterizar (es decir, convertir los
+gr\'aficos vectorialmente definidos en gr\'aficos renderizados). En aplicaciones de CUDA, estos pasos
+no importan, puesto que se trata cada SM independientemente por software.
+
+Todos los accesos a memoria global (la memoria off-chip del dispositivo) se realizan a traves de la memoria
+L1 de cada SM, y a traves de la L2 del todo el procesador. Esta L2 consiste de 6 bancos de 128Kb, compartidas.
+Estas cach\'e son write-through y se comunican de manera directa tanto con la DRAM propia de la placa como
+con el bus PCI Express por el cual pueden comunicarse dos placas entre si, sin pasar por CPU.
+
 En Fermi no se pueden ejecutar simultaneamente instrucciones de precision doble y simple, y como
 las de doble requerien ambos pipelines, suelen disminuir considerablemente el aprovechamiento
 de los cores. En Kepler, al usar 4 unidades de despacho de warp, puede elegir una mejor
@@ -32,6 +129,25 @@ Como estos procesadores implementan el estandar IEEE754-2008, cuentan con precis
 doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instrucciones FMA
 (Fused multiply-add) que no pierden precisci\'on en etapas intermedias de redondeo.
 
+
+
+%El c\'odigo escrito para CUDA se puede compilar a dos targets distintos; uno es
+%el codigo binario nativo de la placa target donde se va a correr y el otro es un
+%codigo intermedio, llamado c\'odigo PTX, que se JIT compila por el driver CUDA
+%antes de enviar a la placa, de modo que sea portable entre placas y arquitecturas
+%(retrocompatibles).
+
+%Cuando se lanza un kernel de ejecuci\'on, este c\'odigo binario se carga en la DRAM propia
+%de la placa. Este codigo va a ser ejecutado por todos los bloques que se hayan definido cuando
+%se lanz\'o el kernel. El ``Thread Engine'' del GPGPU se encarga de repartir los bloques a los
+%SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a grupos de 32 threads, cada uno
+%de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp
+%(de acuerdo a la generaci\'on de los chips), el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP,
+%escondiendo la latencia de los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
+%Estos threads a su vez obtienen sus registros de un register file com\'un a todos los SP. Un scoreboard
+%es mantenido por cada dispatcher de warps para poder determinar que threads estan listos para correr. En Kepler
+%este scoreboard es simplificado ya que las latencias de las operaciones matem\'aticas es conocido, por
+%lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
 %Como el c\'odigo se ejecuta de manera sincr\'onica entre todos los threads del warp, las instrucciones
 %condicionales proveen un problema para esta arquitectura. Como las distintas ramas del condicional
 %son instrucciones excluyentes, no las deben ejecutar todos los threads simultaneamentes. El procesador
@@ -40,53 +156,53 @@ doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instr
 %que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
 
 
-\subsection{Niveles de memoria}
+\subsubsection{Organizacion de la memoria}
 
-La arquitectura CUDA esta enfocada a procesamiento de grandes cantidades de datos
-de puntos flotante. El procesador GPGPU cuenta con cientos de ALU sincronizadas
-por bloques, permitiendo un paralelismo adaptativo a distintos problemas.
+%La arquitectura CUDA esta enfocada a procesamiento de grandes cantidades de datos
+%de puntos flotante. El procesador GPGPU cuenta con cientos de ALU sincronizadas
+%por bloques, permitiendo un paralelismo adaptativo a distintos problemas.
+%
+%El procesamiento GPGPU es similar al procesamiento vectorial
+%realizado por las supercomputadoras Cray y IBM que surgio en los 1960's, pero
+%en vez de usar VLIW para procesamiento masivo, CUDA usa multiples hilos de ejecuci\'on
+%que trabajan simultaneamente sobre los datos.
+%El procesamiento consiste en un funcionamiento hibrido entre compilador y procesador. Se determina
+%un conjunto de elementos a procesar y se elije de manera explicita una manera de particionar el
+%problema a la hora de ser enviado para procesado a la placa.
+%
+%Para realizar el computo, esta arquitectura cuenta a su vez con multiples clases de memorias
+%que se adaptan de maneras diferentes a los distintos procesos. Estas incluyen:
+La memoria de la GPGPU es uno de los puntos cruciales de esta arquitectura. Esta se subdivide
+entre memorias on-chip y memorias off-chip, de acuerdo a su locacion y tiempos de acceso.
 
-El procesamiento GPGPU es similar al procesamiento vectorial
-realizado por las supercomputadoras Cray y IBM que surgio en los 1960's, pero
-en vez de usar VLIW para procesamiento masivo, CUDA usa multiples hilos de ejecuci\'on
-que trabajan simultaneamente sobre los datos.
-El procesamiento consiste en un funcionamiento hibrido entre compilador y procesador. Se determina
-un conjunto de elementos a procesar y se elije de manera explicita una manera de particionar el
-problema a la hora de ser enviado para procesado a la placa.
-
-
-Para realizar el computo, esta arquitectura cuenta a su vez con multiples clases de memorias
-que se adaptan de maneras diferentes a los distintos procesos. Estas incluyen:
+Las memorias se subdividen en 4 categorias distintas:
 
 \begin{itemize}
-  \item Memoria global
   \item Registros
+  \item Memoria global
   \item Memoria local
   \item Memoria compartida
 \end{itemize}
 
-La memoria global es la memoria principal fuera del chip del GPGPU. Esta es de gran tama\~no
-y es compartida por todos los procesadores de la GPGPU y los CPU que integran el
-sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones del driver CUDA
-para poder transferir datos entre la placa y la memoria RAM. Esta memoria es extremadamente
-lenta en comparaci\'on con el procesador, por lo cual se debe siempre intentar recurrir
-a las demas memoria que componen la jerarquia del GPGPU antes que acceder seguido a la memoria
-global.
-
-Los registros son la unidad basica de almacenamiento de los kernels de ejecuci\'on.
+Los registros son la unidad basica de almacenamiento de los threads de ejecuci\'on.
 Cada thread de ejecuci\'on cuenta con una cantidad limitada de registros de punto flotante de
 32 bits con latencia de un par de ciclos de clock. A su vez, existen una cantidad finita de
 registros totales que cuenta un chip (oscilan entre 16.535 y 65.535 registros).
 
-La memoria compartida, o \textit{shared} es una memoria que es visible para todos los threads dentro
-de un bloque, pero es independiente entre bloques. Cada thread puede escribir en cualquier
-parte de la memoria compartida de su bloque y puede ser leido por cualquier otro thread
-de su bloque. Es una memoria muy r\'apida, que tarda una peque\~na cantidad de ciclos
-de acceso de lectura. Esta memoria es compartida con la cach\'e nivel 1. Es limitada en
-tama\~no y cuenta con una capacidad de entre 32Kb y 64kb que debe ser compartida por todos los bloques.
+La memoria global es la memoria principal fuera del chip del GPGPU. Esta es de gran tama\~no (de
+entre 2Gb y 12Gb) y es compartida por todos los SM de la GPGPU y los CPU que integran el
+sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones del driver CUDA
+para poder transferir datos entre la placa y la memoria RAM. La latencia de acceso a la memoria global
+es de cientos de ciclos, sumamente lenta en comparaci\'on con el procesador.
 
-La memoria local es una memoria propia de cada thread, que se encuentra localizada dentro de la
-memoria global. Esta memoria es usada automaticamente por el compilador y sirve como area de spilling
+La memoria compartida, o \texttt{shared} es una memoria que es visible para todos los threads dentro
+de un mismo SM .Cada thread puede escribir en cualquier parte de la memoria compartida de su bloque y
+puede ser leido por cualquier otro thread de su bloque. Es una memoria muy r\'apida, on-chip, y
+que tarda una peque\~na cantidad de ciclos de acceso. Esta memoria es compartida con la cach\'e
+nivel 1, de capacidad de entre 16Kb y 64kb configurable por software.
+
+La memoria local es una memoria local a cada thread, que se encuentra almacenada dentro de la
+memoria global. Esta memoria es definida automaticamente por el compilador y sirve como area de spilling
 de registros cuando se acaban. Cuenta con las mismas desventajas que la memoria global, incluyendo
 su tiempo de acceso.
 
@@ -108,21 +224,96 @@ permitiendo a los bloques tener mayores espacios de memorias compartidas o mayor
 La cach\'e L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en NVIDIA, todos
 los accesos de lectura y escritura a memoria global y textura pasan a traves de esta. ~\cite{NvidiaFermi}
 
-La cach\'e de textura es una cach\'e que presenta no solo localidad espacial, como la mayoria
-de las cach\'es de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino que se le
+La cach\'e de textura es una cach\'e sobre la memoria global que presenta no solo localidad espacial,
+como la mayoria de las cach\'es de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino que se le
 puede agregar el concepto de dimensiones, para poder modelar datos en mas de una dimension.
-Esto la convierte en una herramienta clave a la hora de minimizar los accesos a matrices
-no solo por filas sino por columnas. Esta memoria se debe definir en momento de compilacion,
-en el codigo y no es automatica, porque esta cach\'e tiene limites espaciales (necesarios
-para poder definir areas de memoria sobre la cual operar) y a su vez se debe acceder
-a los dayos subyacentes a traves de funciones especificas. Una caracteristica adicional
-de esta cach\'e es que como necesita resolver estos accesos extra\~nos a la memoria, cuenta
-con una unidad propia de resoluci\'on. Esta unidad tiene limitantes a cuanto podemos
+Esto se adapta de muy bien a los problemas de gr\'aficos en el 2D y 3D, por lo tanto se convierte
+en una herramienta clave a la hora de minimizar los accesos a matrices
+no solo por filas sino por columnas. Esta cach\'e se debe definir en momento de compilaci\'on en
+en el c\'odigo, ya que tiene limites espaciales (necesarios para poder definir areas de memoria
+sobre la cual operar) y a su vez se debe acceder a los datos subyacentes a traves de funciones especificas. Una caracteristica adicional
+de esta cach\'e es que como necesita resolver estos accesos no convencionales a la memoria, cuenta
+con una unidad propia de resoluci\'on de direcciones. Esta unidad tiene limitantes a cuanto podemos
 exigirle, ya que no posee un ancho de banda suficiente como para resolver todos los
 accesos a memoria globales podria servir, asi que hay que usarla judiciosamente.
 
+
+\subsection{Niveles de paralelismo}
+El paralelismo en CUDA principalmente se divide en varios niveles:
+\begin{itemize}
+  \item Bloques de threads
+  \item Grilla de bloques
+  \item Streams
+  \item Multiples placas
+\end{itemize}
+
+El paralelismo a nivel de bloque instancia una cantidad de threads, subdivididos logicamente en 1D, 2D o 3D.
+Los threads internamente se agrupan de a 32 threads (un \textit{warp}).
+Cada uno de estos threads va a contar su propio threadId y con el mismo blockId, identificandolos univocamente.
+Estos threads van a correr simultaneamente en el mismo SM y van a ser puestos y sacados de ejecuci\'on
+dinamicamente por el scheduler de hardware que cuenta la GPU. Para compartir informaci\'on entre
+ellos, se puede utilizar la memoria shared o las instrucciones de comunicacion de threads intrawarp.
+
+El paralelismo a nivel de grid determina una matriz de bloques de ejecuci\'on que particiona
+el dominio del problema. El GigaThread Scheduler va a poner a ejecutar cada bloque en un SM hasta
+el final de la ejecuci\'on de todos los threads. Los bloques entre si no comparten informaci\'on
+sino a traves de la memoria global. Como no se garantiza ningun orden de ejecucion no se puede
+confiar en sincronizar entre si.
+
+El paralelismo de stream es una herramienta empleada para hacer trabajo multithreaded usando una
+sola placa. Esta t\'ecnica permite que multiples threads encolen kerneles o copias de memoria
+independientes, para que el driver pueda schedulearlas simultaneamente si se estan subutilizando
+los recursos. Los streams permiten kernels concurrentes pero cuentan con importantes restricciones
+que generan sincronizaci\'on implicita, lo cual hay que tener presente si se desea mantener el trabajo
+de forma paralela.
+
+El paralelismo a nivel de placa consiste en poder distribuir la carga del problema entre distintas
+GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un como si fuera un software
+multithreaded tradicional. CUDA no cuenta con un modelo implicito de paralelismo entre distintas placas,
+pero es posible hacerlo manualmente eligiendo de manera explicita que dispositivo usar. Las placas
+se pueden comunicar asincronamente entre si, tanto accediendo a las memorias globales de cada una
+como ejecutando c\'odigo remotamente. En las versiones modernas del driver de CUDA, tambien pueden
+directamente comunicarse las placas entre si a traves de la red, permitiendo escalar multinodo facilmente.
+
+Un algoritmo en GPGPU debe considerar todos estos niveles de paralelismo para poder maximizar la
+performance empleando todos los recurosos con los que cuentan estos dispositivos.
+
+\subsection{Diferencias entre Tesla, Fermi, Kepler}
+
+Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda
+arquitectura dise\~nada por Nvidia que era GPGPU. Fermi es la evoluci\'on de Tesla,
+construida para desacoplar a\'un mas los conceptos de gr\'aficos de modo de hacerla
+un procesador m\'as escalable y de proposito general.
+
+\begin{table}[h]
+\caption{Tabla comparativa de las features mas prominentes de las tres arquitecturas de CUDA}
+\label{tab:CudaGenerations}
+\begin{tabular}{lllll}
+                 & Tesla (GT200) & Fermi (GF100) & Kepler (GK110) &  \\
+A\~no            &               &               &                &  \\
+SMs              &               &               &                &  \\
+Cores/SM         &               &               &                &  \\
+Cache L1         &               &               &                &  \\
+Cache L2         &               &               &                &  \\
+Registros/Thread &               &               &                &  \\
+Tecnologia de fabricaci\'on &    &               &                &  \\
+                 &               &               &                &  \\
+                 &               &               &                &
+\end{tabular}
+\end{table}
+
+En la tabla \ref{tab:CudaGenerations} vemos una comparaci\'on de las recursos que estan m\'as directamente
+relacionadas a la performance de un c\'odigo en GPGPU. En esta podemos apreciar como muchos recursos
+aumentaron drasticamente gracias a las tecnologias de fabricaci\'on, que permitieron aumentar la
+cantidad de transistores. Tambien podemos comprobar que, a diferencia de los CPU, las arquitecturas GPGPU
+decidieron utilizar esos nuevos transistores disponibles para mas nucleos de procesamiento, en vez
+de dedicarlas a aumentar las memorias cach\'e, que crecieron minimamente.
+
+
+\subsubsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
+
 Para soportar una arquitectura masivamente paralela, se debe usar una ISA
-(\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA
+(\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA, conocida como PTX,
 debe poder soportar conceptos fundamentales del computo GPGPU: grandes cantidades de registros,
 operaciones en punto flotante de precision simple y doble y fused multiply-add. Adem\'as,
 el c\'odigo compilado para GPGPU debe ser agn\'ostico al dispositivo que lo va a correr, por
@@ -132,33 +323,20 @@ deberia ser la m\'as apropiada en cada dispositivo, sin importar la generaci\'on
 requerimiento clave de esta ISA es que debe poder soportar poder realizar ajustes manuales,
 para poder construir partes claves de ciertas librerias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
+El lenguaje que desarrollo Nvidia para poder programar estos dispositivos a un nivel m\'as alto
+que el assembler especifico de la placa es CUDA. Este lenguaje es una extension de C++, con ciertas
+features agregadas para poder expresar la subdivision de los kernels en threads y bloques.
+Este c\'odigo se compila usando el \texttt{nvcc}, una variante del \texttt{GNU gcc} que se
+encarga de generar el c\'odigo PTX para las funciones marcadas como que se van a ejecutar
+en los dispositivos. Esto despues se linkea normalmente y se genera un binario ejecutable.
 
-\subsection{Niveles de paralelismo}
-El paralelismo en CUDA principalmente se divide en varios niveles:
-\begin{itemize}
-  \item Block Level
-  \item Grid Level
-  \item Board level
-\end{itemize}
+Nvidia, ademas, provee herramientas de profiling para explorar como se estan utilizando los
+recursos durante la ejecuci\'on. Estas son imprescindibles para optimizar, puesto que los limitantes
+de GPU son sumamente distintos a los de CPU, presentando dificultades incluso para programadores
+experimentados. Las herramientas de profiling no solo muestran runtime, sino que sirven para
+ver donde hay accesos a memoria excesivos, puntos de sincronizaci\'on costosos, limitantes
+en los registros.
 
-El paralelismo a nivel de block agrupa de a bloques 32 threads (llamados \texttt{warp} en CUDA).
-Cada uno de estos threads va a contar con el mismo blockId y su propio threadId, identificandolos univocamente.
-Estos threads van a correr simultaneamente en el mismo SM (\texttt{Streaming Multiprocessor}) y
-van a ser puestos y sacados de ejecuci\'on dinamicamente por el scheduler de hardware que cuenta la GPU.
-
-El paralelismo a nivel de grid determina un arreglo de bloques de ejecuci\'on que particiona
-el dominio del problema. El block scheduler va a ejecutar los distintos bloques a ejecutar hasta
-el final de la ejecuci\'on de todos los threads. Cuando este bloque termine, y si se cuentan con
-los recursos apropiados, se pondr\'a a correr el siguiente bloque disponible.
-
-El paralelismo a nivel de placa consiste en poder distribuir la carga del problema entre distintas
-GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un como si fuera un software
-multithreaded tradicional. CUDA no cuenta con un modelo implicito de paralelismo entre distintas placas,
-pero es posible hacerlo manualmente eligiendo de manera explicita que dispositivo usar.
-
-\subsection{Diferencias entre Tesla, Fermi, Kepler}
-
-\subsection{Herramientas de desarrollo, profiling, exploracion}
 
 \subsection{Requerimientos de un problema para GPGPU}
 En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
