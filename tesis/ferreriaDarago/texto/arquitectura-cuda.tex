@@ -1,6 +1,6 @@
 \section{CUDA}
 
-\subsubsection{Introduccion}
+\subsection{Introduccion}
 
 Una de las arquitectura analizadas en este trabajo es la arquitectura GPGPU desarrollada por NVIDIA, conocida
 como CUDA por las siglas en ingles de \textit{Compute Unified Device Architecture}.
@@ -62,7 +62,7 @@ el programador especializado, pero estas herramientas representan un avance fund
 m\'asivo de t\'ecnicas de paralelizaci\'on autom\'aticas, necesarias hoy dia y potencialmente
 imprescindibles en el futuro.
 
-\subsubsection{Organizacion de procesadores}
+\subsection{Organizacion de procesadores}
 
 Los procesadores GPGPU dise\~nados por NVIDIA han sido reorganizados a lo largo de su
 existencia multiples veces pero mayormente tienen una distribucion similar. Vamos a describir a continuacion
@@ -156,7 +156,7 @@ doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instr
 %que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
 
 
-\subsubsection{Organizacion de la memoria}
+\subsection{Organizacion de la memoria}
 
 %La arquitectura CUDA esta enfocada a procesamiento de grandes cantidades de datos
 %de puntos flotante. El procesador GPGPU cuenta con cientos de ALU sincronizadas
@@ -321,7 +321,7 @@ en dos pasos (pero m\'as rapidos que hacerlos independientemente por tener hardw
 debe redondear entre los pasos, perdiendo precisi\'on y haciendo que respete plenamente el IEEE754-2008. El FMA,
 en cambio, lo hace en una sola operaci\'on, y sin redondeos intermedios.
 
-\subsubsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
+\subsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
 
 Para soportar una arquitectura masivamente paralela, se debe usar una ISA
 (\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA, conocida como PTX,
