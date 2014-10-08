@@ -218,6 +218,44 @@ Estas caracteristicas limitan enormemente la clase de problemas que una GPGPU pu
 afrontar, y suelen ser una buena heuristica para determinar de antemano si vale la pena
 invertir el tiempo necesario de la implementaci\'ony ajuste fino.
 
+\subsection{Funcionamiento de un GPGPU}
+
+El c\'odigo escrito para CUDA se puede compilar a dos targets distintos; uno es
+el codigo binario nativo de la placa target donde se va a correr y el otro es un
+codigo intermedio, llamado c\'odigo PTX, que se JIT compila por el driver CUDA
+antes de enviar a la placa, de modo que sea portable entre placas y arquitecturas
+(retrocompatibles).
+
+Cuando se lanza un kernel de ejecuci\'on, este c\'odigo binario se carga en la DRAM propia
+de la placa. Este codigo va a ser ejecutado por todos los bloques que se hayan definido cuando
+se lanz\'o el kernel. El ``Thread Engine'' del GPGPU se encarga de repartir los bloques a los
+SM (Streaming Multiprocessors). Cada SM luego va a ejecutar de a grupos de 32 threads, cada uno
+de ellos corriendo sobre un SP (Streaming Processor). A traves de sus 2 o 4 unidades de dispatch de warp
+(de acuerdo a la generaci\'on de los chips), el SM puede dinamicamente cambiar el warp que se esta ejecutando en sus SP,
+escondiendo la latencia de los stalls de pipelines forzosos para la ejecucion de instrucciones de multiples clocks.
+Estos threads a su vez obtienen sus registros de un register file com\'un a todos los SP. Un scoreboard
+es mantenido por cada dispatcher de warps para poder determinar que threads estan listos para correr. En Kepler
+este scoreboard es simplificado ya que las latencias de las operaciones matem\'aticas es conocido, por
+lo cual se puede reemplazar por contadores m\'as sencillos. ~\cite{NvidiaKepler}
+
+Todos los SP de un GPGPU son sim\'etricos y cuentan todos con las mismas unidades de FP y de Enteros,
+y entre varios cores comparten una o dos unidades de precisi\'on doble y una unidad de funciones especiales.
+En Fermi no se pueden ejecutar simultaneamente instrucciones de precision doble y simple, y como
+las de doble requerien ambos pipelines, suelen disminuir considerablemente el aprovechamiento
+de los cores. En Kepler, al usar 4 unidades de despacho de warp, puede elegir una mejor
+combinaci\'on para poder ejecutar simultaneamente instrucciones que no dependan de las mismas
+unidades funcionales en el pipeline. ~\cite{NvidiaKepler}
+
+Como estos procesadores implementan el estandar IEEE754-2008, cuentan con precision simple y
+doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instrucciones FMA
+(Fused multiply-add) que no pierden precisci\'on en etapas intermedias de redondeo.
+
+%Como el c\'odigo se ejecuta de manera sincr\'onica entre todos los threads del warp, las instrucciones
+%condicionales proveen un problema para esta arquitectura. Como las distintas ramas del condicional
+%son instrucciones excluyentes, no las deben ejecutar todos los threads simultaneamentes. El procesador
+%deshabilitaba los cores que manejaban los threads de las ramas que no se ejecutaban del
+%condicional~\cite{NvidiaTesla}. Para disminuir la cantidad de instrucciones de condicionales
+%que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
 
 \subsubsection{Diferencia entre CPU y GPU - Procesadores especulativos}
 Viendo la historia de CPU, podemos hacer un recorrido de los problemas que los dise\~nadores de procesadores
