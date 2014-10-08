@@ -1,6 +1,6 @@
-\subsection{CUDA}
+\section{CUDA}
 
-\subsubsection{Organizacion de procesadores}
+\subsection{Organizacion de procesadores}
 
 El c\'odigo escrito para CUDA se puede compilar a dos targets distintos; uno es
 el codigo binario nativo de la placa target donde se va a correr y el otro es un
@@ -40,7 +40,7 @@ doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instr
 %que se ejecutan, se cuenta con ~\cite{NvidiaFermi} predicaci\'on en todas las instrucciones de la ISA.
 
 
-\subsubsection{Niveles de memoria}
+\subsection{Niveles de memoria}
 
 La arquitectura CUDA esta enfocada a procesamiento de grandes cantidades de datos
 de puntos flotante. El procesador GPGPU cuenta con cientos de ALU sincronizadas
@@ -133,7 +133,7 @@ requerimiento clave de esta ISA es que debe poder soportar poder realizar ajuste
 para poder construir partes claves de ciertas librerias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
 
-\subsubsection{Niveles de paralelismo}
+\subsection{Niveles de paralelismo}
 El paralelismo en CUDA principalmente se divide en varios niveles:
 \begin{itemize}
   \item Block Level
@@ -156,11 +156,11 @@ GPGPU dispuestas en un mismo sistema compartiendo una memoria RAM com\'un como s
 multithreaded tradicional. CUDA no cuenta con un modelo implicito de paralelismo entre distintas placas,
 pero es posible hacerlo manualmente eligiendo de manera explicita que dispositivo usar.
 
-\subsubsection{Diferencias entre Tesla, Fermi, Kepler}
+\subsection{Diferencias entre Tesla, Fermi, Kepler}
 
-\subsubsection{Herramientas de desarrollo, profiling, exploracion}
+\subsection{Herramientas de desarrollo, profiling, exploracion}
 
-\subsubsection{Requerimientos de un problema para GPGPU}
+\subsection{Requerimientos de un problema para GPGPU}
 En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
 calcular cualquier cosa. Sin embargo, hay altos costos en los que se incurren antes de
 poder ejecutar c\'odigo. Un problema debe exhibir al menos las siguientes caracteristicas
@@ -219,7 +219,7 @@ afrontar, y suelen ser una buena heuristica para determinar de antemano si vale 
 invertir el tiempo necesario de la implementaci\'ony ajuste fino.
 
 
-\subsubsection{Diferencia entre CPU y GPU - Procesadores especulativos}
+\subsection{Diferencia entre CPU y GPU - Procesadores especulativos}
 Viendo la historia de CPU, podemos hacer un recorrido de los problemas que los dise\~nadores de procesadores
 fueron enfrentandose a lo largo del tiempo mirando los componentes que fueron apareciendo.
 
@@ -268,7 +268,7 @@ les permitio romper con el modelo de computo de CPU y definir nuevas estrategias
 que no siempre se adaptan bien a todos los problemas, pero para el subconjunto de los desafios que se
 presentan en el area de HPC y de videojuegos han probado ser un cambio paradigm\'atico.
 
-\subsubsection{Idoneidad para el problema}
+\subsection{Idoneidad para el problema}
 El problema de QM/MM enfrentado en este trabajo cuenta con mutiples operaciones matematicas de gran
 volumen de calculos. En particular, las operaciones matriciales son los cuellos de botella en este
 problema.
