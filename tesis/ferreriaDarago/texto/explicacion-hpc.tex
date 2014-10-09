@@ -16,10 +16,10 @@ mejorar\'ian, y con ellos los tiempos de ejecuci\'on de sus c\'odigos de aplicac
 \textit{hardware free lunch}).
 
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{images/processor-performance.jpg}
-    \caption{Performance de procesador en los \textit{benchmarks} SPEC on respecto a VAX-11/780. Tomado de~\cite{HennessyPatterson}}
-    \label{processor_performance}
+   \centering
+   \includegraphics[width=\textwidth]{images/processor-performance.jpg}
+   \caption{Performance de procesador en los \textit{benchmarks} SPEC on respecto a VAX-11/780. Tomado de~\cite{HennessyPatterson}}
+   \label{processor_performance}
 \end{figure}
 
 Sin embargo, a medida que los transistores han disminuido su tama\~no, han incrementado
@@ -31,8 +31,15 @@ a un 20\%, y consecuentemente se ha modificado el enfoque de dise\~no de procesa
 a hacerse m\'as y m\'as com\'un el uso de multiprocesadores (multiples procesadores
 por chip) para mantener las mejoras de rendimiento.
 
-El impacto en el desarrollo de aplicaciones que necesitan explotar todo el poder
-de computo posible es significativa. En simulaciones para las \'areas de biolog\'ia,
+Esta tendencia puede verse no solo en la continuaci\'on de l\'ineas establecidas
+de procesadores (por ejemplo las lineas Intel i3, i5 e i7 de procesadores para computadoras
+personales), sino en nuevas arquitecturas que apuntan a computo de alta performance: el incremento
+del uso de placas gr\'aficas (GPU) para problemas de computo intensivo, y en desarrollos
+nuevos como la arquitectura MIC (\textit{Many Integrated Core Architecture}) de
+Intel para coprocesadores num\'ericos.
+
+El impacto de este enfoque hacia multiples hilos de ejecuci\'on en paralelo en el
+desarrollo de aplicaciones es significativo. En simulaciones para las \'areas de biolog\'ia,
 medicina, qu\'imica o metereolog\'ia es de invaluable utilidad minimizar los tiempos
 de ejecuci\'on, para permitir mejores implementaciones de los modelos utilizados,
 permitiendo realizar predicciones de mayor calidad. Aprovechar las nuevas
