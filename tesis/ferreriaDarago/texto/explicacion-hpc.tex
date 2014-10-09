@@ -31,7 +31,15 @@ a un 20\%, y consecuentemente se ha modificado el enfoque de dise\~no de procesa
 a hacerse m\'as y m\'as com\'un el uso de multiprocesadores (multiples procesadores
 por chip) para mantener las mejoras de rendimiento.
 
-Esta tendencia puede verse no solo en la continuaci\'on de l\'ineas establecidas
+Adicionalmente, las mejoras de performance debidas al paralelismo 
+a nivel de instrucciones (mediante ejecuci\'on fuera de \'orden, 
+predicci\'on de saltos, ejecuci\'on especulativa, etc.) empezaron a ser 
+progresivamente menores. Esto produjo que se empezara a poner m\'as esfuerzos en
+utilizar tipos de paralelismo como paralelismo a nivel de datos (vectorizaci\'on)
+y paralelismo a nivel de tareas (multiprocesadores)~\cite{HennessyPatterson}.
+
+Esta tendencia hacia la explotaci\'on de paralelismo a nivel de \textit{threads} y datos 
+puede verse no solo en la continuaci\'on de l\'ineas establecidas
 de procesadores (por ejemplo las lineas Intel i3, i5 e i7 de procesadores para computadoras
 personales), sino en nuevas arquitecturas que apuntan a computo de alta performance: el incremento
 del uso de placas gr\'aficas (GPU) para problemas de computo intensivo, y en desarrollos
