@@ -359,10 +359,9 @@ como medir performance y utilizaci\'on y como nuestros cambios impactan en las d
 de dispositivos.
 
 \subsection{Requerimientos de un problema para GPGPU}
-En un principio, al ser GPGPU una arquitectura con completo poder expresivo, se puede
-calcular cualquier cosa. Sin embargo, hay altos costos en los que se incurren antes de
-poder ejecutar c\'odigo. Un problema debe exhibir al menos las siguientes caracteristicas
-para que valga la pena poder pensar en correrlo para GPGPU.
+Dada la organizaci\'on de un procesador GPGPU, es posible ver como esta apuntado a ejecutar
+algoritmos de dominios muy especificos. Un problema debe exhibir al menos las siguientes
+caracteristicas para que valga la pena pensar en correrlo para GPGPU.
 \begin{enumerate}
   \item \label{req:paralelo} El problema debe tener una gran parte paralelizable.
   \item \label{req:float} El problema debe consistir mayormente de operaciones numericas de punto flotante.
