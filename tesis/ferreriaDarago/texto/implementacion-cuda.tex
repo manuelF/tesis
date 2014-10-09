@@ -157,8 +157,46 @@ esto permite, con costo cero, poner a correr el otro para ocultar la latencia si
 demasiado el costo de la sincronizacion.
 
 
-\subsection{Cambios en las memorias compartidas}
-Accesos por bloque
+\subsection{Cambios en la reducci\'on}
+%Hubo que agregar reducci\'on de suma a nivel punto porque ya no se comparten mas la info
+La reorganizacion de la paralelizacion del kernel del calculo de la densidad creo la necesidad
+de varios pasos de reducci\'on que antes se hacian solos.
+
+El primer paso, al ya no haber un bloque por punto, habra que totalizar el c\'alculo de la
+suma de todos los elementos de la columna que acabamos de procesar para obtenerlo. Para reducir,
+vamos a reutilizar la memoria shared que empleamos en el c\'alculo de la energia anterior. Cada
+thread va a poner el valor final del computo realizado en su posicion correspondiente en el
+la memoria compartida. Esto luego se ejecuta como una reducci\'on en \'arbol, donde cada
+thread suma el valor de la posici\'on $x$ con el valor en $2*x$, si fuera este valido. Esto
+luego se repite por la mitad de los threads, hasta que solo el thread 0 lo ejecuta,
+generando exactamente un valor por bloque, que lo va a terminar escribiendo en la memoria
+global.
+
+Esta t\'ecnica de reducci\'on es sumamente conocida para arquitecturas distribuidas, generando
+la respuesta en $O(log_2(n))$ pasos. La literatura de CUDA~\cite{cudaReductions} sugiere tecnicas adicionales para
+minimizar a\'un mas el tiempo empleado en esta reducci\'on, pero considerando que hay, a lo sumo
+6 operaciones, no hay necesidad de mejorar esto mas.
+
+Como va a haber $altura\_{bloque}$ cantidad de escrituras para cada punto, va a entonces
+hacer falta guardar estas cuentas parciales en memoria global. Para eso definimos una matriz
+por cada uno de los parametros que debemos acumular, con tama\~no identico a la cantidad de bloques
+del kernel \texttt{compute\_energy}, para que cada uno de estos escriba unicamente en una posici\'on
+univocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura_{bloque})$,
+menos de 1Mb en el caso m\'as grande.
+
+El siguiente paso de la reducci\'on consiste en acumular los $altura\_{bloque}$ valores descriptos
+recien en un solo por punto. Esto implica encontrar donde estan en las matrices temporales las
+partes de las cuentas, agregarlas y calcular el potencial correcto. Esto genera finalmente los
+coeficientes para calcular la actualizaci\'on de la matriz de Kohn-Sham y los factores para el
+c\'alculo de la matriz de fuerzas.
+
+Esto se refleja en el c\'odigo como una llamada a un nuevo kernel adicional, posterior a la
+cuenta de la densidad y con m\'ultiples matrices temporales adicionales. Este kernel es sumamente
+eficiente porque ya todo el trabajo pesado lo hizo el anterior. Solo se tiene que realizar
+a lo sumo $altura\_{bloque}$ sumas y una llamada a la funci\'on que calcula el potencial y densidad,
+un kernel corto de alta intensidad aritm\'etica que realiza solamente operaciones matem\'aticas.
+Finalmente, la acumulaci\'on finaliza, generando un valor por cada punto, lo mismo que se producia
+anteriormente pero utilizando mucho mejor los recursos del dispositivo.
 
 \subsection{Cambios en los accesos globales}
 La arquitectura de las placas de video estan pensadas entorno al poder de computo.
@@ -207,38 +245,6 @@ uno de los motivos por los cuales el procesador stallea los bloques hasta poder
 ejecutarlos, cuando se liberan un poco mas los recursos.
 
 %http://www.realworldtech.com/gt200/10/   << detalles sobre texture cache invalidation
-
-\subsection{Cambios en la reducci\'on}
-%Hubo que agregar reducci\'on de suma a nivel punto porque ya no se comparten mas la info
-
-La unidad de GPGPU presenta grandes ventajas a la hora del computo masivamente distribuido.
-Si logramos dividir el problema en pequeños kernels de ejecucion, podemos garantizar que
-todos los multiprocesadores van a poder ejecutar constantemente grupos de threads, teniendo
-siempre nuevos grupos listos para poder ponerlos a correr para poder esconder la latencia de uso.
-
-El problema que se presenta al dividir tanto el computo, es que en algun momento se deberia juntar
-todos los bloques independientes de ejecucion. Este proceso se conoce como reducci\'on, es decir,
-aplicar una operacion a un vector de elementos tal que se obtenga un \'unico valor finalmente
-como resultado de la cuenta.
-
-En nuestro caso, al haber cambiado la paralelizacion de un bloque por punto, a un bloque
-de funci\'ones, aparece una reducci\'on que antes no necesitabamos realizar. La reducci\'on que
-requerida es una suma de todos los elementos de toda la columna que acabamos de procesar.
-Como cada instancia del kernel pertenece a una columna de la matriz, y toda una columna se
-procesa por un bloque, \textcolor{blue}{---REVISAR---}, entonces se puede compartir los datos
-a nivel de bloque. Es decir, podemos hacer la reducci\'on reutilizando la memoria compartida
-que usamos antes para pasarnos los distintos valores de cada fila de las funci\'ones y sus derivadas.
-
-La reducci\'on eficiente es un tema ya muy estudiado en la bibliografia \textcolor{blue}{insertar cita a
-reducci\'on y reducci\'on en cuda}. La reducci\'on en memoria compartida es fundamentalmente
-una t\'ipica reducci\'on en \'arbol. Un detalle importante en este caso es que, a pesar de que
-se reducen a lo sumo DENSITY\_BLOCK\_SIZE threads, es necesario hacer la reducci\'on en arbol
-para poder maximizar la cantidad de threads ejecutando en paralelo la reducci\'on. Esta reducci\'on
-binaria se realiza $\log_2{DBS}$ veces.
-
-Este mecanismo de reducci\'on es generico y se puede emplear cualquier operacion binaria que
-totalice las cuentas.
-
 
 \subsection{Cambios en los pasajes de informaci\'on intrawarp}
 %Los shuffles que no anduvieron salvo en function
@@ -307,13 +313,13 @@ capacidad de almacenamiento, un recurso que hasta recientemente venia siendo un 
 convertirlo en una aceleraci\'on notoria.
 
 
-\subsection{Cambios en las operaciones matem\'aticas}
+\subsection{Cambios en las memorias compartidas}
 %Cambiar los vec\_type4 por 3 en los accesos a la shared es mucho mejor, no hace falta alinear ahi
 Otro de los problemas existentes del c\'odigo que quisimos atacar fue el mejor empleo de las
 memorias shared. Estas son un recurso finito y muy importante, ya que son un limitante de
 la ocupancia de los multiprocesadores. Como pueden correr una cantidad de bloques que, a lo sumo,
-no superen los 48Kb de memoria shared entre todos, es imprescindible minimizar el consumo real
-de la memoria shared de modo que no estemos subutilizando los multiprocesadores.
+no superen los 48Kb de memoria shared simultaneamente entre todos, es imprescindible minimizar el
+alocaci\'on de la memoria shared de modo que no estemos subutilizando los SM.
 
 Una cosa que probamos, con un grado de exito variante, fue disminuir el tamaño de los vectores
 donde almacenamos las derivadas direccionales. Como nuestro problema es en tres dimensiones,
@@ -321,16 +327,19 @@ y los vectores estaban configurados para tener 4 valores por cada derivada, prob
 3, para que se ajusten a su consumo real de memoria. Este acercamiento no consider\'o el porque
 se hizo asi de esta manera originalmente. Tener 4 valores consecutivos en memoria fuerza
 al compilador a alinearlos a 16/32 bytes (simple y doble precision).
-Esto presenta grandes ventajas a la hora de hacer transferencias de memoria global en los accesos.
+Esto presenta grandes ventajas a la hora de hacer transferencias de memoria global en los accesos,
+por lo cual decidimos dejarlo como estaban.
 
-Sin embargo, este criterio no aplica a las memorias shared de la GPGPU. Como los accesos
+Sin embargo, este mismo criterio no aplica a las memorias shared de la GPGPU. Como los accesos
 a estas memorias se realizan de a 4 bytes y no de a 16/32, entonces no tiene ninguna ventaja
-en particular realizar el alineamiento. Adicionalmente, como el cuarto valor no tiene forma de marcarse
-como algo mas alla de padding, todavia se opera normalmente con el, por lo que nos ahorramos una
-operaci\'on de c\'alculo. Mas a\'un, se presentan un ahorro del 25\% de los recursos de la memoria compartida
-en contencion, sin ninguna desventaja a la hora de acceder a estos. Principalmente
-esta mejora permite aumentar la cantidad de bloques corriendo concurrentemente en los multiprocesadores,
-sin estar limitados por el uso individual de las memorias compartidas.
+en particular realizar el alineamiento; ya estan alineadas porque los elementos de cada punto
+son flotantes de precisi\'on simple o doble (4 y 8 bytes respectivamente). Adicionalmente, como el
+cuarto valor no tiene forma de marcarse como algo que no sea padding de alineaci\'on, todavia se
+opera normalmente con el, por lo que eliminarlo ahorra una operaci\'on de c\'alculo. Mas a\'un,
+se presentan una disminuci\'on del 25\% de los recursos de la memoria compartida por thread,
+sin ninguna desventaja a la hora de acceder a estos. Principalmente esta mejora permite
+aumentar la cantidad de bloques corriendo concurrentemente en los SM, al punto de eliminar
+la limitaci\'on presente debido a las memorias compartidas.
 
 \subsection{Cambios en los condicionales}
 La arquitectura CUDA representa un m\'odelo de computo pensado en el procesamiento secuencial masivo
