@@ -1,11 +1,94 @@
 
 \section{XeonPhi}
-   \subsection{Memory bus ring}
-   \subsection{Disenio de procesadores}
-   \subsection{Conexion Host - Board}
-   \subsection{Modos: offloading, nativo, hibrido MPI}
-   \subsection{Consumo}
-   \subsection{Herramientas de desarrollo y profiling}
+
+\subsection{Introducci\'on}
+
+La arquitectura Xeon Phi es la culminaci\'on de un trabajo iniciado por Intel en 2004, previendo
+la necesidad de paralelismo masivo para aplicaciones futuras. Saliendo al mercado al final de 2012,
+con el prop\'osito de competir en computo intensivo con NVIDIA CUDA, ha ganado gran tracci\'on dentro
+de HPC a pesar de ser joven. Por ejemplo, ha sido fuertemente utilizada en la supercomputadora Tianhe-2 
+de la Universidad de Sun Yat-Sen en China, listada en Top 500 como la supercomputadora m\'as r\'apida del
+mundo en Junio 2013, Noviembre 2013 y Junio 2014~\cite{Top500XeonPhiJune2013},~\cite{Top500XeonPhiNov2013},~\cite{Top500XeonPhiJune2014}. Los 16000 nodos de esta supercomputadora contienen, adem\'as de dos Ivy Bridge Xeon, 3 coprocesadores
+XeonPhi, dando un total te\'orico de 54.9 petaflops.
+
+\subsection{Dise\~no de los procesadores}
+
+\subsubsection{Microarquitectura general} 
+
+En la concepci\'on del Xeon Phi se tuvieron en cuenta diversos factores, entre los cuales
+se incluye el consumo energ\'etico. Uno de los objetivos fue disminuir la relaci\'on de
+poder de c\'omputo por watt de los procesadores de Xeon de la \'epoca, manteniendo la
+arquitectura ISA x86. Si bien el consumo no se ve\'ia impactado por el set de instrucciones, 
+si se busc\'o eliminar diversas partes del procesador:, intentando mantener 
+caracter\'isticas que sirvieran al tipo de aplicaci\'on a la que se estaba 
+apuntando (programas altamente paralelos a nivel de datos y tareas)~\cite{BookXeonPhi}.
+
+La microarquitectura de este coprocesador se basa fuertemente en muchos procesadores sim\'etricos (SMP), al menos 50, lo
+cual justifica su nombre MIC (\textit{Many Integrated Core}). El objetivo, adem\'as de proveer un dise\~no
+capaz de escalar a las necesidades de aplicaciones fuertemente paralelas, es permitir que las mismas puedan
+ser desarrolladas con herramientas lo m\'as similar posibles a las existentes: cada procesador esta basado
+en el dise\~no del Intel Pentium, con una ISA (\textit{Instruction Set Architecture}) muy similar a la de este.
+Los agregados a la arquitectura son soporte para direccionamiento a 64 bits y nuevas instrucciones de vectorizaci\'on.
+
+Los procesadores tienen un \textit{clock rate} de 1.0 GHz aproximadamente, haciendolos bastante lentos frente
+a otros procesadores de Intel. Por ejemplo, los procesadores de un Intel Xeon CPU E5-2620 tienen un \textit{clock rate}
+de 2.10 GHz, aproximadamente el doble.
+
+Un esquema de la arquitectura de cada procesador puede verse en la figura~\ref{fig:xeon_phi_core}. Cada uno de los cores
+permite hasta 4 \textit{threads} simult\'aneos, con el prop\'osito de esconder la latencia de memoria y del despacho de
+instrucciones vectoriales. Adicionalmente, el uso de dos \textit{pipes} permite que se ejecuten 2
+instrucciones por ciclos de clock.  Algunas instrucciones, sin embargo, solo pueden ser despachadas en una de las dos:
+por ejemplo las instrucciones de vectorizaci\'on solo pueden ser ejecutadas en la \textit{U-pipe}. Para esto se dispone
+de una unidad de vectorizaci\'on (VPU, \textit{Vector Processing Unit}) con 32 registros SIMD (\textit{Single Instruction
+Multiple Data}) de 512 bits, con lo cual cada core puede te\'oricamente realizar 16 operaciones sobre punto flotante de
+32 bits al mismo tiempo. La latencia de estas instrucciones es de 4 ciclos de clock, sin embargo gracias a un pipeline
+se puede obtener un \textit{throughput} de 1 instrucci\'on vectorial por ciclo.
+
+\subsubsection{Pipeline}
+
+El \textit{pipeline} de instrucciones tiene siete estad\'ios para las instrucciones escalares, y las
+instrucciones vectoriales ocupan otras 7. Un esquema de las etapas puede verse en la figura~\ref{fig::xeon_phi_pipeline}.
+El pipeline puede stallearse parcialmente si alguna de las partes sufre un stall, a diferencia de lo que ocurre en 
+arquitecturas como Intel Xeon.
+
+El pipeline tiene las fases usuales del ciclo \textit{fetch-decode-execute}), pero con algunas modificaciones.
+
+El \textit{instruction fetch} esta dividido en dos fases para elegir el \textit{thread} por hardware a ejecutar:
+\textit{Prethread picker function} (PPF) y \textit{Picker function} (PF). En la fase PPF se mueve la instrucci\'on
+a uno de los 4 buffers de \textit{prefetch} que tiene cada procesador. Por cada thread hay adem\'as dos streams de
+instrucciones. Si un stream es stalleado por el pipeline, se puede despachar del otro thread.
+
+El estad\'io PF selecciona el thread a ejecutar, usando el buffer de prefetch. Cada buffer tiene espacio para dos
+instrucciones (porque puede despacharse una instrucci\'on por la \textit{U-pipe} y otra por la \textit{V-pipe}). PF
+funciona de manera \textit{round robin} en los buffers de prefetch. Recargar este buffer (por ejemplo cuando hay un
+\textit{miss} de cache de instrucciones) toma aproximadamente 4 o 5 ciclos.
+
+Una vez que una instrucci\'on ha sido elegida para decodificarse, pasa a los estad\'ios D0 y D1, a una velocidad de
+decodificaci\'on de 2 instrucciones por ciclo de \textit{clock}. De ahi son enviadas a los dos pipes para ejecutarse.
+Por \'ultimo se pasa al estad\'io de \textit{writeback} (WB). No necesariamente cuando una instrucci\'on llega a esta
+fase ha terminado de ejecutarse, puesto que si la operaci\'on es vectorial reci\'en termina de ejecutarse en la unidad
+vectorial 5 ciclos despu\'es.
+
+Este pipeline corto (7 etapas frente a las 20 de la arquitectura Pentium 5 en la que se basa Xeon Phi) contribuye a que
+los \textit{branch predictions} tenga menor latencia, y las instrucciones escalares tengan poca latencia~\cite{IntelXeonPhiWhitePaper}.
+
+\subsection{Estructura de cache}
+
+Adem\'as de la unidad de vectrizaci\'on y la unidad escalar, cada procesador cuenta con 32 Kb de cache L1 y 512 Kb de cache
+L2 unificada para datos y c\'odigo. Estas caches son \textit{set associative} \textit{8-way} con una linea de cache de 64 bytes. La cache de datos es no bloqueante, de manera que un \textit{miss} de cache de un thread en un core, no se produce un \textit{flush} del pipeline en los dem\'as threads.
+
+La cache L2 mantiene su coherencia mediante el uso de un directorio distribuido de \textit{tags}. Un esquema del mismo puede
+verse en la figura~\ref{fig:xeon_phi_arch_global}.
+
+\subsection{Instruction Set Architecture}
+
+\subsection{Organizaci\'on de la memoria}
+
+\subsection{Conexion Host - Board}
+\subsection{Modos de ejecuci\'on}
+\subsection{Consumo}
+\subsection{Herramientas de desarrollo y profiling}
+\subsection{Idoneidad para la tarea}
 
 \subsection{Hardware}
 
