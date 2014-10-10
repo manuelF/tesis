@@ -87,13 +87,13 @@ cuando se lo necesita. ~\cite{CudaOverview}
 \end{figure}
 
 Los SM son unidades completas de ejecucion. Estos tienen 32 SPs interconectados entre si, que operan sobre
-un register file com\'un a todos ellos. Los SM cuentan adicionalmente con multiples unidades de Load/Store,
+un register file com\'un a todos. Los SM cuentan adicionalmente con m\'ultiples unidades de Load/Store,
 que permiten realizar accesos a memoria independientes. Existen 4 unidades de SFU (\textit{Special Function
-Unit}) por SM, para realizar rapidamente operaciones matematicas trascendentales (trigonometricas, potencias,
+Unit}) por SM, para realizar rapidamente operaciones matem\'aticas trascendentales (trigonometricas, potencias,
 raices, etc.). Cada SM ejecuta simultaneamente una cantidad fija de threads, llamado \textit{warp}
-con cada thread corriendo en un SP. Las unidades de envios de warps se encargan de mantener registro de que
+con cada uno de estos corriendo en un SP. Las unidades de envios de warps se encargan de mantener registro de que
 threads estan disponibles para correr en un momento dado y permiten realizar cambios de contexto por hardware
-eficientemente ($<25 \mu$s ~\cite{PattersonFermi}). Con esto, pueden ejecutar
+eficientemente ($<25 \mu$s)~\cite{PattersonFermi}. Con esto, se pueden ejecutar
 concurrentemente dos warps distintos para esconder la latencia de las operaciones. En precision doble,
 esto no se puede, asi que hay solamente un warp corriendo a la vez.
 
@@ -173,7 +173,7 @@ doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instr
 %Para realizar el computo, esta arquitectura cuenta a su vez con multiples clases de memorias
 %que se adaptan de maneras diferentes a los distintos procesos. Estas incluyen:
 La memoria de la GPGPU es uno de los puntos cruciales de esta arquitectura. Esta se subdivide
-entre memorias on-chip y memorias off-chip, de acuerdo a su locacion y tiempos de acceso.
+entre memorias on-chip y memorias on-board, de acuerdo a su locacion y tiempos de acceso.
 
 Las memorias se subdividen en 4 categorias distintas:
 
@@ -191,18 +191,18 @@ registros totales que cuenta un chip (oscilan entre 16.535 y 65.535 registros).
 
 La memoria global es la memoria principal fuera del chip del GPGPU. Esta es de gran tama\~no (de
 entre 2Gb y 12Gb) y es compartida por todos los SM de la GPGPU y los CPU que integran el
-sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones del driver CUDA
+sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones del runtime CUDA
 para poder transferir datos entre la placa y la memoria RAM. La latencia de acceso a la memoria global
-es de cientos de ciclos, sumamente lenta en comparaci\'on con el procesador.
+es de cientos de ciclos~\cite{Demystifying}, sumamente lenta en comparaci\'on con el procesador.
 
-La memoria compartida, o \texttt{shared} es una memoria que es visible para todos los threads dentro
-de un mismo SM .Cada thread puede escribir en cualquier parte de la memoria compartida de su bloque y
-puede ser leido por cualquier otro thread de su bloque. Es una memoria muy r\'apida, on-chip, y
-que tarda una peque\~na cantidad de ciclos de acceso. Esta memoria es compartida con la cach\'e
-nivel 1, de capacidad de entre 16Kb y 64kb configurable por software.
+La memoria compartida, o \textit{shared}, es una memoria que es visible para todos los threads dentro
+de un mismo SM. Cada thread puede escribir en cualquier parte de la memoria compartida dentro de su bloque y
+puede ser leido por cualquier otro thread de este. Es una memoria muy r\'apida, on-chip, y
+que tarda aproximadamente 40 ciclos de acceso.~\cite{Demystifying} Esta memoria es compartida con la cach\'e
+L1, de capacidad de entre 16Kb y 64kb configurable por software.
 
-La memoria local es una memoria local a cada thread, que se encuentra almacenada dentro de la
-memoria global. Esta memoria es definida automaticamente por el compilador y sirve como area de spilling
+La memoria local es una memoria propia de cada thread, y se encuentra almacenada dentro de la
+memoria global. Esta memoria es definida automaticamente por el compilador y sirve como area de \textit{spilling}
 de registros cuando se acaban. Cuenta con las mismas desventajas que la memoria global, incluyendo
 su tiempo de acceso.
 
@@ -298,11 +298,12 @@ un procesador m\'as escalable y de proposito general.
   Tecnologia fabricaci\'on & 65 nm           & 40 nm           & 28 nm            \\
   SMs                      & 30              & 16              & 15               \\
   SP / SM                  & 8               & 32              & 192              \\
-  Cach\'e L1               & -               & 16 - 48Kb       & 16- 48Kb         \\
+  Cach\'e L1               & -               & 16 - 48Kb       & 16 - 32 - 48Kb   \\
   Cache L2                 & -               & 768Kb           & 1536Kb           \\
   Mem\'oria Shared/SM      & 16Kb            & 16 - 48Kb       & 16 - 32 - 48Kb   \\
   Registros/Thread         & 63              & 63              & 255              \\
   Pico Precision Simple    & 240 MAD / clock & 512 FMA / clock & 2880 FMA / clock \\
+  Pico GFLOPS Simple       & 933             & 1345            & 3977             \\
   GFLOPS/Watt              & 3.95            & 5.38            & 15.9             \\ \bottomrule
   \end{tabular}
 \caption{Tabla comparativa de las features mas prominentes de las tres arquitecturas de CUDA}
@@ -325,7 +326,16 @@ en cambio, lo hace en una sola operaci\'on, y sin redondeos intermedios.
 La medida m\'as usada por \nvidia para publicitar la performance de estos dispositivos y poder
 compararlos entre si, y contra CPU, son los GFLOPS. Esta unidad mide cuantas operaciones de punto
 floatante de precision simple se pueden realizar por segundo. Esta m\'etrica es la utilizada tambien
-por los clusters en el ranking TOP500, donde se ordenan de acuerdo al pico medible.
+por los clusters en el ranking TOP500, donde se ordenan de acuerdo al pico medible. No solo
+es notable como se cuadruplico la performance (te\'orica) en solamente 6 a\~nos (algo inalcanzable para
+los CPU modernos) sino que a\'un mas notable es como mejoro la performance por Watt. Esto
+tambien se ve en que Kepler tiene menos SM que Fermi o Tesla, pero son mucho mas poderosos y
+eficientes. La tecnologia de fabricaci\'on ha ayudado a la disminuci\'on del consumo, un
+problema que acechaba a los dise\~nos Fermi, ya que sus consumos superiores a 200W por
+dispositivo los hacian muy dificiles de refrigerar incluso en clusters de HPC. Se puede
+notar la estrategia de mercado de \nvidia de introducirse en las supercomputadoras de todo
+el mundo, donde el consumo y la refrigeraci\'on son factores limitantes (mucho m\'as aun que,
+por ejemplo, computadoras de escritorio).
 
 \subsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
 
