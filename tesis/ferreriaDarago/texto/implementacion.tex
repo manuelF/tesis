@@ -61,20 +61,20 @@ El pseudo c\'odigo del algoritmo de balanceo se detalla a continuaci\'on.
   \While{$ronda\_threads < max\_rondas\_threads$}
     \State $ronda\_threads++$
 
-    \State $tiempo\_minimo \gets duracion[T_{min}]$
-    \State $tiempo\_maximo \gets duracion[T_{max}]$
+    \State $tiempo\_minimo \gets duracion[T_{\min}]$
+    \State $tiempo\_maximo \gets duracion[T_{\max}]$
 
-    \While {$tiempo_{max} < tiempo_{min} * k \wedge ronda\_trabajos < max\_ronda\_trabajos$}
+    \While {$tiempo_{\max} < tiempo_{\min} * k \wedge ronda\_trabajos < max\_ronda\_trabajos$}
       \State $ronda\_trabajos++$
-      \State $\Delta T \gets (tiempo_{max} - tiempo_{min}) /2$
-      \ForAll{$G_i \in Trabajos[T_{max}]$}
-        \If{$duracion[G_i] * correccion[T_{max}][T_{min}] * penalidad\_migracion - \Delta T < tiempo_{G_{mejor\_candidato}}$}
+      \State $\Delta T \gets (tiempo_{\max} - tiempo_{\min}) /2$
+      \ForAll{$G_i \in Trabajos[T_{\max}]$}
+        \If{$duracion[G_i] * correccion[T_{\max}][T_{\min}] * penalidad\_migracion - \Delta T < tiempo_{G_{mejor\_candidato}}$}
           \State $G_{mejor\_candidato} \gets G_i$
         \EndIf
       \EndFor
      \State Liberar la memoria de las marices cacheadas de $G_{mejor\_candidato}$
-     \State Mover $G_{mejor\_candidato}$ de $T_{max}$ a $T_{min}$
-     \State Actualizar la duracion total de $T_{max}$ a $T_{min}$, aplicando la correcci\'on de tiempos
+     \State Mover $G_{mejor\_candidato}$ de $T_{\max}$ a $T_{\min}$
+     \State Actualizar la duracion total de $T_{\max}$ a $T_{\min}$, aplicando la correcci\'on de tiempos
     \EndWhile
   \EndWhile
 \end{algorithmic}
