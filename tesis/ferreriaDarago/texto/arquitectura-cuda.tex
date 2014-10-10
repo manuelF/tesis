@@ -2,7 +2,7 @@
 
 \subsection{Introduccion}
 
-Una de las arquitectura analizadas en este trabajo es la arquitectura GPGPU desarrollada por NVIDIA, conocida
+Una de las arquitectura analizadas en este trabajo es la arquitectura GPGPU desarrollada por \nvidia, conocida
 como CUDA por las siglas en ingles de \textit{Compute Unified Device Architecture}.
 CUDA surge naturalmente de la aplicaci\'on del hardware desarrollado gr\'aficos, pero aplicados al computo cient\'ifico.
 
@@ -17,10 +17,10 @@ add-ons a las placas gr\'aficas tradicionales 2D. A principios de la d\'ecada de
 y se podian encadenar entre si, uno por pixel en la pantalla.~\cite{CG} Este paralelismo es el desarrollo fundamental
 que llevaba a las GPU a poder procesar operaciones gr\'aficas ordenes de magnitud m\'as rapidas que el CPU.
 
-En el 2006, NVIDIA introduce la arquitectura G80,
+En el 2006, \nvidia introduce la arquitectura G80,
 que es la primera placa de video que deja de resolver \'unicamente problemas especializados a gr\'aficos
 para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los
-tipos de operaciones que realiza (geometria, vertex y pixel shaders) ~\cite{cudaHandbook}. Como subproducto de esto,
+tipos de operaciones que realiza (geometria, vertex y pixel shaders).~\cite{cudaHandbook} Como subproducto de esto,
 el GPU deja de tener pipelines especializados y pasa a tener procesadores sim\'etricos m\'as sencillos y m\'as
 faciles de construir. Esta arquitectura es la que se ha mantenido y mejorado en el tiempo, permitiendo
 a las GPU escalar masivamente en procesadores simples, de un bajo clock de una disipaci\'on t\'ermica
@@ -31,15 +31,15 @@ de manera pseudo-explicita, y con esto poder escalar ``facilmente'' si solamente
 placa mas r\'apida. ~\cite{} Te\'cnicamente esta arquitectura cuenta entre cientos y miles de procesadores
 especializados en c\'alculo de punto flotante, procesando cada uno un \textit{thread} distinto pero
 trabajando de manera sincr\'onica agrupados en bloques. Cada procesador a su vez cuenta con entre
-64 a 256 registros ~\cite{NvidiaFermi}~\cite{NvidiaKepler}, como porci\'on de un register file de 64kb.
+64 a 256 registros~\cite{NvidiaFermi}~\cite{NvidiaKepler}, como porci\'on de un register file de 64kb.
 Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de
 su dise\~no fundamental para gr\'aficos). Estos no poseen instrucciones SIMD, ya que su dise\~no primario
 esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los
 bloques sincronicos de procesadores. De este modo, las placas modernas como la K40 alcanzan
 poder de computo de 4.3 TFLOPs de precision simple, 1.7 TFLOPs de precision doble y 288GB/sec de
-transferencia, usando 2880 CUDA Cores ~\cite{NvidiaKeplerDatasheet}. Para poner en escala la concentraci\'on
+transferencia, usando 2880 CUDA Cores.~\cite{NvidiaKeplerDatasheet} Para poner en escala la concentraci\'on
 de poder de calculo, estas prestaciones harian de una computadora usando solo dos de estas placas
-la supercomputadora m\'as potente del mundo en Noviembre 2001 ~\cite{Top500November2001}.
+la supercomputadora m\'as potente del mundo en Noviembre 2001.~\cite{Top500November2001}
 
 Para poder correr programas explotando la arquitectura CUDA, se deben escribir de manera que
 el problema se particione usando el modelo de grilla de bloques de threads. Esto implica una
@@ -51,7 +51,7 @@ desarrollos nuevos basados en la aceleraci\'on de algoritmos num\'ericos (su pri
 % ~\cite{meter refs a gpu montecarlos}
 Adem\'as, no todas las aplicaciones deben reescribirse de manera completa. Con la introducci\'on
 de las librerias CuBLAS y CuFFT, se han buscado reemplazar con minimos cambios las historicas
-librerias BLAS y FFTw, piedras fundamentales del computo HPC. ~\cite{cublas} ~\cite{cufft}.
+librerias BLAS y FFTw, piedras fundamentales del computo HPC.~\cite{cublas}~\cite{cufft}
 
 Nuevas soluciones para la portabilidad se siguen desarrollando: las librerias como Thrust ~\cite{thrust},
 OpenMP4.0 ~\cite{OpenMPspec} y OpenACC 2.0 ~\cite{OpenACCSpec} son herramientas que buscan hacer el
@@ -64,11 +64,11 @@ imprescindibles en el futuro.
 
 \subsection{Organizacion de procesadores}
 
-Los procesadores GPGPU dise\~nados por NVIDIA han sido reorganizados a lo largo de su
+Los procesadores GPGPU dise\~nados por \nvidia han sido reorganizados a lo largo de su
 existencia multiples veces pero mayormente tienen una distribucion similar. Vamos a describir a continuacion
 la organizaci\'on definida en la arquitectura Fermi y luego analizaremos las diferencias con Kepler.
 
-La arquitectura GPGPU dise\~nada por NVIDIA se centra en el uso de una cantidad escable de procesadores
+La arquitectura GPGPU se centran en el uso de una cantidad escable de procesadores
 multithreaded denominados \textit{Streaming Multiprocessors (SMs)}. Un multiprocesador esta dise\~nado
 para ejecutar cientos de threads concurrentemente, usando sus unidades aritmeticas llamadas \textit{Streaming
 Processors (SPs)}. Para manejar esa cantidad de threads, se concibio una nueva entrada a la taxonomia de Flynn,
@@ -93,7 +93,7 @@ Unit}) por SM, para realizar rapidamente operaciones matematicas trascendentales
 raices, etc.). Cada SM ejecuta simultaneamente una cantidad fija de threads, llamado \textit{warp}
 con cada thread corriendo en un SP. Las unidades de envios de warps se encargan de mantener registro de que
 threads estan disponibles para correr en un momento dado y permiten realizar cambios de contexto por hardware
-muy eficientemente (alrededor 20-25 $\mu$segundos ~\cite{PattersonFermi}). Con esto, pueden ejecutar
+eficientemente ($<25 \mu$s ~\cite{PattersonFermi}). Con esto, pueden ejecutar
 concurrentemente dos warps distintos para esconder la latencia de las operaciones. En precision doble,
 esto no se puede, asi que hay solamente un warp corriendo a la vez.
 
@@ -221,7 +221,7 @@ tambien esta dedicada a la memoria compartida, por lo que es posible en tiempo d
 darle directivas a la GPGPU que asigne m\'as memoria cach\'e o m\'as memoria compartida,
 permitiendo a los bloques tener mayores espacios de memorias compartidas o mayores hit rate de cach\'es.
 
-La cach\'e L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en NVIDIA, todos
+La cach\'e L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en \nvidia, todos
 los accesos de lectura y escritura a memoria global y textura pasan a traves de esta. ~\cite{NvidiaFermi}
 
 La cach\'e de textura es una cach\'e sobre la memoria global que presenta no solo localidad espacial,
@@ -283,7 +283,7 @@ performance, empleando asi todos los recursos con los que cuentan estas arquitec
 \subsection{Diferencias entre Tesla, Fermi, Kepler}
 
 Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda
-arquitectura dise\~nada por Nvidia que era GPGPU. Fermi es la evoluci\'on de Tesla,
+arquitectura dise\~nada por \nvidia que era GPGPU. Fermi es la evoluci\'on de Tesla,
 construida para desacoplar a\'un mas los conceptos de gr\'aficos de modo de hacerla
 un procesador m\'as escalable y de proposito general.
 
@@ -291,18 +291,19 @@ un procesador m\'as escalable y de proposito general.
 % Please add the following required packages to your document preamble:
 \begin{table}[h]
   \begin{tabular}{@{}llll@{}}
-    \toprule
-    Caracter\'isticas        & Tesla (GT200)   & Fermi (GF100)   & Kepler (GK110)   \\ \midrule
-    A\~no introducci\'on     & 2006            & 2010            & 2012             \\
-    Transistores             & 1400 millones   & 3000 millones   & 3500 millones    \\
-    Tecnologia fabricaci\'on & 65 nm           & 40 nm           & 28 nm            \\
-    SMs                      & 30              & 16              & 15               \\
-    SP / SM                  & 8               & 32              & 192              \\
-    Cach\'e L1               & -               & 16 - 48Kb       & 16 - 32 - 48Kb   \\
-    Cache L2                 & -               & 768Kb           & 1536Kb           \\
-    Mem\'oria Shared/SM      & 16Kb            & 16 - 48Kb       & 16 - 32 - 48Kb   \\
-    Registros/Thread         & 63              & 63              & 255              \\
-    Pico Precision Simple    & 240 MAD / clock & 512 FMA / clock & 2880 FMA / clock \\ \bottomrule
+  \toprule
+  Caracter\'isticas        & Tesla (GT200)   & Fermi (GF100)   & Kepler (GK110)   \\ \midrule
+  A\~no introducci\'on     & 2006            & 2010            & 2012             \\
+  Transistores             & 1400 millones   & 3000 millones   & 3500 millones    \\
+  Tecnologia fabricaci\'on & 65 nm           & 40 nm           & 28 nm            \\
+  SMs                      & 30              & 16              & 15               \\
+  SP / SM                  & 8               & 32              & 192              \\
+  Cach\'e L1               & -               & 16 - 48Kb       & 16- 48Kb         \\
+  Cache L2                 & -               & 768Kb           & 1536Kb           \\
+  Mem\'oria Shared/SM      & 16Kb            & 16 - 48Kb       & 16 - 32 - 48Kb   \\
+  Registros/Thread         & 63              & 63              & 255              \\
+  Pico Precision Simple    & 240 MAD / clock & 512 FMA / clock & 2880 FMA / clock \\
+  GFLOPS/Watt              & 3.95            & 5.38            & 15.9             \\ \bottomrule
   \end{tabular}
 \caption{Tabla comparativa de las features mas prominentes de las tres arquitecturas de CUDA}
 \label{tab:CudaGenerations}
@@ -313,13 +314,18 @@ relacionadas a la performance de un dispositivo GPGPU. Se puede apreciar como mu
 crecieron drasticamente gracias a las tecnologias de fabricaci\'on, que permitieron aumentar la
 cantidad de transistores. Tambien podemos comprobar que, a diferencia de los CPU, las arquitecturas GPGPU
 decidieron utilizar esos nuevos transistores disponibles para mas nucleos de procesamiento, en vez
-de dedicarlas a aumentar las memorias cach\'e, que crecieron minimamente.
+de dedicarlas a aumentar las memorias cach\'e, que crecieron minimamente (comparando contra las cach\'es de CPU).
 
 Una de las diferencias mas notables entre Tesla y Fermi es la presencia de FMA (\textit{Fused Multiply-Add})
 contra el MAD (\textit{Multiply - Add}). El MAD realiza la multiplicaci\'on y la acumulaci\'on
 en dos pasos (pero m\'as rapidos que hacerlos independientemente por tener hardware dedicado en los SP)
 debe redondear entre los pasos, perdiendo precisi\'on y haciendo que respete plenamente el IEEE754-2008. El FMA,
 en cambio, lo hace en una sola operaci\'on, y sin redondeos intermedios.
+
+La medida m\'as usada por \nvidia para publicitar la performance de estos dispositivos y poder
+compararlos entre si, y contra CPU, son los GFLOPS. Esta unidad mide cuantas operaciones de punto
+floatante de precision simple se pueden realizar por segundo. Esta m\'etrica es la utilizada tambien
+por los clusters en el ranking TOP500, donde se ordenan de acuerdo al pico medible.
 
 \subsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
 
@@ -333,7 +339,7 @@ lo debe poder determinar el driver de la placa en tiempo de ejecuci\'on.  Un \'u
 requerimiento clave de esta ISA es que debe poder soportar poder realizar ajustes manuales,
 para poder construir partes claves de ciertas librerias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
-El lenguaje que desarrollo Nvidia para poder programar estos dispositivos a un nivel m\'as alto
+El lenguaje que desarrollo \nvidia para poder programar estos dispositivos a un nivel m\'as alto
 que el assembler especifico del procesador es CUDA. Este lenguaje es una extension de C++, con ciertas
 features agregadas para poder expresar la subdivision de los kernels en threads y bloques, junto
 con poder especificar que variables y funciones van a ejecutarse en el GPGPU y en el CPU. Una caracteristica
@@ -347,7 +353,7 @@ encarga de generar el c\'odigo PTX para las funciones marcadas como que se van a
 en los GPGPU. Este codigo objeto despues se linkea normalmente con el resto del c\'odigo que corre en CPU
 y se genera un binario ejecutable.
 
-Nvidia, ademas, provee herramientas de profiling para explorar como se estan utilizando los
+\nvidia, ademas, provee herramientas de profiling para explorar como se estan utilizando los
 recursos durante la ejecuci\'on. Estas son escenciales para optimizar, puesto que los limitantes
 de GPU son sumamente distintos a los de CPU, presentando dificultades incluso para programadores
 experimentados. Las herramientas de profiling no solo muestran runtime, sino que sirven para
@@ -430,13 +436,13 @@ Lo importante ac\'a es observar el patron: ``no desechar algo que podramos neces
 ``intentar predecir el futuro de los condicionales'', ``intentar correr multiples instrucciones a la vez
 porque puede llegar a bloquear en alguna de ellas.''
 
-Todos estos problemas convierten al CPU en dispositivo que gira alrededor de la especulaci\'on,
+Todos estos problemas han convertido al CPU en un dispositivo que gira alrededor de la especulaci\'on,
 de los valores futuros que pueden tener las ejecuciones, del probable reuso de datos.
-Podemos observar entonces que las unidades que verdaderamente operaciones aritmeticas,
+Podemos observar entonces que las unidades que verdaderamente realizan las operaciones logico-aritmeticas,
 las ALU, son muy pocas en comparaci\'on con la cantidad de dispositivos de soporte que estan
 sobre el silicio del CPU.
 
-En contraste, las arquitecturas GPGPU son verdaderas procesadores de computo masivo. Estan dise\~nadas para
+En contraste, los dispositivos GPGPU son verdaderos procesadores de computo masivo. Estan dise\~nadas para
 resolver constantemente operaciones muy bien definidas (intrucciones de punto flotante en su mayoria).
 Comparativamente con un CPU, las ALU de las GPU son bastante pobres y lentas. No funcionan a las mismas
 velocidades de clock (rara vez superan 1.1Ghz) y sus SP deben estar sincronizados entre si. Pero la gran ventaja esta en la cantidad.
@@ -485,4 +491,5 @@ los problemas enfrentados eran casi en su totalidad de operaciones de punto flot
 caracteristicas de contar con un fuerte nivel de paralelismo en los cuellos de botella y de ser operaciones
 mayormente de punto flotante, determinamos que el uso de las GPGPU era idoneo, en comparaci\'on con arquitecturas
 de proposito general con menos GFLOPS.
+
 
