@@ -41,6 +41,13 @@ transferencia, usando 2880 CUDA Cores.~\cite{NvidiaKeplerDatasheet} Para poner e
 de poder de calculo, estas prestaciones harian de una computadora usando solo dos de estas placas
 la supercomputadora m\'as potente del mundo en Noviembre 2001.~\cite{Top500November2001}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/cuda-gflops.png}
+    \caption{Picos teoricas de performance en GFLOPS/s. Tomado de~\cite{cudaProgrammingGuide}}
+    \label{cuda-gflops}
+\end{figure}
+
 Para poder correr programas explotando la arquitectura CUDA, se deben escribir de manera que
 el problema se particione usando el modelo de grilla de bloques de threads. Esto implica una
 reescritura completa de los c\'odigos actuales en CPU y un cambio de paradigma importante, al
@@ -199,7 +206,10 @@ La memoria compartida, o \textit{shared}, es una memoria que es visible para tod
 de un mismo SM. Cada thread puede escribir en cualquier parte de la memoria compartida dentro de su bloque y
 puede ser leido por cualquier otro thread de este. Es una memoria muy r\'apida, on-chip, y
 que tarda aproximadamente 40 ciclos de acceso.~\cite{Demystifying} Esta memoria es compartida con la cach\'e
-L1, de capacidad de entre 16Kb y 64kb configurable por software.
+L1, de capacidad de entre 16Kb y 64kb configurable por software. Esta memoria se encuentra dividida
+en 32 bancos de 4 bytes de tama\~no, permitiendo que cada uno de los 32 threads acceda independientemente
+a un float. Si hubiera conflicto, los accesos a ese banco se serializarian, aumentando la latencia
+de la llamada.~\cite{farberCuda}
 
 La memoria local es una memoria propia de cada thread, y se encuentra almacenada dentro de la
 memoria global. Esta memoria es definida automaticamente por el compilador y sirve como area de \textit{spilling}
@@ -237,6 +247,12 @@ con una unidad propia de resoluci\'on de direcciones. Esta unidad tiene limitant
 exigirle, ya que no posee un ancho de banda suficiente como para resolver todos los
 accesos a memoria globales podria servir, asi que hay que usarla judiciosamente.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/cuda-memories.png}
+    \caption{Jerarquia de memorias en GPU. Tomado de~\cite{farberCuda}}
+    \label{cuda-memories}
+\end{figure}
 
 \subsection{Esquema de paralelismo}
 Al ser una arquitectura masivamente paralela desde su concepci\'on, CUDA presenta varios niveles de paralelismo, para
@@ -489,17 +505,17 @@ presentan en el area de HPC y de videojuegos han probado ser un cambio paradigm\
 
 \subsection{Idoneidad para el problema}
 El problema de QM/MM enfrentado en este trabajo cuenta con mutiples operaciones matematicas de gran
-volumen de calculos. En particular, las operaciones matriciales son los cuellos de botella en este
-problema.
+volumen de calculos. En particular, las operaciones matriciales son los cuellos de botella en esta aplicaci\'on.
+
 Para obtener los valores numericos de densidad buscados en los puntos, se deben obtener las derivadas primeras
-y segundas, lo cual implica hacer multiples operaciones de multiplicaci\'onmatricial. Estas multiplicaciones
-pueden ser paralelizadas por columnas y por filas. Estos problemas estan fuertemente estudiados como paralelizarlos
-en la literatura, ya que los problemas de algebra lineal los requieren constantemente.
-En nuestro caso, se requieren para un sistema cientas de estas multiplicaciones, algunas con matrices de mas de
-$500^2$ elementos. Al consistir este proyecto un sistema de resoluci\'on num\'erico de las f\'ormulas de QM/MM,
+y segundas, lo cual implica hacer multiples operaciones de multiplicaci\'on matricial. Estos problemas estan
+fuertemente estudiados como paralelizarlos en la literatura, existen muchas aplicaciones de algebra lineal que
+los requieren constantemente.
+En nuestro caso, se requieren para un sistema miles de estas multiplicaciones, algunas con matrices de mas de
+$500^2$ elementos. Al consistir este proyecto un sistema de resoluci\'on num\'erica de las f\'ormulas de QM/MM,
 los problemas enfrentados eran casi en su totalidad de operaciones de punto flotante. Luego, dados las
 caracteristicas de contar con un fuerte nivel de paralelismo en los cuellos de botella y de ser operaciones
 mayormente de punto flotante, determinamos que el uso de las GPGPU era idoneo, en comparaci\'on con arquitecturas
-de proposito general con menos GFLOPS.
+de proposito general con menos poder de c\'omputo.
 
 
