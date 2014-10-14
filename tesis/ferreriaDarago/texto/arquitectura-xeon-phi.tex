@@ -47,6 +47,14 @@ arquitectura de \textit{full pipeline} se puede obtener un \textit{throughput} d
 
 \subsubsection{Pipeline}
 
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\textwidth]{images/xeon-phi-pipeline.png}
+   \caption{Pipeline de Xeon Phi, tomado de~\cite{XeonPhiBook} }
+   \label{fig::xeon_phi_pipeline}
+\end{figure}
+
+
 El \textit{pipeline} de instrucciones tiene siete estad\'ios para las instrucciones escalares, y las
 instrucciones vectoriales ocupan otras 7. Un esquema de las etapas puede verse en la figura~\ref{fig::xeon_phi_pipeline}.
 El pipeline puede stallearse parcialmente si alguna de las partes sufre un stall, a diferencia de lo que ocurre en 
@@ -144,7 +152,7 @@ que no ser\'an vueltos a utilizar en calculos posteriores. Como su nombre lo ind
 y este puede ignorarlo.
 
 Por \'ultimo, tambi\'en la unidad vectorial implementa un \textit{prefetcher} por software, tanto para los caches L1 y L2. Estos
-pueden combinarse con instrucciones de \textit{gather} y \textit{scatter} para disminuir los accesos a memoria y los \textit{stalls}}
+pueden combinarse con instrucciones de \textit{gather} y \textit{scatter} para disminuir los accesos a memoria y los \textit{stalls}
 en retiro de instrucciones.
 
 \subsection{Organizaci\'on de la memoria}
@@ -200,7 +208,10 @@ utilizada para lograr un m\'aximo equilibrio de potencia y consumo es que la apl
 manejar los estados de poder que dispone. 
 
 Existen varios estados de consumo energ\'etico: Turbo, P-states, C-states y M-states. En modo Turbo, seg\'un la cantidad de
-cores ejecutando se puede incrementar la frecuencia de reloj de los mismos.
+cores ejecutando se puede incrementar la frecuencia de reloj de los mismos. La frecuencia de operaci\'on de todos los procesadores
+puede modificarse usando los distintos P-states, que rigen la velocidad del clock general. Adicionalmente cada core puede estar en
+distintos C-states. El procesador puede correr a su m\'axima capacidad (C0), puede no recibir el clock general pero si interrupciones
+(C1), o puede estar apagado en su totalidad (C6). Existen estados similares para los controladores de memoria (M-states).
 
 \subsection{Herramientas de desarrollo y profiling}
 \subsection{Idoneidad para la tarea}
