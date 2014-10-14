@@ -17,8 +17,9 @@ XeonPhi, dando un total te\'orico de 54.9 petaflops.
 
 En la concepci\'on del Xeon Phi se tuvieron en cuenta diversos factores, entre los cuales
 se incluye el consumo energ\'etico. Uno de los objetivos fue disminuir la relaci\'on de
-poder de c\'omputo por watt de los procesadores de Xeon de la \'epoca, manteniendo la
-arquitectura ISA x86. Si bien el consumo no se ve\'ia impactado por el set de instrucciones, 
+poder de c\'omputo por watt de los procesadores de Xeon de la \'epoca, manteniendo una entorno
+de desarrollo de prop\'osito general como el de esta arquitectura. 
+Si bien el consumo no se ve\'ia impactado por el set de instrucciones, 
 si se busc\'o eliminar diversas partes del procesador:, intentando mantener 
 caracter\'isticas que sirvieran al tipo de aplicaci\'on a la que se estaba 
 apuntando (programas altamente paralelos a nivel de datos y tareas)~\cite{BookXeonPhi}.
@@ -40,9 +41,9 @@ instrucciones vectoriales. Adicionalmente, el uso de dos \textit{pipes} permite 
 instrucciones por ciclos de clock.  Algunas instrucciones, sin embargo, solo pueden ser despachadas en una de las dos:
 por ejemplo las instrucciones de vectorizaci\'on solo pueden ser ejecutadas en la \textit{U-pipe}. Para esto se dispone
 de una unidad de vectorizaci\'on (VPU, \textit{Vector Processing Unit}) con 32 registros SIMD (\textit{Single Instruction
-Multiple Data}) de 512 bits, con lo cual cada core puede te\'oricamente realizar 16 operaciones sobre punto flotante de
-32 bits al mismo tiempo. La latencia de estas instrucciones es de 4 ciclos de clock, sin embargo gracias a un pipeline
-se puede obtener un \textit{throughput} de 1 instrucci\'on vectorial por ciclo.
+Multiple Data}) de 512 bits por thread, con lo cual cada uno puede te\'oricamente realizar 16 operaciones sobre punto flotante de
+32 bits al mismo tiempo. La latencia de estas instrucciones es de 4 ciclos de clock, sin embargo gracias a su micro
+arquitectura de \textit{full pipeline} se puede obtener un \textit{throughput} de 1 instrucci\'on vectorial por ciclo.
 
 \subsubsection{Pipeline}
 
@@ -63,6 +64,10 @@ instrucciones (porque puede despacharse una instrucci\'on por la \textit{U-pipe}
 funciona de manera \textit{round robin} en los buffers de prefetch. Recargar este buffer (por ejemplo cuando hay un
 \textit{miss} de cache de instrucciones) toma aproximadamente 4 o 5 ciclos.
 
+Los 4 threads de un core son multiplexados por el pipeline del mismo, de manera de que si uno de los threads esta
+\textit{stalleado} se elija a otro que tenga trabajo para hacer. Se sugiere entonces el uso de al menos dos 
+\textit{threads} por core para esconder latencias de memoria y de instrucciones vectoriales, y asi aumentar la performance.
+
 Una vez que una instrucci\'on ha sido elegida para decodificarse, pasa a los estad\'ios D0 y D1, a una velocidad de
 decodificaci\'on de 2 instrucciones por ciclo de \textit{clock}. De ahi son enviadas a los dos pipes para ejecutarse.
 Por \'ultimo se pasa al estad\'io de \textit{writeback} (WB). No necesariamente cuando una instrucci\'on llega a esta
@@ -75,18 +80,128 @@ los \textit{branch predictions} tenga menor latencia, y las instrucciones escala
 \subsection{Estructura de cache}
 
 Adem\'as de la unidad de vectrizaci\'on y la unidad escalar, cada procesador cuenta con 32 Kb de cache L1 y 512 Kb de cache
-L2 unificada para datos y c\'odigo. Estas caches son \textit{set associative} \textit{8-way} con una linea de cache de 64 bytes. La cache de datos es no bloqueante, de manera que un \textit{miss} de cache de un thread en un core, no se produce un \textit{flush} del pipeline en los dem\'as threads.
+L2 unificada para datos y c\'odigo. Estas caches son \textit{set associative} \textit{8-way} con una linea de cache de 64 bytes. 
+La cache de datos es no bloqueante, de manera que un \textit{miss} de cache de un thread en un core, 
+no se produce un \textit{flush} del pipeline en los dem\'as threads.
 
 La cache L2 mantiene su coherencia mediante el uso de un directorio distribuido de \textit{tags}. Un esquema del mismo puede
-verse en la figura~\ref{fig:xeon_phi_arch_global}.
+verse en la figura~\ref{fig:xeon_phi_arch_global}. El mismo esta dividido en 64 secciones y une tanto los segmentos del
+directorio de tags con los cores y los controladores de memoria principal, utilizando una topolog\'ia de anillo bidireccional
+con un anillo para datos, otro para direcciones y otro para confirmaciones (\textit{acknowledgements}).
 
-\subsection{Instruction Set Architecture}
+Cuando ocurre un \textit{miss} de cache L2, la direcci\'on es enviada al anillo de direcciones. Si la l\'inea de cache
+es de otro core, se env\'ia un request de \textit{forwarding} y los datos son enviados por el anillo de datos. Si ning\'un
+core tiene esa l\'inea de cache se env\'ia un pedido a uno de los varios controladores de memoria. Cada uno de estos controladores
+maneja un subconjunto del espacio de direcciones con el prop\'osito de reducir los cuellos de botella y aumentar el ancho de banda.
+
+El protocolo de coherencia esta basado en MESI utilizando GOLS.
+
+Cada cache L2 esta divida en dos bancos y tiene una latencia de 2 ciclos para leer 64 bytes (una l\'inea) y 1 ciclo para escribir 64 bytes.
+
+La unidad de procesamiento vectorial lee y escribe los datos de cache con una granularidad de 512 bits, a trav\'es de un
+\textit{bus} dedicado de 512 bits. Los accesos son alineados antes de ser escritos al \textit{write-commit} buffer de la
+cach\'e.
+
+La pol\'tica de cach\'e puede modificarse mediante \textit{hints} al coprocesador. Por defecto la pol\'itica del subsistema
+de cach\'e es pseudo-LRU (\textit{Least Recently Used}). Antes de escribir una l\'inea de cache el procesador debe leerla a su propia
+cache (pol\'tica conocida como RFO, \textit{Read For Ownership}). Dado que esto puede implicar que datos \'utiles de cache
+sean removidos para dejar lugar a datos que solo se van a escribir, la arquitectura da soporte a stores \textit{stremeados},
+que pasan de largo a los caches. Tambi\'en se dispone de un \textit{prefetcher} por hardware.
+
+\subsection{Arquitectura de instrucciones}
+
+Si bien la base del conjunto de instrucciones de la arquitectura del Xeon Phi es la P54C de Pentium (IA-32), nuevas instrucciones
+se han incluido con el prop\'osito de aumentar la idoneidad del procesador para computo de alta performance. 
+Estas operaciones incluyen implementaciones por \textit{hardware} de operaciones com\'unes en HPC: rec\'iproco de un valor, 
+ra\'iz cuadrada, potencia y exponenciaci\'on, y operaciones m\'as relacionadas con la memoria como por ejemplo \textit{scatter and gatter} 
+y stores \textit{streameados} de manera de aprovechar mejor el ancho de banda de memoria que permite la arquitectura.
+
+El dise\~no de las instrucciones vectoriales es ternario, con dos operandos fuentes y uno destino codificados en la instrucci\'on.
+Esta configuraci\'on permite una ganancia de hasta 20\% sobre la configuraci\'on usual binaria de otras arquictecturas SIMD (como
+por ejemplo SSE o AVX)~\cite{BookXeonPhi}. Tambi\'en el \textit{set} de instrucciones cuenta con operaciones FMA (\textit{Fused
+Multiply Add}) que utilizan los tres operandos como fuente y uno de ellos como el destino.
+
+Una expansi\'on adicional para aprovechar los registros amplios son los registros de mascara (\textit{masked registers}).
+Estos registros de 16 bits se utilizan en varias de las instrucciones vectoriales para habilitar o deshabilitar elementos
+de los 16 (como m\'aximo) que tiene un registro SIMD del Xeon Phi como parte de un computo, contribuyendo a la generalidad de
+las instrucciones adicionales de la arquitectura. Si un elemento del registro de m\'ascara, el valor resultado de la operaci\'on
+sobre los dos elementos correspondientes de los operandos fuentes es escrito en el lugar correspondiente del operando destino.
+
+Asi como ocurre con los 32 registros SIMD, los 8 registros de m\'ascara son
+por \textit{thread}. El uso de estas m\'ascaras esta contemplado en las instrucciones, requiriendo un ciclo de clock adicional
+para pasar por la \textit{Mask pipeline}. 
+
+Las instrucciones especiales para exponenciaci\'on forman parte de la EMU (\textit{Extended Math Unit}), utilizando cuadratura
+num\'erica y tablas para aproximar las funciones trascendentales por \textit{hardware}. Debido a la prevalencia en computo
+cient\'ifico de estas instrucciones se busc\'o la disminuci\'on en el uso de ciclos de reloj para su c\'alculo.
+
+La adici\'on de instrucciones sobre memoria no secuencial (\textit{scatter and gather}) resultan interesantes por su prevalencia
+en HPC y porque facilitan la tarea de generaci\'on de c\'odigo vectorial en los \textit{backends} de compiladores. Tambi\'en, con
+el prop\'osito de permitir un control m\'as fino de los cach\'es, los operandos en memoria para operaciones vectoriales permiten
+la inclusi\'on de un atributo denominado \textit{eviction hint}. Este atributo permite determinar si los datos ser\'an o no
+reusados, escribiendolos directamente a memoria si no fuese as\'i. De esta manera se evita la contaminaci\'on de cache con datos
+que no ser\'an vueltos a utilizar en calculos posteriores. Como su nombre lo indica, este atributo es un consejo al coprocesador,
+y este puede ignorarlo.
+
+Por \'ultimo, tambi\'en la unidad vectorial implementa un \textit{prefetcher} por software, tanto para los caches L1 y L2. Estos
+pueden combinarse con instrucciones de \textit{gather} y \textit{scatter} para disminuir los accesos a memoria y los \textit{stalls}}
+en retiro de instrucciones.
 
 \subsection{Organizaci\'on de la memoria}
 
-\subsection{Conexion Host - Board}
+La memoria principal del Xeon Phi consiste de memoria RAM GDDR5 en la placa, de 8 GB. Los cores y la memoria principal son comunicados mediante el uso de 8
+controladoras, conectadas mediante el anillo bidireccional, de dos canales a 5.5 Gb/s. Cada transferencia realizada es de 4 bytes. 
+Esto nos da un l\'imite de ancho de banda te\'orico de 352 GB/s pero detalles de implementaci\'on de los chips limitan este valor a 200 GB/s. 
+
+Las controladores reciben los pedidos mediante el anillo de direcciones y convierten estos en comandos para GDD5, retornando finalmente los datos en
+el anillo de datos. Los dispositivos GDDR5 tienen el espacio de direcciones interlineado para distribuir mejor la carga de pedidos.
+
+La memoria esta dividida en p\'aginas utilizando un esquema de 4 niveles, con direcciones de 64 bits~\ref{fig:xeon_phi_addressing}. El tama\~no de p\'agina soportado es de 4 Kb
+o 2 Mb, siendo el esquema de 2 Mb preferido en aplicaciones de computo cient\'ifico. Como es de esperar, el Xeon Phi utiliza TLBs (\textit{Translation Lookaside
+Buffers}) para disminuir la cantidad de accesos a memoria necesarios para mapear una p\'agina de memoria virtual en una f\'isica.
+
+\subsection{Conexion Host - Coprocesador}
+
+El Xeon Phi se conecta con su host mediante el uso de un bus PCI Express 2.0 de 16 pistas. Las transferencias pueden ser
+mediante I/O programada o DMA (\textit{Direct Memory Access}). Este bus permite la transferencia no solo al host sino a
+otros coprocesadores, permitiendo tener varias placas en una misma computadora. La velocidad de transferencia alcanzada
+es de m\'as de 6 GB/s. DMA ocurre a velocidad de \textit{clock} del proceador, y los 8 canales de DMA pueden transferir
+en paralelo. Cada transacci\'on de DMA es entre 64 y 256 bytes.
+
+Siendo que el coprocesador dispone de su propio sistema operativo basado en Linux, lo cual incluye una implementaci\'on
+de un \textit{stack} completo de TCP/IP, el bus PCI se puede utilizar para comunicar el sistema operativo del host con
+el del Xeon Phi a trav\'es de protocolos como SSH (Secure SHell). Esto facilita la administraci\'on de la placa y la
+transferencia de c\'odigo y datos para ejecuci\'on, y el uso del coprocesador como nodo de computaci\'on adicional en un
+esquema de cluster.
+
+La placa no tiene acceso a perif\'ericos, en particular disco duro. Para esto se puede utilizar un sistema NFS (\textit{Network
+File System}) con el prop\'osito de almacenar datos en el host.
+
 \subsection{Modos de ejecuci\'on}
+
+Existen tres m\'etodos para ejecutar c\'odigo en el coprocesador.
+
+\begin{enumerate}
+    \item Nativo: El Xeon Phi permite correr c\'odigo directamente. Esto es gracias a la presencia de BusyBox Linux como sistema operativo,
+    lo cual da soporte de sistema de archivos y entorno de ejecuci\'on. El c\'odigo puede ser enviado al Xeon Phi desde el host, y por defecto se utiliza un sistema
+    de archivos montado sobre la propia RAM. 
+    \item Offloading: El \textit{host} puede delegar la ejecuci\'on de ciertas porciones de c\'odigo al coprocesador. 
+    Esto requiere que los datos necesarios para el c\'omputo sean copiados del \textit{host} al Xeon Phi, lo cual puede implicar que el bus puede ser un cuello de botella 
+    importante (puesto que los datos de entrada, y la salida deben ser movido al Xeon Phi y traidos de vuelta al finalizar el c\'omputo).
+    \item Simétrico: En este modo de ejecuci\'on se piensa al Xeon Phi y su host como dos nodos en un \textit{cluster} de c\'omputo, y al bus PCIe como una red de alta velocidad.
+    Este modo es especialmente interesante si se dispone de m\'as de un Xeon Phi en un mismo host, 
+    y se utiliza una interfaz de pasado de mensajes entre ellos como por ejemplo MPI (\textit{Message Passing Interface}).
+\end{enumerate}
+
 \subsection{Consumo}
+
+El consumo energ\'etico es uno de los principales factores considerados para el dise\~no de la arquitectura MIC. La filosof\'ia
+utilizada para lograr un m\'aximo equilibrio de potencia y consumo es que la aplicaci\'on dictamina al hardware como 
+manejar los estados de poder que dispone. 
+
+Existen varios estados de consumo energ\'etico: Turbo, P-states, C-states y M-states. En modo Turbo, seg\'un la cantidad de
+cores ejecutando se puede incrementar la frecuencia de reloj de los mismos.
+
 \subsection{Herramientas de desarrollo y profiling}
 \subsection{Idoneidad para la tarea}
 
