@@ -8,7 +8,8 @@ la necesidad de paralelismo masivo para aplicaciones futuras. Saliendo al mercad
 con el prop\'osito de competir en computo intensivo con NVIDIA CUDA, ha ganado gran tracci\'on dentro
 de HPC a pesar de ser joven. Por ejemplo, ha sido fuertemente utilizada en la supercomputadora Tianhe-2 
 de la Universidad de Sun Yat-Sen en China, listada en Top 500 como la supercomputadora m\'as r\'apida del
-mundo en Junio 2013, Noviembre 2013 y Junio 2014~\cite{Top500XeonPhiJune2013},~\cite{Top500XeonPhiNov2013},~\cite{Top500XeonPhiJune2014}. Los 16000 nodos de esta supercomputadora contienen, adem\'as de dos Ivy Bridge Xeon, 3 coprocesadores
+mundo en Junio 2013, Noviembre 2013 y Junio 2014~\cite{Top500XeonPhiJune2013},~\cite{Top500XeonPhiNov2013},~\cite{Top500XeonPhiJune2014}. 
+Los 16000 nodos de esta supercomputadora contienen, adem\'as de dos Ivy Bridge Xeon, 3 coprocesadores
 XeonPhi, dando un total te\'orico de 54.9 petaflops.
 
 \subsection{Dise\~no de los procesadores}
@@ -213,64 +214,40 @@ puede modificarse usando los distintos P-states, que rigen la velocidad del cloc
 distintos C-states. El procesador puede correr a su m\'axima capacidad (C0), puede no recibir el clock general pero si interrupciones
 (C1), o puede estar apagado en su totalidad (C6). Existen estados similares para los controladores de memoria (M-states).
 
+Con el objetivo de proveer informaci\'on de temperatura y uso al sistema operativo y aplicaciones, el coprocesador dispone de
+hardware dedicado de colecci\'ion de estos datos para uso posterior. Con esto se puede hacer uso inteligente de los diferentes
+estados del procesador de acuerdo a la carga de trabajo del sistema y su comportamiento.
+
+Esta interfaz con el hardware es utilizada por tanto el sistema operativo incluido en la placa como por el \textit{stack} de
+aplicaci\'on (MPSS, \textit{Manycore Platform Software Stack}) para controlar el consumo energ\'etico. Por ejemplo, cuando el
+coprocesador se encuentra \textit{idle}, sin trabajo que realizar.
+
 \subsection{Herramientas de desarrollo y profiling}
+
+El desarrollo de aplicaciones para el Xeon Phi es muy similar al desarrollo de aplicaciones para las arquitecturas
+de la linea Xeon de Intel. Esto es gracias a la existencia de compiladores de C, C++ y Fortran (lenguajes muy usados en
+el \'ambito de HPC) que pueden producir c\'odigo para el Xeon Phi, y la presencia de un sistema operativo y \textit{stack}
+de aplicaciones que facilitan la tarea de ejecuci\'on y mantenimiento del c\'odigo. A diferencia de Nvidia CUDA, no es necesario
+el uso de un lenguaje de programaci\'on separado.
+
+Los distintos modos de uso para el Xeon Phi reciben soporte de diversas librer\'ias. El uso mediante \textit{offloading}, por ejemplo,
+es provisto mediante el uso de pragmas y opciones de compilaci\'on que permiten indicar que computo y como deben ser transferidos
+a la placa. Estos pragmas permiten control fino de como enviar los datos a la placa, si deben ser transmitidos de vuelta de la placa,
+etc.
+
+Asimismo los compiladores de Intel pueden generar c\'odigo para la arquitectura MIC, el cual se puede ejecutar directamente sobre
+el Xeon Phi a trav\'es del sistema operativo. 
+
+Por \'ultimo, Intel tambi\'en provee librer\'ias portadas como OpenMP, MPI, Thread Building Blocks, etc. Librer\'ias ya existentes
+como la MKL (\textit{Math Kernel Library}), que implementa las conocidas rutinas de BLAS y LAPACK, tambi\'en tienen su versi\'on
+pensada para Xeon Phi, e incluso pueden utilizar transparentemente el Xen Phi.
+
 \subsection{Idoneidad para la tarea}
 
-\subsection{Hardware}
-
-La arquitectura del Xeon Phi, parte de la linea de Intel Many Core Architecture (MIC), est\'a esquematizada
-en la figura~\ref{fig:xeon_phi_arch}. Cada procesador esta esquematizado en~\ref{fig:xeon_phi_core}
-
-La base de esta arquitectura consiste entre 60 y 80 cores SMP (\textit{Symmetric Multiprocessing}), con lo cual todos
-ellos comparten la misma memoria principal. Cada uno de los cores tiene un \textit{clock rate} de 1 GHz,
-con una arquitectura similar al set de instrucciones de Intel IA-32. Las principales diferencias con este
-conjunto de instrucciones son el soporte para direccionamiento a 64 bits y nuevas instrucciones de vectorizaci\'on.
-
-Cada procesador tiene adem\'as soporte para 4 \textit{threads}, es decir, 4 hilos de ejecuci\'on diferentes. Adicionalmente,
-cada \textit{thread} puede ejecutar dos instrucciones por ciclo de clock, mediante el uso de dos pipes: \textit{V-pipe} y \textit{U-pipe}.
-Algunas instrucciones, sin embargo, solo puede ser ejecutadas en una de las dos: por ejemplo las instrucciones de vectorizaci\'on solo pueden
-ser ejecutadas en la \textit{U-pipe}. Para ejecutar estas instrucciones se dispone de una unidad de vectorizaci\'on (VPU, \textit{Vector Processing Unit}).
-Esta unidad cuenta 32 registros SIMD (Single Instruction Multiple Data) de 512 bits. La latencia de estas instrucciones es de 4 ciclos de clock pero permiten
-operar sobre 16 valores de punto flotante de precisi\'on simple (\textit{float}) a la vez.
-
-Adem\'as de la unidad de vectorizaci\'on y la unidad escalar, cada procesador cuenta con 32 Kb de cache L1 y 512 Kb de cache
-L2. Estas caches son asociativas \textit{8-way} y su linea de cache tiene 64 bytes. La coherencia de cach\'e se mantiene
-mediante un directorio distribuido de \textit{tags} (v\'ease figura~\ref{fig:xeon_phi_arch}) dividido en 64 secciones e implementado
-por hardware. La memoria principal consiste de memoria RAM GDDR5 en la placa, de 8 GB con velocidad de transferencia de 5.5 GT/s en 16 canales y con transferencia de 4
-bytes. Esto nos da un l\'imite de ancho de banda te\'orico de 352 GB/s pero detalles de implementaci\'on de los chips limitan este valor a 200 GB/s.
-
-Cada procesador, puede realizar pedidos de memoria independientes sin que la memoria se convierta en un cuello
-de botella importante~\cite{Fang}. Sin embargo, los 4 \textit{threads} dentro de un \textit{core} ven sus accesos a memoria serializados.
-
-Adicionalmente los cores est\'an conectados por dos anillos bidireccionales que les permite comunicarse entre si. La velocidad de
-comunicaci\'on es suficiente para considerar que todos los procesadores son sim\'etricos (es decir, cada procesador puede comunicarse con
-cualquier otro con un \textit{overhead} despreciable)~\cite{Fang}.
-
-Por \'ultimo, cada procesador tiene un \textit{in-order pipeline} de corta longitud, diferencia importante con los cores de un procesador
-estandar de la arquitectura x86. El \textit{pipeline} corto implica que las operaciones escalares no tienen latencia y las vectoriales tienen baja latencia,
-y el costo por \textit{branch misprediction} es bajo~\cite{IntelXeonPhiWhitePaper}. Este punto diferencia fuertemente al Xeon Phi de aceleradores de computo como las GPGPU,
-que tienen alto costo en las bifuraciones de decisiones. Sin embargo, el Xeon Phi no ejecuta instrucciones de manera \textit{out-of-order}, lo cual implica que muchas
-t\'ecnicas de optimizaci\'on que explotan el paralelismo a nivel instrucci\'on usuales en arquitecturas como x86-64 no son aplicables.
-
-La otra diferencia es nuevas instrucciones de vectorizaci\'on, incompatibles con sets de vectorizaci\'on anteriores de Intel (por ejemplo AVX o SSE 4.1).
-Estas operaciones incluyen implementaciones por \textit{hardware} de operaciones com\'unes en HPC: rec\'iproco de un valor, ra\'iz cuadrada, potencia y
-exponenciaci\'on, y operaciones m\'as relacionadas con la memoria como por ejemplo \textit{scatter and gatter} y stores \textit{streameados} de manera de aprovechar
-mejor el ancho de banda que tiene la arquitectura.
-
-El Xeon Phi es un coprocesador, lo cual implica que necesita ser instalado sobre una computadora que sirva de \textit{host}. La comunicaci\'on con este host
-ocurre a trav\'es de un bus PCI Express, no comparten ni memoria ni otros perif\'ericos como por ejemplo disco duro. Existen dos m\'etodos para acceder al Xeon~\cite{BookXeonPhi}
-
-\begin{enumerate}
-    \item Nativo: El Xeon Phi permite correr c\'odigo directamente, mediante el uso de SSH (Secure SHell). Esto es gracias a la presencia de BusyBox Linux como sistema operativo,
-    lo cual da soporte de sistema de archivos y entorno de ejecuci\'on. La interfaz utiliza TCP/IP virtualizado mediante el bus PCI Express. Si bien el coprocesador no tiene acceso a \textit{storage} persistente (puesto que el sistema operativo esta montado sobre la memoria) esto puede resolverse utilizando un sistema de archivos remoto montado en la memoria del host.
-    \item Offloading: El \textit{host} puede delegar la ejecuci\'on de ciertas porciones de c\'odigo al coprocesador. Esto requiere que los datos necesarios para el c\'omputo sean copiados del \textit{host} al Xeon Phi, lo cual puede implicar que el bus puede ser un cuello de botella importante (puesto que los datos de entrada, y la salida deben ser movido al Xeon Phi y traidos de vuelta al finalizar el c\'omputo).
-    \item Simétrico: En este modo de ejecuci\'on se piensa al Xeon Phi y su host como dos nodos en un \textit{cluster} de c\'omputo, y al bus PCIe como una red de alta velocidad.
-Este modo es especialmente interesante si se dispone de m\'as de un Xeon Phi en un mismo host, y se utiliza una interfaz de pasado de mensajes entre ellos como por ejemplo MPI (\textit{Message Passing Interface}).
-\end{enumerate}
-
-Por \'ultimo, en pos de simplificar el trabajo de adaptar una aplicaci\'on a usar el Xeon Phi, el mismo provee una unidad de monitoreo de \textit{performance} (\textit{Performance
-Monitoring Tool}, PMU). Esta unidad permite la colecci\'on de informaci\'on del coprocesador, aunque no tiene soporte para ciertas caracter\'isticas com\'unes a los procesadores
-de lineas m\'as est\'andar de Intel (por ejemplo: \textit{sampling} preciso de eventos por \textit{hardware}, como por ejemplo ciclos por instrucci\'on o \textit{misses} de cache).
-
-
-
+Siendo que el mercado principal para Xeon Phi son las aplicaciones de computo cient\'ifico, esto hace que la 
+aplicaci\'on LIO sea ya de por si una posible candidata al uso de esta tecnolog\'ia. Otros aspectos que
+hacen interesante portar la misma al uso del Xeon Phi son la existencia de una gran cantidad de c\'odigo ya
+implementada en C++ y Fortran, la cual ya puede ser movida a Xeon Phi sin requerir m\'as que una compilaci\'on. 
+Este c\'odigo existente tiene una performance fuertemente atada al computo asociado,
+y la tarea es altamente paralelizable (como se demostr\'o en las implementaciones ya realizadas usando CUDA) y
+vectorizable. 
