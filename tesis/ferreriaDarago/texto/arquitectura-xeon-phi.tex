@@ -12,31 +12,34 @@ mundo en Junio 2013, Noviembre 2013 y Junio 2014~\cite{Top500XeonPhiJune2013},~\
 Los 16000 nodos de esta supercomputadora contienen, adem\'as de dos Ivy Bridge Xeon, 3 coprocesadores
 XeonPhi, dando un total te\'orico de 54.9 petaflops.
 
-\subsection{Dise\~no de los procesadores}
-
-\subsubsection{Microarquitectura general} 
+\subsection{Microarquitectura general} 
 
 En la concepci\'on del Xeon Phi se tuvieron en cuenta diversos factores, entre los cuales
 se incluye el consumo energ\'etico. Uno de los objetivos fue disminuir la relaci\'on de
-poder de c\'omputo por watt de los procesadores de Xeon de la \'epoca, manteniendo una entorno
+poder de c\'omputo por watt de los procesadores de Xeon de la \'epoca, manteniendo un entorno
 de desarrollo de prop\'osito general como el de esta arquitectura. 
 Si bien el consumo no se ve\'ia impactado por el set de instrucciones, 
-si se busc\'o eliminar diversas partes del procesador:, intentando mantener 
+si se busc\'o eliminar diversas partes del procesador, intentando mantener 
 caracter\'isticas que sirvieran al tipo de aplicaci\'on a la que se estaba 
 apuntando (programas altamente paralelos a nivel de datos y tareas)~\cite{BookXeonPhi}.
 
-La microarquitectura de este coprocesador se basa fuertemente en muchos procesadores sim\'etricos (SMP), al menos 50, lo
-cual justifica su nombre MIC (\textit{Many Integrated Core}). El objetivo, adem\'as de proveer un dise\~no
-capaz de escalar a las necesidades de aplicaciones fuertemente paralelas, es permitir que las mismas puedan
-ser desarrolladas con herramientas lo m\'as similar posibles a las existentes: cada procesador esta basado
-en el dise\~no del Intel Pentium, con una ISA (\textit{Instruction Set Architecture}) muy similar a la de este.
-Los agregados a la arquitectura son soporte para direccionamiento a 64 bits y nuevas instrucciones de vectorizaci\'on.
+La microarquitectura de este coprocesador se basa fuertemente en muchos (m\'as de 50) procesadores sim\'etricos que comparten la memoria, lo
+cual justifica su nombre MIC (\textit{Many Integrated Core}). Cada procesador esta basado
+en el dise\~no del Intel Pentium, con una ISA (\textit{Instruction Set Architecture}) basada en la IA-32 con
+soporte para direccionamiento a 64 bits y nuevas instrucciones de vectorizaci\'on.
 
 Los procesadores tienen un \textit{clock rate} de 1.0 GHz aproximadamente, haciendolos bastante lentos frente
 a otros procesadores de Intel. Por ejemplo, los procesadores de un Intel Xeon CPU E5-2620 tienen un \textit{clock rate}
 de 2.10 GHz, aproximadamente el doble.
 
-Un esquema de la arquitectura de cada procesador puede verse en la figura~\ref{fig:xeon_phi_core}. Cada uno de los cores
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=0.6\textwidth]{images/xeon-phi-core.jpg}
+   \caption{Pipeline del procesador Intel Xeon Phi, tomado de~\cite{XeonPhiArchArticle} }
+   \label{fig::xeon_phi_core}
+\end{figure}
+
+Un esquema de la arquitectura de cada procesador puede verse en la figura~\ref{fig::xeon_phi_core}. Cada uno de los cores
 permite hasta 4 \textit{threads} simult\'aneos, con el prop\'osito de esconder la latencia de memoria y del despacho de
 instrucciones vectoriales. Adicionalmente, el uso de dos \textit{pipes} permite que se ejecuten 2
 instrucciones por ciclos de clock.  Algunas instrucciones, sin embargo, solo pueden ser despachadas en una de las dos:
@@ -46,12 +49,12 @@ Multiple Data}) de 512 bits por thread, con lo cual cada uno puede te\'oricament
 32 bits al mismo tiempo. La latencia de estas instrucciones es de 4 ciclos de clock, sin embargo gracias a su micro
 arquitectura de \textit{full pipeline} se puede obtener un \textit{throughput} de 1 instrucci\'on vectorial por ciclo.
 
-\subsubsection{Pipeline}
+\subsection{Pipeline}
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\textwidth]{images/xeon-phi-pipeline.png}
-   \caption{Pipeline de Xeon Phi, tomado de~\cite{XeonPhiBook} }
+   \includegraphics[width=0.6\textwidth]{images/xeon-phi-pipeline.png}
+   \caption{Pipeline del procesador Intel Xeon Phi, tomado de~\cite{XeonPhiBook} }
    \label{fig::xeon_phi_pipeline}
 \end{figure}
 
@@ -93,8 +96,15 @@ L2 unificada para datos y c\'odigo. Estas caches son \textit{set associative} \t
 La cache de datos es no bloqueante, de manera que un \textit{miss} de cache de un thread en un core, 
 no se produce un \textit{flush} del pipeline en los dem\'as threads.
 
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=0.6\textwidth]{images/xeon-phi-ring.jpg}
+   \caption{Detalle de la estructura de anillo del Xeon Phi, tomado de~\cite{XeonPhiArchArticle}}
+   \label{fig::xeon_phi_arch_global}
+\end{figure}
+
 La cache L2 mantiene su coherencia mediante el uso de un directorio distribuido de \textit{tags}. Un esquema del mismo puede
-verse en la figura~\ref{fig:xeon_phi_arch_global}. El mismo esta dividido en 64 secciones y une tanto los segmentos del
+verse en la figura~\ref{fig::xeon_phi_arch_global}. El mismo esta dividido en 64 secciones y une tanto los segmentos del
 directorio de tags con los cores y los controladores de memoria principal, utilizando una topolog\'ia de anillo bidireccional
 con un anillo para datos, otro para direcciones y otro para confirmaciones (\textit{acknowledgements}).
 
@@ -165,7 +175,14 @@ Esto nos da un l\'imite de ancho de banda te\'orico de 352 GB/s pero detalles de
 Las controladores reciben los pedidos mediante el anillo de direcciones y convierten estos en comandos para GDD5, retornando finalmente los datos en
 el anillo de datos. Los dispositivos GDDR5 tienen el espacio de direcciones interlineado para distribuir mejor la carga de pedidos.
 
-La memoria esta dividida en p\'aginas utilizando un esquema de 4 niveles, con direcciones de 64 bits~\ref{fig:xeon_phi_addressing}. El tama\~no de p\'agina soportado es de 4 Kb
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=0.6\textwidth]{images/xeon-phi-addressing.png}
+   \caption{Esquema de paginaci\'on del Xeon Phi}
+   \label{fig::xeon_phi_addressing}
+\end{figure}
+
+La memoria esta dividida en p\'aginas utilizando un esquema de 4 niveles, con direcciones de 64 bits~\ref{fig::xeon_phi_addressing}. El tama\~no de p\'agina soportado es de 4 Kb
 o 2 Mb, siendo el esquema de 2 Mb preferido en aplicaciones de computo cient\'ifico. Como es de esperar, el Xeon Phi utiliza TLBs (\textit{Translation Lookaside
 Buffers}) para disminuir la cantidad de accesos a memoria necesarios para mapear una p\'agina de memoria virtual en una f\'isica.
 
