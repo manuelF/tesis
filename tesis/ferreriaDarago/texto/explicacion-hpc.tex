@@ -1,9 +1,9 @@
-Una significativa parte del impacto de las computadoras en los distintos aspectos de las
+Una parte significativa del impacto de las computadoras en los distintos aspectos de las
 ciencias e incluso de la vida diaria se debe al crecimiento de su
 poder de c\'omputo desde la aparici\'on de los primeros microprocesadores hasta el
 d\'ia de hoy.
 
-Entre 1986 y 2002, la performance de los procesadores crec\'io en promedio, un 50%
+Entre 1986 y 2002, la performance de los procesadores crec\'io en promedio, un 50\%
 por a\~no~\cite{Pacheco}, en parte gracias a la denominada \textit{Ley de Moore}, que
 establec\'ia que la densidad de transistores por circuito integrado se duplicaba
 cada 18 meses~\cite{HennessyPatterson}. Esto puede verse en la figura~\ref{processor_performance},
@@ -22,23 +22,26 @@ mejorar\'ian, y con ellos los tiempos de ejecuci\'on de sus c\'odigos de aplicac
    \label{processor_performance}
 \end{figure}
 
-Sin embargo, a medida que los transistores han disminuido su tama\~no, han incrementado
-su disipaci\'on t\'ermica, limitando entonces la cantidad que se puede ubicar de los mismos
-en un circuito sin producir que el mismo se comporte de manera err\'atica producto
-de la elevada temperatura de operaci\'on. El impacto de esto puede verse en que,
-desde 2002, la performance de los monoprocesadores ha visto su crecimiento disminuir
-a un 20\%, y consecuentemente se ha modificado el enfoque de dise\~no de procesadores, empezando
-a hacerse m\'as y m\'as com\'un el uso de multiprocesadores (multiples procesadores
-por chip) para mantener las mejoras de rendimiento.
+Sin embargo, a medida que los transistores disminuyen su tama\~no, aumentan su
+disipaci\'on t\'ermica por unidad de superficie.  Esto limita la cantidad que se pueden ubicar de los mismos
+en un circuito sin producir que este se comporte de manera err\'atica producto
+de la elevada temperatura de operaci\'on. El mismo motivo impide el crecimiento de frecuencia de reloj, uno de los
+principales motores de avance en eficiencia. Los problemas t\'ermicos han implicado que
+desde el 2002, la tasa de crecimiento de la performance de los monoprocesadores ha disminuido a un 20\% anual.
+Consecuentemente, los principales fabricantes de procesadores se ha modificado el enfoque de investigaci\'on y dise\~no, empezando
+a hacerse m\'as y m\'as com\'un el uso de multiples procesadores por chip para mantener las mejoras de rendimiento.
 
-Adicionalmente, las mejoras de performance debidas al paralelismo 
-a nivel de instrucciones (mediante ejecuci\'on fuera de \'orden, 
-predicci\'on de saltos, ejecuci\'on especulativa, etc.) empezaron a ser 
+La preocupaci\'on por la disipaci\'on y el consumo energ\'etico insustentables han sido motivadores de dise\~nos con menor frecuencia
+de clock, pero aprovechando las a\'un crecientes densidades de transistores para incrementar las unidades de soporte.
+
+Adicionalmente, las mejoras de performance debidas al paralelismo
+a nivel de instrucciones (mediante ejecuci\'on fuera de \'orden,
+ejecuci\'on especulativa, \textit{pipelining}, etc.) empezaron a ser
 progresivamente menores. Esto produjo que se empezara a poner m\'as esfuerzos en
 utilizar tipos de paralelismo como paralelismo a nivel de datos (vectorizaci\'on)
 y paralelismo a nivel de tareas (multiprocesadores)~\cite{HennessyPatterson}.
 
-Esta tendencia hacia la explotaci\'on de paralelismo a nivel de \textit{threads} y datos 
+Esta tendencia hacia la explotaci\'on de paralelismo a nivel de \textit{threads} y datos
 puede verse no solo en la continuaci\'on de l\'ineas establecidas
 de procesadores (por ejemplo las lineas Intel i3, i5 e i7 de procesadores para computadoras
 personales), sino en nuevas arquitecturas que apuntan a computo de alta performance: el incremento
