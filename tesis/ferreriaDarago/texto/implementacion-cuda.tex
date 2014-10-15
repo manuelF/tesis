@@ -4,22 +4,6 @@ El programa originalmente estaba concebido para ser corrido en GPU nVidia GTX880
 Luego, las cosas que se usaron para este desarrollo consistieron en la libreria CUDA version
 2, para arquitecturas a lo sumo SM20.
 
-La estructura del programa era la siguiente:
-\begin{enumerate}
-\item Se determinan los mallados del sistema
-\item Se clasifican en cubos y esferas
-\item Para cada elemento, se resuelve el sistema
-\item Esto se repite hasta que converga a lo sumo en una cantidad limitada de pasos, o diverga
-\end{enumerate}
-
-La resoluci\'on del sistema en si esta compuesta de varios pasos:
-\begin{enumerate}
-\item Se obtiene el valor de la funci\'on de onda en cada punto de la malla
-\item Se generan las matrices con los gradientes y los hessianos de cada funci\'on
-\item Se calculan las densidades y el producto matricial por bloques por funci\'on
-\item Se calcula la matriz de coeficientes de las fuerzas entre las particulas
-\end{enumerate}
-
 
 \subsection{Cuellos de botellas originales, limitantes estructurales}
 

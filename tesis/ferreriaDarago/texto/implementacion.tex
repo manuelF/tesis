@@ -1,3 +1,39 @@
+\section{Implementacion existente}
+Antes de describir las mejoras realizadas sobre la aplicaci\'on existente, vamos a ver
+los pasos que componen la construcci\'on de la matriz de Kohn-Sham, necesario para el
+c\'alculo de las fuerzas interatomicas de QM, representadas en la funci\'on de onda y
+la energia del sistema.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{images/g2g-steps.pdf}
+   \caption{Pasos del c\'alculo de DFT realizado por LIO}
+   \label{fig:lio-steps}
+\end{figure}
+
+Este esquema esta basado en el trabajo de Stratmann~\cite{Stratmann}, donde se propone
+agrupar puntos en vez de resolver el computo uno por uno. El agrupamiento permite determinar
+cuales funciones tienen una contribuci\'on significativa al computo final. Dado que las
+funciones Gaussianas decaen rapidamente a la distnacia, el tama\~no del conjunto de
+funciones significativas no depende del numero de atomos del sistema. Es decir, el tama\~no
+tiene orden constante en terminos de complejidad computacional. Como consecuencia, es posible
+subdividir el calculo de la DFT computando los grupos independientemente.
+
+Un diagrama simplificando la estructura del calculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
+Los pasos (a) a (e) corresponden a la etapa de inicializaci\'on, y se calculan una \'unica vez
+al comienzo de la simulaci\'on. La iteracion de SCF (\textit{Self-Consistent Field}) se
+compone de los pasos (f) a (l). Este ciclo se repite mientras la matriz densidad cambia
+menos de una cierta toleracia previamente establecida. Se agrega una condici\'on de corte ac\'a
+en el n\'umero de iteraciones, para poder capturar los sistemas mal condicionados.~\cite{LIO}
+
+Los pasos de la figura \ref{fig:lio-steps} m\'as computacionalmente costosos son (i), (j) y (k).
+En la implementaci\'on original de LIO~\cite{TesisNitsche}, se muestra como estos pasos
+obtienen grandes mejoras en GPU sobre su implementaci\'on de referencia en CPU. Sin embargo,
+estos pasos todavia insumen una gran cantidad de tiempo, incluso en las versiones aceleradas.
+
+Estudiaremos distintos cambios hechos a las rutinas para minimizar los tiempos,
+sin cambiar la estructura general del c\'alculo, ya probado en la literatura.
+
 \section{Implementacion en CUDA}
 
 \input{implementacion-cuda}
