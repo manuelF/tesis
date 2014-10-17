@@ -1,6 +1,6 @@
 \subsection{Cuellos de botellas originales, limitantes estructurales}
 
-De los pasos descriptos en la figura \ref{fig:lio-steps}, el m\'as costoso
+De las etapas descriptas en la figura \ref{fig:lio-steps}, el m\'as costoso
 en la implementaci\'on existente para GPU es el paso (j). En el c\'alculo de un sistema
 de tama\~no medio, este paso solo representaba el 95\% del tiempo total. Esto hacia
 que esta etapa llevara tanto tiempo como todos los demas calculos combinados, incluso
@@ -66,9 +66,9 @@ miles de threads por bloque, entonces es posible que las operaciones que sirvan
 para sincronizar los threads de todo un bloque en un punto espec\'ifico antes de proseguir
 (un barrier) sean excesivamente costosas.
 
-La arquitectura GPGPU de NVIDIA organiza los registros de todos los threads en un unico
+La arquitectura GPGPU de \nvidia organiza los registros de todos los threads en un unico
 register file, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
-los computos intermedios, NVIDIA decidio unificarlos, ya que es muy variable la cantidad que va a usar
+los computos intermedios, \nvidia decidio unificarlos, ya que es muy variable la cantidad que va a usar
 cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
 registros por thread. Mientras que Fermi permitia hasta 63 registros, Kepler permite hasta 255. Esto
 es positivo para poder correr bloques de pocos threads pero gran cantidad de registros. Por otro lado,
@@ -265,7 +265,7 @@ ejecutarlos, cuando se liberan un poco mas los recursos.
 %Los shuffles que no anduvieron salvo en function
 La arquitectura SM35, junto con CUDA5, trajeron aparejadas una herramienta interesante
 para el manejo interno de los pasajes de informaci\'on intra-warp durante la ejecuci\'on.
-Las instrucciones de shuffle, como asi las denomina NVIDIA, son instrucciones que facilitan
+Las instrucciones de shuffle, como asi las denomina \nvidia, son instrucciones que facilitan
 el pasaje directo de un registro de un thread en un warp, a otro, en un solo ciclo de ejecuci\'on.
 Estas instrucciones existen en diversas maneras, con distintos propositos. Principalmente se
 utilizan para pasar de un thread al siguiente (modulo el warp size) un registro para poder seguir
@@ -302,7 +302,7 @@ Esta estrategia es claramente impractica en CPU, puesto que se cuenta con mucha 
 de uso general. En GPU era necesario por el faltante de memoria, pero no es tan notorio como en CPU,
 puesto que estas cuentas se pueden hacer bastante m\'as rapido en GPU.
 
-Cuando la aplicacion original se concibio, no habia siquiera placas Tesla de GPGPU apuntadas a HPC, con
+Cuando la aplicacion original se concibi\'o, no habia siquiera placas Tesla de GPGPU apuntadas a HPC, con
 m\'as memoria disponible que los modelos de consumidores. Aprovechando estos recursos actuales,
 desarrollamos un m\'etodos para poder almacenar estos resultados temporales, de manera dinamica
 durante la ejecuci\'on de la aplicaci\'on, para poder aprovechar este recurso que originalmente
@@ -320,7 +320,7 @@ a que almacene solamente un par de las grandes.
 Para controlar la administracion de memoria, se realiza la estimaci\'on si la placa cuenta
 con la suficiente memoria libre para guardar los datos a calcular, y si puede, se guardan de manera
 permanente (hasta que la partici\'on se mueva a otro dispositivo o la liberaci\'on de recursos al
-finalizar el programa). Esto ademas es configurable de modo que una corrida pueda usar un porcentaje
+finalizar el programa). Esto ademas es configurable de modo que una ejecucion pueda usar un porcentaje
 de la memoria con la que cuenta la placa, para poder correr multiples procesos de simulaci\'on concurrentemente.
 
 Esta sencilla mejora permite explotar el hecho de que las placas hayan aumentado dramaticamente su
@@ -370,7 +370,7 @@ Esto trae aparejado una penalidad importante. Si esa bifurcacion contiene mucho 
 entonces es evidente que se subutilizan importantemente los recursos disponibles.
 
 Habiendo varios de estos casos en los kernels presentes, decidimos utilizar una t\'ecnica sugerida
-por NVIDIA. Esta consiste en hacer las operaciones normalmente, como si todos los threads cumplieran
+por \nvidia. Esta consiste en hacer las operaciones normalmente, como si todos los threads cumplieran
 las condiciones del condicional y multiplicar por 1 o por 0 el resultado antes de acumular.
 Esto hace que las cuentas que no se ejecutaban antes ahora lo hagan pero que simplemente no aporten
 a la reducci\'on. Esta t\'ecnica elimina la existencia de la rama falsa de los condicionales, pero
