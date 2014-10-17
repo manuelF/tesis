@@ -1,25 +1,25 @@
 Una parte significativa del impacto de las computadoras en los distintos aspectos de las
-ciencias e incluso de la vida diaria se debe al crecimiento de su
+ciencias, e incluso de la vida diaria, se debe al crecimiento de su
 poder de c\'omputo desde la aparici\'on de los primeros microprocesadores hasta el
 d\'ia de hoy.
 
 Entre 1986 y 2002, la performance de los procesadores crec\'io en promedio, un 50\%
 por a\~no~\cite{Pacheco}, en parte gracias a la denominada \textit{Ley de Moore}, que
 establec\'ia que la densidad de transistores por circuito integrado se duplicaba
-cada 18 meses~\cite{HennessyPatterson}. Esto puede verse en la figura~\ref{processor_performance},
-que compara los resultados de los \textit{benchmarks} SPEC de procesadores en distintos
-momentos de la historia con respecto al procesador VAX-11/780.
+cada 18 meses~\cite{HennessyPatterson}. Esto puede verse en la figura~\ref{moore-law},
+que compara la cantidad de transistores de distintos procesadores desde 1971 a la actualidad.
 
-Este crecimiento consistente permiti\'o durante mucho tiempo a los desarrolladores
-de aplicaciones escribir programas de manera serial, sabiendo que al poco tiempo los procesadores
-mejorar\'ian, y con ellos los tiempos de ejecuci\'on de sus c\'odigos de aplicaci\''on (fen\'omeno denominado
+Este crecimiento constante permiti\'o a los desarrolladores de procesadores incrementar la potencia
+de c\'alculo, duplicando la performance cada 24 meses. Esto benefici\'o durante mucho tiempo a los desarrolladores
+de aplicaciones, que escribian programas de manera serial, y al poco tiempo los procesadores
+mejorar\'ian, y con ellos los tiempos de ejecuci\'on de sus c\'odigos de aplicaci\'on (fen\'omeno denominado
 \textit{hardware free lunch}).
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\textwidth]{images/processor-performance.jpg}
-   \caption{Performance de procesador en los \textit{benchmarks} SPEC on respecto a VAX-11/780. Tomado de~\cite{HennessyPatterson}}
-   \label{processor_performance}
+   \includegraphics[width=\textwidth]{images/moore-law.pdf}
+   \caption{Cantidad de transistores en procesadores emblematicos desde 1971}
+   \label{moore-law}
 \end{figure}
 
 Sin embargo, a medida que los transistores disminuyen su tama\~no, aumentan su
@@ -27,9 +27,9 @@ disipaci\'on t\'ermica por unidad de superficie.  Esto limita la cantidad que se
 en un circuito sin producir que este se comporte de manera err\'atica producto
 de la elevada temperatura de operaci\'on. El mismo motivo impide el crecimiento de frecuencia de reloj, uno de los
 principales motores de avance en eficiencia. Los problemas t\'ermicos han implicado que
-desde el 2002, la tasa de crecimiento de la performance de los monoprocesadores ha disminuido a un 20\% anual.
-Consecuentemente, los principales fabricantes de procesadores se ha modificado el enfoque de investigaci\'on y dise\~no, empezando
-a hacerse m\'as y m\'as com\'un el uso de multiples procesadores por chip para mantener las mejoras de rendimiento.
+desde el 2002, la tasa de crecimiento de la performance de los monoprocesadores haya disminuido a un 20\% anual.
+Consecuentemente, los principales fabricantes de procesadores han modificado el enfoque de investigaci\'on y dise\~no, empezando
+a hacerse m\'as y m\'as com\'un el uso de m\'ultiples procesadores por chip para mantener las mejoras de rendimiento.
 
 La preocupaci\'on por la disipaci\'on y el consumo energ\'etico insustentables han sido motivadores
 de dise\~nos con menor frecuencia de clock, pero aprovechando las a\'un crecientes densidades de
@@ -51,7 +51,7 @@ claros ejemplos de esta tendencia.
 
 El impacto de este enfoque hacia multiples hilos de ejecuci\'on en paralelo en el
 desarrollo de aplicaciones es significativo. En simulaciones para las \'areas de biolog\'ia,
-medicina, qu\'imica o metereolog\'ia es de invaluable utilidad minimizar los tiempos
+medicina, qu\'imica o meteorolog\'ia es de invaluable utilidad minimizar los tiempos
 de ejecuci\'on, para permitir mejores implementaciones de los modelos utilizados,
 permitiendo realizar predicciones de mayor calidad. Aprovechar las nuevas
 arquitecturas multiprocesador requiere modificaciones en el c\'odigo no triviales,
