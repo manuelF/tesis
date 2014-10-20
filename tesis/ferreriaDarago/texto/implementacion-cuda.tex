@@ -1,19 +1,15 @@
-\subsection{Estructura inicial del programa}
-
-El programa originalmente estaba concebido para ser corrido en GPU nVidia GTX8800.
-Luego, las cosas que se usaron para este desarrollo consistieron en la libreria CUDA version
-2, para arquitecturas a lo sumo SM20.
-
-
 \subsection{Cuellos de botellas originales, limitantes estructurales}
 
-El cuello de botella principal que presentaba este c\'odigo era en la
-resoluci\'on del sistema, especificamente en el c\'odigo que calculaba la matriz de Kohn-Sham.
-En el GPU, esta funci\'on insumia el 95\% del tiempo total, que en sistemas de gran cantidad
-de puntos, estaba en el orden de minutos. Los problemas principales que mostraba esta funci\'on fueron:
+De los pasos descriptos en la figura \ref{fig:lio-steps}, el m\'as costoso
+en la implementaci\'on existente para GPU es el paso (j). En el c\'alculo de un sistema
+de tama\~no medio, este paso solo representaba el 95\% del tiempo total. Esto hacia
+que esta etapa llevara tanto tiempo como todos los demas calculos combinados, incluso
+en las GPU m\'as veloces del mercado (Tesla K20, GeForce GTX 780).
+
+Los problemas principales que mostraba esta kernel son:
 \begin{itemize}
 \item Cantidad de accesos a memoria global
-\item Falta de accesos coalescentes
+\item Falta de accesos coalescentes a memoria
 \item Sobreuso de la memoria compartida
 \item Subsaturacion de los SM
 \end{itemize}
@@ -21,15 +17,26 @@ de puntos, estaba en el orden de minutos. Los problemas principales que mostraba
 \subsection{Accesos a memoria global}
 
 \subsection{Falta de accesos coalescentes}
-Asi como a los CPU les interesa realizar accesos alineados a memoria, a los GPU les
-interesa aun mas. El termino coalescencia de memoria se aplica a GPU mediante
-la organizacion de los accesos a memoria de manera ordenada y predecible. La l\'ogica
-detras de esto es que cuando el GPU accede a memoria de manera alineada, puede traer
-entre 16 y 64 bytes en una sola lectura, mientras que si debe acceder de manera no
-alineada a memoria, o con threads que no acceden de manera predecible a esta, entonces
-se deberan serializar los accesos y separar en m\'ultiples accesos a memoria global para leer
-esta informaci\'on. Este problema solamente se agrava si se debe hacer muy frecuentemente
+Asi como en CPU es importante realizar accesos alineados a memoria, en GPU es aun m\'as critico.
+El termino coalescencia de memoria se define en GPU como la organizacion de los accesos a memoria
+de secuencial, ordenada y predecible. La l\'ogica detras de esto es que cuando el GPU accede a
+memoria de manera alineada, puede traer entre 16 y 64 bytes en una sola lectura, suficiente para
+cada uno de los threads del warp. Si en cambio debe acceder de manera no
+alineada a memoria, o con threads que no acceden de manera predecible, entonces
+se deberan serializar los accesos y separar en m\'ultiples transacciones a memoria global para satisfacer
+el pedido. Este problema solamente se agrava si se debe hacer accesos frecuentes
 por cientos de threads, como es el caso de los bloques con gran nivel de paralelismo explicito.
+
+En el paso del c\'alculo de la densidades el acceso a las funciones calculadas
+se realizaba por columnas en vez de por filas. Esto ocasionaba que por cada acceso,
+un warp tuviera que realizar 32 accesos secuenciales a memoria, ya que no se podian alinear
+en una transacci\'on. Esto, ademas, se repetia para las funciones, las derivadas y los
+hessianos, por lo cual los accesos eran sumamente costosos.
+
+Para realizar el cambio de coalescencia, se tuvieron que transponer las matrices de
+valores de funciones, gradientes y hessianos. La transposici\'on de matrices es un ejemplo
+sumamente estudiado por la literatura de CUDA ya que ataca un punto debil de la arquitectura,
+el ancho de banda de transferencia.
 
 \subsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
