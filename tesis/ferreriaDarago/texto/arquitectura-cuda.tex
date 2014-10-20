@@ -85,10 +85,9 @@ a nivel de thread, usado de manera extensa a traves del multithreading por hardw
 son ejecutadas en orden y no hay prediccion de saltos ni ejecuci\'on especulativa, todo se ejecuta solamente
 cuando se lo necesita. ~\cite{CudaOverview}
 
-
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/fermi-sm.pdf}
+    \includegraphics[width=250px]{images/fermi-sm.pdf}
     \caption{Diagrama de bloques del SM de GF100 Fermi. Tomado de~\cite{NvidiaFermi}}
     \label{fermi_sm}
 \end{figure}
@@ -201,6 +200,10 @@ entre 2Gb y 12Gb) y es compartida por todos los SM de la GPGPU y los CPU que int
 sistema. Es decir, tanto los GPGPU y los CPU pueden invocar las funciones del runtime CUDA
 para poder transferir datos entre la placa y la memoria RAM. La latencia de acceso a la memoria global
 es de cientos de ciclos~\cite{Demystifying}, sumamente lenta en comparaci\'on con el procesador.
+La memoria global tambien puede ser mapeada, o \textit{pinneada}. Esto quiere decir que va a existir
+una copia de esa alocaci\'on de memoria en la placa en la memoria principal del procesador. El driver
+de CUDA va a mantener la consistencia entre ambas de manera as\'incrona, evitando la necesidad de hacer
+copias de memoria explicitas.
 
 La memoria compartida, o \textit{shared}, es una memoria que es visible para todos los threads dentro
 de un mismo SM. Cada thread puede escribir en cualquier parte de la memoria compartida dentro de su bloque y
@@ -249,9 +252,9 @@ accesos a memoria globales podria servir, asi que hay que usarla judiciosamente.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{images/cuda-memories.png}
+    \includegraphics[width=250px]{images/cuda-memories.png}
     \caption{Jerarquia de memorias en GPU. Tomado de~\cite{farberCuda}}
-    \label{cuda-memories}
+    \label{fig:cuda-memories}
 \end{figure}
 
 \subsection{Esquema de paralelismo}
@@ -315,7 +318,7 @@ un procesador m\'as escalable y de proposito general.
   SMs                      & 30              & 16              & 15               \\
   SP / SM                  & 8               & 32              & 192              \\
   Cach\'e L1               & -               & 16 - 48Kb       & 16 - 32 - 48Kb   \\
-  Cache L2                 & -               & 768Kb           & 1536Kb           \\
+  Cach\'e L2               & -               & 768Kb           & 1536Kb           \\
   Mem\'oria Shared/SM      & 16Kb            & 16 - 48Kb       & 16 - 32 - 48Kb   \\
   Registros/Thread         & 63              & 63              & 255              \\
   Pico Precision Simple    & 240 MAD / clock & 512 FMA / clock & 2880 FMA / clock \\
@@ -356,7 +359,7 @@ por ejemplo, computadoras de escritorio).
 \subsection{CUDA, Herramientas de desarrollo, profiling, exploracion}
 
 Para soportar una arquitectura masivamente paralela, se debe usar una ISA
-(\texttt{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA, conocida como PTX,
+(\textit{Instruction Set Architecture}) dise\~nada especialmente para el problema. Esta ISA, conocida como PTX,
 debe poder soportar conceptos fundamentales del computo GPGPU: grandes cantidades de registros,
 operaciones en punto flotante de precision simple y doble y fused multiply-add. Adem\'as,
 el c\'odigo compilado para GPGPU debe ser agn\'ostico al dispositivo que lo va a correr, por
@@ -427,7 +430,7 @@ en memoria pueden incurrir en multiples accesos a esta para recorrerlas, y en la
 arquitecturas GPGPU son estos los que generan el mayor cuello de botella. Ademas,
 suelen ser dificiles de paralelizar en m\'ultiples subproblemas. Tener como parametros de
 entrada matrices o arreglos que se puedan partir facilmente incurre en minimos
-overheads de computo y permite aprovechar mejor las memorias caches y las herramientas de
+overheads de computo y permite aprovechar mejor las memorias cach\'es y las herramientas de
 prefetching que brinda la arquitectura.
 
 Item \ref{req:transf} ataca uno de los puntos criticos de esta arquitectura. Para poder
@@ -456,7 +459,7 @@ los dise\~nos siguiendo la historia de los componentes que fueron apareciendo en
 
 (insertar foto de die de nehalem)
 
-Caches - Pipelines - Predictores - M\'as cach\'e - M\'as controladores de memoria - Multiple issues
+cach\'es - Pipelines - Predictores - M\'as cach\'e - M\'as controladores de memoria - Multiple issues
 
 Lo importante ac\'a es observar el patron: ``no desechar algo que podramos necesitar pronto'',
 ``intentar predecir el futuro de los condicionales'', ``intentar correr multiples instrucciones a la vez
@@ -480,16 +483,16 @@ tanto por su enf\'asis fundamental, las aplicaciones gr\'aficas, como para su as
 de proposito general.
 
 Por contrapartida, los GPU disponen de pocas unidades de soporte del procesamiento. Estos no disponen pipelines
-especulativos, el tama\~no de las caches estan a ordenes de magnitud de las de CPU, la latencia a las memorias
+especulativos, el tama\~no de las cach\'es estan a ordenes de magnitud de las de CPU, la latencia a las memorias
 principales de la GPU estan a centenas de clocks de distancia, etc. La arquitectura asume que siempre va a tener m\'as trabajo
 para hacer, por lo cual en vez de intentar solucionar los pitfalls de un grupo de threads, directamente
 los reschedulea para m\'as adelante y continua procesando otro warp de threads. Se puede notar que durante del
 dise\~no de la arquitectura GPGPU buscaron resolver el problema del computo masivo pensando en hacer
 m\'as cuentas a la vez y recalcular datos, si fuera necesario. Esto es una marcada diferencia contra
 los CPU, que estan pensado en rehacer el menor trabajo posible y intentar mantener todos los datos que pueda en
-las memorias caches masivas.
+las memorias cach\'es masivas.
 
-Nuevamente, aca se ve el legado historico de los CPU. Al tener que poder soportar cualquier aplicacion, no pueden
+Nuevamente, ac\'a se ve el legado historico de los CPU. Al tener que poder soportar cualquier aplicacion, no pueden
 avocarse de lleno a una sola problematica. Para las arquitecturas GPGPU, el hecho de no tener que dise\~nar un
 procesador de proposito general retrocompatible permitio un cambio radical a la hora de concebir
 una arquitectura de gran throughput auxiliar al procesador, no reemplazandolo sino mas bien adicionando poder de computo.~\cite{GlaskowskyFermi}
