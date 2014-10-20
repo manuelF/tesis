@@ -1,10 +1,10 @@
 Con la aparici\'on de las computadoras en el \'ambito de la ciencias experimentales, han
 ganado tracci\'on los desarrollos en m\'etodos de simulaci\'on de modelos matem\'aticos.
-Con el apoyo de estas nuevas t\'ecnicas se hace posible no solo
+El apoyo de estas nuevas t\'ecnicas hace posible no solo
 complementar la experimentaci\'on sino tambi\'en explorar la teor\'ia de fondo de maneras que
 no son posibles o convenientes mediante enfoques m\'as cl\'asicos.
 
-Un ejemplo es el estudio, dentro del marco de la qu\'imica, de los comportamientos de las
+Un ejemplo dentro del marco de la qu\'imica es el estudio de los comportamientos de las
 part\'iculas peque\~nas (electrones, protones, etc.) de acuerdo a las leyes de la f\'isica. En este \'area las
 simulaciones de los postulados que rigen la mec\'anica de part\'iculas (denominada mec\'anica cu\'antica)
 resultan invaluables para el estudio de fen\'omenos a escala microsc\'opica.
@@ -27,7 +27,7 @@ esto no ocurre se puede simplificar utilizando el operador Hamiltoniano
     \hat{H} =  -\frac{\hbar^2}{m} \nabla^2 + \hat{V}
 \end{equation*}
 
-a la ecuaci\'on de Sch\"odinger \textit{independiente del tiempo}
+a la ecuaci\'on de Schr\"odinger \textit{independiente del tiempo}
 
 \begin{equation}
     \label{schro_time_indep}
@@ -40,12 +40,13 @@ Ahora, si bien resolver esta ecuaci\'on diferencial ser\'ia suficiente para dete
 manera exacta cuando hay m\'as de una part\'icula en el mismo. Por este motivo, para problemas de mayor tama\~no se utilizan aproximaciones num\'ericas
 para obtener una soluci\'on de~\ref{schro_time_indep}.
 
-Existen diversos m\'etodos aproximados para resolver esta ecuaci\'on, los cuales intercambian costo computacional (es decir, cantidad de operaciones a realizar)
-por precisi\'on de la respuesta obtanida. Debido a su buena relaci\'on costo/calidad, para resolver numericamente~\ref{schro_time_indep}, utilizamos el modelo propuesto por la
+Existen diversos m\'etodos aproximados para resolver esta ecuaci\'on que intercambian costo computacional (es decir, cantidad de operaciones a realizar)
+por precisi\'on de la respuesta obtenida. Debido a su buena relaci\'on costo/calidad, para resolver numericamente~\ref{schro_time_indep}, utilizamos el modelo propuesto por la
 DFT (\textit{Density Functional Theory}).
 
-La base de este m\'etodo consiste en dos teoremas publicados por Hohenberg y Kohn en 1964~\cite{HohenbergKohn}. El primero introduce el concepto de la \textit{densidad electr\'onica} $\rho$, que viene a representar la probabilidad de encontrar un electr\'on en
-el espacio dado un estado de la configuraci\'on del sistema. El resultado te\'orico que provee el primer teorema es entonces que
+La base de este m\'etodo consiste en dos teoremas publicados por Hohenberg y Kohn en 1964~\cite{HohenbergKohn}. El primero introduce
+el concepto de la \textit{densidad electr\'onica} $\rho$, que representa la probabilidad de encontrar un electr\'on en
+el espacio dada una configuraci\'on del sistema. El resultado te\'orico que provee el primer teorema es entonces que
 $\rho$ y $\Psi$ (y por lo tanto $E$) se encuentran relacionadas por la siguiente ecuaci\'on:
 
 \begin{equation}
@@ -80,7 +81,7 @@ y es aproximada mediante una integral n\'umerica utilizando una grilla de puntos
 \end{equation}
 
 Este valor puede aproximarse de diversas maneras, con distintos resultados num\'ericos y cantidad de operaciones
-asociado, debido a que para el c\'alculo del t\'ermino $E_{XC}$ se puede considerar el gradiente
+asociado, debido a que para el c\'alculo del t\'ermino $E_{XC}$ se puede considerar adem\'as el gradiente
 y el hessiano de la energ\'ia de intercambio y correlaci\'on (necesitando entonces calcular
 estos valores para cada punto).
 
@@ -88,13 +89,13 @@ Otro aspecto importante de esta teor\'ia es que provee una manera de calcular la
 mediante el denominado m\'etodo de Kohn-Sham~\cite{KohnSham}. Este m\'etodo se basa en el segundo teorema
 de Hohenberg y Khon, que establece que la densidad electr\'onica es la funci\'on que
 cumple que $\int \rho(r) dr = N$, la cantidad de atomos del sistema, $\rho(r) \geq 0$ y que
-minimiza la energ\'ia $E[\rho]$~\ref{hohenberg_kohn_energy}. Esto nos da
-un m\'etodo iterativo para, empezando con una aproximaci\'on inicial a la densidad electr\'onica,
-iterar el calculo de la misma (usando una matriz de coeficientes denominada \textit{Matriz de Kohn Sham}), hasta
+minimiza la energ\'ia $E[\rho]$~\ref{hohenberg_kohn_energy}. Esto produce
+un m\'etodo iterativo para calcular $\rho$. Se empieza con una aproximaci\'on inicial y
+se itera el c\'alculo de la misma usando una matriz de coeficientes denominada \textit{Matriz de Kohn Sham}, hasta
 alcanzar un m\'inimo para $E$.
 
 El algoritmo que se deduce de la DFT es uno de los m\'etodos m\'as populares en c\'alculos
-de estado s\'olido, especialmente desde la decada del 90 cuando se mejor\'o las aproximaciones para modelado de
+de estado s\'olido, especialmente desde la d\'ecada del 90 cuando se mejoraron las aproximaciones para modelado de
 interacciones. El valor de esta teor\'ia para el estudio de las propiedades de la materia le vali\'o a Kohn el Premio Nobel
 de Qu\'imica en 1998.
 
@@ -110,17 +111,17 @@ electr\'onica cambia), modulando este comportamiento mediante una simulaci\'on b
 cl\'asica del resto del sistema. Para esto se divide la energ\'ia en tres partes:
 
 \begin{equation}
-    E = E_{QM} + E_{QM-MM} + E_{MM}
+    E = E_{QM} + E_{QM/MM} + E_{MM}
 \end{equation}
 
 Donde la energ\'ia $E_{QM}$ se obtiene mediante el m\'etodo DFT visto m\'as arriba, y la energ\'ia
 $E_{MM}$ proviene de simular el campo de fuerzas cl\'asico de atracci\'on electroest\'atica de
 Coulomb (por ejemplo usando \textit{n-body}).
 
-La contribuci\'on $E_{QM-MM}$ en este trabajo, se calcula mediante la ecuaci\'on
+La contribuci\'on $E_{QM/MM}$ en este trabajo, se calcula mediante la ecuaci\'on
 
 \begin{equation}
-    E_{QM-MM} = \sum_{l = 1}^{N_c} q_l \int \frac{\rho(r)}{\mid r - R_l \mid} + \sum_{l = 1}^{N_c}\sum_{\alpha = 1}^{N_q} [ v_{LJ} ( \mid R_l - \tau_\alpha \mid ) + \frac{q_l z_\alpha}{\mid R_l - \tau_\alpha \mid} ]
+    E_{QM/MM} = \sum_{l = 1}^{N_c} q_l \int \frac{\rho(r)}{\mid r - R_l \mid} + \sum_{l = 1}^{N_c}\sum_{\alpha = 1}^{N_q} [ v_{LJ} ( \mid R_l - \tau_\alpha \mid ) + \frac{q_l z_\alpha}{\mid R_l - \tau_\alpha \mid} ]
 \end{equation}
 
 Donde el primer t\'ermino relaciona una carga puntual del sistema cl\'asico con la densidad
@@ -132,7 +133,9 @@ Los m\'etodos \textit{QM/MM}, dentro del marco de m\'etodos multiescala, son amp
 la pr\'actica. Estos modelos multiescala han valido a Karplus, Levitt y
 Warshel el premio Nobel de Qu\'imica en 2013, por su valor para la simulaci\'on de sistemas complejos.
 
-Nuestro trabajo se realiza en base a programas ya existentes. El c\'alculo de $E_{QM}$ y $E_{QM-MM}$ son realizados por el paquete de \textit{software} LIO~\cite{LIO}~\cite{TesisNitsche}, el cual fue optimizado para este trabajo para el uso de distintas arquitecturas de CPU y GPGPU. Esta librer\'ia
-se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el calculo
-de $E_{MM}$. Nos concentraremos en las partes m\'as intensivas computacionalmente de LIO, que corresponden a la
-implementaci\'on de los c\'alculos que hemos introducido en esta secci\'on.
+Nuestro trabajo se realiza en base a programas ya existentes. El c\'alculo de $E_{QM}$ y $E_{QM/MM}$ son realizados por el paquete de
+\textit{software} LIO~\cite{LIO}~\cite{TesisNitsche}, el cual fue optimizado en este trabajo para el uso de
+distintas arquitecturas de CPU y GPGPU. Esta librer\'ia
+se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el c\'alculo
+de $E_{MM}$. Nos concentraremos en las partes computacionalmente m\'as intensivas de LIO, que corresponden a la
+implementaci\'on de los c\'alculos introducidos en esta secci\'on.
