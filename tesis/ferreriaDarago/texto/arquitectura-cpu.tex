@@ -127,6 +127,13 @@ de la aplicaci\'on que es paralelizable y el porcentaje que no lo \'es. Matem\'a
 Donde $S$ es el porcentaje m\'aximo de mejora alcanzable, $B$ es la fracci\'on del algoritmo a ejecutar que debe ejecutarse
 serialmente, y $n$ la cantidad de hilos de ejecuci\'on paralelos que se dispone.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/amdahl.png}
+    \caption{Aceleraci\'on te\'orica m\'axima (en veces) dada por la ley de Amdahl, seg\'un la cantidad de nucleos de procesamiento}
+    \label{fig:amdahl_plot}
+\end{figure}
+
 Un ejemplo de esta ley en acci\'on es que si $95 \%$ del problema es paralelizable entonces el l\'imite te\'orico de
 mejora es de 20 veces (el programa corriendo sobre infinitos cores se ejecutar\'ia en un veinteavo del tiempo que originalmente
 requer\'ia). La curva puede verse graficada en~\ref{fig:amdahl_plot}.
