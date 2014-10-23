@@ -431,4 +431,38 @@ Para distribuir las tareas utilizamos dos t\'ecnicas combinadas, una para distri
 tareas estaticamente y otra para redistribuirlas dinamicamente de acuerdo al runtime de
 cada tarea.
 
+Resolver un sistema, en principio, debiera ser inherentemente paralelo; resolver para un grupo
+no afecta resolver para otro. Sin embargo, escalar este problema entre m\'ultiples placas convierte
+el problema de \textit{compute-bound} en un problema \textit{memory-bound}. Como cada dispositivo
+va a tener que copiarse un fragmento de la matriz global RMM  y acumular en una matriz RMM salida,
+va a existir una contenci\'on entre los threads para leer y escribir en la memoria principal.
+Esto ocasiona que el speedup entre multiples placas no sea lineal; al haber una cantidad
+limitada de trabajo y un fragmento de resoluci\'on que necesariamente tiene que leer y
+escribir en memoria es una contenci\'on necesaria.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/4placas-simple.png}
+   \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on simple}
+   \label{plt:4placas-doble}
+\end{figure}
+
+Un importante caso excepcional a lo anterior es la realizaci\'on del trabajo en doble precisi\'on. La cuenta
+de resoluci\'on de SCF se puede realizar tanto en simple como en doble precisi\'on, para minimizar los
+errores de las operaciones. El costo de realizarlas en doble esta en la performance. Es notable
+el tiempo adicional que compone cada iteraci\'on, por lo cual las simulaciones que lo usen van
+a poder realizar como m\'aximo, aproximadamente un cuarto de la cantidad de iteraciones que la misma ejecutada en simple precision.
+El computo utilizando precision doble tiene, sin embargo, ventajas en el paralelismo entre placas.
+Como los kernels son completamente \textit{compute-bound}, las copias de memoria son poco costosas
+en relaci\'on a la resoluci\'on de los grupos. Esto hace que haya poca contenci\'on en la memoria principal,
+dado que hay menor concurrencia sobre estas. Podemos observar en la figura \ref{plt:4placas-doble} una clara mejora en los tiempos
+de c\'alculo de los sistemas en doble precision entonces usando esta t\'ecnica de paralelismo, aproximadamente
+una mejora lineal en la cantidad de dispositivos usados.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/4placas-doble.png}
+   \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on doble}
+   \label{plt:4placas-doble}
+\end{figure}
 
