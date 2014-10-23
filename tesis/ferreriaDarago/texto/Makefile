@@ -1,15 +1,12 @@
-PLOTS=$(wildcard plots/comun/*.py)
 
-
-tesis.pdf: *.tex bibliografia.bib plots
+tesis.pdf: *.tex bibliografia.bib doplots
 	pdflatex tesis.tex
 	bibtex tesis.aux
 	pdflatex tesis.tex
 	pdflatex tesis.tex
 
-plots: $(PLOTS)
+doplots:
 	bash regenerate_plots.sh
-	touch plots
 
 clean: cleantex cleanplots
 
