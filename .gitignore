@@ -1,0 +1,10 @@
+*.aux
+*.toc
+*.log
+*.out
+*.idx
+*.bbl
+*.bcf
+*.pyc
+*.blg
+

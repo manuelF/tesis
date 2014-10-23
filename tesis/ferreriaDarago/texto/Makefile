@@ -1,3 +1,5 @@
+PLOTS=$(wildcard plots/comun/*.py)
+
 
 tesis.pdf: *.tex bibliografia.bib plots
 	pdflatex tesis.tex
@@ -5,12 +7,13 @@ tesis.pdf: *.tex bibliografia.bib plots
 	pdflatex tesis.tex
 	pdflatex tesis.tex
 
-plots: cleanPlots
+plots: $(PLOTS)
 	bash regenerate_plots.sh
+	touch plots
 
-clean: cleanTex cleanPlots
+clean: cleantex cleanplots
 
-cleanPlots:
+cleanplots:
 	find plots/ -name *.png | xargs rm -f
-cleanTex:
+cleantex:
 	rm -f tesis.pdf *.aux *.toc *.log *.out *.idx *.bbl *.bcf *.blg
