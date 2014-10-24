@@ -88,35 +88,96 @@ fundamentales a la hora de evaluar como proseguir en la busqueda de optimizacion
 
 \subsection{Cambios en el threading}
 %Cambiamos de blocks por puntos, a blocks por funci\'on.
-De los 3 kernels que originalmente componian la iteracion de SCF, el que se encargaba
-del calculo de la densidad insumia el 94\% del tiempo total de uso de la GPU. Minimizar
-el tiempo de ejecuci\'on de esta funcion resultaba vital para poder disminuir el tiempo
-de convergencia de SCF.
 
-El cuello de botella fundamental radicaba en como se distribuia el trabajo de computo
+De los 3 kernels que originalmente componian la iteraci\'on de SCF en GPU, el que se encargaba
+del c\'alculo de la densidad electr\'onica de la contribuci\'on de la energ\'ia de intercambio correlaci\'on
+insumia el 94\% del tiempo total de uso de la GPU. Minimizar el tiempo de ejecuci\'on de
+esta funcion resultaba vital para poder disminuir el tiempo de convergencia de SCF.
+
+Este kernel computa resoluci\'on num\'erica de la integral descripta en la secci\'on introductoria.
+\begin{equation}
+    E_{XC} = \int \rho(r) \epsilon_{xc}\left( \rho(r) \right ) dr
+\end{equation}
+\begin{center}
+    $\Downarrow$
+\end{center}
+\begin{equation}
+    E_{XC} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
+\end{equation}
+Esta calcula el termino de la energ\'ia de intercambio correlaci\'on, usando una grilla
+de puntos con peso. Esta cuenta se realiza por cada partici\'on de los grupos en el mallado
+del problema. El t\'ermino $\rho$ se obtiene de la base gaussiana usada, y $\epsilon_{xc}$
+son los coeficientes variacionales. La operatoria entonces que se realiza
+en el procesador es
+\begin{equation}
+  E_{XC} \approx \sum^{puntos} \sum_{i<m} F_i \sum_{j<i} F_j C_{i,j}
+\end{equation}
+
+Donde $F_i$, $F_j$ son los valores del mallado de las funciones de la base en un punto dado,
+$m$ es la cantidad de funciones de la base y $C_{i,j}$ son los $\epsilon_{xc}$.
+
+El cuello de botella fundamental en la ejecuci\'on radicaba en como se distribuia el trabajo de computo
 entre los kernels. La estrategia de paralelizaci\'on original determinaba la partici\'on
-del sistema a resolver instanciando un bloque por cada punto (\texttt{blockId.x $\in$ group\_m}),
-una cantidad fija de threads (usando \texttt{threadId.x $\in$ BLOCK\_SIZE})
-Los threads servian para reutilizar la memoria compartida; cada uno hacia la lectura
-de un $F_i$ que se lo compartian entre todos, y luego todos usaban un $F_j$ distinto, para
-hacer la multiplicaci\'on de filas por columnas.
+del sistema a resolver instanciando un bloque por cada punto ({$blockId.x < m$}),
+una cantidad fija de threads (usando $threadId.x < BLOCK\_SIZE$)
+Los threads servian para reutilizar la memoria compartida; cada thread leia un
+elemento de la matriz de coeficientes ($C_{i,j})$) y luego lo compartian con los
+dem\'as threads.
 
 Esta distribuci\'on resultaba natural al problema, pero visto con mayor detalle, esto
 implicaba una cantidad de cuentas innecesarias que podian ser eliminadas.
 
-Uno de los cambios importantes fue crear mas bloques, para las particiones que tienen
-mas funciones. Decidimos usar otra dimensi\'on de los bloques (\texttt{blockId.y}),
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{images/cuda-parallelism.pdf}
+   \caption{Estrategia original y modificada de paralelismo en el kernel de computo de la densidad
+   electronica computada durante $E_{XC}$.}
+   \label{fig:cuda-xc-parallelism}
+\end{figure}
+
+El cambio m\'as importante para la performance provino de reconsiderar
+la estrategia de partici\'on. La grilla con un bloque por punto con una cantidad
+fija de threads tiene el problema de que, con bases grandes, tiene que realizar
+mucho trabajo por bloque. Esto causa que los SM esten ocupados constantemente
+por kernels de larga duracion. Lo que se busca es que los  bloques realicen
+menos trabajo por llamada, de modo que se puedan despachar a mas SM a medida
+que estos terminen. En definitiva, lo que se busca es incrementar el throughput
+de la placa. Esta estrategia se observa en la parte superior de la figura
+\ref{fig:cuda-xc-parallelism}.
+
+La nueva partici\'on que se eligio dispone un bloque por funci\'on,
+de modo que cada thread $i$ realice la cuenta $F_i \sum_{j}^{i} F_j C_{i,j}$
+y se compartan entre threads los valores de $F_i$ leidos.
+Esta estrategia se ve en la parte inferior de la figura \ref{fig:cuda-xc-parallelism}.
+
+La nuva estrategia permite una mucho mayor reutilizaci\'on de las lecturas a memoria
+global (uno de los grandes limitantes de esta arquitectua). Este cambio es posible ahora
+dado el tama\~no de las memorias compartidas (16Kb en la generaci\'on de
+dispositivos existentes en implementaci\'on original, actualmente 48Kb). Finalmente
+esto tambien se beneficia del incremento en tanto la cantidad de SM y la de SP por
+SM. Todos estos factores permitieron un gran speedup.
+
+El otro cambio importantes fue partir en problema en m\'as bloques, para las grupos que tengan
+m\'as funciones. Decidimos agregar otra dimensi\'on a la grilla de bloques (\texttt{blockId.y}),
 para determinar cuantos grupos de threads van a hacer falta para procesar completamente
 todas las funciones de ese punto. Llamamos a este parametro $altura\_bloques$. Se
-calcula para cada particion entonces como $altura\_bloques = {group\_m}/{BLOCK\_SIZE}$
-Para todas las particiones chicas, este valor no supera a 1. En los cubos y esferas m\'as
+calcula para cada particion como $altura\_bloques = {m}/{BLOCK\_SIZE}$.
+Para las particiones chicas, este valor no supera a 1. En los cubos y esferas m\'as
 grandes (de los sistemas probados), la altura puede ser hasta 6. Esto significa una gran
 cantidad de bloques adicionales con respecto al m\'etodo anterior.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/threading.png}
+   \caption{Speedup en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia}
+   \label{plt:speedup-threading}
+\end{figure}
+
 %%
 %%
 
 Despues de haber hecho el cambio de la parelelizacion, estudiamos realizar
-mas de un punto por thread. Esto sirve para aprovechar un par de lecturas que son comunes
+m\'as de un punto por thread. Esto sirve para aprovechar un par de lecturas que son comunes
 entre dos funciones. Con este cambio, se instancian menos bloques (la mitad de la dimension $y$
 definida para esto) y se pueden ocultar algunas latencias de acceso, pero
 cada grupo de threads lleva m\'as tiempo y usan m\'as registros. Esta estrategia es similar
@@ -242,9 +303,9 @@ dividir en bloques con threads en $x$, $y$, $z$, entonces tiene mucho sentido pe
 que las estructuras de datos subyacentes se van a acceder usando indices multidimensionales.
 
 En nuestro problema, la memoria de textura se presenta como una soluci\'on para
-los accesos bidimensionales de la matriz de RMM para el grupo de puntos.
+los accesos bidimensionales de la matriz de coeficientes para el grupo de puntos.
 Como esta matriz debe ser multiplicada por todos los valores de las funci\'ones,
-derivadas primeras y segundas, se va a acceder a toda la matriz de RMM mas de
+derivadas primeras y segundas, se va a acceder a toda la matriz de coeficientes mas de
 una vez por cada thread. Adem\'as, como se va a usar toda la matriz, y esta suele
 tener un tamaño intermedio (es muy grande para memoria constante), el problema
 suele entrar casi completamente en la memoria de textura.
@@ -398,11 +459,11 @@ podemos evitarlos.
 
 \subsection{Escalando m\'as all\'a de un GPU}
 Una vez que fueron solucionados muchos limitantes de performance en los kernels del computo
-de la densidad electr\'onica y del c\'alculo de la matriz RMM, nos encontramos en un punto donde
+de la densidad electr\'onica y del c\'alculo de la matriz de Fock, nos encontramos en un punto donde
 no fue posible determinar mejoras significativas en el c\'alculo para reducir tiempos.
 Decidimos subir un nivel m\'as el paralelismo, de modo de poder solucionar multiples particiones
 simultaneamente. Dado que es independiente el computo de cada partici\'on (salvo la acumulaci\'on
-en la matriz RMM de salida y en la matriz de fuerzas interat\'omicas), nos pareci\'o que seria
+en la matriz de Fock de salida y en la matriz de fuerzas interat\'omicas), nos pareci\'o que seria
 interesante ver como escala distribuir el computo a lo largo de multiples GPU.
 
 Para dividir el problema entre varios dispositivos usamos, al igual que en CPU, OpenMP. Definimos
@@ -434,7 +495,7 @@ cada tarea.
 Resolver un sistema, en principio, debiera ser inherentemente paralelo; resolver para un grupo
 no afecta resolver para otro. Sin embargo, escalar este problema entre m\'ultiples placas convierte
 el problema de \textit{compute-bound} en un problema \textit{memory-bound}. Como cada dispositivo
-va a tener que copiarse un fragmento de la matriz global RMM  y acumular en una matriz RMM salida,
+va a tener que copiarse un fragmento de la matriz global de coeficientes  y acumular en la matriz de Fock de salida,
 va a existir una contenci\'on entre los threads para leer y escribir en la memoria principal.
 Esto ocasiona que el speedup entre multiples placas no sea lineal; al haber una cantidad
 limitada de trabajo y un fragmento de resoluci\'on que necesariamente tiene que leer y
@@ -465,4 +526,16 @@ una mejora lineal en la cantidad de dispositivos usados.
    \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on doble}
    \label{plt:4placas-doble}
 \end{figure}
+
+
+Speedup definitivo
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/final.png}
+   \caption{Speedup en veces de correr Hemoglobina comparando implementacion original en CUDA contra
+   las versiones optimizadas definitivas}
+   \label{plt:cuda-final}
+\end{figure}
+
 
