@@ -30,4 +30,5 @@ def barGraph(title, xlabel, ylabel, values, ticks, filename):
   p1 = plt.bar(barLocations, values, barWidth, color='r')
   pylab.legend()
   pylab.savefig(filename, bbox_inches='tight')
+  pylab.close()
 
