@@ -7,4 +7,4 @@
 *.bcf
 *.pyc
 *.blg
-
+tesis/ferreriaDarago/texto/plots/**/*.png
