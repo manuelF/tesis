@@ -32,13 +32,13 @@ def speedupDoble():
   barGraph(**params)
 
 def threading():
-  ref_m2090 = 4019568.0
-  change_m2090 = 1156914.0
-  ref_kepler = 1.0
-  change_kepler = 0.5
+  ref_m2090 = 3915307.0
+  change_m2090 = 3077739.0
+  ref_kepler = 4358695.0
+  change_kepler = 1929594.0
   measures = (ref_m2090/ref_m2090, ref_m2090/change_m2090,
       ref_kepler/ref_kepler, ref_kepler/change_kepler)
-  print measures
+
   params =  {'title': u"Speedup del computo de densidad electronica",
       'xlabel':u"Arquitecturas GPU",
       'ylabel':u"Aceleración (en veces)",
@@ -47,6 +47,29 @@ def threading():
         u'Referencia Kepler', u'Optimizado Kepler'),
       'filename':"threading.png"}
   barGraph(**params)
+
+def variandoDBS():
+  m2090_32 =1113661.0
+  m2090_64 =638061.0
+  m2090_128 =849679.0
+
+  k40_32 = 579138.0
+  k40_64 = 401664.0
+  k40_128 = 494509.0
+  
+  measures = (m2090_32, m2090_64, m2090_128,
+    k40_32, k40_64, k40_128)
+
+  params =  {'title': u"Speedup del computo de densidad electronica",
+      'xlabel':u"Tamaño del bloque",
+      'ylabel':u"Tiempo del kernel density [us]",
+      'values':measures,
+      'ticks':(u'Fermi DBS 32', u'Fermi DBS 64',u'Fermi DBS 128',
+         u'Kepler DBS 32', u'Kepler DBS 64',u'Keploer DBS 128',),
+      'filename':"dbs.png"}
+  barGraph(**params)
+
+
 
 def speedupTotal():
   ref_1x2090 = 5005751
@@ -70,3 +93,4 @@ if __name__ == '__main__':
   speedupSimple()
   speedupDoble()
   speedupTotal()
+  variandoDBS()

@@ -211,26 +211,17 @@ por bloque. Mostramos que tener solo un warp es bueno, pero mucho mejor a\'un es
 esto permite, con costo cero, poner a correr el otro para ocultar la latencia sin agrandar
 demasiado el costo de la sincronizaci\'on.
 
+Habiendo hechas todas las demas optimizaciones detalladas en las secciones siguientes, evaluamos
+unicamente este parametro. Evaluamos un bloque de 32 threads hasta 128 threads por bloque,
+el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
 
-%%%%%%%%%%%%% fruta underneath
-Una cosa que se nota que este mecanismo de paralelizacion cuenta con
-la ventaja de que casi no se compartian los datos entre los distintos threads, lo cual,
-a priori, deberia haber ocasionado que no hubiera mucho mejor forma de realizar el computo.
-
-Originalmente el c\'odigo generaba un bloque por cada punto en el grupo de puntos
-que teniamos que solucionar, con una sola dimension por thread.
-Como este era el kernel que insumia el 94\% del tiempo de todo el proceso, decidimos
-atacarlo de raiz, cambiando la paralelizaci\'on. A pesar de que el profiler de CUDA nos indicaba
-que tenia una buena occupancy, decidimos cambiar de fondo el encare del problema.
-
-
-Sin embargo, con un detalle m\'as fino, es posible notar que este mecanismo hacia que
-muchos threads hicieran cuentas innecesarias, que no contribuian a la reducci\'on total.
-Esto daba una alta ocupancia ficticia, que buscamos acercar a la real. Adem\'as, a pesar
-de que se compartian muy poca informaci\'on por la memoria compartida, tambien habia muchos
-puntos de sincronización a nivel bloque.
-
-
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/dbs.png}
+   \caption{Speedup en veces del kernel density corriendo Hemoglobina variando
+   la arquitectura y tama\~no de \textit{BLOCK\_SIZE}.}
+   \label{plt:dbs-runtime}
+\end{figure}
 
 
 \subsection{Cambios en la reducci\'on}
