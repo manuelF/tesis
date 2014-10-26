@@ -193,7 +193,7 @@ Un bloque chico ademas nos permite usar mas memoria compartida por thread, dado 
 cantidad fija de memoria por bloque (entre 32Kb y 64Kb). Cuando se cuentan con muchos m\'as
 threads, se debe reducir este uso por thread de modo que todos puedan ejecutar concurrentemente.
 
-Dicho esto, la literatura ~\cite{farberCuda} sugiere siempre que sea posible
+Dicho esto, la literatura~\cite{farberCuda} sugiere siempre que sea posible
 usar bloques grandes y con threads lo m\'as independientes posibles. Una gran cantidad de threads
 en un bloque permite tener muchos m\'as warps para schedulear de modo de esconder las latencias de
 operaciones y de a accesos globales. Sin embargo, contar con muchos threads hace que las
@@ -350,15 +350,15 @@ normalmente entraban en la memoria principal de un CPU, no entraban completos en
 La decisi\'on tomada por muchas aplicaciones de entonces es compensar esto calculando
 datos intermedios y tirandolos al final; teniendo que ser recalculados en las proximas iteraciones.
 
-Esta estrategia es claramente impractica en CPU, puesto que se cuenta con mucha mas memoria
+Esta estrategia es claramente impractica en CPU, puesto que se cuenta con mucha m\'as memoria
 de uso general. En GPU era necesario por el faltante de memoria, pero no es tan notorio como en CPU,
-puesto que estas cuentas se pueden hacer bastante m\'as rapido en GPU.
+puesto que estas cuentas se pueden hacer m\'as rapido en GPU.
 
 Cuando la aplicacion original se concibi\'o, no habia siquiera placas Tesla de GPGPU apuntadas a HPC, con
 m\'as memoria disponible que los modelos de consumidores. Aprovechando estos recursos actuales,
-desarrollamos un m\'etodos para poder almacenar estos resultados temporales, de manera dinamica
-durante la ejecuci\'on de la aplicaci\'on, para poder aprovechar este recurso que originalmente
-era limitante pero ya no.
+desarrollamos un m\'etodos para poder almacenar las matrices de los valores de funciones y sus derivadas
+en cada punto para cada grupo durante la ejecuci\'on de la aplicaci\'on, de modo de  poder aprovechar
+este recurso que originalmente era limitante pero ya no.
 
 Para poder determinar que cosas van a ser guardadas en mem\'oria y que no, se determin\'o una heuristica
 que define el orden de las particiones a solucionar. Esta heuristica estima que tama\~no van a
@@ -375,7 +375,16 @@ permanente (hasta que la partici\'on se mueva a otro dispositivo o la liberaci\'
 finalizar el programa). Esto ademas es configurable de modo que una ejecucion pueda usar un porcentaje
 de la memoria con la que cuenta la placa, para poder correr multiples procesos de simulaci\'on concurrentemente.
 
-Esta sencilla mejora permite explotar el hecho de que las placas hayan aumentado dramaticamente su
+Un detalle a tener en cuenta es que, incluso si se maximiza el porcentaje de memoria usado para
+cachear estas matrices, tal vez no alcanza para que quepa todo el sistema evaluado en memoria. Esto
+se nota principalmente en la linea GeForce, que cuentan con aproxidamante entre un cuarto y la mitad
+de la memoria global que tienen su equivalente en la linea Tesla. Esto sin embargo, es mitigado
+cuando se computa m\'ultiples placas, que tambien distribuyen el almacenamiento ademas del computo.
+
+Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
+cantidad de memoria disponible para el cacheo.
+
+Esta simple mejora permite explotar el hecho de que las placas hayan aumentado dramaticamente su
 capacidad de almacenamiento, un recurso que hasta recientemente venia siendo un limitante podemos
 convertirlo en una aceleraci\'on notoria.
 

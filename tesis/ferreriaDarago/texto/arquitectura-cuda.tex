@@ -302,7 +302,7 @@ performance, empleando asi todos los recursos con los que cuentan estas arquitec
 \subsection{Diferencias entre Tesla, Fermi, Kepler}
 
 Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda
-arquitectura dise\~nada por \nvidia que era GPGPU. Fermi es la evoluci\'on de Tesla,
+arquitectura GPGPU dise\~nada por \nvidia . Fermi es la evoluci\'on de Tesla,
 construida para desacoplar a\'un mas los conceptos de gr\'aficos de modo de hacerla
 un procesador m\'as escalable y de proposito general.
 
@@ -342,12 +342,12 @@ en dos pasos (pero m\'as rapidos que hacerlos independientemente por tener hardw
 debe redondear entre los pasos, perdiendo precisi\'on y haciendo que respete plenamente el IEEE754-2008. El FMA,
 en cambio, lo hace en una sola operaci\'on, y sin redondeos intermedios.
 
-La medida m\'as usada por \nvidia para publicitar la performance de estos dispositivos y poder
+La m\'etrica usada por \nvidia para publicitar la performance de estos dispositivos y poder
 compararlos entre si, y contra CPU, son los GFLOPS. Esta unidad mide cuantas operaciones de punto
-floatante de precision simple se pueden realizar por segundo. Esta m\'etrica es la utilizada tambien
+floatante de precision simple se pueden realizar por segundo. Esta unidad es utilizada tambien
 por los clusters en el ranking TOP500, donde se ordenan de acuerdo al pico medible. No solo
 es notable como se cuadruplico la performance (te\'orica) en solamente 6 a\~nos (algo inalcanzable para
-los CPU modernos) sino que a\'un mas notable es como mejoro la performance por Watt. Esto
+los CPU modernos) sino que a\'un mas notorio es como mejoro la performance por Watt. Esto
 tambien se ve en que Kepler tiene menos SM que Fermi o Tesla, pero son mucho mas poderosos y
 eficientes. La tecnologia de fabricaci\'on ha ayudado a la disminuci\'on del consumo, un
 problema que acechaba a los dise\~nos Fermi, ya que sus consumos superiores a 200W por
