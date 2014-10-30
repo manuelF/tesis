@@ -1,2 +1,2 @@
 #! /bin/bash
-cd plots/cuda && python experiments.py
+cd plots/cuda && python2 experiments.py
