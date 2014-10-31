@@ -4,17 +4,10 @@ De las etapas descriptas en la figura \ref{fig:lio-steps}, el m\'as costoso
 en la implementaci\'on existente para GPU es el paso (j). En el c\'alculo de un sistema
 de tama\~no medio, este paso solo representaba el 95\% del tiempo total. Esto hacia
 que esta etapa llevara tanto tiempo como todos los demas calculos combinados, incluso
-en las GPU m\'as veloces del mercado (Tesla K20, GeForce GTX 780).
+en las GPU m\'as veloces del mercado (Tesla K40, GeForce GTX 780).
 
-Los problemas principales que mostraba esta kernel son:
-\begin{itemize}
-\item Cantidad de accesos a memoria global
-\item Falta de accesos coalescentes a memoria
-\item Sobreuso de la memoria compartida
-\item Subsaturacion de los SM
-\end{itemize}
-
-\subsection{Accesos a memoria global}
+A continuaci\'on detallaremos muchos de los cambios que fueron realizados para aumentar
+la performance del c\'omputo de SCF.
 
 \subsection{Falta de accesos coalescentes}
 Asi como en CPU es importante realizar accesos alineados a memoria, en GPU es aun m\'as critico.
@@ -36,7 +29,7 @@ hessianos, por lo cual los accesos eran sumamente costosos.
 Para realizar el cambio de coalescencia, se tuvieron que transponer las matrices de
 valores de funciones, gradientes y hessianos. La transposici\'on de matrices es un ejemplo
 sumamente estudiado por la literatura de CUDA ya que ataca un punto debil de la arquitectura,
-el ancho de banda de transferencia.
+el ancho de banda de transferencia. La transposici\'on se tiene que realizar
 
 \subsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que esten listos para correr
@@ -343,7 +336,7 @@ de romper compatibilidad con las placas de la generacion Fermi anterior.
 
 \subsection{Cambios en el almacenamiento de matrices temporales}
 Una de las principales limitaciones de las GPGPU es la cantidad fija de memoria. Esta no es
-expandible dado que esta soldada a la placa. Esto era aun m\'as notable cuando las placas
+expandible dado que esta soldada a la placa. Esto era aun m\'as notorio cuando las placas
 contaban con menos de 1Gb de memoria (A\~nos 2007-2008).
 Para problemas de calculo num\'erico, esto era un limitante muy serio; los problemas que
 normalmente entraban en la memoria principal de un CPU, no entraban completos en las GPU.
@@ -351,13 +344,13 @@ La decisi\'on tomada por muchas aplicaciones de entonces es compensar esto calcu
 datos intermedios y tirandolos al final; teniendo que ser recalculados en las proximas iteraciones.
 
 Esta estrategia es claramente impractica en CPU, puesto que se cuenta con mucha m\'as memoria
-de uso general. En GPU era necesario por el faltante de memoria, pero no es tan notorio como en CPU,
-puesto que estas cuentas se pueden hacer m\'as rapido en GPU.
+de uso general. En GPU era necesario por el faltante de memoria, pero puesto que estas cuentas se pueden
+hacer m\'as rapido que en CPU, convirtiendose entonces en una estrategia valida.
 
-Cuando la aplicacion original se concibi\'o, no habia siquiera placas Tesla de GPGPU apuntadas a HPC, con
+Cuando la aplicacion original se concibi\'o, no habia siquiera placas GPGPU apuntadas a HPC, con
 m\'as memoria disponible que los modelos de consumidores. Aprovechando estos recursos actuales,
 desarrollamos un m\'etodos para poder almacenar las matrices de los valores de funciones y sus derivadas
-en cada punto para cada grupo durante la ejecuci\'on de la aplicaci\'on, de modo de  poder aprovechar
+en cada punto para cada grupo durante la ejecuci\'on de la aplicaci\'on, de modo de poder aprovechar
 este recurso que originalmente era limitante pero ya no.
 
 Para poder determinar que cosas van a ser guardadas en mem\'oria y que no, se determin\'o una heuristica
@@ -369,25 +362,70 @@ de la partici\'on), la constante es elevada. Determinamos entonces que es m\'as 
 aprovechar la memoria de la placa que almacena muchas matrices temporales de particiones chicas
 a que almacene solamente un par de las grandes.
 
-Para controlar la administracion de memoria, se realiza la estimaci\'on si la placa cuenta
-con la suficiente memoria libre para guardar los datos a calcular, y si puede, se guardan de manera
+Esta heuristica resulta adem\'as, un acertado predictor del tiempo de computo de todos los
+kernels de un grupo confirmando que el problema actualmente es memory-bound. Esto se ve en la figura
+\ref{plt:runtime-fullereno}, como el tiempo de resoluci\'on de un kernel escala linealmente con
+la cantidad de memoria necesaria para operar.
+
+
+Para controlar la administracion de memoria, se calcula si la placa dispone
+con la suficiente memoria libre para guardar las matrices de funciones, y si puede, se almacenan de manera
 permanente (hasta que la partici\'on se mueva a otro dispositivo o la liberaci\'on de recursos al
-finalizar el programa). Esto ademas es configurable de modo que una ejecucion pueda usar un porcentaje
-de la memoria con la que cuenta la placa, para poder correr multiples procesos de simulaci\'on concurrentemente.
+finalizar las iteraciones de SCF). Este mecanismo adem\'as es configurable de modo que una ejecuci\'on
+pueda usar un porcentaje de la memoria con la que cuenta la placa, para poder correr multiples procesos de
+simulaci\'on concurrentemente.
 
 Un detalle a tener en cuenta es que, incluso si se maximiza el porcentaje de memoria usado para
 cachear estas matrices, tal vez no alcanza para que quepa todo el sistema evaluado en memoria. Esto
 se nota principalmente en la linea GeForce, que cuentan con aproxidamante entre un cuarto y la mitad
-de la memoria global que tienen su equivalente en la linea Tesla. Esto sin embargo, es mitigado
-cuando se computa m\'ultiples placas, que tambien distribuyen el almacenamiento ademas del computo.
+de la memoria global que tienen su equivalente en la linea Tesla. Esto es mitigado cuando se computa
+m\'ultiples placas, que tambien distribuyen el almacenamiento ademas del computo.
 
 Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
 cantidad de memoria disponible para el cacheo.
 
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/global-fullereno.png}
+   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on del porcentaje de memoria
+   disponible de la placa, entre 0 y 4240 Mb.}
+   \label{plt:global-fullereno}
+\end{figure}
+
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/global-detailed-fullereno.png}
+   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on del porcentaje de memoria
+   disponible de la placa, entre 0 y 530 Mb.}
+   \label{plt:global-detailed-fullereno}
+\end{figure}
+
+Como se puede ver en las figuras \ref{plt:global-fullereno} y \ref{plt:global-detailed-fullereno}, el
+uso de el almacenamiento de las funciones produce una mejora de hasta el 25\% en el tiempo de ejecuci\'on
+de toda una iteracion de SCF. Es muy interesante notar que son los primeros grupos los que causan mayor
+diferencia en los tiempos de ejecuci\'on. Con 5.3 Mb, se pueden guardar los 23 grupos mas peque\~nos del
+fullereno $C_{60}$  y de ahi en m\'as, el impacto de la mejora decae. Esto es as\'i porque en grupos
+chicos, el overhead del c\'alculo usando kernel de funciones es muy elevado en comparaci\'on a las
+cuentas (se desperdician muchos threads). Este comportamiento se puede ver
+bien en en la figura~\ref{plt:runtime-functions-fullereno}, donde se puede apreciar el importante
+peso de los grupos chicos en el tiempo total del calculo de las funciones. Decidimos no intentar
+optimizar el c\'alculo ya que al almacenar las matrices este costo directamente se hace cero para
+casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
+
+\begin{figure}[htbp]
+   \centering
+   %TODO
+   \includegraphics[width=250px]{plots/cuda/global-functions-acc.png}
+   \caption{Acumulado del runtime del calculo de las funciones de los grupos ordenados
+     por tama\~no de las matrices de funciones en funcion del tama\~no acumulado de estas,
+     en un Fullereno $C_{60}$.}
+   \label{plt:runtime-functions-fullereno}
+\end{figure}
+
 Esta simple mejora permite explotar el hecho de que las placas hayan aumentado dramaticamente su
 capacidad de almacenamiento, un recurso que hasta recientemente venia siendo un limitante podemos
 convertirlo en una aceleraci\'on notoria.
-
 
 \subsection{Cambios en las memorias compartidas}
 %Cambiar los vec\_type4 por 3 en los accesos a la shared es mucho mejor, no hace falta alinear ahi
@@ -413,9 +451,24 @@ son flotantes de precisi\'on simple o doble (4 y 8 bytes respectivamente). Adici
 cuarto valor no tiene forma de marcarse como algo que no sea padding de alineaci\'on, todavia se
 opera normalmente con el, por lo que eliminarlo ahorra una operaci\'on de c\'alculo. Mas a\'un,
 se presentan una disminuci\'on del 25\% de los recursos de la memoria compartida por thread,
-sin ninguna desventaja a la hora de acceder a estos. Principalmente esta mejora permite
-aumentar la cantidad de bloques corriendo concurrentemente en los SM, al punto de eliminar
-la limitaci\'on presente debido a las memorias compartidas.
+sin ninguna desventaja a la hora de acceder a estos. Principalmente esta mejora, en teor\'ia, permite
+aumentar la cantidad de bloques corriendo concurrentemente en los SM, para poder eliminar
+la limitaci\'on presente debido al uso simultaneo de memoria compartidas.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=250px]{plots/cuda/shared-4vs3.png}
+   \caption{Aceleraci\'on obtenida en Fermi y Kepler al reducir a 3 componentes los
+   elementos en la memoria compartida.}
+   \label{plt:shared4vs3}
+\end{figure}
+
+Como se puede observar en la figura~\ref{plt:shared4vs3}, se obtienen muy pocas ganancias al usar elementos
+de 3 componentes con respecto a usar elementos de 4. Esto muestra que el limitante de concurrencia
+de este kernel no pasa por falta de memoria compartida. Adem\'as, esto permite apreciar que los
+tiempos de acceso a los datos en las memorias shared son realmente muy bajos, pudiendose ver
+como con incluso un 25\% mas de operaciones de lecto-escritura, el tiempo de ejecuci\'on casi no varia.
+
 
 \subsection{Cambios en los condicionales}
 La arquitectura CUDA representa un m\'odelo de computo pensado en el procesamiento secuencial masivo
@@ -432,16 +485,18 @@ entonces es evidente que se subutilizan importantemente los recursos disponibles
 
 Habiendo varios de estos casos en los kernels presentes, decidimos utilizar una t\'ecnica sugerida
 por \nvidia. Esta consiste en hacer las operaciones normalmente, como si todos los threads cumplieran
-las condiciones del condicional y multiplicar por 1 o por 0 el resultado antes de acumular.
+las condiciones del condicional y multiplicar por 1 o por 0 al resultado antes de acumular.
 Esto hace que las cuentas que no se ejecutaban antes ahora lo hagan pero que simplemente no aporten
 a la reducci\'on. Esta t\'ecnica elimina la existencia de la rama falsa de los condicionales, pero
-trae dos problemas no triviales.
+trae aparejada dos problemas no triviales.
 
-Uno de ellos es como solucionar el problema de los accesos a memoria.
-Usualmente las guardas condicionales estan puestas para que el programa, si cumple ciertas condiciones,
-no acceda a memoria que esta mas alla de los limites definidos. Por ejemplo, si \texttt{threadId > arraySize}, entonces claramente
-no deberia acceder a \texttt{array[threadId]}, puesto que seria memoria invalida. Si eliminamos la guarda
-entonces los accesos a memoria no pueden quedar igual. Una soluci\'on consiste en multiplicar tambien
+Uno de ellos es como solucionar el problema de los indices en los accesos a memoria.
+Un uso usual delas guardas condicionales es para evitar que el programa, si cumple ciertas condiciones,
+no acceda a memoria que esta mas alla de los limites definidos.
+Por ejemplo, si \texttt{threadId > arraySize}, entonces claramente
+no deberia acceder a ninguna posici\'on mas alla de \texttt{array[threadId]},
+puesto que seria memoria invalida. Si eliminamos la guarda
+entonces los accesos a memoria pueden no quedar igual. Una soluci\'on consiste en multiplicar tambien
 por 1 o por 0 la direccion a la cual se va a acceder. Como CUDA maneja los arreglos de memoria
 como C (es decir, basados en 0 como primer direcci\'on), esta t\'ecnica es v\'alida para hacer
 siempre accesos correcto a memoria. El problema luego es en la coalescencia; como ahora algunos
@@ -526,16 +581,4 @@ una mejora lineal en la cantidad de dispositivos usados.
    \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on doble}
    \label{plt:4placas-doble}
 \end{figure}
-
-
-Speedup definitivo
-
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=250px]{plots/cuda/final.png}
-   \caption{Speedup en veces de correr Hemoglobina comparando implementacion original en CUDA contra
-   las versiones optimizadas definitivas}
-   \label{plt:cuda-final}
-\end{figure}
-
 

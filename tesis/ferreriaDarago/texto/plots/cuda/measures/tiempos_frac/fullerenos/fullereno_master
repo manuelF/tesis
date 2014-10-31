@@ -1,0 +1,576 @@
+--
+Cubo 0 Size: 14976 Time iteration: 0us.
+rmm: 55us. density: 630us. pot: 0us. forces: 0us. resto: 0us. functions: 1136us.
+--
+Cubo 1 Size: 19968 Time iteration: 0us.
+rmm: 51us. density: 549us. pot: 0us. forces: 0us. resto: 0us. functions: 881us.
+--
+Cubo 2 Size: 29952 Time iteration: 0us.
+rmm: 52us. density: 560us. pot: 0us. forces: 0us. resto: 0us. functions: 1077us.
+--
+Cubo 3 Size: 39936 Time iteration: 0us.
+rmm: 62us. density: 549us. pot: 0us. forces: 0us. resto: 0us. functions: 1067us.
+--
+Cubo 4 Size: 14976 Time iteration: 0us.
+rmm: 51us. density: 557us. pot: 0us. forces: 0us. resto: 0us. functions: 879us.
+--
+Cubo 5 Size: 239616 Time iteration: 0us.
+rmm: 428us. density: 814us. pot: 0us. forces: 0us. resto: 0us. functions: 1258us.
+--
+Cubo 6 Size: 407680 Time iteration: 0us.
+rmm: 460us. density: 828us. pot: 0us. forces: 0us. resto: 0us. functions: 1260us.
+--
+Cubo 7 Size: 154752 Time iteration: 0us.
+rmm: 63us. density: 755us. pot: 0us. forces: 0us. resto: 0us. functions: 1442us.
+--
+Cubo 8 Size: 239616 Time iteration: 0us.
+rmm: 414us. density: 772us. pot: 0us. forces: 0us. resto: 0us. functions: 1251us.
+--
+Cubo 9 Size: 1680640 Time iteration: 0us.
+rmm: 573us. density: 1205us. pot: 0us. forces: 0us. resto: 0us. functions: 1750us.
+--
+Cubo 10 Size: 3006848 Time iteration: 0us.
+rmm: 338us. density: 1871us. pot: 0us. forces: 0us. resto: 0us. functions: 1773us.
+--
+Cubo 11 Size: 1025024 Time iteration: 0us.
+rmm: 465us. density: 995us. pot: 0us. forces: 0us. resto: 0us. functions: 1741us.
+--
+Cubo 12 Size: 104832 Time iteration: 0us.
+rmm: 53us. density: 772us. pot: 0us. forces: 0us. resto: 0us. functions: 1236us.
+--
+Cubo 13 Size: 407680 Time iteration: 0us.
+rmm: 445us. density: 818us. pot: 0us. forces: 0us. resto: 0us. functions: 1266us.
+--
+Cubo 14 Size: 3261440 Time iteration: 0us.
+rmm: 351us. density: 1851us. pot: 0us. forces: 0us. resto: 0us. functions: 1799us.
+--
+Cubo 15 Size: 6522880 Time iteration: 0us.
+rmm: 1021us. density: 2856us. pot: 0us. forces: 0us. resto: 0us. functions: 1922us.
+--
+Cubo 16 Size: 1921920 Time iteration: 0us.
+rmm: 533us. density: 1342us. pot: 0us. forces: 0us. resto: 0us. functions: 1754us.
+--
+Cubo 17 Size: 179712 Time iteration: 0us.
+rmm: 61us. density: 746us. pot: 0us. forces: 0us. resto: 0us. functions: 1406us.
+--
+Cubo 18 Size: 154752 Time iteration: 0us.
+rmm: 61us. density: 918us. pot: 0us. forces: 0us. resto: 0us. functions: 1673us.
+--
+Cubo 19 Size: 1104896 Time iteration: 0us.
+rmm: 488us. density: 999us. pot: 0us. forces: 0us. resto: 0us. functions: 1772us.
+--
+Cubo 20 Size: 2146560 Time iteration: 0us.
+rmm: 278us. density: 1661us. pot: 0us. forces: 0us. resto: 0us. functions: 1760us.
+--
+Cubo 21 Size: 668928 Time iteration: 0us.
+rmm: 114us. density: 945us. pot: 0us. forces: 0us. resto: 0us. functions: 1811us.
+--
+Cubo 22 Size: 89856 Time iteration: 0us.
+rmm: 52us. density: 763us. pot: 0us. forces: 0us. resto: 0us. functions: 1222us.
+--
+Cubo 23 Size: 59904 Time iteration: 0us.
+rmm: 52us. density: 763us. pot: 0us. forces: 0us. resto: 0us. functions: 1212us.
+--
+Cubo 24 Size: 104832 Time iteration: 0us.
+rmm: 53us. density: 749us. pot: 0us. forces: 0us. resto: 0us. functions: 1228us.
+--
+Cubo 25 Size: 59904 Time iteration: 0us.
+rmm: 48us. density: 761us. pot: 0us. forces: 0us. resto: 0us. functions: 1211us.
+--
+Cubo 26 Size: 14976 Time iteration: 0us.
+rmm: 72us. density: 550us. pot: 0us. forces: 0us. resto: 0us. functions: 874us.
+--
+Cubo 27 Size: 29952 Time iteration: 0us.
+rmm: 51us. density: 553us. pot: 0us. forces: 0us. resto: 0us. functions: 1073us.
+--
+Cubo 28 Size: 239616 Time iteration: 0us.
+rmm: 412us. density: 778us. pot: 0us. forces: 0us. resto: 0us. functions: 1250us.
+--
+Cubo 29 Size: 1680640 Time iteration: 0us.
+rmm: 584us. density: 1193us. pot: 0us. forces: 0us. resto: 0us. functions: 1749us.
+--
+Cubo 30 Size: 3261440 Time iteration: 0us.
+rmm: 344us. density: 1884us. pot: 0us. forces: 0us. resto: 0us. functions: 1801us.
+--
+Cubo 31 Size: 1104896 Time iteration: 0us.
+rmm: 504us. density: 1002us. pot: 0us. forces: 0us. resto: 0us. functions: 1751us.
+--
+Cubo 32 Size: 59904 Time iteration: 0us.
+rmm: 53us. density: 781us. pot: 0us. forces: 0us. resto: 0us. functions: 1214us.
+--
+Cubo 33 Size: 14976 Time iteration: 0us.
+rmm: 50us. density: 576us. pot: 0us. forces: 0us. resto: 0us. functions: 856us.
+--
+Cubo 34 Size: 1680640 Time iteration: 0us.
+rmm: 556us. density: 1178us. pot: 0us. forces: 0us. resto: 0us. functions: 1765us.
+--
+Cubo 35 Size: 44588544 Time iteration: 0us.
+rmm: 3431us. density: 11916us. pot: 0us. forces: 0us. resto: 0us. functions: 2732us.
+--
+Cubo 36 Size: 125199360 Time iteration: 0us.
+rmm: 8933us. density: 34940us. pot: 0us. forces: 0us. resto: 0us. functions: 4865us.
+--
+Cubo 37 Size: 20500480 Time iteration: 0us.
+rmm: 1985us. density: 6995us. pot: 0us. forces: 0us. resto: 0us. functions: 2634us.
+--
+Cubo 38 Size: 768768 Time iteration: 0us.
+rmm: 114us. density: 960us. pot: 0us. forces: 0us. resto: 0us. functions: 1861us.
+--
+Cubo 39 Size: 19968 Time iteration: 0us.
+rmm: 55us. density: 579us. pot: 0us. forces: 0us. resto: 0us. functions: 880us.
+--
+Cubo 40 Size: 3006848 Time iteration: 0us.
+rmm: 345us. density: 1914us. pot: 0us. forces: 0us. resto: 0us. functions: 1819us.
+--
+Cubo 41 Size: 125199360 Time iteration: 0us.
+rmm: 8944us. density: 34778us. pot: 0us. forces: 0us. resto: 0us. functions: 5170us.
+--
+Cubo 42 Size: 268311680 Time iteration: 0us.
+rmm: 21135us. density: 84525us. pot: 0us. forces: 0us. resto: 0us. functions: 8533us.
+--
+Cubo 43 Size: 66703104 Time iteration: 0us.
+rmm: 5095us. density: 21834us. pot: 0us. forces: 0us. resto: 0us. functions: 3249us.
+--
+Cubo 44 Size: 1118208 Time iteration: 0us.
+rmm: 509us. density: 1029us. pot: 0us. forces: 0us. resto: 0us. functions: 1766us.
+--
+Cubo 45 Size: 1025024 Time iteration: 0us.
+rmm: 488us. density: 1023us. pot: 0us. forces: 0us. resto: 0us. functions: 1767us.
+--
+Cubo 46 Size: 20500480 Time iteration: 0us.
+rmm: 1984us. density: 6988us. pot: 0us. forces: 0us. resto: 0us. functions: 2576us.
+--
+Cubo 47 Size: 60128640 Time iteration: 0us.
+rmm: 4372us. density: 14794us. pot: 0us. forces: 0us. resto: 0us. functions: 3053us.
+--
+Cubo 48 Size: 9443200 Time iteration: 0us.
+rmm: 1212us. density: 3551us. pot: 0us. forces: 0us. resto: 0us. functions: 2031us.
+--
+Cubo 49 Size: 519168 Time iteration: 0us.
+rmm: 430us. density: 869us. pot: 0us. forces: 0us. resto: 0us. functions: 1475us.
+--
+Cubo 50 Size: 104832 Time iteration: 0us.
+rmm: 53us. density: 771us. pot: 0us. forces: 0us. resto: 0us. functions: 1227us.
+--
+Cubo 51 Size: 768768 Time iteration: 0us.
+rmm: 117us. density: 946us. pot: 0us. forces: 0us. resto: 0us. functions: 1808us.
+--
+Cubo 52 Size: 1153152 Time iteration: 0us.
+rmm: 471us. density: 1036us. pot: 0us. forces: 0us. resto: 0us. functions: 1745us.
+--
+Cubo 53 Size: 519168 Time iteration: 0us.
+rmm: 481us. density: 840us. pot: 0us. forces: 0us. resto: 0us. functions: 1460us.
+--
+Cubo 54 Size: 29952 Time iteration: 0us.
+rmm: 56us. density: 543us. pot: 0us. forces: 0us. resto: 0us. functions: 1080us.
+--
+Cubo 55 Size: 19968 Time iteration: 0us.
+rmm: 51us. density: 551us. pot: 0us. forces: 0us. resto: 0us. functions: 879us.
+--
+Cubo 56 Size: 39936 Time iteration: 0us.
+rmm: 53us. density: 559us. pot: 0us. forces: 0us. resto: 0us. functions: 1075us.
+--
+Cubo 57 Size: 14976 Time iteration: 0us.
+rmm: 49us. density: 552us. pot: 0us. forces: 0us. resto: 0us. functions: 881us.
+--
+Cubo 58 Size: 407680 Time iteration: 0us.
+rmm: 433us. density: 824us. pot: 0us. forces: 0us. resto: 0us. functions: 1263us.
+--
+Cubo 59 Size: 3006848 Time iteration: 0us.
+rmm: 353us. density: 1947us. pot: 0us. forces: 0us. resto: 0us. functions: 1774us.
+--
+Cubo 60 Size: 6522880 Time iteration: 0us.
+rmm: 1049us. density: 2866us. pot: 0us. forces: 0us. resto: 0us. functions: 1927us.
+--
+Cubo 61 Size: 2146560 Time iteration: 0us.
+rmm: 274us. density: 1688us. pot: 0us. forces: 0us. resto: 0us. functions: 1751us.
+--
+Cubo 62 Size: 104832 Time iteration: 0us.
+rmm: 53us. density: 773us. pot: 0us. forces: 0us. resto: 0us. functions: 1237us.
+--
+Cubo 63 Size: 29952 Time iteration: 0us.
+rmm: 54us. density: 555us. pot: 0us. forces: 0us. resto: 0us. functions: 1092us.
+--
+Cubo 64 Size: 3261440 Time iteration: 0us.
+rmm: 343us. density: 1869us. pot: 0us. forces: 0us. resto: 0us. functions: 1798us.
+--
+Cubo 65 Size: 125199360 Time iteration: 0us.
+rmm: 8990us. density: 34865us. pot: 0us. forces: 0us. resto: 0us. functions: 4867us.
+--
+Cubo 66 Size: 268311680 Time iteration: 0us.
+rmm: 21129us. density: 84354us. pot: 0us. forces: 0us. resto: 0us. functions: 8519us.
+--
+Cubo 67 Size: 60128640 Time iteration: 0us.
+rmm: 4283us. density: 14999us. pot: 0us. forces: 0us. resto: 0us. functions: 3102us.
+--
+Cubo 68 Size: 1153152 Time iteration: 0us.
+rmm: 477us. density: 1060us. pot: 0us. forces: 0us. resto: 0us. functions: 1810us.
+--
+Cubo 69 Size: 39936 Time iteration: 0us.
+rmm: 57us. density: 561us. pot: 0us. forces: 0us. resto: 0us. functions: 1076us.
+--
+Cubo 70 Size: 6522880 Time iteration: 0us.
+rmm: 1084us. density: 2976us. pot: 0us. forces: 0us. resto: 0us. functions: 1913us.
+--
+Cubo 71 Size: 268311680 Time iteration: 0us.
+rmm: 21170us. density: 84465us. pot: 0us. forces: 0us. resto: 0us. functions: 8525us.
+--
+Cubo 72 Size: 306958080 Time iteration: 0us.
+rmm: 35207us. density: 131771us. pot: 0us. forces: 0us. resto: 0us. functions: 9380us.
+--
+Cubo 73 Size: 173630080 Time iteration: 0us.
+rmm: 12440us. density: 45039us. pot: 0us. forces: 0us. resto: 0us. functions: 6185us.
+--
+Cubo 74 Size: 1848704 Time iteration: 0us.
+rmm: 558us. density: 1402us. pot: 0us. forces: 0us. resto: 0us. functions: 1810us.
+--
+Cubo 75 Size: 1921920 Time iteration: 0us.
+rmm: 579us. density: 1369us. pot: 0us. forces: 0us. resto: 0us. functions: 1785us.
+--
+Cubo 76 Size: 66703104 Time iteration: 0us.
+rmm: 5113us. density: 21878us. pot: 0us. forces: 0us. resto: 0us. functions: 3201us.
+--
+Cubo 77 Size: 173630080 Time iteration: 0us.
+rmm: 12445us. density: 45013us. pot: 0us. forces: 0us. resto: 0us. functions: 6122us.
+--
+Cubo 78 Size: 30825600 Time iteration: 0us.
+rmm: 2827us. density: 9861us. pot: 0us. forces: 0us. resto: 0us. functions: 2501us.
+--
+Cubo 79 Size: 757120 Time iteration: 0us.
+rmm: 113us. density: 972us. pot: 0us. forces: 0us. resto: 0us. functions: 1835us.
+--
+Cubo 80 Size: 179712 Time iteration: 0us.
+rmm: 57us. density: 756us. pot: 0us. forces: 0us. resto: 0us. functions: 1434us.
+--
+Cubo 81 Size: 1118208 Time iteration: 0us.
+rmm: 500us. density: 1026us. pot: 0us. forces: 0us. resto: 0us. functions: 1750us.
+--
+Cubo 82 Size: 1848704 Time iteration: 0us.
+rmm: 532us. density: 1323us. pot: 0us. forces: 0us. resto: 0us. functions: 2917us.
+--
+Cubo 83 Size: 722176 Time iteration: 0us.
+rmm: 438us. density: 871us. pot: 0us. forces: 0us. resto: 0us. functions: 1491us.
+--
+Cubo 84 Size: 59904 Time iteration: 0us.
+rmm: 53us. density: 758us. pot: 0us. forces: 0us. resto: 0us. functions: 1217us.
+--
+Cubo 85 Size: 154752 Time iteration: 0us.
+rmm: 65us. density: 765us. pot: 0us. forces: 0us. resto: 0us. functions: 1453us.
+--
+Cubo 86 Size: 1025024 Time iteration: 0us.
+rmm: 481us. density: 1003us. pot: 0us. forces: 0us. resto: 0us. functions: 1782us.
+--
+Cubo 87 Size: 1921920 Time iteration: 0us.
+rmm: 545us. density: 1342us. pot: 0us. forces: 0us. resto: 0us. functions: 1751us.
+--
+Cubo 88 Size: 668928 Time iteration: 0us.
+rmm: 112us. density: 926us. pot: 0us. forces: 0us. resto: 0us. functions: 1811us.
+--
+Cubo 89 Size: 59904 Time iteration: 0us.
+rmm: 52us. density: 734us. pot: 0us. forces: 0us. resto: 0us. functions: 1193us.
+--
+Cubo 90 Size: 1104896 Time iteration: 0us.
+rmm: 528us. density: 1020us. pot: 0us. forces: 0us. resto: 0us. functions: 1758us.
+--
+Cubo 91 Size: 20500480 Time iteration: 0us.
+rmm: 2046us. density: 6968us. pot: 0us. forces: 0us. resto: 0us. functions: 2572us.
+--
+Cubo 92 Size: 66703104 Time iteration: 0us.
+rmm: 5036us. density: 21643us. pot: 0us. forces: 0us. resto: 0us. functions: 3182us.
+--
+Cubo 93 Size: 9443200 Time iteration: 0us.
+rmm: 1209us. density: 3637us. pot: 0us. forces: 0us. resto: 0us. functions: 2028us.
+--
+Cubo 94 Size: 519168 Time iteration: 0us.
+rmm: 461us. density: 824us. pot: 0us. forces: 0us. resto: 0us. functions: 1489us.
+--
+Cubo 95 Size: 14976 Time iteration: 0us.
+rmm: 53us. density: 686us. pot: 0us. forces: 0us. resto: 0us. functions: 883us.
+--
+Cubo 96 Size: 2146560 Time iteration: 0us.
+rmm: 299us. density: 1748us. pot: 0us. forces: 0us. resto: 0us. functions: 1855us.
+--
+Cubo 97 Size: 60128640 Time iteration: 0us.
+rmm: 4409us. density: 14789us. pot: 0us. forces: 0us. resto: 0us. functions: 3058us.
+--
+Cubo 98 Size: 173630080 Time iteration: 0us.
+rmm: 12436us. density: 45062us. pot: 0us. forces: 0us. resto: 0us. functions: 6101us.
+--
+Cubo 99 Size: 30825600 Time iteration: 0us.
+rmm: 2787us. density: 9593us. pot: 0us. forces: 0us. resto: 0us. functions: 2524us.
+--
+Cubo 100 Size: 722176 Time iteration: 0us.
+rmm: 455us. density: 888us. pot: 0us. forces: 0us. resto: 0us. functions: 1522us.
+--
+Cubo 101 Size: 668928 Time iteration: 0us.
+rmm: 122us. density: 981us. pot: 0us. forces: 0us. resto: 0us. functions: 1819us.
+--
+Cubo 102 Size: 9443200 Time iteration: 0us.
+rmm: 1255us. density: 3703us. pot: 0us. forces: 0us. resto: 0us. functions: 2027us.
+--
+Cubo 103 Size: 30825600 Time iteration: 0us.
+rmm: 2745us. density: 9369us. pot: 0us. forces: 0us. resto: 0us. functions: 2486us.
+--
+Cubo 104 Size: 5031936 Time iteration: 0us.
+rmm: 921us. density: 2266us. pot: 0us. forces: 0us. resto: 0us. functions: 1888us.
+--
+Cubo 105 Size: 332800 Time iteration: 0us.
+rmm: 416us. density: 826us. pot: 0us. forces: 0us. resto: 0us. functions: 1260us.
+--
+Cubo 106 Size: 89856 Time iteration: 0us.
+rmm: 52us. density: 765us. pot: 0us. forces: 0us. resto: 0us. functions: 1222us.
+--
+Cubo 107 Size: 519168 Time iteration: 0us.
+rmm: 447us. density: 836us. pot: 0us. forces: 0us. resto: 0us. functions: 1467us.
+--
+Cubo 108 Size: 757120 Time iteration: 0us.
+rmm: 114us. density: 941us. pot: 0us. forces: 0us. resto: 0us. functions: 1836us.
+--
+Cubo 109 Size: 332800 Time iteration: 0us.
+rmm: 437us. density: 800us. pot: 0us. forces: 0us. resto: 0us. functions: 1286us.
+--
+Cubo 110 Size: 19968 Time iteration: 0us.
+rmm: 54us. density: 573us. pot: 0us. forces: 0us. resto: 0us. functions: 882us.
+--
+Cubo 111 Size: 104832 Time iteration: 0us.
+rmm: 58us. density: 765us. pot: 0us. forces: 0us. resto: 0us. functions: 1230us.
+--
+Cubo 112 Size: 179712 Time iteration: 0us.
+rmm: 57us. density: 747us. pot: 0us. forces: 0us. resto: 0us. functions: 1449us.
+--
+Cubo 113 Size: 89856 Time iteration: 0us.
+rmm: 53us. density: 759us. pot: 0us. forces: 0us. resto: 0us. functions: 1220us.
+--
+Cubo 114 Size: 59904 Time iteration: 0us.
+rmm: 49us. density: 756us. pot: 0us. forces: 0us. resto: 0us. functions: 1213us.
+--
+Cubo 115 Size: 768768 Time iteration: 0us.
+rmm: 117us. density: 930us. pot: 0us. forces: 0us. resto: 0us. functions: 1809us.
+--
+Cubo 116 Size: 1118208 Time iteration: 0us.
+rmm: 505us. density: 1031us. pot: 0us. forces: 0us. resto: 0us. functions: 1759us.
+--
+Cubo 117 Size: 519168 Time iteration: 0us.
+rmm: 447us. density: 816us. pot: 0us. forces: 0us. resto: 0us. functions: 1480us.
+--
+Cubo 118 Size: 29952 Time iteration: 0us.
+rmm: 54us. density: 570us. pot: 0us. forces: 0us. resto: 0us. functions: 1080us.
+--
+Cubo 119 Size: 104832 Time iteration: 0us.
+rmm: 54us. density: 767us. pot: 0us. forces: 0us. resto: 0us. functions: 1226us.
+--
+Cubo 120 Size: 1153152 Time iteration: 0us.
+rmm: 518us. density: 1035us. pot: 0us. forces: 0us. resto: 0us. functions: 1734us.
+--
+Cubo 121 Size: 1848704 Time iteration: 0us.
+rmm: 541us. density: 1363us. pot: 0us. forces: 0us. resto: 0us. functions: 1770us.
+--
+Cubo 122 Size: 757120 Time iteration: 0us.
+rmm: 116us. density: 938us. pot: 0us. forces: 0us. resto: 0us. functions: 1856us.
+--
+Cubo 123 Size: 59904 Time iteration: 0us.
+rmm: 57us. density: 757us. pot: 0us. forces: 0us. resto: 0us. functions: 1233us.
+--
+Cubo 124 Size: 59904 Time iteration: 0us.
+rmm: 48us. density: 730us. pot: 0us. forces: 0us. resto: 0us. functions: 1215us.
+--
+Cubo 125 Size: 519168 Time iteration: 0us.
+rmm: 435us. density: 838us. pot: 0us. forces: 0us. resto: 0us. functions: 1478us.
+--
+Cubo 126 Size: 722176 Time iteration: 0us.
+rmm: 479us. density: 897us. pot: 0us. forces: 0us. resto: 0us. functions: 1483us.
+--
+Cubo 127 Size: 332800 Time iteration: 0us.
+rmm: 410us. density: 837us. pot: 0us. forces: 0us. resto: 0us. functions: 1269us.
+--
+Cubo 128 Size: 19968 Time iteration: 0us.
+rmm: 52us. density: 540us. pot: 0us. forces: 0us. resto: 0us. functions: 893us.
+--
+Cubo 129 Size: 29952 Time iteration: 0us.
+rmm: 51us. density: 562us. pot: 0us. forces: 0us. resto: 0us. functions: 1094us.
+--
+Cubo 130 Size: 59904 Time iteration: 0us.
+rmm: 48us. density: 765us. pot: 0us. forces: 0us. resto: 0us. functions: 1244us.
+--
+Cubo 131 Size: 19968 Time iteration: 0us.
+rmm: 68us. density: 543us. pot: 0us. forces: 0us. resto: 0us. functions: 875us.
+--
+Esfera 0 Size: 63471616 Time iteration: 0us.
+rmm: 3513us. density: 15982us. pot: 0us. forces: 0us. resto: 0us. functions: 3083us.
+--
+Esfera 1 Size: 63471616 Time iteration: 0us.
+rmm: 3552us. density: 15825us. pot: 0us. forces: 0us. resto: 0us. functions: 3071us.
+--
+Esfera 2 Size: 63471616 Time iteration: 0us.
+rmm: 3640us. density: 15928us. pot: 0us. forces: 0us. resto: 0us. functions: 3053us.
+--
+Esfera 3 Size: 63471616 Time iteration: 0us.
+rmm: 3567us. density: 15777us. pot: 0us. forces: 0us. resto: 0us. functions: 3043us.
+--
+Esfera 4 Size: 63471616 Time iteration: 0us.
+rmm: 3579us. density: 15898us. pot: 0us. forces: 0us. resto: 0us. functions: 3055us.
+--
+Esfera 5 Size: 63471616 Time iteration: 0us.
+rmm: 3575us. density: 15806us. pot: 0us. forces: 0us. resto: 0us. functions: 3063us.
+--
+Esfera 6 Size: 63471616 Time iteration: 0us.
+rmm: 3632us. density: 15887us. pot: 0us. forces: 0us. resto: 0us. functions: 3087us.
+--
+Esfera 7 Size: 63471616 Time iteration: 0us.
+rmm: 3538us. density: 15748us. pot: 0us. forces: 0us. resto: 0us. functions: 3043us.
+--
+Esfera 8 Size: 63471616 Time iteration: 0us.
+rmm: 3567us. density: 15903us. pot: 0us. forces: 0us. resto: 0us. functions: 3047us.
+--
+Esfera 9 Size: 63471616 Time iteration: 0us.
+rmm: 3544us. density: 15778us. pot: 0us. forces: 0us. resto: 0us. functions: 3038us.
+--
+Esfera 10 Size: 63471616 Time iteration: 0us.
+rmm: 3602us. density: 15906us. pot: 0us. forces: 0us. resto: 0us. functions: 3022us.
+--
+Esfera 11 Size: 63471616 Time iteration: 0us.
+rmm: 3532us. density: 15721us. pot: 0us. forces: 0us. resto: 0us. functions: 3036us.
+--
+Esfera 12 Size: 63471616 Time iteration: 0us.
+rmm: 3602us. density: 15902us. pot: 0us. forces: 0us. resto: 0us. functions: 3011us.
+--
+Esfera 13 Size: 63471616 Time iteration: 0us.
+rmm: 3556us. density: 15879us. pot: 0us. forces: 0us. resto: 0us. functions: 3026us.
+--
+Esfera 14 Size: 63471616 Time iteration: 0us.
+rmm: 3535us. density: 15829us. pot: 0us. forces: 0us. resto: 0us. functions: 3024us.
+--
+Esfera 15 Size: 63471616 Time iteration: 0us.
+rmm: 3541us. density: 15818us. pot: 0us. forces: 0us. resto: 0us. functions: 3007us.
+--
+Esfera 16 Size: 63471616 Time iteration: 0us.
+rmm: 3611us. density: 15939us. pot: 0us. forces: 0us. resto: 0us. functions: 3029us.
+--
+Esfera 17 Size: 63471616 Time iteration: 0us.
+rmm: 3552us. density: 15812us. pot: 0us. forces: 0us. resto: 0us. functions: 3033us.
+--
+Esfera 18 Size: 63471616 Time iteration: 0us.
+rmm: 3606us. density: 15821us. pot: 0us. forces: 0us. resto: 0us. functions: 3051us.
+--
+Esfera 19 Size: 63471616 Time iteration: 0us.
+rmm: 3553us. density: 15884us. pot: 0us. forces: 0us. resto: 0us. functions: 3043us.
+--
+Esfera 20 Size: 63471616 Time iteration: 0us.
+rmm: 3593us. density: 15898us. pot: 0us. forces: 0us. resto: 0us. functions: 3042us.
+--
+Esfera 21 Size: 63471616 Time iteration: 0us.
+rmm: 3592us. density: 15865us. pot: 0us. forces: 0us. resto: 0us. functions: 3008us.
+--
+Esfera 22 Size: 63471616 Time iteration: 0us.
+rmm: 3544us. density: 15862us. pot: 0us. forces: 0us. resto: 0us. functions: 3052us.
+--
+Esfera 23 Size: 63471616 Time iteration: 0us.
+rmm: 3600us. density: 15821us. pot: 0us. forces: 0us. resto: 0us. functions: 3039us.
+--
+Esfera 24 Size: 63471616 Time iteration: 0us.
+rmm: 3596us. density: 15974us. pot: 0us. forces: 0us. resto: 0us. functions: 3278us.
+--
+Esfera 25 Size: 63471616 Time iteration: 0us.
+rmm: 3564us. density: 15855us. pot: 0us. forces: 0us. resto: 0us. functions: 3057us.
+--
+Esfera 26 Size: 63471616 Time iteration: 0us.
+rmm: 3552us. density: 15838us. pot: 0us. forces: 0us. resto: 0us. functions: 3127us.
+--
+Esfera 27 Size: 63471616 Time iteration: 0us.
+rmm: 3572us. density: 15777us. pot: 0us. forces: 0us. resto: 0us. functions: 3825us.
+--
+Esfera 28 Size: 63471616 Time iteration: 0us.
+rmm: 3604us. density: 15907us. pot: 0us. forces: 0us. resto: 0us. functions: 3055us.
+--
+Esfera 29 Size: 63471616 Time iteration: 0us.
+rmm: 3587us. density: 15846us. pot: 0us. forces: 0us. resto: 0us. functions: 2982us.
+--
+Esfera 30 Size: 63471616 Time iteration: 0us.
+rmm: 3568us. density: 15822us. pot: 0us. forces: 0us. resto: 0us. functions: 3024us.
+--
+Esfera 31 Size: 63471616 Time iteration: 0us.
+rmm: 3554us. density: 15907us. pot: 0us. forces: 0us. resto: 0us. functions: 3054us.
+--
+Esfera 32 Size: 63471616 Time iteration: 0us.
+rmm: 3624us. density: 15900us. pot: 0us. forces: 0us. resto: 0us. functions: 3020us.
+--
+Esfera 33 Size: 63471616 Time iteration: 0us.
+rmm: 3591us. density: 15838us. pot: 0us. forces: 0us. resto: 0us. functions: 3022us.
+--
+Esfera 34 Size: 63471616 Time iteration: 0us.
+rmm: 3575us. density: 15813us. pot: 0us. forces: 0us. resto: 0us. functions: 3047us.
+--
+Esfera 35 Size: 63471616 Time iteration: 0us.
+rmm: 3538us. density: 15787us. pot: 0us. forces: 0us. resto: 0us. functions: 3050us.
+--
+Esfera 36 Size: 63471616 Time iteration: 0us.
+rmm: 3594us. density: 15923us. pot: 0us. forces: 0us. resto: 0us. functions: 3043us.
+--
+Esfera 37 Size: 63471616 Time iteration: 0us.
+rmm: 3597us. density: 15879us. pot: 0us. forces: 0us. resto: 0us. functions: 2992us.
+--
+Esfera 38 Size: 63471616 Time iteration: 0us.
+rmm: 3533us. density: 15844us. pot: 0us. forces: 0us. resto: 0us. functions: 3052us.
+--
+Esfera 39 Size: 63471616 Time iteration: 0us.
+rmm: 3554us. density: 15830us. pot: 0us. forces: 0us. resto: 0us. functions: 3052us.
+--
+Esfera 40 Size: 63471616 Time iteration: 0us.
+rmm: 3573us. density: 15928us. pot: 0us. forces: 0us. resto: 0us. functions: 3035us.
+--
+Esfera 41 Size: 63471616 Time iteration: 0us.
+rmm: 3588us. density: 15869us. pot: 0us. forces: 0us. resto: 0us. functions: 3021us.
+--
+Esfera 42 Size: 63471616 Time iteration: 0us.
+rmm: 3553us. density: 15820us. pot: 0us. forces: 0us. resto: 0us. functions: 3071us.
+--
+Esfera 43 Size: 63471616 Time iteration: 0us.
+rmm: 3544us. density: 15764us. pot: 0us. forces: 0us. resto: 0us. functions: 3065us.
+--
+Esfera 44 Size: 63471616 Time iteration: 0us.
+rmm: 3613us. density: 15939us. pot: 0us. forces: 0us. resto: 0us. functions: 3042us.
+--
+Esfera 45 Size: 63471616 Time iteration: 0us.
+rmm: 3592us. density: 15902us. pot: 0us. forces: 0us. resto: 0us. functions: 3033us.
+--
+Esfera 46 Size: 63471616 Time iteration: 0us.
+rmm: 3532us. density: 15873us. pot: 0us. forces: 0us. resto: 0us. functions: 3021us.
+--
+Esfera 47 Size: 63471616 Time iteration: 0us.
+rmm: 3613us. density: 15852us. pot: 0us. forces: 0us. resto: 0us. functions: 3009us.
+--
+Esfera 48 Size: 63471616 Time iteration: 0us.
+rmm: 3592us. density: 15943us. pot: 0us. forces: 0us. resto: 0us. functions: 3019us.
+--
+Esfera 49 Size: 63471616 Time iteration: 0us.
+rmm: 3569us. density: 15880us. pot: 0us. forces: 0us. resto: 0us. functions: 3023us.
+--
+Esfera 50 Size: 63471616 Time iteration: 0us.
+rmm: 3538us. density: 15827us. pot: 0us. forces: 0us. resto: 0us. functions: 3045us.
+--
+Esfera 51 Size: 63471616 Time iteration: 0us.
+rmm: 3527us. density: 15820us. pot: 0us. forces: 0us. resto: 0us. functions: 3035us.
+--
+Esfera 52 Size: 63471616 Time iteration: 0us.
+rmm: 3576us. density: 15862us. pot: 0us. forces: 0us. resto: 0us. functions: 3024us.
+--
+Esfera 53 Size: 63471616 Time iteration: 0us.
+rmm: 3596us. density: 15900us. pot: 0us. forces: 0us. resto: 0us. functions: 3023us.
+--
+Esfera 54 Size: 63471616 Time iteration: 0us.
+rmm: 3606us. density: 15849us. pot: 0us. forces: 0us. resto: 0us. functions: 3045us.
+--
+Esfera 55 Size: 63471616 Time iteration: 0us.
+rmm: 3594us. density: 15819us. pot: 0us. forces: 0us. resto: 0us. functions: 2993us.
+--
+Esfera 56 Size: 63471616 Time iteration: 0us.
+rmm: 3611us. density: 15905us. pot: 0us. forces: 0us. resto: 0us. functions: 3016us.
+--
+Esfera 57 Size: 63471616 Time iteration: 0us.
+rmm: 3574us. density: 15870us. pot: 0us. forces: 0us. resto: 0us. functions: 3010us.
+--
+Esfera 58 Size: 63471616 Time iteration: 0us.
+rmm: 3546us. density: 15834us. pot: 0us. forces: 0us. resto: 0us. functions: 3019us.
+--
+Esfera 59 Size: 63471616 Time iteration: 0us.
+rmm: 3522us. density: 15872us. pot: 0us. forces: 0us. resto: 0us. functions: 3007us.
