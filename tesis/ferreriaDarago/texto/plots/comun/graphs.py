@@ -13,7 +13,11 @@
 ##    'filename':"texture.png"}
 ##barGraph(**params)
 
+import matplotlib as mpl
+from matplotlib.mlab import stineman_interp
+from matplotlib.ticker import FormatStrFormatter
 import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
 import pylab
 import numpy as np
 
@@ -27,19 +31,41 @@ def barGraph(xlabel, ylabel, yvalues, ticks, ylim, filename, title=u""):
   pylab.ylabel(ylabel)
   pylab.xlabel(xlabel)
   plt.xticks(np.arange(0.25, N), ticks)
-  p1 = plt.bar(barLocations, yvalues, barWidth, color='r')
+  p1 = plt.bar(barLocations, yvalues, barWidth)
   plt.ylim(ylim)
   pylab.legend()
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-def stackGraph(xlabel, ylabel, xvalues, yvalues, filename, xlim, ylim,
-               ylegend=u'',ticks='', title=u""):
+def lineGraph(xlabel, ylabel, yvalues, filename,
+               scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
   pylab.title(title)
   pylab.ylabel(ylabel)
   pylab.xlabel(xlabel)
-  p1 = plt.stackplot(xvalues, yvalues, color='r', label=ylegend)
-  pylab.legend()
+  fig, ax = plt.subplots()
+  base = range(len(yvalues))
+  f = interp1d(base, yvalues)
+  fig, ax = plt.subplots()
+  ax.plot(base,yvalues,'o',base,f(base),'-.', label=ylegend)
+
+#  ax.set_xscale(scale)
+  if ticks:
+    locs, labels = plt.xticks()
+    plt.xticks(locs,ticks)
+
+  pylab.legend(loc='best')
+  pylab.savefig(filename, bbox_inches='tight')
+  pylab.close()
+
+def stackGraph(xlabel, ylabel, yvalues, filename,
+               scale=u'linear',xvalues=None,ylegend=u'',ticks='', title=u""):
+  pylab.title(title)
+  pylab.ylabel(ylabel)
+  pylab.xlabel(xlabel)
+  fig, ax = plt.subplots()
+  ax.stackplot(xvalues, yvalues, label=ylegend)
+  ax.set_xscale(scale)
+  pylab.legend(loc='best')
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
@@ -50,12 +76,21 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename, xlim, ylim
   pylab.title(title)
   pylab.ylabel(ylabel)
   pylab.xlabel(xlabel)
-  p1 = plt.scatter(xvalues, yvalues, color='r', label=ylegend)
-  plt.plot(xvalues, m*xvalues + c, 'b', label=fitlegend)
+  p1 = plt.scatter(xvalues, yvalues, label=ylegend)
+  plt.plot(xvalues, m*xvalues + c,  label=fitlegend)
   plt.xlim(xlim)
   plt.ylim(ylim)
-  pylab.legend(loc=2)
+  pylab.legend(loc='best')
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
+def initialize():
+  mpl.rcParams['savefig.dpi'] = 150
 
+
+try:
+  import seaborn as sns
+  sns.set_context("paper",font_scale=1.7)
+  initialize()
+except ImportError:
+  pass

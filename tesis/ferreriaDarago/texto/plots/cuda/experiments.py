@@ -16,7 +16,7 @@ def texture():
   barGraph(**params)
 
 def speedupSimple():
-  params =  {'title': u"Speedup en multiples M2090 (simple precision)",
+  params =  {#'title': u"Speedup en multiples M2090 (simple precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
       'ylabel':u"Aceleración (en veces)",
       'yvalues':(1.0,1.83,2.6,2.86),
@@ -26,7 +26,7 @@ def speedupSimple():
   barGraph(**params)
 
 def speedupDoble():
-  params =  {'title': u"Speedup en multiples M2090 (doble precision)",
+  params =  {#'title': u"Speedup en multiples M2090 (doble precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
       'ylabel':u"Aceleración (en veces)",
       'yvalues':(1.0,2.03,2.92,3.8),
@@ -43,7 +43,7 @@ def threading():
   measures = (ref_m2090/change_m2090,
       ref_kepler/change_kepler)
 
-  params =  {'title': u"Aceleracion de density cambiando el threading",
+  params =  {#'title': u"Aceleracion de density cambiando el threading",
       'xlabel':u"Arquitecturas GPU",
       'ylabel':u"Aceleración (en veces)",
       'yvalues':measures,
@@ -66,9 +66,9 @@ def variandoDBS():
 
   params =  {'title': u"Tiempo del computo de density variando el tamaño del bloque",
       'xlabel':u"Tamaño del bloque",
-      'ylabel':u"Tiempo del kernel density [us]",
-      'yvalues':measures,
-      'ylim':(0.0,max(list(measures))*1.1),
+      'ylabel':u"Tiempo del kernel density [ms]",
+      'yvalues':np.divide(measures,1000),
+      'ylim':(0.0,max(list(measures))*0.001),
       'ticks':(u'Fermi 32', u'Fermi 64',u'Fermi 128',
          u'Kepler 32', u'Kepler 64',u'Kepler 128',),
       'filename':"dbs.png"}
@@ -109,38 +109,38 @@ def globalMemory():
   measures =  tuple( map((lambda x: (1/x) * (m2090_gpu0)), vals))
 
   params =  {#'title': u"Speedup del computo de densidad electronica variando el tamaño del cacheo",
-      'xlabel':u"Tamaño de la memoria global disponible",
+      'xlabel':u"Tamaño de la memoria global disponible [Mb]",
       'ylabel':u"Aceleración (en veces)",
       'yvalues':measures,
-      'ylim':(0.8,1.4),
-      'ticks':(u'0 Mb',u'530 Mb', u'1060 Mb',u'1590 Mb',
-		    u'2650 Mb',u'3180 Mb', u'3710 Mb',u'4240 Mb',),
+      'ylegend':'Aceleracion kernel functions',
+      'ticks':(u'0',u'530', u'1060',u'1590',
+		    u'2650',u'3180', u'3710',u'4240',),
       'filename':"global-fullereno.png"}
-  barGraph(**params)
+  lineGraph(**params)
 
 def globalMemoryDetailed():
 #iteration fullereno - giol - 2090 - master
   m2090_gpu0 = 3358165.5555556
   m2090_gpu1e_5 = 3078160.6666667
   m2090_gpu1e_4 = 2909544.8888889
-  m2090_gpu1e_3 = 2807708.6666667
-  m2090_gpu1e_2 = 2815344.3333333
+  m2090_gpu1e_3 = 2817708.6666667
+  m2090_gpu1e_2 = 2805344.3333333
   m2090_gpu1e_1 = 2768049.2222222
 
   vals = [m2090_gpu0, m2090_gpu1e_5, m2090_gpu1e_4, m2090_gpu1e_3,
       m2090_gpu1e_2, m2090_gpu1e_1 ]
-  measures =  tuple( map((lambda x: (1/x) * (m2090_gpu0)), vals))
+  measures =  ( map((lambda x: (1/x) * (m2090_gpu0)), vals))
 
 
   params =  {#'title': u"Aceleracion del computo de densidad electronica variando el tamaño del cacheo",
-      'xlabel':u"Tamaño de la memoria global disponible",
+      'xlabel':u"Tamaño de la memoria global disponible [Mb]",
       'ylabel':u"Aceleración (en veces)",
       'yvalues':measures,
-      'ylim':(0.8,1.4),
-      'ticks':(u'0 Mb',u'0.053 Mb', u'0.53 Mb',u'5.3 Mb',
-		    u'53 Mb',u'530 Mb'),
+      'ticks':(u'0',u'0.053', u'0.53',u'5.3',u'53',u'530'),
+      'xvalues':np.concatenate(([0],(10**np.array(range(5)))*53/(1000.**1))),
+      'ylegend':'Aceleracion kernel functions',
       'filename':"global-detailed-fullereno.png"}
-  barGraph(**params)
+  lineGraph(**params)
 
 def acumuladoGlobalMemory():
 #Acumulando los runtimes de funciones en Fullereno 2090 Giol
@@ -156,8 +156,6 @@ def acumuladoGlobalMemory():
       'ylabel':u"Fracción del tiempo acumulado",
       'yvalues':runtimes_partials,
       'xvalues':np.divide(np.cumsum(ordered['size']),1024.**3),
-      'ylim' : (0,1),
-      'xlim' : (0, 1e8),
       'filename':"global-functions-acc.png"}
   stackGraph(**params)
 
