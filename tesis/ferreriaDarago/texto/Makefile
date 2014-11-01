@@ -15,7 +15,7 @@ cleantex:
 	rm -f tesis.pdf *.aux *.toc *.log *.out *.idx *.bbl *.bcf *.blg
 
 python-plots:
-	apt-get install python-pip libfreetype6-dev libxft-dev
+	apt-get install python-dev  python-pip libfreetype6-dev libxft-dev
 	pip install numpy matplotlib scipy pandas seaborn
 
 .PHONY: clean cleantex cleanplots plots
