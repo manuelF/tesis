@@ -15,7 +15,7 @@
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
+
 import pylab
 import numpy as np
 
@@ -42,9 +42,12 @@ def lineGraph(xlabel, ylabel, yvalues, filename,
   pylab.xlabel(xlabel)
   fig, ax = plt.subplots()
   base = range(len(yvalues))
-  f = interp1d(base, yvalues)
   fig, ax = plt.subplots()
-  ax.plot(base,yvalues,'o',base,f(base),'-.', label=ylegend)
+  if hasScipy:
+    f = interp1d(base, yvalues)
+    ax.plot(base,yvalues,'o',base,f(base),'-.', label=ylegend)
+  else:
+    ax.plot(base,yvalues,'o', label=ylegend)
   if ticks:
     locs, labels = plt.xticks()
     plt.xticks(locs,ticks)
@@ -84,9 +87,16 @@ def initialize():
   mpl.rcParams['savefig.dpi'] = 150
 
 
+hasScipy = False
+try:
+  from scipy.interpolate import interp1d
+  hasScipy = True
+except ImportError:
+  pass
+
 try:
   import seaborn as sns
   sns.set_context("paper",font_scale=1.7)
-  initialize()
 except ImportError:
   pass
+initialize()
