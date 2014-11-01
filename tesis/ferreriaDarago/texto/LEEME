@@ -1,0 +1,6 @@
+Para la generar los graficos por primera vez, si hay problema de paquetes
+instalar usando el Makefile de esta carpeta
+
+sudo make python-plots
+
+Eso instala los paquetes necesarios para ejecutar los plots.
