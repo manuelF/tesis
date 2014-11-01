@@ -16,6 +16,6 @@ cleantex:
 
 python-plots:
 	apt-get install python-dev  python-pip libfreetype6-dev libxft-dev
-	pip install numpy matplotlib seaborn #scipy pandas
+	pip install numpy matplotlib #seaborn scipy pandas
 
 .PHONY: clean cleantex cleanplots plots
