@@ -14,8 +14,6 @@
 ##barGraph(**params)
 
 import matplotlib as mpl
-from matplotlib.mlab import stineman_interp
-from matplotlib.ticker import FormatStrFormatter
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import pylab
@@ -47,8 +45,6 @@ def lineGraph(xlabel, ylabel, yvalues, filename,
   f = interp1d(base, yvalues)
   fig, ax = plt.subplots()
   ax.plot(base,yvalues,'o',base,f(base),'-.', label=ylegend)
-
-#  ax.set_xscale(scale)
   if ticks:
     locs, labels = plt.xticks()
     plt.xticks(locs,ticks)
