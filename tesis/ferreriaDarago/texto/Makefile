@@ -15,4 +15,7 @@ cleanplots:
 cleantex:
 	rm -f tesis.pdf *.aux *.toc *.log *.out *.idx *.bbl *.bcf *.blg
 
+install:
+	pip install numpy matplotlib scipy pandas seaborn
+
 .PHONY: clean cleantex cleanplots plots
