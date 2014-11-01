@@ -161,7 +161,7 @@ cantidad de bloques adicionales con respecto al m\'etodo anterior.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=250px]{plots/cuda/threading.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/threading.png}
    \caption{Speedup en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia}
    \label{plt:speedup-threading}
 \end{figure}
@@ -210,7 +210,7 @@ el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=250px]{plots/cuda/dbs.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/dbs.png}
    \caption{Speedup en veces del kernel density corriendo Hemoglobina variando
    la arquitectura y tama\~no de \textit{BLOCK\_SIZE}.}
    \label{plt:dbs-runtime}
@@ -386,7 +386,7 @@ cantidad de memoria disponible para el cacheo.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=250px]{plots/cuda/global-fullereno.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/global-fullereno.png}
    \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on del porcentaje de memoria
    disponible de la placa, entre 0 y 4240 Mb.}
    \label{plt:global-fullereno}
@@ -395,7 +395,7 @@ cantidad de memoria disponible para el cacheo.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=250px]{plots/cuda/global-detailed-fullereno.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/global-detailed-fullereno.png}
    \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on del porcentaje de memoria
    disponible de la placa, entre 0 y 530 Mb.}
    \label{plt:global-detailed-fullereno}
@@ -416,7 +416,7 @@ casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
 \begin{figure}[htbp]
    \centering
    %TODO
-   \includegraphics[width=250px]{plots/cuda/global-functions-acc.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/global-functions-acc.png}
    \caption{Acumulado del runtime del calculo de las funciones de los grupos ordenados
      por tama\~no de las matrices de funciones en funcion del tama\~no acumulado de estas,
      en un Fullereno $C_{60}$.}
@@ -457,7 +457,7 @@ la limitaci\'on presente debido al uso simultaneo de memoria compartidas.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=250px]{plots/cuda/shared-4vs3.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/shared-4vs3.png}
    \caption{Aceleraci\'on obtenida en Fermi y Kepler al reducir a 3 componentes los
    elementos en la memoria compartida.}
    \label{plt:shared4vs3}
@@ -558,7 +558,7 @@ escribir en memoria es una contenci\'on necesaria.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=250px]{plots/cuda/4placas-simple.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/4placas-simple.png}
    \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on simple}
    \label{plt:4placas-doble}
 \end{figure}
@@ -577,7 +577,7 @@ una mejora lineal en la cantidad de dispositivos usados.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=250px]{plots/cuda/4placas-doble.png}
+   \includegraphics[width=\plotwidth]{plots/cuda/4placas-doble.png}
    \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on doble}
    \label{plt:4placas-doble}
 \end{figure}
