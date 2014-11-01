@@ -154,6 +154,7 @@ def acumuladoGlobalMemory():
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"Tamaño de las matrices acumuladas [Gb]",
       'ylabel':u"Fracción del tiempo acumulado",
+      'ylegend':u"Fracción del tiempo acumulado",
       'yvalues':runtimes_partials,
       'xvalues':np.divide(np.cumsum(ordered['size']),1024.**3),
       'filename':"global-functions-acc.png"}
@@ -163,21 +164,23 @@ def predictorSizeInGpu():
 #Runtime total por grupo vs sizeingpu en Fullereno 2090 Giol
   fileformat = {'names': ('index','size','rmm','density','functions'),
         'formats' :('uint64','uint64','uint64','uint64','uint64')}
-  measures = np.loadtxt("measures/tiempos_frac/fullerenos/size_tiempos", fileformat)
-  ordered = np.sort(measures, order='size')
-  a_total = ordered['rmm'] + ordered['density'] + ordered['functions']
+  files = [("measures/tiempos_frac/fullerenos/size_tiempos","sizeingpu-predictor-fullereno.png"),
+      ("measures/tiempos_frac/hemo/size_tiempos","sizeingpu-predictor-hemo.png"),
+      ("measures/tiempos_frac/caroteno/size_tiempos","sizeingpu-predictor-caroteno.png")]
+  for f,fname in files:
+    measures = np.loadtxt(f, fileformat)
+    ordered = np.sort(measures, order='size')
+    a_total = ordered['rmm'] + ordered['density'] + ordered['functions']
 
-  params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
-      'xlabel':u"Tamaño de las matrices del grupo [Mb]",
-      'ylabel':u"Runtime de un grupo [ms]",
-      'yvalues':np.divide(a_total,1000.),
-      'xvalues':np.divide(ordered['size'],1024.**2),
-      'ylim' : (1,130),
-      'xlim' : (0, 300),
-      'ylegend': 'Runtime de un grupo',
-      'fitlegend': 'Fit lineal',
-      'filename':"sizeingpu-predictor-fullereno.png"}
-  scatterGraphFitLineal(**params)
+    params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
+        'xlabel':u"Tamaño de las matrices del grupo [Mb]",
+        'ylabel':u"Runtime de un grupo [ms]",
+        'yvalues':np.divide(a_total,1000.),
+        'xvalues':np.divide(ordered['size'],1024.**2),
+        'ylegend': 'Runtime de un grupo',
+        'fitlegend': 'Fit lineal',
+        'filename':fname}
+    scatterGraphFitLineal(**params)
 
 def speedupTotal():
   ref_1x2090 = 5005751

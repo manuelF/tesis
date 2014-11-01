@@ -69,7 +69,7 @@ def stackGraph(xlabel, ylabel, yvalues, filename,
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename, xlim, ylim,
+def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
                           ylegend=u'',fitlegend='u', ticks='', title=u""):
   A = np.vstack([xvalues, np.ones(len(xvalues))]).T
   m, c = np.linalg.lstsq(A, yvalues)[0]
@@ -78,8 +78,8 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename, xlim, ylim
   pylab.xlabel(xlabel)
   p1 = plt.scatter(xvalues, yvalues, label=ylegend)
   plt.plot(xvalues, m*xvalues + c,  label=fitlegend)
-  plt.xlim(xlim)
-  plt.ylim(ylim)
+  plt.xlim((0, max(xvalues)*1.1))
+  plt.ylim((0, max(yvalues)*1.1))
   pylab.legend(loc='best')
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
