@@ -11,9 +11,8 @@ la performance del c\'omputo de SCF.
 
 \subsection{Falta de accesos coalescentes}
 Asi como en CPU es importante realizar accesos alineados a memoria, en GPU es aun m\'as critico.
-El termino coalescencia de memoria se define en GPU como la organizacion de los accesos a memoria
-de secuencial, ordenada y predecible. La l\'ogica detras de esto es que cuando el GPU accede a
-memoria de manera alineada, puede traer entre 16 y 64 bytes en una sola lectura, suficiente para
+El termino coalescencia de memoria se define en GPU como la organizacion de los accesos a memoria de secuencial, ordenada y predecible. 
+La l\'ogica detras de esto es que cuando el GPU accede a memoria de manera alineada, puede traer entre 16 y 64 bytes en una sola lectura, suficiente para
 cada uno de los threads del warp. Si en cambio debe acceder de manera no
 alineada a memoria, o con threads que no acceden de manera predecible, entonces
 se deberan serializar los accesos y separar en m\'ultiples transacciones a memoria global para satisfacer
