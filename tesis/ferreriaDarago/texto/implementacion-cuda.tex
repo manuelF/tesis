@@ -11,7 +11,7 @@ la performance del c\'omputo de SCF.
 
 \subsection{Falta de accesos coalescentes}
 Asi como en CPU es importante realizar accesos alineados a memoria, en GPU es aun m\'as critico.
-El termino coalescencia de memoria se define en GPU como la organizacion de los accesos a memoria de secuencial, ordenada y predecible. 
+El termino coalescencia de memoria se define en GPU como la organizacion de los accesos a memoria de secuencial, ordenada y predecible.
 La l\'ogica detras de esto es que cuando el GPU accede a memoria de manera alineada, puede traer entre 16 y 64 bytes en una sola lectura, suficiente para
 cada uno de los threads del warp. Si en cambio debe acceder de manera no
 alineada a memoria, o con threads que no acceden de manera predecible, entonces
@@ -353,8 +353,8 @@ en cada punto para cada grupo durante la ejecuci\'on de la aplicaci\'on, de modo
 este recurso que originalmente era limitante pero ya no. Estas incluyen la matriz de funciones,
 con una cantidad de elementos $O(puntos \times funciones)$, y si se usa el m\'etodo GGA
 (\textit{Generalized Gradient Approximation}) para realizar los c\'alculos de DFT, tambien se requieren
-las matrices de gradientes y hessianos de las funciones ($O(4 \times puntos \times funciones)$ y
-$(8 \times puntos \times funciones)$ respectivamente).
+las matrices de gradientes y hessianos de las funciones ($O(3 \times puntos \times funciones)$ y
+$O(6 \times puntos \times funciones)$ respectivamente).
 
 Para poder determinar que cosas van a ser guardadas en mem\'oria y que no, se determin\'o una heuristica
 que define el orden de las particiones a solucionar. Esta heuristica estima que tama\~no van a
@@ -384,8 +384,8 @@ cantidad de memoria disponible para el cacheo.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/global-fullereno.png}
-   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on del porcentaje de memoria
-   disponible de la placa, entre 0 y 4240 Mb.}
+   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria libre de
+   la placa usada para almacenar las funciones, entre 0 y 4240 Mb.}
    \label{plt:global-fullereno}
 \end{figure}
 
@@ -393,8 +393,8 @@ cantidad de memoria disponible para el cacheo.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/global-detailed-fullereno.png}
-   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on del porcentaje de memoria
-   disponible de la placa, entre 0 y 530 Mb.}
+   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria libre de
+   la placa usada para almacenar las funciones, entre 0 y 530 Mb.}
    \label{plt:global-detailed-fullereno}
 \end{figure}
 
