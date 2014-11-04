@@ -1,1 +1,160 @@
+Asi como ya exist\'ia una base de c\'odigo original de CUDA, el
+trabajo sobre CPU tambi\'en se realiz\'o sobre el c\'odigo original
+existente. El mismo fue dise\~nado de manera uniprocesador, y teniendo
+en mente un set de instrucciones SIMD anterior a AVX, donde el tama\~no
+de los registros de procesador era de 128 bits.
+
+Con el prop\'osito de adaptar el c\'odigo para procesadores
+paralelos y vectoriales como lo son los de la gama Xeon y Xeon Phi de
+Intel, se busc\'o vectorizar y paralelizar el c\'odigo tanto como fuese
+posible. En particular, se prioriz\'o lograr una gran escalabilidad en
+n\'umero de procesadores, especialmente en las pruebas realizadas en el
+Xeon.
+
+De acuerdo a la bibliografi\'ia~\cite{Jeffers}, es necesario lograr que
+el c\'odigo este no solamente bien vectorizado sino que escale con la
+cantidad de procesadores para poder hacer uso de las prestaciones del
+coprocesador Xeon Phi. Por lo tanto, las pruebas iniciales se concentraron
+en lograr buena escalabilidad y vectorizac\'on en CPU.
+
+Puesto que muchas decisiones arquitecturales del c\'odigo se realizaron en
+base a experimentos con prototipos representativos de las diversas operaciones,
+incluiremos algunos detalles del dispositivo utilizado para las pruebas.
+
+La computadora utilizada para las pruebas fue un servidor \textit{dual-socket}
+con 12 procesadores Intel Xeon CPU E5-2620 v2, dividos en dos grupos de 6. Los
+procesadores corren a una frecuencia de clock de 2.10 GHz, y soportan el set
+de instrucciones x86-64 con AVX 1.
+Cada procesador cuenta con 64 Kb de cache L1, 2 Mb de cache L2 para cada par de cores, y
+15 Mb de cache L3 compartida.
+El mismo contaba con 32 GB de memoria RAM DDR3 a 4 canales de memoria, dando 
+una transferencia te\'orica m\'axima de 42.6 GB/s, con ciclo de clock a 1.3 MHz.
+
+La familia de procesadores Xeon cuenta con tecnolog\'ia Turbo Boost. La misma 
+incluye una funcionalidad en el chip que ajusta din\'amicamente la frecuencia
+de los procesadores de acuerdo a la temperatura y potencia empleadas. Esto, si
+bien a \textit{a priori} es algo \'util ya que mejora la performance de los 
+programas, dificulta el an\'alisis de escalabilidad ya que al utilizar m\'as
+procesadores, aumenta el consumo energ\'etico y temperatura y por tanto la
+frecuencia de los procesadores disminuye. Para evitar este efecto en nuestro
+an\'alisis se deshabilito Turbo Boost al realizar las pruebas.
+
+Asimismo, originalmente los procesadores Intel Xeon cuentan con Hyperthreading,
+dando un total de 24 procesadores virtuales en vez de 12 n\'ucleos f\'isicos.
+Sin embargo, los dos hilos de ejecuci\'on (\textit{hyperthreads}) en un mismo
+procesador comparten unidades b\'asicas como las ALU. Al no ser totalmente
+independientes, esto tambi\'en dificulta el an\'alisis. Para no tomar esto en
+cuenta se trabajo con Hyperthreading deshabilitado.
+
+Las pruebas tambi\'en se ajustaron en base al coprocesador Xeon Phi que estaba
+conectado al Xeon como host. El modelo de coprocesador usado contaba con 61 
+cores y 8 Gb de memoria RAM, los valores est\'andar para la l\'inea actual de
+Xeon Phi.
+
+La secci\'on de c\'odigo trabajada corresponde a la parte del procesamiento
+de LIO optimizada mediante CUDA. Esta parte del c\'odigo estaba ya implementada
+en C++, utilizando extensiones de Intel ICC para vectorizaci\'on . No se busc\'o
+optimizar otras secciones de c\'odigo ya que las mismas no contaban con una
+contrapartida en CUDA, haciendo entonces imposible comparar esta arquitectura con
+Intel Xeon y Xeon Phi. Si bien el tiempo de ejecuci\'on de esas secciones, por su
+caracter serial y poco optimizado, terminan consumiendo una fracci\'on del tiempo
+no despreciable, se consider\'o fuera del enfoque de este trabajo trabajar sobre
+ellas. La optimizaci\'on de las mismas para aprovechar de las arquitecturas
+estudiadas queda como trabajo a futuro.
+
+\subsection{Estructura original del c\'odigo}
+
+Un esquema de alto nivel del computo m\'as intensivo realizado por el paquete
+G2G se encuentra en la figura~\ref{algo:lio-iteration}. Este c\'omputo corresponde
+a una iteraci\'on de c\'omputo de la matriz de Kohn-Sham. El pseudoc\'odigo
+corresponde a la implementaci\'on en C++ del mismo para los casos donde se
+utiliza GGA (\textit{Gradient Global Approximation}) y se calculan tanto las
+fuerzas como la matriz resultado.
+
+El marco general de la aplicaci\'on a nivel pseudoc\'odigo se encuentra en la
+figura~\ref{algo:lio-general-schematics}. Corresponde al detalle del esquema
+a alto nivel mostrado en la figura~\ref{fig:lio-steps}.
+
+Las matrices $G$ y $H$ corresponden a matrices de vectores $\mathbb{R}^3$, y
+la matriz $F$ de valores de funciones es de escalares. Las operaciones entre
+vectores y vectores y escalares tienen la sem\'antica esperable de algebra
+lineal. El producto entre dos vectores debe ser interpretado como producto
+componente a componente, no como producto escalar o vectorial.
+
+La implementaci\'on de las operaciones entre vectores merece particular atenci\'on.
+Para aprovechar el set de instrucciones SSE 4, la ultima versi\'on disponible al
+momento de realizar la implementaci\'on, la clase que implementa un vector de 3
+componentes (\texttt{cvector3}) se adapt\'o mediante herencia para mapear a un
+registro de SSE 4. Dado que el ancho de estos registros es de 128 bits, los mismos
+permiten realizar calculos de a 4 punto flotante a la vez. Al ser 3, uno de los
+elementos del registro SSE no se utiliza.
+
+La representaci\'on de un vector de tres componentes de esta manera, si bien da
+un \textit{speedup} significativo, no es portable ni escalable. Al incrementar el
+ancho de registro SIMD m\'as de los campos deben ser ignorados, malgastando cada
+vez m\'as espacio. Asimismo, se desperdician oportunidades por parte del compilador
+para optimizar mejor haciendo uso de todos los registros y operaciones que dispone
+la arquitectura. 
+
+Uno de los computos, \texttt{ssyr}, utilizaba la GSL (\textit{GNU Scientific Library}).
+La misma se reemplazo por la MKL (\textit{Math Kernel Library}) de Intel ya que
+la operaci\'on corresponde a una subrutina de BLAS nivel 2 muy conocida. Esto se
+realiz\'o principalmente para evitar tener que hacer una compilaci\'on y linkeo
+de la librer\'ia GSL en el Xeon Phi, y para disminuir la cantidad de c\'odigo a
+optimizar dado que la MKL ya se utilizaba en otras secciones del programa.
+
+\begin{algorithm}[H]
+        \caption{Pseudoc\'odigo de la iteraci\'on original de LIO}
+        \label{algo:lio-iteration}
+        \begin{algorithmic}
+            \Function{iteration}{$PG : PointGroup, Forces: \mathbb{R}^{fr \times fc}, RMMO: \mathbb{R}^{rr \times rc}$}
+              \State $RMM^{IN} \gets rmm\_input(G)$
+              \State $F \gets functions(PG)$
+              \State $G \gets gradient(PG)$
+              \State $H \gets hessian(PG)$
+              \State $energy \gets 0$
+              \State $n,m \gets \# functions(PG), \# points(G)$
+              \ForAll{$p \in [0..m)$}
+                  \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
+                  \ForAll{$i \in [0..n)$}
+                      \State $w \gets \Sigma_{0 \leq j \leq i} F_{p,j} \cdot RMM_{ij}$
+                      \State $w3 \gets \Sigma_{0 \leq j \leq i} G_{p,j} \cdot RMM_{ij}$
+                      \State $ww1 \gets \Sigma_{0 \leq j \leq i} H_{p,2j} \cdot RMM_{ij}$
+                      \State $ww2 \gets \Sigma_{0 \leq j \leq i} H_{p,2j+1} \cdot RMM_{ij}$
+                      \State $pd \gets pd + F_{p,i} w$
+                      \State $dxyz \gets dxyz + G_{p,i} \cdot w + w3 \cdot F_{p,i}$
+                      \State $dd1 \gets dd1 + 2 \cdot w3 \cdot G_{p,i} + H_{p,2i} \cdot w + ww1 \cdot F_{p,i}$
+                      \State $FgXXY \gets (G_{p,i}^x, G_{p,i}^x, G_{p,i}^y)$
+                      \State $w3XXY \gets (w3^x, w3^x, w3^y)$
+                      \State $w3YYZ \gets (w3^y, w3^y, w3^z)$
+                      \State $FgYZZ \gets (G_{p,i}^y, G_{p,i}^z, G_{p,i}^z)$
+                      \State $dd2 \gets dd2 + FgXXY \cdot w3YYZ + FgYYZ \cdot w3XXY + H_{p,2j+1} \cdot w + ww2 \cdot F_{p,i}$
+                  \EndFor 
+                  \State $exch, corr, y2a \gets potencial(pd, dxyz, dd1, dd2)$
+                  \State $energy \gets energy + (weight(p) \cdot pd) \cdot (exch + corr)$
+                  \State $FR_p \gets y2a \cdot weight(p)$
+              \EndFor
+              \State $RMM^{OUT}_{i,j} \gets \Sigma_{k < m} F_k \cdot F_k' \cdot FR_k$
+              \ForAll{$i,j \gets rmm\_indexes(PG)$}
+                  \State $RMMO_{i,j} \gets RMMO_{i,j} + RMM^{OUT}_{i,j}$
+              \EndFor
+            \EndFunction
+        \end{algorithmic}
+\end{algorithm}
+
+\subsection{Cambios en la vectorizaci\'on}
+
+
+\subsection{Prototipo usando MKL}
+
+\subsection{Prototipos de paralelizacion}
+
+\subsection{Modificaciones en el algoritmo}
+
+\subsection{An\'alisis de cargas}
+
 \subsection{Cambios en paralelismo}
+
+\subsection{Algoritmo de particionado}
+
+\subsection{Algoritmo de balanceo}
