@@ -14,12 +14,12 @@ la energia del sistema.
 Este esquema esta basado en el trabajo de Stratmann~\cite{Stratmann}, donde se propone
 agrupar puntos en vez de resolver el computo uno por uno. El agrupamiento permite determinar
 cuales funciones tienen una contribuci\'on significativa al computo final. Dado que las
-funciones Gaussianas decaen rapidamente a la distnacia, el tama\~no del conjunto de
-funciones significativas no depende del numero de atomos del sistema. Es decir, el tama\~no
-tiene orden constante en terminos de complejidad computacional. Como consecuencia, es posible
-subdividir el calculo de la DFT computando los grupos independientemente.
+funciones Gaussianas decaen r\'apidamente a la distancia, el tama\~no del conjunto de
+funciones significativas no depende del n\'umero de \'atomos del sistema. Es decir, el tama\~no
+tiene orden constante en t\'erminos de complejidad computacional. Como consecuencia, es posible
+subdividir el c\'alculo de la DFT computando los grupos independientemente.
 
-Un diagrama simplificando la estructura del calculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
+Un diagrama simplificando la estructura del c\'alculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
 Los pasos (a) a (e) corresponden a la etapa de inicializaci\'on, y se calculan una \'unica vez
 al comienzo de la simulaci\'on. La iteracion de SCF (\textit{Self-Consistent Field}) se
 compone de los pasos (f) a (l). Este ciclo se repite mientras la matriz densidad cambia
