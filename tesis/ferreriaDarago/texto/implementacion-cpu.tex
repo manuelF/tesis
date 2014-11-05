@@ -62,6 +62,17 @@ no despreciable, se consider\'o fuera del enfoque de este trabajo trabajar sobre
 ellas. La optimizaci\'on de las mismas para aprovechar de las arquitecturas
 estudiadas queda como trabajo a futuro.
 
+Como caso de estudio para las modificaciones, se utiliz\'o como ejemplo el c\'omputo
+de DFT sobre una mol\'ecula de hemoglobina. El caso es considerado de tama\~no
+mediano para las pruebas usuales que se realizan con el paquete LIO. Si bien la 
+cantidad de \'atomos es peque\~na, el n\'umero de electrones y sus interacciones
+hacen que sea necesario muchas funciones y muchos puntos de integraci\'on para
+modelarlo correctamente. En particular, uno de los \'atomos (el \'atomo de hierro)
+posee muchas capas electr\'onicas y por ende una gran cantidad de puntos y 
+funciones a calcular. Los datos espec\'ificos se encuentran en el ap\'endice.
+
+% TODO(jpdarago): Agregar datos de hemoglobina en el apendice
+
 \subsection{Estructura original del c\'odigo}
 
 Un esquema de alto nivel del computo m\'as intensivo realizado por el paquete
@@ -144,12 +155,128 @@ optimizar dado que la MKL ya se utilizaba en otras secciones del programa.
 
 \subsection{Cambios en la vectorizaci\'on}
 
+Uno de los primeros cambios fue la estructura de vectorizaci\'on para el ciclo 
+interno de la iteraci\'on de LIO.
 
-\subsection{Prototipo usando MKL}
+En base a la necesidad de que el c\'odigo escale correctamente con el ancho de registros
+SIMD (256 bits para AVX 1 en Xeon y 512 bits para AVX 2 en el Xeon Phi), se elimin\'o el
+uso de clases SIMD expl\'icitas para vectores de 3 componentes. 
+
+Esto deleg\'o al compilador la tarea de vectorizar el c\'odigo apropiadamente. Inicialmente
+esto produjo una degradaci\'on importante de performance, dado que la organizaci\'on del
+c\'odigo no permite al compilador vectorizar efectivamente. 
+
+Para revertir esta regresi\'on, se modific\'o la organizaci\'on del c\'odigo de manera de
+realizar los c\'omputos de manera m\'as amena a la optimizaci\'on. La observaci\'on clave
+para esto es que los computos se realizan siempre componente a componente. En particular,
+el ciclo m\'as intensivo de c\'omputo (el interior de la iteraci\'on) puede dividirse
+en cada componente para convertirse en 10 operaciones de suma sobre un vector de
+elementos. 
+
+Una heur\'istica de optimizaci\'on para estos casos es convertir los arreglos de
+estructuras (como por ejemplo las matrices de gradiente $G$ y de hessiano $H$, que
+son matrices densas de estructuras de tres valores) en estructuras de arreglos.
+En este caso esto implica partir las matrices en 3 matrices (una para cada
+componente), sino tambi\'en dividir el hessiano en sus componentes pares e impares.
+De esta manera, cada componente es un valor escalar y los ciclos pueden reescribirse
+para utilizar operaciones de punto flotante usuales sobre cada elemento.
+
+El c\'odigo resultante para el ciclo m\'as interno puede verse en el pseudoc\'odigo
+de la figura~\ref{fig:lio-pseudo-dividir}. 
+
+%TODO(jpdarago): Agregar pseudocodigo para esta parte
+
+La figura~\ref{fig:lio-post-partir-mats} muestra los resultados de realizar esta
+optimizaci\'on en el caso de prueba de hemoglobina en la computadora de prueba.
+
+%TODO(jpdarago): Agregar este grafico con regresion.
+
+\subsection{Almacenamiento de las matrices}
+
+Una mejora considerable surge tambi\'en de utilizar una estrategia de \textit{caching}
+similar a la utilizada en el c\'odigo de GPU para evitar el c\'alculo de las mismas
+en cada iteraci\'on. A diferencia de GPU, la memoria principal es de f\'acil y
+amplia disponibilidad para procesadores est\'andar, con lo cual es posible en ese
+caso calcular para cada grupo de puntos, el gradiente hessiano y valores de 
+funciones una \'unica vez antes de empezar las iteraciones.
+
+De manera de poder controlar esto, se habilit\'o como una opci\'on en tiempo de
+compilaci\'on al programa.
+
+Esta modificaci\'on es sencilla ya que podemos utilizar el mismo flag 
+\textit{inGlobal} de GPU para marcar que las funciones de un grupo se encuentran
+ya calculadas y almacenadas en memoria principal. El impacto en el ciclo de 
+iteraci\'on es m\'inimo y solo consiste en remover el c\'alculo de las funciones
+del mismo.
+
+La figura~\ref{fig:lio-post-cachear} muestra la diferencia entre el programa
+optimizado en la secci\'on anterior, y el actual despu\'es de esta modificaci\'on.
+
+%TODO(jpdarago): Agregar este grafico con regresion.
+
+\subsection{Alineamiento de matrices}
+
+De modo de facilitar la vectorizaci\'on de las operaciones realizadas en el 
+ciclo principal de la iteraci\'on, se tuvo en cuenta la alineaci\'on de las 
+matrices de funciones, hessiano y gradiente. La alineaci\'on a 64 bytes facilita
+el uso de instrucciones vectoriales especiales del procesador para tomar los 
+valores de la memoria principal~\cite{AutovectorizationGuide}.
+
+Para alinear el comienzo de todas las matrices a 64 bytes se emplea la funci\'on
+de la librer\'ia MKL de Intel \texttt{mkl\_malloc}.
+
+Esto sin embargo no resulta sufiicente en el caso del ciclo m\'as interno de
+la iteraci\'on. Para esto, necesitamos que cada fila de las matrices esten alineadas.
+Dado que la cantidad de columnas de una matriz corresponde a la cantidad de funciones,
+alineamos las mismas con un \texttt{padding} de ceros hasta el multiplo m\'as 
+cercano de 64 bytes. Esto introduce un m\'aximo de 16 valores nulos de precisi\'on 
+simple u 8 de precisi\'on doble (de acuerdo a cual se este empleando) en cada
+fila.
+
+La figura~\ref{fig:lio-post-align} muestra el resultado de aplicar esta optimizaci\'on
+en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
+
+%TODO(jpdarago): Agregar este grafico con regresion
 
 \subsection{Prototipos de paralelizacion}
 
-\subsection{Modificaciones en el algoritmo}
+Con la optimizaci\'on anterior observamos que los ciclos principales del c\'odigo
+estaban vectorizados y buscamos entonces obtener mejor \textit{performance} haciendo
+uso de los multiples procesadores disponibles.
+
+Con el prop\'osito de simplificar la tarea sin perder control o performance, 
+usamos el soporte para OpenMP del compilador ICC de Intel. OpenMP corresponde a
+un \textit{estandar} de compiladores para paralelismo asistido por el usuario,
+mediante \texttt{pragmas} de compilador y una librer\'ia de soporte sobre 
+primitivas del sistema operativo. 
+
+Un ejemplo de como se puede utilizar esta librer\'ia para paralelizar un ciclo
+sencillo se encuentra en el c\'odigo de C++ de la figura~\ref{fig:openmp-example}.
+
+El caracter asistido de OpenMP implica que nosotros debemos indicar como 
+realizar la partici\'on de trabajo. En un primer momento vimos dos posibles rutas 
+hacia paralelizar el c\'odigo: dividir los grupos entre \textit{threads} de 
+procesamiento, o utilizar multiples procesadores para dividirse el trabajo 
+correspondiente los puntos y funciones dentro de un mismo grupo. Esta segunda
+posibilidad corresponde a lo que se realiza ya en la implementaci\'on para placas
+de video.
+
+La decisi\'on no es trivial debido a las caracter\'sticas del trabajo a realizar
+y la arquitectura de los procesadores Xeon y Xeon Phi. A diferencia de las GPGPU,
+estos no cuentan con una gran cantidad de procesadores y exhiben un costo alto
+para lanzar un procesador. Esto hace entonces, en primera instancia, inviable
+realizar una partici\'on id\'entica a la de los \textit{kernels} implementados
+en CUDA. 
+
+
+La grilla de integraci\'on, como ya hemos explicado, se divide en cubos y 
+esferas. Las esferas corresponden a los n\'ucleos de los \'atomos del sistema.
+Los cubos son determinados por la grilla de integraci\'on y tienen tama\~no
+variable. El caracter heterog\'eneo y variable de estos grupos es lo que hace
+
+Tomamos como ejemplo el caso de la hemoglobina, el empleado para ajustar los
+par\'ametros de nuestra implementaci\'on. Un histograma de la cantidad de 
+funciones por grupo
 
 \subsection{An\'alisis de cargas}
 
