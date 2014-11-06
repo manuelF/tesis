@@ -7,13 +7,13 @@
 \usepackage{fullpage}
 \usepackage{url}
 \usepackage[table]{xcolor}
+\usepackage{framed}
 \usepackage{multirow}
-% \usepackage{nopageno}
 
 %opening
 \title{\Huge Unleashing the Power of Multicore Systems for Molecular Dynamics Simulations}
 
-\author{{\Large Mariano Camilo Gonzalez Lebrero} (\url{mcgl@qb.ffyb.uba.ar})\\
+\author{{\Large Mariano Camilo Gonz\'alez Lebrero} (\url{mcgl@qb.ffyb.uba.ar})\\
 Instituto de Qu\'imica y Fisicoqu\'imica Biol\'ogica\\
 Facultad de Farmacia y Bioqu\'imica\\
 Universidad de Buenos Aires \\
@@ -31,7 +31,12 @@ Facultad de Ciencias Exactas y Naturales\\
 Universidad de Buenos Aires\\
 +54+11-4576-3378 (123)\\
 \\
-\includegraphics[keepaspectratio, width=4cm]{logofcen.pdf}
+\includegraphics[keepaspectratio, width=3cm]{logofcen.pdf}\\
+\\
+Funds Requested: 150K USD \\
+\\
+The amount of Cost Share (if any): XXXXXXXXX\\
+\\
 }
 \date{\today }
 
@@ -45,6 +50,138 @@ Universidad de Buenos Aires\\
 \maketitle
 
 \newpage
+
+\section{Executive Summary}
+% {1 page}.
+Define and highlight the focus of this proposal by clearly articulating the scientific challenges to be overcome, computational complexities, and the industry impact of modernizing these particular codes. 
+
+Note: Emphasis should be put into this summary as it will be utilized by the review committee
+for the initial proposal review.
+
+ESTA PARTE LA LLENA DAMIAN
+
+
+\newpage
+
+\section{Background and Details of proposal.}
+% {1-3 pages}. This section is the centerpiece of the proposal. It should clearly identify and describe the proposed code optimization, in detail (with an URL to the code licensing information), and connection to the code author and path to scale distribution.
+
+\subsection{Statement of Work}
+Description of the code in the original state (GPU version), cite the papers. 
+
+\subsection{Schedule} 
+
+Due to the interdisciplinary nature of this project, the activities have a computational side and an application side.
+
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{|p{8cm}| *{12}{p{0.3cm}|}}
+\hline
+\multirow{2}{*}{\textbf{Activity}} & \multicolumn{12}{c|}{\textbf{Month}} \\
+\cline{2-13}
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12\\
+\hline
+Bibliographic revision & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & & & & & & & & & \\
+\hline
+
+Structural genomics database of pathogens & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & & & & & \\
+\hline
+
+General architecture of the application & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & & & & & & & & \\
+\hline
+
+Selection of devices to be supported & & & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & & & & & \\
+\hline
+
+Generation of the structural genome & & & & & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6}& & & \\
+\hline
+
+Determination of the druggability & & & & & & & & \cellcolor[gray]{0.6}& \cellcolor[gray]{0.6}& & & \\
+
+\hline
+
+Overall analysis of the data and target prioritization & & & & & & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6}& \cellcolor[gray]{0.6}& \cellcolor[gray]{0.6}& \cellcolor[gray]{0.6}\\
+
+\hline
+
+Prototypes & & & & & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6}& \cellcolor[gray]{0.6}& \cellcolor[gray]{0.6}& \cellcolor[gray]{0.6}\\
+\hline
+\end{tabular}
+\caption{Proposed schedule of activities for the first year}
+\label{Tab:Firstyear}
+\end{table}
+
+
+
+pedirle a Juan Pablo que ponga lo que hizo hasta ahora, incluir optimizaciones de CPU solo. 
+Mencionar o ver MKL.
+
+\subsection{Milestones \& Deliverables}
+\begin{itemize}
+\item 3 months: Study of the Xeon-phi architecture. Analysis of the impact of the new architecture in the QM/MM aplication.
+
+\item 6 months: First compiled version in the XEON-phi including fisrt optimizations (\textbf{first deliverable}).
+
+\item 12 months: Diagnosis report of the problems and bottlenecks of the QM/MM application in the XEON-Phi architecture and possible workarounds (\textbf{second deriverable})
+
+\item 24 months: QM/MM highly optimized version for Xeon-Phi, publicily available for download (\textbf{third deriverable}).
+\end{itemize}
+
+\begin{framed}
+\textbf{Success Criteria}: At least, obtain a speedup of 5X comparing against the original CPU version. 
+\end{framed}
+
+
+\newpage
+
+\section{Proposal Team}
+
+% {1-2 pages}. Summarize the members of the program team, their qualifications, and their level of participation in the project. The proposal may consist of individuals from multiple departments and institutions. Interdisciplinary teams are encouraged to apply.
+This project will be jointly developed by researchers from the following institutions:
+\begin{enumerate}[i)]
+% \itemsep0em 
+\item GRUPO DE DAMIAN leaded by Dar\'io Ariel Estr\'in: Description of the group and short bio.
+
+
+\item GRUPO DE NANO: Description
+
+\item High Performance Computing Laboratory for Interdisciplinary Applications (LICAR), Computer Science Departament, School of Sciences, Universidad de Buenos Aires.
+
+\end{enumerate}
+
+The project will be XXX  by the following professors:
+\begin{enumerate}[i)]
+% \itemsep0em 
+
+\item Mariano Camilo Gonz\'alez Lebrero: short bio
+
+\item Esteban Eduardo Mocskos: short bio
+
+\item Dami\'an Ariel Scherlis Perel: short bio
+
+\end{enumerate}
+
+Additionally, PhD students will be involved in some of the stages of the project:
+\begin{itemize}
+\item William Agudelo Su\'arez
+
+\item Uriel Morzan
+
+\item Francisco Ram\'irez
+
+\item Nicol\'as Foglia 
+
+\item David Gonz\'alez M\'arquez (LICAR)
+
+\item Maximiliano Geier (LICAR)
+
+\end{itemize}
+
+
+
+
+
 
 % \begin{abstract}
 % Neglected diseases are a group of infectious diseases, infecting over one Billion people, and which are especially endemic in low-income populations in the developing regions of Africa, Asia, and the southern region of America (Latin America and the Caribbean), including tuberculosis, malaria, trypanosomiasis (i.e. Chagas disease), filariasis and schistosomiasis among others. 
