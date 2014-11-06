@@ -242,7 +242,11 @@ en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
 
 Con la optimizaci\'on anterior observamos que los ciclos principales del c\'odigo
 estaban vectorizados y buscamos entonces obtener mejor \textit{performance} haciendo
-uso de los multiples procesadores disponibles.
+uso de los multiples procesadores disponibles. Para esto, buscamos una soluci\'on
+que nos permitiera escalar lo mejor posible en cantidad de procesadores: Utilizar
+$n$ procesadores debiera mejorar la performance lo m\'as cerca de $n$-veces posible.
+
+%TODO(jpdarago): Esta parte de OpenMP no deberia ir en la introduccion?
 
 Con el prop\'osito de simplificar la tarea sin perder control o performance, 
 usamos el soporte para OpenMP del compilador ICC de Intel. OpenMP corresponde a
@@ -252,6 +256,33 @@ primitivas del sistema operativo.
 
 Un ejemplo de como se puede utilizar esta librer\'ia para paralelizar un ciclo
 sencillo se encuentra en el c\'odigo de C++ de la figura~\ref{fig:openmp-example}.
+En el ejemplo, las iteraciones del ciclo principal ser\'an divididas entre los
+distintos \textit{threads} en porciones iguales y consecutivas, y cada uno
+ejecutara el cuerpo interno del ciclo para sus iteraciones. La cantidad de 
+hilos de ejecuci\'on a lanzar y como se dividen las iteraciones son controladas
+mediante los par\'ametros del pragma pasado al compilador.
+
+No solo al encontrarse la secci\'on cr\'itica los hilos de ejecuci\'on deben
+sincronizarse para iniciar el trabajo, sino que al terminar cada uno debe esperar
+a que los otros concluyan para que uno solo de ellos prosiga con el resto del
+programa. Esto quiere decir que el inicio y fin de un \textit{loop} paralelizado
+con OpenMP son puntos de sincronizaci\'on y tienen un \textit{overhead} asociado.
+
+\begin{figure}[htbp]
+    \label{fig:openmp-example}
+    \begin{lstlisting}
+        #pragma omp parallel for num_threads(12) schedule(static)
+        for(int i = 0; i < n; i++) {
+            int result = 0;
+            for(int j = 0; j < m; j++) {
+                result += a[i][j] * b[j];
+            }
+            results[i] = result;
+        }
+    \end{lstlisting}
+    \caption{Ejemplo de programa paralelizado con OpenMP para correr en 12 threads. Cada thread
+    sera asignado una cantidad fija de iteraciones consecutivas.}
+\end{figure}
 
 El caracter asistido de OpenMP implica que nosotros debemos indicar como 
 realizar la partici\'on de trabajo. En un primer momento vimos dos posibles rutas 
@@ -264,24 +295,229 @@ de video.
 La decisi\'on no es trivial debido a las caracter\'sticas del trabajo a realizar
 y la arquitectura de los procesadores Xeon y Xeon Phi. A diferencia de las GPGPU,
 estos no cuentan con una gran cantidad de procesadores y exhiben un costo alto
-para lanzar un procesador. Esto hace entonces, en primera instancia, inviable
-realizar una partici\'on id\'entica a la de los \textit{kernels} implementados
-en CUDA. 
+para lanzar un hilo de ejecuci\'on. Los hilos de ejecuci\'on comparten memorias
+cach\'e y, si su cantidad es mayor que la cantidad de procesadores disponible,
+deben ser asignados a procesadores por parte del \textit{scheduler} del sistema
+operativo.
 
+Esto hace entonces, en primera instancia, inviable realizar una partici\'on id\'entica a 
+la de los \textit{kernels} implementados en CUDA, donde la cuenta se realiza para 
+grupos chicos de puntos.
 
-La grilla de integraci\'on, como ya hemos explicado, se divide en cubos y 
+Por otro lado, tampoco es trivial partir los grupos entre los procesadores disponibles,
+y tampoco es trivial dividir los puntos de un grupo entre procesadores para resolverlos.
+El motivo es la forma que tiene la grilla de integraci\'on con la que se trabaja.
+
+Esta grilla de integraci\'on, como ya hemos explicado, se divide en cubos y 
 esferas. Las esferas corresponden a los n\'ucleos de los \'atomos del sistema.
 Los cubos son determinados por la grilla de integraci\'on y tienen tama\~no
-variable. El caracter heterog\'eneo y variable de estos grupos es lo que hace
+variable. 
 
 Tomamos como ejemplo el caso de la hemoglobina, el empleado para ajustar los
 par\'ametros de nuestra implementaci\'on. Un histograma de la cantidad de 
-funciones por grupo
+funciones por grupo, y la cantidad de puntos por grupo, puede verse en la 
+figura~\ref{fig:lio-histo-groups}.
 
-\subsection{An\'alisis de cargas}
+\begin{figure}[htbp]
+   \centering
+   \begin{subfigure}[b]{\plotwidth}
+     \includegraphics[width=\textwidth]{plots/cpu/histogram-functions-hemo.png}
+     \caption{}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidth}
+     \includegraphics[width=\textwidth]{plots/cpu/histogram-points-hemo.png}
+     \caption{}
+   \end{subfigure}
+   \caption{Histogramas para la cantidad de puntos y funciones para los grupos correspondientes al caso de prueba
+   de hemoglobina}
+   \label{fig:lio-histo-groups}
+\end{figure}
 
-\subsection{Cambios en paralelismo}
+Como puede verse, tanto la cantidad de grupos como de funciones para un grupo es altamente
+variable. Los grupos m\'as pesados como las esferas tienen una cantidad dentro de los
+miles de puntos y cientos de funciones, mientras ha 748 grupos (65\%
+del total) con menos de 50 funciones a calcular por punto, y 927 (80\% del total)
+que poseen menos de 100 puntos.
+
+Adicionalmente, el grupo m\'as grande en cantidad de puntos tiene 5238 veces m\'as
+puntos que el m\'as chico, y el m\'as grande en cantidad de funciones tiene 24
+veces m\'as puntos (debido al ajuste de alineaci\'on que se explic\'o en la 
+secci\'on anterior).
+
+Por lo tanto, identificamos las siguientes dificultades:
+
+\begin{itemize}
+    \item Dividir los grupos entre hilos de ejecuci\'on tiene la dificultad de que
+    los grupos m\'as grandes dominan a los m\'as chicos, pudiendo producir un serio
+    desbalance de carga de trabajo, especialmente cuando se incrementa la cantidad de
+    procesadores en juego.
+    \item Recorrer cada grupo y dividir los puntos a procesar entre procesadores
+    tiene como desventaja que muchos grupos tienen una muy peque\~na cantidad de
+    puntos, con lo cual incrementar la cantidad de procesadores no nos ser\'a util
+    para resolver los mismos (porque no hay un punto que darle a uno o m\'as procesadores).
+    Este desbalance tambi\'en nos parece indeseable. 
+    
+    Adem\'as, como ya se\~nalamos, el costo de sincronizaci\'on de hilos de 
+    ejecuci\'on al terminar un ciclo paralelizado con OpenMP no es menor, por
+    lo tanto si la cantidad de trabajo para cada thread es menor a este 
+    \textit{overhead} no vale la pena incrementar la cantidad de \textit{threads}.
+\end{itemize}
+
+La soluci\'on propuesta a este problema es un h\'ibrido entre estas dos
+estrategias: Los puntos que sean demasiado chicos en cantidad de trabajo son
+reunidos y divididos entre los procesadores disponibles, y los que si sean lo
+suficientemente grandes son procesados secuencialmente, pero los procesadores se
+dividen el trabajo de los puntos a procesar para cada uno de los grupos.
+
+\subsection{An\'alisis de cargas de grupos}
+
+La divisi\'on de los grupos chicos entre procesadores es una tarea de complejidad
+no trivial, puesto que el tiempo de ejecuci\'on total corresponde al tiempo m\'aximo
+que uno de los procesadores tome en resolver su partici\'on, ya que todo hilo de 
+ejecuci\'on que termine su trabajo antes debe esperarlo para sincronizarse.
+
+Puesto que antes de empezar las iteraciones sabemos cuales son los grupos a 
+procesar, podemos usar estar informaci\'on para hacer una partici\'on de los mismos
+una vez antes de empezar a iterar. Para esto necesitamos un estimativo del costo
+y un algoritmo que, dados los costos de los grupos y la cantidad de threads a 
+utilizar, asigne cada grupo a cada thread.
+
+Para tener una idea del costo de cada grupo, usamos el estimador de operaciones
+dado por~\cite{LIO} junto con un ajuste fijo para considerar overheads fijos a 
+cada grupo. Matem\'aticamente el estimador utilizado es:
+
+\begin{equation}
+    Costo(PG) = \frac{\#f(PG) \cdot \#p(PG) \cdot (\#p(PG) + 1)}{2} + C
+\end{equation}
+
+donde $f(PG)$ son las funciones del grupo y $p(PG)$ los puntos del grupo. La 
+constante fue ajustada experimentalmente de acuerdo a los ejemplos disponibles y
+su impacto en el tiempo de ejecuci\'on para los mismos ser\'a descripto en 
+secciones posteriores.
 
 \subsection{Algoritmo de particionado}
+
+El algoritmo de particionado recibe como entrada un vector $C = {C_1, \cdots, C_n}$
+de costos y un valor $m$, la cantidad de threads a utilizar, y devuelve una 
+partici\'on de los mismos $P_1, \dots, P_m$ tal que
+
+\begin{align}
+    \bigcup P_i & = C \\
+    P_i \bigcap P_j & = \emptyset, \qquad \forall 1 \leq i,j \leq m, i \neq j
+    \label{eq:partition-conditions}
+\end{align}
+
+y que minimiza el valor m\'aximo de peso para una partici\'on, es decir:
+
+\begin{align}
+    \max \sum 
+\end{align}
+
+Un aspecto importante a se\~nalar de este problema es que pertenece a la clase
+de problemas computacionales \textit{NP-hard}. Esta clase de problemas forma una
+clase de equivalencia con respecto a su dificultad e incluye problemas para los 
+cuales no se conocen soluciones que esten acotadas por una cantidad polinomial 
+de operaciones en funci\'on de la entrada.
+
+Esto es desalentador en un principio puesto que un algoritmo exacto para resolver
+este problema y que sea pr\'actico para utilizar en entradas no triviales no es
+conocido, y la pregunta de si existe es parte de una de las preguntas abiertas
+m\'as conocidas de la computaci\'on~\cite{Cormen}.
+
+En particular, este problema es muy similar a otro problema muy conocido, 
+denominado \textit{Bin Packing Problem}. Este problema consiste en, dados $n$ 
+objetos con vol\'umenes $V_1, \dots, V_n$, y disponiendo de contenedores de
+vol\'umen m\'aximo $C$, dar la m\'inima cantidad de contenedores necesarios para
+empaquetar todos los objetos.
+
+La relaci\'on entre ambos problemas puede hacerse expl\'icita mediante una simple
+reducci\'on de uno al otro.
+
+Observemos que si conocieramos, para nuestro problema de dividir el trabajo entre
+hilos de ejecuci\'on, el valor $M$ de carga m\'axima que uno de estos tiene que
+procesar, podemos usar un algoritmo que resuelva \textit{Bin packing} para 
+obtener la m\'inima cantidad de hilos de ejecuci\'on que necesitamos para distribuir
+el trabajo y que ninguno de ellos este cargado m\'as que $M$. 
+
+Para determinar $M$ usamos un simple algoritmo de b\'usqueda binaria en base a los
+siguientes tres observaciones:
+
+\begin{itemize}
+    \item Es imposible que $M$ sea m\'as chica que el menor de los costos de los
+    trabajos a procesar. Esto es trivialmente demostrable.
+    \item Dado que siempre disponemos de al menos un procesador, sabemos que $M$
+    es como mucho el total de todos los trabajos. Esto tambi\'en es trivialmente
+    cierto.
+    \item Sabemos que si tenemos una soluci\'on tal que cada thread esta cargado
+    hasta $M$ unidades de trabajo, tenemos una soluci\'on para toda carga m\'axima
+    $M', M' \geq M$. An\'alogamente, sabemos que si no podemos encontrar una 
+    soluci\'on para $M$, es imposible que obtengamos una para $M', M' \leq M$.
+\end{itemize}
+
+Con esto, utilizamos busqueda binaria para encontrar el $M$. En cada paso, para
+un $M$ candidato, usamos un algoritmo de \textit{bin packing} para obtener 
+cuantos hilos de ejecuci\'on necesitariamos para dividir el trabajo de manera que
+ning\'un procesador reciba m\'as trabajo que $M$. Si esta cantidad es mayor que
+la cantidad de n\'ucleos de procesamiento m\'aximos que disponemos, entonces 
+necesitamos que al menos uno de los procesadores este m\'as cargado. Sino, podemos
+intentar cargarlos menos.
+
+Un pseudoc\'odigo para esta secci\'on del algoritmo esta disponible en la figura~\ref{algo:partition-algo}.
+
+Un problemad de esta estrategia es que, como se se\~nalo anteriormente, 
+\textit{Bin packing} es un problema \textit{NP-hard}~\cite{NPCompleteness}. Sin
+embargo, se conocen buenos algoritmos aproximados para resolver el problema. Los
+mismos pueden devolver una respuesta que no es \'optima, pero razonablemente cerca
+de la \'optima.
+
+Una estrategia posible de este estilo es la estrategia denominada \textit{First
+fit decreasing}, que es la utilizada en este trabajo. Esta estrategia consiste en 
+iterativamente ubicar los objetos, en \'orden de mayor a menor en costo, 
+en el primer contenedor en el que entre. De no disponerse ninguno, se utiliza
+uno nuevo y se repite el algoritmo. Se sabe que este algoritmo da una respuesta
+que como m\'aximo es $\frac{11}{9} O + 1$, donde $O$ es el \'optimo para el 
+problema a resolver~\cite{FFDDemo}.
+
+Esta secci\'on del algoritmo tambi\'en puede verse en pseudoc\'odigo en~\ref{algo:partition-algo}.
+La complejidad resultante es $O(M n \log n)$ con $n$ la cantidad de elementos y $M$ la suma
+de todos los costos. Dado que $M$ y $n$ son de tama\~no razonablemente peque\~no y el algoritmo
+solo debe ser ejecutado antes de la primer iteraci\'on, decidimos utilizarlo para
+nuestra implementaci\'on.
+
+\begin{algorithm}[H]
+    \caption{Pseudoc\'odigo del algoritmo para particionar trabajo entre \textit{threads}}
+    \label{algo:partition-algo}
+    \begin{algorithmic}
+        \Function{partition}{$C = \{C_1, \dots, C_n\}, m$}
+            \State $sort(C)$
+            \State $L = min(C)-1, R = sum(C)$
+            \While{$R - L > 1$}
+                \Comment{Invariante: $(L, \dots, R]$ contiene la capacidad maxima.}
+                \State $Capacity \gets \frac{L+R}{2}$
+                \State $Partition \gets splitbins(C,Capacity)$
+                \If{$\# Partition \leq m$}
+                    \State $R \gets Capacity$
+                \Else
+                    \State $L \gets Capacity$
+                \EndIf
+            \EndWhile
+            \Return{$splitbins(C, R)$}
+        \EndFunction
+
+        \Function{splitbins}{$C = \{C_1, \dots, C_n\}, m$}
+            \State $Bins \gets []$
+            \ForAll{$c \in C$}
+                \State $Fits \gets [v \mid Space(v) \geq c]$
+                \If{$Fits = \emptyset $}
+                    \State $Fits \gets EmptyBin \bigcup Fits$
+                \EndIf 
+                \State $Fits_1 \gets Fits_1 \bigcup c$
+            \EndFor
+            \Return $Bins$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\subsection{Cambios en paralelismo interno}
 
 \subsection{Algoritmo de balanceo}
