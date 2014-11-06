@@ -86,6 +86,13 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
 def initialize():
   mpl.rcParams['savefig.dpi'] = 150
 
+def histogram(xlabel, ylabel, values, nbins, title, filename):
+  pylab.hist(values, nbins, histtype="bar", normed=1, alpha=0.5)
+  pylab.title(title)
+  pylab.xlabel(xlabel)
+  pylab.ylabel(ylabel)
+  pylab.savefig(filename, bbox_inches='tight')
+  pylab.close()
 
 hasScipy = False
 try:
