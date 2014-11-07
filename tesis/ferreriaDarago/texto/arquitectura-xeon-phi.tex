@@ -10,7 +10,7 @@ de HPC a pesar de ser reciente. Por ejemplo, ha sido fuertemente utilizada en la
 de la Universidad de Sun Yat-Sen en China, listada en Top 500 como la supercomputadora m\'as r\'apida del
 mundo en Junio 2013, Noviembre 2013 y Junio 2014~\cite{Top500XeonPhiJune2013},~\cite{Top500XeonPhiNov2013},~\cite{Top500XeonPhiJune2014}.
 Los 16000 nodos de esta supercomputadora contienen, adem\'as de dos Ivy Bridge Xeon, 3 coprocesadores
-XeonPhi, dando un poder total de computo te\'orico de 54.9 petaflops.
+Xeon Phi, dando un poder total de computo te\'orico de 54.9 petaflops.
 
 \subsection{Microarquitectura general}
 
@@ -19,7 +19,7 @@ se incluye el consumo energ\'etico. Uno de los objetivos fue aumentar la relaci\
 poder de c\'omputo por Watt de los procesadores de Xeon de la \'epoca, manteniendo un entorno
 de desarrollo de prop\'osito general como el de x86.
 Si bien el consumo no se ve\'ia impactado por el set de instrucciones,
-si se busc\'o eliminar diversos componentes del procesador, mantendiendo las caracter\'isticas
+si se busc\'o eliminar diversos componentes del procesador, manteniendo las caracter\'isticas
 que sirvieran al tipo de aplicaci\'on a la que se estaba
 apuntando (programas altamente paralelos a nivel de datos y tareas)~\cite{BookXeonPhi}.
 
@@ -28,7 +28,7 @@ cual justifica su nombre MIC (\textit{Many Integrated Core}). Cada procesador es
 en el dise\~no del Intel Pentium, con una ISA (\textit{Instruction Set Architecture}) similar a la IA-32 con
 soporte para direccionamiento a 64 bits y nuevas instrucciones de vectorizaci\'on.
 
-Los procesadores tienen un \textit{clock rate} de 1.0 GHz aproximadamente, haciendolos relativamente lentos frente
+Los procesadores tienen un \textit{clock rate} de 1.0 GHz aproximadamente, comparativamente lentos frente
 a otros procesadores de Intel. Por ejemplo, los cores de un Intel Xeon CPU E5-2620 tienen un \textit{clock rate}
 de 2.10 GHz, m\'as del doble.
 
@@ -78,7 +78,7 @@ funciona de manera \textit{round robin} en los buffers de prefetch. Recargar est
 
 Los 4 threads de un core son multiplexados por el pipeline del mismo, de manera de que si uno de los threads esta
 \textit{stalleado} se elija a otro que tenga trabajo para hacer. Se sugiere entonces el uso de al menos dos
-\textit{threads} por core para esconder latencias de memoria y de instrucciones vectoriales, y asi aumentar la performance.
+\textit{threads} por core para esconder latencias de memoria y de instrucciones vectoriales, y as\'i aumentar la performance.
 
 Una vez que una instrucci\'on ha sido elegida para decodificarse, pasa a los estad\'ios D0 y D1, a una velocidad de
 decodificaci\'on de 2 instrucciones por ciclo de \textit{clock}. De ahi son enviadas a cada pipeline para ejecutarse.
@@ -146,20 +146,20 @@ de los 16 (como m\'aximo) que tiene un registro SIMD del Xeon Phi como parte de 
 las instrucciones adicionales de la arquitectura. Si un elemento no estuviera en el registro de m\'ascara, el valor resultado de la operaci\'on
 sobre los dos elementos correspondientes de los operandos fuentes es escrito en el lugar correspondiente del operando destino.
 
-Asi como ocurre con los 32 registros SIMD, los 8 registros de m\'ascara son
+As\'i como ocurre con los 32 registros SIMD, los 8 registros de m\'ascara son
 por \textit{thread}. El uso de estas m\'ascaras esta contemplado en las instrucciones, requiriendo un ciclo de clock adicional
 para pasar por la \textit{Mask pipeline}.
 
 Las instrucciones especiales para exponenciaci\'on forman parte de la EMU (\textit{Extended Math Unit}), utilizando cuadratura
-num\'erica y tablas para aproximar las funciones trascendentales por \textit{hardware}. Debido a la prevalencia en computo
+num\'erica y tablas para aproximar las funciones trascendentales por \textit{hardware}. Debido a la prevalencia en c\'omputo
 cient\'ifico de estas instrucciones se busc\'o la disminuci\'on en el uso de ciclos de reloj para su c\'alculo.
 
-La adici\'on de instrucciones sobre memoria no secuencial (\textit{scatter and gather}) resultan interesantes por su prevalencia
+La adici\'on de instrucciones sobre memoria no secuencial (\textit{scatter and gather}) resultan interesantes por su utilizaci\'on
 en HPC y porque facilitan la tarea de generaci\'on de c\'odigo vectorial en los \textit{backends} de compiladores. Tambi\'en, con
 el prop\'osito de permitir un control m\'as fino de los cach\'es, los operandos en memoria para operaciones vectoriales permiten
 la inclusi\'on de un atributo denominado \textit{eviction hint}. Este atributo permite determinar si los datos ser\'an o no
-reusados, escribiendolos directamente a memoria si no fuese as\'i. De esta manera se evita la contaminaci\'on de cache con datos
-que no ser\'an vueltos a utilizar en calculos posteriores. Como su nombre lo indica, este atributo es un consejo al coprocesador,
+reusados, escribi\'endolos directamente a memoria si no fuese as\'i. De esta manera se evita la contaminaci\'on de cache con datos
+que no ser\'an vueltos a utilizar en c\'alculos posteriores. Como su nombre lo indica, este atributo es un consejo al coprocesador,
 y este puede ignorarlo.
 
 Por \'ultimo, tambi\'en la unidad vectorial implementa un \textit{prefetcher} por software, tanto para los caches L1 y L2. Estos
@@ -169,11 +169,11 @@ en retiro de instrucciones.
 \subsection{Organizaci\'on de la memoria}
 
 La memoria principal del Xeon Phi consiste de memoria RAM GDDR5 en la placa, de 8 GB. Los cores y la memoria principal son comunicados mediante el uso de 8
-controladoras, conectadas mediante el anillo bidireccional, de dos canales a 5.5 Gb/s. Cada transferencia realizada es de 4 bytes.
+controladoras, conectadas mediante un anillo bidireccional de dos canales a 5.5 Gb/s. Cada transferencia realizada es de 4 bytes.
 Esto nos da un l\'imite de ancho de banda te\'orico de 352 GB/s pero detalles de implementaci\'on de los chips limitan este valor a 200 GB/s.
 
-Las controladores reciben los pedidos mediante el anillo de direcciones y convierten estos en comandos para GDD5, retornando finalmente los datos en
-el anillo de datos. Los dispositivos GDDR5 tienen el espacio de direcciones interlineado para distribuir mejor la carga de pedidos.
+Las controladores reciben los pedidos mediante el anillo de direcciones y convierten estos en comandos para GDDR5, retornando finalmente los datos en
+el anillo de datos. Los dispositivos GDDR5 tienen el espacio de direcciones interlineado entre distintos bancos de memoria para distribuir mejor la carga de pedidos.
 
 \begin{figure}[htbp]
    \centering
@@ -184,9 +184,9 @@ el anillo de datos. Los dispositivos GDDR5 tienen el espacio de direcciones inte
 
 La memoria esta dividida en p\'aginas utilizando un esquema de 4 niveles, con direcciones de 64 bits~\ref{fig::xeon_phi_addressing}. El tama\~no de p\'agina soportado es de 4 Kb
 o 2 Mb, siendo el esquema de 2 Mb preferido en aplicaciones de computo cient\'ifico. Como es de esperar, el Xeon Phi utiliza TLBs (\textit{Translation Lookaside
-Buffers}) para disminuir la cantidad de accesos a memoria necesarios para mapear una p\'agina de memoria virtual en una f\'isica.
+Buffers}) para disminuir la cantidad de accesos a memoria necesarios para resolver una p\'agina de memoria virtual en una f\'isica.
 
-\subsection{Conexion Host - Coprocesador}
+\subsection{Conexi\'on Host - Coprocesador}
 
 El Xeon Phi se conecta con su host mediante el uso de un bus PCI Express 2.0 de 16 lineas. Las transferencias pueden ser
 mediante I/O programada o DMA (\textit{Direct Memory Access}). Este bus permite la transferencia no solo al host sino a
@@ -200,8 +200,9 @@ el del Xeon Phi a trav\'es de protocolos como SSH (Secure SHell). Esto facilita 
 transferencia de c\'odigo y datos para ejecuci\'on, y el uso del coprocesador como nodo de computaci\'on adicional en un
 esquema de cluster.
 
-La placa no tiene acceso a perif\'ericos, en particular disco duro. Para esto se puede utilizar un sistema NFS (\textit{Network
-File System}) con el prop\'osito de almacenar datos en el host.
+Como el Xeon Phi es aut\'onomo con respecto al SO del host, no tiene acceso a perif\'ericos, en particular dispositivos de almacenamiento.
+Para esto se puede utilizar un sistema NFS (\textit{Network File System}) con el prop\'osito de almacenar datos en el host que sean visibles
+desde el Xeon Phi.
 
 \subsection{Modos de ejecuci\'on}
 
@@ -213,8 +214,8 @@ Existen tres m\'etodos para ejecutar c\'odigo en el coprocesador.
     de archivos montado sobre la propia RAM.
     \item Offloading: El \textit{host} puede delegar la ejecuci\'on de ciertas porciones de c\'odigo al coprocesador.
     Esto requiere que los datos necesarios para el c\'omputo sean copiados del \textit{host} al Xeon Phi, lo cual puede implicar que el bus puede ser un cuello de botella
-    importante (puesto que los datos de entrada, y la salida deben ser movido al Xeon Phi y traidos de vuelta al finalizar el c\'omputo).
-    \item Simétrico: En este modo de ejecuci\'on se piensa al Xeon Phi y su host como dos nodos en un \textit{cluster} de c\'omputo, y al bus PCIe como una red de alta velocidad.
+    importante (puesto que los datos de entrada, y la salida deben ser movido al Xeon Phi y recuperados al finalizar el c\'omputo).
+    \item Sim\'etrico: En este modo de ejecuci\'on se piensa al Xeon Phi y su host como dos nodos en un \textit{cluster} de c\'omputo, y al bus PCIe como una red de alta velocidad.
     Este modo es especialmente interesante si se dispone de m\'as de un Xeon Phi en un mismo host,
     y se utiliza una interfaz de pasado de mensajes entre ellos como por ejemplo MPI (\textit{Message Passing Interface}).
 \end{enumerate}
@@ -248,7 +249,7 @@ de aplicaciones que facilitan la tarea de ejecuci\'on y mantenimiento del c\'odi
 el uso de un lenguaje de programaci\'on separado.
 
 Los distintos modos de uso para el Xeon Phi reciben soporte de diversas librer\'ias. El uso mediante \textit{offloading}, por ejemplo,
-es provisto mediante el uso de pragmas y opciones de compilaci\'on que permiten indicar que computo y como deben ser transferidos
+es provisto mediante el uso de \textit{pragmas} y opciones de compilaci\'on que permiten indicar que computo y como deben ser transferidos
 a la placa. Estos pragmas permiten control fino de como enviar los datos a la placa, si deben ser transmitidos de vuelta de la placa,
 etc.
 
@@ -257,14 +258,16 @@ el Xeon Phi a trav\'es del sistema operativo.
 
 Por \'ultimo, Intel tambi\'en provee librer\'ias portadas como OpenMP, MPI, Thread Building Blocks, etc. Librer\'ias ya existentes
 como la MKL (\textit{Math Kernel Library}), que implementa las conocidas rutinas de BLAS y LAPACK, tambi\'en tienen su versi\'on
-pensada para Xeon Phi, e incluso pueden utilizar transparentemente el Xen Phi.
+pensada para Xeon Phi, e incluso pueden utilizar de manera transparente el Xeon Phi.
 
 \subsection{Idoneidad para la tarea}
 
 Siendo que el mercado principal para Xeon Phi son las aplicaciones de computo cient\'ifico, esto hace que la
 aplicaci\'on LIO sea ya de por si una posible candidata al uso de esta tecnolog\'ia. Otros aspectos que
 hacen interesante portar la misma al uso del Xeon Phi son la existencia de una gran cantidad de c\'odigo ya
-implementada en C++ y Fortran, la cual ya puede ser movida a Xeon Phi sin requerir m\'as que una compilaci\'on.
-Este c\'odigo existente tiene una performance fuertemente atada al computo asociado,
-y la tarea es altamente paralelizable (como se demostr\'o en las implementaciones ya realizadas usando CUDA) y
-vectorizable.
+implementada en C++ y Fortran, la cual ya puede ser movida a Xeon Phi sin requerir m\'as que una compilaci\'on,
+seg\'un Intel.
+El c\'odigo existente en LIO tiene una performance fuertemente atada al costo del c\'omputo asociado,
+siendo esta tarea altamente paralelizable (como se demostr\'o en las implementaciones ya realizadas usando CUDA) y
+vectorizable. Estas son las caracter\'isticas que requiere un problema para que valga la pena considerar la
+implementaci\'on en Xeon Phi.
