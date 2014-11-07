@@ -153,6 +153,8 @@ optimizar dado que la MKL ya se utilizaba en otras secciones del programa.
         \end{algorithmic}
 \end{algorithm}
 
+%TODO(jpdarago): Explicar cada una de estas partes del codigo de lio por separado
+
 \subsection{Cambios en la vectorizaci\'on}
 
 Uno de los primeros cambios fue la estructura de vectorizaci\'on para el ciclo 
@@ -320,16 +322,12 @@ figura~\ref{fig:lio-histo-groups}.
 
 \begin{figure}[htbp]
    \centering
-   \begin{subfigure}[b]{\plotwidth}
+   \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\textwidth]{plots/cpu/histogram-functions-hemo.png}
      \caption{Cantidad de funciones}
    \end{subfigure}
-   \begin{subfigure}[b]{\plotwidth}
+   \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\textwidth]{plots/cpu/histogram-points-hemo.png}
-     \caption{Cantidad de puntos}
-   \end{subfigure}
-   \begin{subfigure}[b]{\plotwidth}
-     \includegraphics[width=\textwidth]{plots/cpu/histogram-indexes-hemo.png}
      \caption{Cantidad de puntos}
    \end{subfigure}
    \caption{Histogramas para la cantidad de puntos y funciones para los grupos correspondientes al caso de prueba
@@ -641,7 +639,22 @@ coherencia entre caches intreprocesadores.
 
 La soluci\'on a este problema es sin embargo sencilla, trasponiendo la matriz de
 valores de funciones. La misma puede trasponerse una vez y almacenarse en memoria
-RAM al iniciar las iteraciones, teniendo por lo tanto un relativo bajo costo.
+RAM al iniciar las iteraciones, teniendo por lo tanto un relativo bajo costo de
+creaci\'on, y el impacto que tiene en la cantidad de \textit{misses} de cache.
+
+Esta modificaci\'on del algoritmo introduce un nuevo aspecto a considerar, similar
+a las consideraciones que hicimos para la cantidad de puntos y funciones: una poca
+cantidad de \'indices a actualizar en un mismo grupo eclipsa el \textit{overhead}
+que introduce el uso de OpenMP. La cantidad de \'indices de la matriz de Fock a
+actualizar tambi\'en tiene una distribuci\'on bastante dispar, como puede verse
+para el caso de ejemplo de hemoglobina en la figura~\ref{fig:histogram-indexes-hemo}.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\textwidth]{plots/cpu/histogram-functions-hemo.png}
+   \caption{Cantidad de indices a actualizar de la matriz de Fock}
+   \label{fig:histogram-indexes-hemo}
+\end{figure}
 
 \subsection{Algoritmo de balanceo}
 
