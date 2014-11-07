@@ -518,6 +518,72 @@ nuestra implementaci\'on.
     \end{algorithmic}
 \end{algorithm}
 
-\subsection{Cambios en paralelismo interno}
+\subsection{Cambios en paralelismo}
+
+Con esto detallamos el algoritmo de divisi\'on de grupos entre hilos de ejecuci\'on.
+Sin embargo, todav\'ia es necesario modificar la paralelizaci\'on interna con dos
+prop\'ositos:
+
+\begin{itemize}
+    \item La versi\'on original del c\'odigo actualizaba matrices globales. Para
+    la divisi\'on de grupos entre si esto es indeseable porque requiere que los
+    accesos entre threads a posiciones comunes sean coordinados. 
+    \item Los ciclos originales no estaban paralelizados. Utilizando OpenMP 
+    hicimos que los mismos sean paralelos.
+\end{itemize}
+
+A partir del pseudoc\'odigo presentado en la figura~\ref{algo:lio-iteration} vemos
+que hay tres ciclos claves: El c\'alculo de la energ\'ia de intercambio y 
+correlaci\'on, que tambi\'en calcula valores usados por los dem\'as, el
+c\'alculo de fuerzas y el c\'alculo de la matriz de salida. El segundo de estos
+ciclos solo se realiza en la \'ultima iteraci\'on si se busca calcular las fuerzas
+y por lo tanto no fue el principal foco de nuestra optimizaci\'on.
+
+El primero de los ciclos, que tambi\'en resulta ser el m\'as computacionalmente
+costoso, resulta sencillo de paralelizar, en base a que no hay dependencias entre
+las iteraciones m\'as alla de que se debe calcular la energ\'ia total sumando
+las contribuciones de cada punto. Esto es sencillo de realizar utilizando un
+\textit{feature} de OpenMP que se denomina reducciones, y que permite especificar
+que cada \textit{thread} debe tener una copia local de la variable y al finalizar
+todos los hilos de ejecuci\'on, el resultado debe juntarse. Los factores pueden
+almacenarse en arreglos separados.
+
+El segudo ciclo, esquematizado en la figura~\ref{algo:lio-rmm-output}, no es tan
+sencillo de paralelizar. Dado que los resultados de juntado se realizar sobre 
+una misma matriz, una soluci\'on posible ser\'ia tener una matriz para cada
+\textit{thread} y que cada uno junte los resultados para su thread. Si bien se
+eligi\'o una estrategia similar para la paralelizaci\'on externa, en este caso no
+resulta una opci\'on atractiva.
+
+\begin{enumerate}
+    \item La cantidad de matrices crece con la cantidad de threads, y a diferencia
+    del caso anterior, donde la operaci\'on de reducci\'on de todas las matrices
+    a la global se realizaba una vez por iteraci\'on (siendo por lo tanto 
+    una operaci\'on relativamente barata), en este caso deber\'ia realizarse para
+    cada grupo en cada iteraci\'on, da\~nando las ventajas obtenidas por dividir
+    las iteraciones entre los multiples procesadores.
+    \item La operaci\'on de reducir las matrices a una matriz global es una 
+    operaci\'on fuertemente \textit{memory-bound}, con lo cual esta limitada por
+    la capacidad del ancho de bus y no por el computo a realizar. 
+\end{enumerate}
+
+El segundo punto enumerado anteriormente merece un an\'alisis especial. Para ello
+utilizamos un \textit{benchmark} especialmente dise\~nado para ilustrar la falta
+de escalabilidad de este problema. 
+
+El c\'odigo C++ esquem\'atico usado puede verse en la figura~\ref{algo:sum-matrix-bench-code}.
+Se intent\'o paralelizar el c\'odigo utilizando OpenMP y un algoritmo de suma recursivo,
+donde cada procesador recibe dos matrices a sumar y el resultado final se calcula
+realizando una sumatoria en \'arbol.
+
+Como puede verse en la figura~\ref{fig:sum-matrix-bench-result}, los resultados
+son desalentadores: el uso de multiprocesamiento no es \'util para este problema
+puesto que la relaci\'on c\'omputo / memoria es muy baja. 
+
+Dado que esta operaci\'on dominar\'ia las posibles mejoras a obtener, buscamos
+otra organizaci\'on de la suma para no requerir esta operaci\'on.
+
+
+
 
 \subsection{Algoritmo de balanceo}
