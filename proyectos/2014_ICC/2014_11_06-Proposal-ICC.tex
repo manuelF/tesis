@@ -40,10 +40,10 @@ The amount of Cost Share (if any): XXXXXXXXX\\
 }
 \date{\today }
 
-\addtolength{\textwidth}{3cm}
-\addtolength{\oddsidemargin}{-1.5cm}
-\addtolength{\topmargin}{-1.5cm}
-\addtolength{\textheight}{4cm}
+% \addtolength{\textwidth}{3cm}
+% \addtolength{\oddsidemargin}{-1.5cm}
+% \addtolength{\topmargin}{-1.5cm}
+% \addtolength{\textheight}{4cm}
 
 \begin{document}
 
@@ -67,7 +67,34 @@ ESTA PARTE LA LLENA DAMIAN
 % {1-3 pages}. This section is the centerpiece of the proposal. It should clearly identify and describe the proposed code optimization, in detail (with an URL to the code licensing information), and connection to the code author and path to scale distribution.
 
 \subsection{Statement of Work}
+
+Para hacer simulaciones en quimicia y en bioquimica hay dos grandes familias de modelos que se diferencian en el nivel de detalle.
+Por un lado esta el grupo de modelos que se basan en la aplicacion de los postulados de la mecanica quantica (QM) y permiten obtener una descripcion detallada de la estructura electronica y molecular de los sistemas.
+El alto costo computacional asociado a la utilizacion de estos modelos lo vuelven muy limitado en cuanto al tamanio de los sistemas  que se pueden estudiar.
+
+Debida a esta restricciones, surgi\'o la familia de los modelos basados en Molecular Mechanics (MM) en el que los atomos son representados mediante esferas cargadas y las uniones quimicas mediante resortes, evitando los detalles de la estructura electronica.
+Estos modelos simplificados disminuyen notoriamente el costo computacional asociado, pero no pueden describir procesos reactivos, es decir aquellos en los cuales los cambios en la estructura electronica es importante (por ejemplo reaccion quimica, interaccion con luz, etc).
+
+El estudio de fenomenos reactivos en quimica, bioquimica y nuevos materiales requiere el modelado de sistemas de gran tama\~no (que incluyen miles de atomos) que no pueden ser tratados mediante modelos QM por su tama\~no ni por modelos MM por ser procesos reactivos.
+En este contexto, surgen los metodos QM/MM en los cuales una porcion del sistema (la porcion reactiva) es tratada usando un modelo cuantico y el resto mediante mecanica molecular. 
+
+De esta manera, se pueden simular procesos en sistemas de gran tamanio en los que el cambio de la estructura electronica resulta fundamental, pero con un costo computacional asociado que no resulta prohibitivo.
+
+1) Que es LIO? software de QM que resuelve la estructura y dinamica electronica de sistemas en el marco teorico de DFT y TDFT.
+Caracteristicas fundamentales de QM que se deben describir:
+1) Autoconsistencia
+2) + de 92\% del tiempo de cada iteracion autoconsistente se consume en el calculo en un solo termino, denominado exchange-correlation.
+3) Se acompla con Amber (entre los dos esta el QM/MM).
+
 Description of the code in the original state (GPU version), cite the papers. 
+
+
+
+
+
+
+
+
 
 \subsection{Schedule} 
 
