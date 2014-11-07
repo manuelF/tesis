@@ -95,17 +95,18 @@ def shared4vs3():
 
 def globalMemory():
 #iteration fullereno - giol - 2090 - master
-  m2090_gpu0 = 3358165.5555556
-  m2090_gpu1 = 2768049.2222222
-  m2090_gpu2 = 2824399.3333333
-  m2090_gpu3 = 2674648.2222222
-  m2090_gpu4 = 2630395.0
-  m2090_gpu5 = 2619868.3333333
-  m2090_gpu6 = 2690540.5555556
-  m2090_gpu7 = 2675686.2222222
 
-  vals = [m2090_gpu0, m2090_gpu1, m2090_gpu2, m2090_gpu3,
-      m2090_gpu4, m2090_gpu5, m2090_gpu6, m2090_gpu7]
+  m2090_gpu0 = 3310800
+  m2090_gpu1 = 2807270
+  m2090_gpu2 = 2806877
+  m2090_gpu3 = 2785507
+  m2090_gpu4 = 2791127
+  m2090_gpu5 = 2742317
+  m2090_gpu6 = 2739543
+  m2090_gpu7 = 2694980
+
+  vals = map(float,[m2090_gpu0, m2090_gpu1, m2090_gpu2, m2090_gpu3,
+      m2090_gpu4, m2090_gpu5, m2090_gpu6, m2090_gpu7])
   measures =  tuple( map((lambda x: (1/x) * (m2090_gpu0)), vals))
 
   params =  {#'title': u"Speedup del computo de densidad electronica variando el tamaño del cacheo",
@@ -120,15 +121,15 @@ def globalMemory():
 
 def globalMemoryDetailed():
 #iteration fullereno - giol - 2090 - master
-  m2090_gpu0 = 3358165.5555556
-  m2090_gpu1e_5 = 3078160.6666667
-  m2090_gpu1e_4 = 2909544.8888889
-  m2090_gpu1e_3 = 2817708.6666667
-  m2090_gpu1e_2 = 2805344.3333333
-  m2090_gpu1e_1 = 2768049.2222222
+  m2090_gpu0 = 3310800
+  m2090_gpu1e_5 = 3067842
+  m2090_gpu1e_4 = 2987461
+  m2090_gpu1e_3 = 2832157
+  m2090_gpu1e_2 = 2835134
+  m2090_gpu1e_1 = 2807270
 
-  vals = [m2090_gpu0, m2090_gpu1e_5, m2090_gpu1e_4, m2090_gpu1e_3,
-      m2090_gpu1e_2, m2090_gpu1e_1 ]
+  vals = map(float, [m2090_gpu0, m2090_gpu1e_5, m2090_gpu1e_4, m2090_gpu1e_3,
+      m2090_gpu1e_2, m2090_gpu1e_1 ])
   measures =  ( map((lambda x: (1/x) * (m2090_gpu0)), vals))
 
 
