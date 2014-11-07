@@ -322,11 +322,15 @@ figura~\ref{fig:lio-histo-groups}.
    \centering
    \begin{subfigure}[b]{\plotwidth}
      \includegraphics[width=\textwidth]{plots/cpu/histogram-functions-hemo.png}
-     \caption{}
+     \caption{Cantidad de funciones}
    \end{subfigure}
    \begin{subfigure}[b]{\plotwidth}
      \includegraphics[width=\textwidth]{plots/cpu/histogram-points-hemo.png}
-     \caption{}
+     \caption{Cantidad de puntos}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidth}
+     \includegraphics[width=\textwidth]{plots/cpu/histogram-indexes-hemo.png}
+     \caption{Cantidad de puntos}
    \end{subfigure}
    \caption{Histogramas para la cantidad de puntos y funciones para los grupos correspondientes al caso de prueba
    de hemoglobina}
@@ -410,7 +414,7 @@ partici\'on de los mismos $P_1, \dots, P_m$ tal que
 y que minimiza el valor m\'aximo de peso para una partici\'on, es decir:
 
 \begin{align}
-    \max \sum 
+    \displaystyle \max_i \sum_{p \in P_i} C_p
 \end{align}
 
 Un aspecto importante a se\~nalar de este problema es que pertenece a la clase
@@ -501,7 +505,8 @@ nuestra implementaci\'on.
                     \State $L \gets Capacity$
                 \EndIf
             \EndWhile
-            \Return{$splitbins(C, R)$}
+
+            \State \Return{$splitbins(C, R)$}
         \EndFunction
 
         \Function{splitbins}{$C = \{C_1, \dots, C_n\}, m$}
@@ -509,11 +514,13 @@ nuestra implementaci\'on.
             \ForAll{$c \in C$}
                 \State $Fits \gets [v \mid Space(v) \geq c]$
                 \If{$Fits = \emptyset $}
-                    \State $Fits \gets EmptyBin \bigcup Fits$
+                    \State $Bin \gets EmptyBin$
+                \Else
+                    \State $Bin \gets Fits[0]$
                 \EndIf 
-                \State $Fits_1 \gets Fits_1 \bigcup c$
+                \State $Bin \gets Bin \bigcup c$
             \EndFor
-            \Return $Bins$
+            \State \Return $Bins$
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -583,7 +590,59 @@ puesto que la relaci\'on c\'omputo / memoria es muy baja.
 Dado que esta operaci\'on dominar\'ia las posibles mejoras a obtener, buscamos
 otra organizaci\'on de la suma para no requerir esta operaci\'on.
 
+Un pseudoc\'odigo correspondiente al algoritmo de c\'alculo de la matriz de Fock
+nuevo se encuentra en la figura~\ref{fig:rmm-output-changes}. La versi\'on 
+inicial del algoritmo corresponde a la ya descripta en secciones anteriores: para
+cada punto se calcula su contribuci\'on a la matriz global y finalmente se suman
+todas las contribuciones locales a la matriz global.
 
+\begin{algorithm}[H]
+    \centering
+    \label{algo:rmm-output-previous}
+    \begin{algorithmic}
+        \State $R \gets 0_{m,n}$
+        \State $F \gets functions(PG)$
+        \ForAll{$p \in points(PG)$}
+            \ForAll{$i,j \in m \times n$} 
+            \State $R_{i,j} \gets R_{i,j} + F_{p,i} \cdot F_{p,j} \cdot factors_{p}$
+            \EndFor
+        \EndFor
+        \ForAll{$i,j \in fock\_indexes(PG)$}
+            \State $Fock_{i,j} \gets Fock_{i,j} + R_{i,j}$
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
 
+La versi\'on modificada puede verse en la figura~\ref{fig:rmm-output-new}. Lo que
+hacemos para este caso es, recorrer los \'indices a actualizar de la matriz total
+y luego obtener la contribuci\'on de todos los puntos. Dado que cada \'indice debe
+ser actualizado por a lo sumo un solo hilo de ejecuci\'on, no hay necesidad de
+clonar matrices y reducirlas.
+
+\begin{algorithm}[H]
+    \centering
+    \label{algo:rmm-output-new}
+    \begin{algorithmic}
+        \State $R \gets 0_{m,n}$
+        \State $F \gets functions(PG)^T$
+        \ForAll{$i,j \in indexes$}
+            \State $Fock_{i,j} \gets Fock_{i,j} + \displaystyle \Sigma_{p \in points(PG)} F_{p,i} \cdot F_{p,j} \cdot factors_{p}$
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
+Un problema provocado por la implementaci\'on es que recorre la matriz de funciones
+en \'orden de columnas, en lugar de \'orden por filas. Este \'orden es poco amigable
+para los caches ya que cada fila de la matriz probablemente resida en l\'ineas de
+cache diferentes. Esto puede disminuir apreciablemente la performance del algoritmo.
+Adem\'as, lastima su escalabilidad en procesadores, al incrementarse la cantidad de
+invalidaciones de cache y por lo tanto el \textit{overhead} del algoritmo de
+coherencia entre caches intreprocesadores.
+
+La soluci\'on a este problema es sin embargo sencilla, trasponiendo la matriz de
+valores de funciones. La misma puede trasponerse una vez y almacenarse en memoria
+RAM al iniciar las iteraciones, teniendo por lo tanto un relativo bajo costo.
 
 \subsection{Algoritmo de balanceo}
+
+
