@@ -161,7 +161,7 @@ Uno de los primeros cambios fue la estructura de vectorizaci\'on para el ciclo
 interno de la iteraci\'on de LIO.
 
 En base a la necesidad de que el c\'odigo escale correctamente con el ancho de registros
-SIMD (256 bits para AVX 1 en Xeon y 512 bits para AVX 2 en el Xeon Phi), se elimin\'o el
+SIMD (256 bits para AVX 1 en Xeon y 512 bits para AVX 2 y MMIC), se elimin\'o el
 uso de clases SIMD expl\'icitas para vectores de 3 componentes. 
 
 Esto deleg\'o al compilador la tarea de vectorizar el c\'odigo apropiadamente. Inicialmente
@@ -397,6 +397,33 @@ constante fue ajustada experimentalmente de acuerdo a los ejemplos disponibles y
 su impacto en el tiempo de ejecuci\'on para los mismos ser\'a descripto en 
 secciones posteriores.
 
+Un interrogante que nos planteamos es si era conveniente en CPU utilizar el mismo
+estimador de trabajo \textit{size\_in\_gpu} para el problema estudiado. Sin 
+embargo, debido a la diferencia entre ambas arquitecturas, los estimadores que
+dan buenos resultados en una no lo hacen en la otra.
+
+En la figura~\ref{fig:comp-size-cost} puede verse una comparaci\'on entre ambos
+predictores en pruebas realizadas para CPU. Cada gr\'afico muestra la calidad
+relativa del estimador correspondiente con respecto al tiempo de ejecuci\'on 
+(en milisegundos) para los grupos examinados. Se puede ver que el tiempo de
+ejecuci\'on, a diferencia de lo que ocurre en la implementaci\'on en GPGPU, es
+mejor predicho por el estimador de costo que por el tama\~no de cada grupo en
+memoria.
+
+\begin{figure}[htbp]
+   \centering
+   \begin{subfigure}[b]{\plotwidthtres}
+     \includegraphics[width=\textwidth]{plots/cpu/fit-func-size_in_gpu.png}
+     \caption{Predictor con \textit{size\_in\_gpu}}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidthtres}
+     \includegraphics[width=\textwidth]{plots/cpu/fit-func-cost.png}
+     \caption{Predictor con funci\'on de costo}
+   \end{subfigure}
+   \caption{Tiempos de ejecuci\'on de cada grupo de acuerdo al costo del mismo seg\'un predictor, para todos los ejemplos disponibles}
+   \label{fig:lio-histo-groups}
+\end{figure}
+ 
 \subsection{Algoritmo de particionado}
 
 El algoritmo de particionado recibe como entrada un vector $C = {C_1, \cdots, C_n}$

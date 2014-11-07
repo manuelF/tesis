@@ -1,10 +1,38 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
 import sys
 
 import numpy as np
 sys.path.insert(0, '../comun')
 from graphs import *
+
+def time2micros(s):
+    return int(re.search("(\d+)us.",s).group(1))
+
+def plot_cost_function():
+    with open("measures/times-for-groups.txt") as f:
+        data = []
+        for line in f.readlines():
+            pieces = line.split() 
+
+            keys = [pieces[i] for i in xrange(0,len(pieces),2)]
+            vals = [pieces[i] for i in xrange(1,len(pieces),2)]
+
+            data.append(dict(zip(keys,vals)))
+
+        for key in ['size_in_gpu', 'cost']: 
+            xvals,yvals = zip(*[(int(v[key]), time2micros(v['times']) / 1000.0) for v in data])
+            params = {
+                'xlabel': u"Costo basado en funcion %s" % key,
+                'ylabel': u"Runtime de un grupo [ms]",
+                'xvalues': np.array(xvals),
+                'yvalues': np.array(yvals),
+                'ylegend': 'Runtime de un grupo',
+                'fitlegend': 'Fit Lineal',
+                'filename': "fit-func-%s.png" % key
+            }
+            scatterGraphFitLineal(**params)
 
 def hemo_group_sizes_histogram():
     allfunctions, allpoints, allindexes = [], [], []
@@ -47,3 +75,4 @@ def hemo_group_sizes_histogram():
 
 if __name__ == '__main__':
     hemo_group_sizes_histogram()
+    plot_cost_function()
