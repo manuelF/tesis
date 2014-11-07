@@ -257,6 +257,10 @@ un kernel corto de alta intensidad aritm\'etica que realiza solamente operacione
 Finalmente, la acumulaci\'on finaliza, generando un valor por cada punto, lo mismo que se produc\'ia
 anteriormente pero utilizando mucho mejor los recursos del dispositivo.
 
+
+%%%%%%%%%%%%%%%5
+
+
 \subsection{Cambios en los accesos globales}
 La arquitectura de las placas de v\'ideo est\'an pensadas entorno al poder de computo.
 Las decisiones tomadas por los dise\~nadores de las GPGPU se concentran alrededor
@@ -295,13 +299,24 @@ suele entrar casi completamente en la memoria de textura.
 La lectura bidimensional en este caso, se ajusta muy bien a los accesos por filas
 y por columnas a la matriz.
 
-El uso de la memoria de texturas agrega un recurso mas que tenemos que tener en
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cuda/texture.png}
+   \caption{Aceleracion del c\'alculo de densidad corriendo Hemoglobina en Fermi y Kepler
+   usando memoria de textura para leer los coeficientes variacionales.}
+   \label{plt:texture}
+\end{figure}
+
+Como podemos ver en la figura~\ref{plt:texture}, esta optimizaci\'on aprovecha este
+recurso \'unico de GPU. Sin embargo, esto agrega un factor mas que tenemos que tener en
 cuenta a la hora de profilear el c\'odigo. Para administrar los accesos a
-la memoria de textura, cada multiprocesador tiene multiples "Unidades de textura".
+la memoria de textura, cada multiprocesador tiene m\'ultiples unidades de textura.
 Cuando dependemos de sobremanera de la memoria de textura para esconder la latencia,
-se presentan contenciones sobre el acceso a las unidades de textura. Esto es
-uno de los motivos por los cuales el procesador stallea los bloques hasta poder
-ejecutarlos, cuando se liberan un poco mas los recursos.
+se presentan contenciones sobre el acceso a estas unidades. Esta cach\'e hay que usarla
+solamente en los accesos mas costosos únicamente, ya que si intentamos pasar todos
+los accesos a través de este, no solo no se verían mejoras, sino que seria un retroceso
+completo de performance, como sucedió cuando se intent\'o agregar adem\'as las matrices
+de funciones a este m\'etodo.
 
 %http://www.realworldtech.com/gt200/10/   << detalles sobre texture cache invalidation
 
@@ -466,47 +481,47 @@ tiempos de acceso a los datos en las memorias shared son realmente muy bajos, pu
 como con incluso un 25\% mas de operaciones de lecto-escritura, el tiempo de ejecuci\'on casi no varia.
 
 
-\subsection{Cambios en los condicionales}
-La arquitectura CUDA representa un modelo de computo pensado en el procesamiento secuencial masivo
-de datos de punto flotante. Esto es herencia de su legado de placa gr\'aficas, que era un stream
-constante de datos. Al generalizar la arquitectura para que sea de prop\'osito general, entonces
-surge el problema de ejecuci\'on condicional. Como el resultado de la evaluaci\'on puede ser distinto
-para cada thread, entonces surge el problema de como ejecutar un warp en lockstep cuando algunos threads
-correr\'an la rama \texttt{true} y otros la rama \texttt{false}. La soluci\'on que adopta CUDA es la
-serializaci\'on impl\'icita. Los threads que no ejecutan el \texttt{true} correr\'an \texttt{NOP}
-y lo mismo se har\'a en el caso del \texttt{false}, al rev\'es.
-
-Esto trae aparejado una penalidad importante. Si esa bifurcaci\'on contiene mucho c\'odigo no trivial,
-entonces es evidente que se subutilizan importantemente los recursos disponibles.
-
-Habiendo varios de estos casos en los kernels presentes, decidimos utilizar una t\'ecnica sugerida
-por \nvidia. Esta consiste en hacer las operaciones normalmente, como si todos los threads cumplieran
-las condiciones del condicional y multiplicar por 1 o por 0 al resultado antes de acumular.
-Esto hace que las cuentas que no se ejecutaban antes ahora lo hagan pero que simplemente no aporten
-a la reducci\'on. Esta t\'ecnica elimina la existencia de la rama falsa de los condicionales, pero
-trae aparejada dos problemas no triviales.
-
-Uno de ellos es como solucionar el problema de los indices en los accesos a memoria.
-Un uso usual delas guardas condicionales es para evitar que el programa, si cumple ciertas condiciones,
-no acceda a memoria que esta mas all\'a de los limites definidos.
-Por ejemplo, si \texttt{threadId > arraySize}, entonces claramente
-no deber\'ia acceder a ninguna posici\'on mas all\'a de \texttt{array[threadId]},
-puesto que seria memoria invalida. Si eliminamos la guarda
-entonces los accesos a memoria pueden no quedar igual. Una soluci\'on consiste en multiplicar tambi\'en
-por 1 o por 0 la direcci\'on a la cual se va a acceder. Como CUDA maneja los arreglos de memoria
-como C (es decir, basados en 0 como primer direcci\'on), esta t\'ecnica es v\'alida para hacer
-siempre accesos correcto a memoria. El problema luego es en la coalescencia; como ahora algunos
-threads de un warp van a acceder a una posici\'on de memoria muy distinta a otros, entonces el procesado
-va a partir esos accesos en m\'ultiples transacciones. Esto puede hacer que la cuenta no solo no mejore
-la performance, sino que puede que la empeore sustancialmente. Se debe hacer un profiling caso
-por caso para poder estudiar el impacto en el kernel.
-
-El otro problema es en cuentas que pueden dar NaN (como el t\'ipico caso de divisi\'on por cero).
-Como, por est\'andar IEEE 754, los NaN hacen que todas las operaciones con ellos den NaN,
-entonces pueden propagarse por la cuenta, incluso en con multiplicaci\'on con cero del resultado.
-La soluci\'on m\'as evidente seria comprobar si son NaN antes de reducirlas, y si lo fueran, reemplazarlos
-por cero. Esto puede llegar a ser inevitable en muchos casos; en el nuestro, con replantear las cuentas,
-podemos evitarlos.
+%\subsection{Cambios en los condicionales}
+%La arquitectura CUDA representa un modelo de computo pensado en el procesamiento secuencial masivo
+%de datos de punto flotante. Esto es herencia de su legado de placa gr\'aficas, que era un stream
+%constante de datos. Al generalizar la arquitectura para que sea de prop\'osito general, entonces
+%surge el problema de ejecuci\'on condicional. Como el resultado de la evaluaci\'on puede ser distinto
+%para cada thread, entonces surge el problema de como ejecutar un warp en lockstep cuando algunos threads
+%correr\'an la rama \texttt{true} y otros la rama \texttt{false}. La soluci\'on que adopta CUDA es la
+%serializaci\'on impl\'icita. Los threads que no ejecutan el \texttt{true} correr\'an \texttt{NOP}
+%y lo mismo se har\'a en el caso del \texttt{false}, al rev\'es.
+%
+%Esto trae aparejado una penalidad importante. Si esa bifurcaci\'on contiene mucho c\'odigo no trivial,
+%entonces es evidente que se subutilizan importantemente los recursos disponibles.
+%
+%Habiendo varios de estos casos en los kernels presentes, decidimos utilizar una t\'ecnica sugerida
+%por \nvidia. Esta consiste en hacer las operaciones normalmente, como si todos los threads cumplieran
+%las condiciones del condicional y multiplicar por 1 o por 0 al resultado antes de acumular.
+%Esto hace que las cuentas que no se ejecutaban antes ahora lo hagan pero que simplemente no aporten
+%a la reducci\'on. Esta t\'ecnica elimina la existencia de la rama falsa de los condicionales, pero
+%trae aparejada dos problemas no triviales.
+%
+%Uno de ellos es como solucionar el problema de los indices en los accesos a memoria.
+%Un uso usual delas guardas condicionales es para evitar que el programa, si cumple ciertas condiciones,
+%no acceda a memoria que esta mas all\'a de los limites definidos.
+%Por ejemplo, si \texttt{threadId > arraySize}, entonces claramente
+%no deber\'ia acceder a ninguna posici\'on mas all\'a de \texttt{array[threadId]},
+%puesto que seria memoria invalida. Si eliminamos la guarda
+%entonces los accesos a memoria pueden no quedar igual. Una soluci\'on consiste en multiplicar tambi\'en
+%por 1 o por 0 la direcci\'on a la cual se va a acceder. Como CUDA maneja los arreglos de memoria
+%como C (es decir, basados en 0 como primer direcci\'on), esta t\'ecnica es v\'alida para hacer
+%siempre accesos correcto a memoria. El problema luego es en la coalescencia; como ahora algunos
+%threads de un warp van a acceder a una posici\'on de memoria muy distinta a otros, entonces el procesado
+%va a partir esos accesos en m\'ultiples transacciones. Esto puede hacer que la cuenta no solo no mejore
+%la performance, sino que puede que la empeore sustancialmente. Se debe hacer un profiling caso
+%por caso para poder estudiar el impacto en el kernel.
+%
+%El otro problema es en cuentas que pueden dar NaN (como el t\'ipico caso de divisi\'on por cero).
+%Como, por est\'andar IEEE 754, los NaN hacen que todas las operaciones con ellos den NaN,
+%entonces pueden propagarse por la cuenta, incluso en con multiplicaci\'on con cero del resultado.
+%La soluci\'on m\'as evidente seria comprobar si son NaN antes de reducirlas, y si lo fueran, reemplazarlos
+%por cero. Esto puede llegar a ser inevitable en muchos casos; en el nuestro, con replantear las cuentas,
+%podemos evitarlos.
 
 \subsection{Escalando m\'as all\'a de un GPU}
 Una vez que fueron solucionados muchos limitantes de performance en los kernels del computo
