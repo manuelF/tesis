@@ -6,12 +6,20 @@ sys.path.insert(0, '../comun')
 from graphs import *
 
 def texture():
+#hemo k40 2075 solo density
+  ref_c2075 = 1153238.9
+  change_c2075 = 1072045.1836735
+  ref_kepler = 733393.46
+  change_kepler = 599249.48979592
+  measures = (ref_c2075/change_c2075,
+      ref_kepler/change_kepler)
+
   params =  { #'title': u"Speedup de uso de memorias de textura",
       'xlabel':u"Arquitectura GPU",
       'ylabel':u"Aceleración (en veces)",
-      'yvalues':(1.0,1.21,1.38),
-      'ylim':(0.0,2.0),
-      'ticks':(u'Referencia', u'Fermi', u'Kepler'),
+      'yvalues':measures,
+      'ylim':(0.0,1.5),
+      'ticks':(u'Mejora Textura Fermi', u'Mejora Textura Kepler'),
       'filename':"texture.png"}
   barGraph(**params)
 

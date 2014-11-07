@@ -16,6 +16,8 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from matplotlib.patches import Rectangle
+
 import pylab
 import numpy as np
 
@@ -40,12 +42,11 @@ def lineGraph(xlabel, ylabel, yvalues, filename,
   pylab.title(title)
   pylab.ylabel(ylabel)
   pylab.xlabel(xlabel)
-  fig, ax = plt.subplots()
   base = range(len(yvalues))
   fig, ax = plt.subplots()
   if hasScipy:
     f = interp1d(base, yvalues)
-    ax.plot(base,yvalues,'o',base,f(base),'-.', label=ylegend)
+    ax.plot(base,yvalues,'o',base,f(base),'-', label=ylegend)
   else:
     ax.plot(base,yvalues,'o', label=ylegend)
   if ticks:
@@ -62,9 +63,14 @@ def stackGraph(xlabel, ylabel, yvalues, filename,
   pylab.ylabel(ylabel)
   pylab.xlabel(xlabel)
   fig, ax = plt.subplots()
-  ax.stackplot(xvalues, yvalues, label=ylegend)
+  stack = ax.stackplot(xvalues, yvalues, label=ylegend)
+  proxy_rects = [Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0]) for pc in stack]
+  label_list = [ylegend]
+  # make the legend
+  ax.legend(proxy_rects, label_list, loc=2)
+
   ax.set_xscale(scale)
-  pylab.legend(loc='best')
+  #pylab.legend(loc='best')
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
