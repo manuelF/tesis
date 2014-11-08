@@ -88,7 +88,7 @@ def reduce_summing_matrix_plot():
         'yvalues': np.array(measures),
         'ylegend': u'Costo en segundos',
         'filename': u'scalability-matrix-sums.png',
-        'ylim': (0.14,0.2),
+        'ylim': (0.17,0.23),
     }
 
     lineGraph(**params)
