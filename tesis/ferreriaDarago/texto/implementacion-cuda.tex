@@ -566,9 +566,19 @@ la cantidad de memoria necesaria para operar.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\plotwidthtres]{plots/cuda/sizeingpu-predictor-fullereno.png}
-  \includegraphics[width=\plotwidthtres]{plots/cuda/sizeingpu-predictor-hemo.png}
-  \includegraphics[width=\plotwidthtres]{plots/cuda/sizeingpu-predictor-caroteno.png}
+   \begin{subfigure}[b]{\plotwidthtres}
+    \includegraphics[width=\textwidth]{plots/cuda/sizeingpu-predictor-fullereno.png}
+    \caption{Fullereno}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidthtres}
+    \includegraphics[width=\textwidth]{plots/cuda/sizeingpu-predictor-hemo.png}
+    \caption{Hemoglobina}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidthtres}
+    \includegraphics[width=\plotwidthtres]{plots/cuda/sizeingpu-predictor-caroteno.png}
+    \caption{Caroteno}
+   \end{subfigure}
+
   \caption{Tiempo de de resoluci\'on de los grupos de fullereno, hemoglobina y caroteno en
     funci\'on del tama\~no de las matrices de funciones para una iteraci\'on de SCF.}
   \label{plt:runtime-fullereno}
