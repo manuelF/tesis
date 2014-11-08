@@ -14,14 +14,14 @@ def plot_cost_function():
     with open("measures/times-for-groups.txt") as f:
         data = []
         for line in f.readlines():
-            pieces = line.split() 
+            pieces = line.split()
 
             keys = [pieces[i] for i in xrange(0,len(pieces),2)]
             vals = [pieces[i] for i in xrange(1,len(pieces),2)]
 
             data.append(dict(zip(keys,vals)))
 
-        for key in ['size_in_gpu', 'cost']: 
+        for key in ['size_in_gpu', 'cost']:
             xvals,yvals = zip(*[(int(v[key]), time2micros(v['times']) / 1000.0) for v in data])
             params = {
                 'xlabel': u"Costo basado en funcion %s" % key,
@@ -73,6 +73,27 @@ def hemo_group_sizes_histogram():
     }
     histogram(**params)
 
+def reduce_summing_matrix_plot():
+    threads, measures = [],[]
+    with open("./measures/experimento-reducir-matrices.txt") as f:
+        for line in f.readlines():
+            t, m = line.strip().split(" ")
+            threads.append(int(t))
+            measures.append(float(m))
+
+    params = {
+        'xlabel': u"Cantidad de threads utilizados",
+        'ylabel': u"Tiempo tomado en las reducciones [s]",
+        'xvalues': np.array(threads),
+        'yvalues': np.array(measures),
+        'ylegend': u'Costo en segundos',
+        'filename': u'scalability-matrix-sums.png',
+        'ylim': (0.14,0.2),
+    }
+
+    lineGraph(**params)
+
 if __name__ == '__main__':
     hemo_group_sizes_histogram()
     plot_cost_function()
+    reduce_summing_matrix_plot()
