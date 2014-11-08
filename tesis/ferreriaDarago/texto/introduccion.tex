@@ -1,16 +1,16 @@
 Con la aparici\'on de las computadoras, han ganado espacio dentro de las ciencias naturales los m\'etodos de simulaci\'on.
-El uso de estas t\'ecnicas permite validar modelos teóricos así cómo tambien brindar información detallada (microscópica) del proceso simulado.
+El uso de estas t\'ecnicas permite validar modelos te\'oricos as\'i c\'omo tambien brindar informaci\'on detallada (microsc\'opica) del proceso simulado.
 
-En el ámbito de la química existen diferentes modelos que permiten simular procesos de interes.
+En el \'ambito de la qu\'imica existen diferentes modelos que permiten simular procesos de interes.
 Dentro de estos modelos hay dos que se destacas por su uso.
-Los métodos basados en la mecánica cuántica que proporcionan un a descripción de la estructura electrónica del sistema y los métodos basados en la mecánica molecular donde las moléculas son tratadas mediante un campo de fuerza
-clásico y los electrones no son tenidos en cuenta explicitamente.
+Los m\'etodos basados en la mec\'anica cu\'antica que proporcionan un a descripci\'on de la estructura electr\'onica del sistema y los m\'etodos basados en la mec\'anica molecular donde las mol\'eculas son tratadas mediante un campo de fuerza
+cl\'asico y los electrones no son tenidos en cuenta explicitamente.
 
-Modelos Cuánticos (QM)
+\section{Modelos Cu\'anticos (QM)}
 
-El comportamiento de las partículas livianas (cómo el electrón) está regido por las leyes de la mecánica cuántica.
-Este marco teórico desarrollado a comienzos del siglo XX propone que las partículas (cómo electrones y protones) pueden (y deven en algunos casos) 
-ser descriptas cómo ondas. Así, cualquier propiedad de un sistema esta determinado por una función llamada función de onda ($\Psi$) que satisface la ecuación de Sr\"oeringer dependiente del tiempo.
+El comportamiento de las part\'iculas livianas (c\'omo el electr\'on) est\'a regido por las leyes de la mec\'anica cu\'antica.
+Este marco te\'orico desarrollado a comienzos del siglo XX propone que las part\'iculas (c\'omo electrones y protones) pueden (y deven en algunos casos) 
+ser descriptas c\'omo ondas. As\'i, cualquier propiedad de un sistema esta determinado por una funci\'on llamada funci\'on de onda ($\Psi$) que satisface la ecuaci\'on de Sr\"oeringer dependiente del tiempo.
 
 \begin{equation}
     \label{schro_time_dep}
@@ -19,7 +19,7 @@ ser descriptas cómo ondas. Así, cualquier propiedad de un sistema esta determi
 
 donde $\mathbf{r} = (r_1,\dots,r_n)$ es el vector de todas las posiciones de las part\'iculas del sistema,
 $m$ es la masa de una part\'icula cualquiera, $V$ es un campo externo que afecta a las part\'iculas y
-$\hbar$ es la constante de Planck divida por $2\pi$. Si el campo externo no depende del tiempo esta ecuación se puede simplificar a 
+$\hbar$ es la constante de Planck divida por $2\pi$. Si el campo externo no depende del tiempo esta ecuaci\'on se puede simplificar a 
 
 \begin{equation*}
     \hat{H} =  -\frac{\hbar^2}{m} \nabla^2 + \hat{V}
@@ -35,21 +35,21 @@ a la ecuaci\'on de Schr\"odinger \textit{independiente del tiempo}
 Donde $E$ es la energ\'ia asociada a la funci\'on de onda $\Psi$.
 
 Ahora, si bien resolver esta ecuaci\'on diferencial ser\'ia suficiente para determinar todas las propiedades del sistema, esto no puede hacerse de
-manera exacta cuando hay m\'as de un electrón en el mismo. Por este motivo, para problemas de mayor tama\~no se utilizan aproximaciones 
+manera exacta cuando hay m\'as de un electr\'on en el mismo. Por este motivo, para problemas de mayor tama\~no se utilizan aproximaciones 
 para obtener una soluci\'on de~\ref{schro_time_indep}.
 
 Existen diversos m\'etodos para resolver (aproximadamente) esta ecuaci\'on con diferente costo computacional (es decir, cantidad de operaciones a realizar)
-y calidad de la respuesta obtenida. Dentro de estos métodos hay uno que destaca por su excelente relación costo/calidad, el método basado en la Teoría de los Funcionales de la Densidad 
+y calidad de la respuesta obtenida. Dentro de estos m\'etodos hay uno que destaca por su excelente relaci\'on costo/calidad, el m\'etodo basado en la Teor\'ia de los Funcionales de la Densidad 
 (DFT, Density Functional Theory) desarrollada por Hohenberg y Kohn en 1964.
 
-En este merco teórico la \textit{densidad electr\'onica} $\rho$, que representa la probabilidad de encontrar un electr\'on en
+En este merco te\'orico la \textit{densidad electr\'onica} $\rho$, que representa la probabilidad de encontrar un electr\'on en
 el espacio dada una configuraci\'on del sistema ocupa un rol destacado.
 La base de este m\'etodo consiste en dos teoremas publicados por Hohenberg y Kohn ~\cite{HohenbergKohn}.
 Estos autores demuestran que $\rho$ y $V$ (y por lo tanto $\psi$) se encuentran relacionadas biunivocamente, 
-es decir que una dada densidad electrónica contiene la misma información que la función de onda.
-De esta manera cualquier observable (cómo la energía) puede ser representado cómo un funcional de la densidad (de allí su nombre).
+es decir que una dada densidad electr\'onica contiene la misma informaci\'on que la funci\'on de onda.
+De esta manera cualquier observable (c\'omo la energ\'ia) puede ser representado c\'omo un funcional de la densidad (de all\'i su nombre).
 
-Además propusieron la dependencia de la energía del sistema cómo funcional de la densidad de la siguiente forma:
+Adem\'as propusieron la dependencia de la energ\'ia del sistema c\'omo funcional de la densidad de la siguiente forma:
 \begin{equation}
     \label{hohenberg_kohn_energy}
     E[\rho] = T_s[\rho] + V_{ne}[\rho] + \frac{1}{2} \int \int \frac{\rho(\vec{r}_1) \rho(\vec{r}_2)}{r_{12}} d\vec{r}_1 d\vec{r_2} + E_{xc}[\rho]
@@ -57,13 +57,13 @@ Además propusieron la dependencia de la energía del sistema cómo funcional de
 
 Donde $T_s[\rho]$ es la energ\'ia cin\'etica asociada con la densidad, $V_{ne}[\rho]$ es la energ\'ia potencial producto de la interacci\'on entre los
 electr\'ones (la densidad) y los n\'ucleos, el tercer t\'ermino es el resultado de la repulsi\'on de Coulomb entre electrones y $E_{xc}[\rho]$ es la
-energ\'ia de intercambio y correlacci\'on. Este último término da cuenta de la energía asociada a escribir la función de onda de manera que cumpla con el principio de antisimería de Pauli y de la correlación
-en la posición instantánea de los electrones.
+energ\'ia de intercambio y correlacci\'on. Este \'ultimo t\'ermino da cuenta de la energ\'ia asociada a escribir la funci\'on de onda de manera que cumpla con el principio de antisimer\'ia de Pauli y de la correlaci\'on
+en la posici\'on instant\'anea de los electrones.
 
-Esta formulación es exacta si se conociera el término $E_{xc}[\rho]$ dado que los demás tienen solución analítica. En las aproximaciones hechas para calcular el mismo reside tanto la calidad cómo el costo 
-computacional de este tipo de simulaciones. Por ello, el objetivo central de este trabajo consiste en mejorar el tiempo insumido en el computo de este término.
+Esta formulaci\'on es exacta si se conociera el t\'ermino $E_{xc}[\rho]$ dado que los dem\'as tienen soluci\'on anal\'itica. En las aproximaciones hechas para calcular el mismo reside tanto la calidad c\'omo el costo 
+computacional de este tipo de simulaciones. Por ello, el objetivo central de este trabajo consiste en mejorar el tiempo insumido en el computo de este t\'ermino.
 
-La forma comunmente utilizada para calcular este término se basa en definir un funcional local $\epsilon_{xc}$ que depende de la densidad (Local Density Aproximation, LDA) o de la densidad y su gradiente 
+La forma comunmente utilizada para calcular este t\'ermino se basa en definir un funcional local $\epsilon_{xc}$ que depende de la densidad (Local Density Aproximation, LDA) o de la densidad y su gradiente 
 (General Gardient Aproximation, GGA) en cada punto del espacio.
 
 De esta manera se puede calcualr $ E_{XC} $ mediante la integral:
@@ -72,7 +72,7 @@ De esta manera se puede calcualr $ E_{XC} $ mediante la integral:
     E_{XC} = \int \rho(r) \epsilon_{xc}\left( \rho(r) \right ) dr
 \end{equation}
 
-que es aproximada mediante una suma utilizando una grilla de puntos según:
+que es aproximada mediante una suma utilizando una grilla de puntos seg\'un:
 
 \begin{equation}
     \label{approx_excenergy}
@@ -93,20 +93,20 @@ de estado s\'olido, especialmente desde la d\'ecada del 90 cuando se mejoraron l
 interacciones. El valor de esta teor\'ia para el estudio de las propiedades de la materia le vali\'o a Kohn el Premio Nobel
 de Qu\'imica en 1998.
 
-Si bien la relaci\'on costo calidad de este m\'etodo es muy buena, el costo computacional asociado sigue siendo elevado lo que limita su aplicación a sistemas pequeños (digamos cientos de átomos como máximo).
+Si bien la relaci\'on costo calidad de este m\'etodo es muy buena, el costo computacional asociado sigue siendo elevado lo que limita su aplicaci\'on a sistemas peque\~nos (digamos cientos de \'atomos como m\'aximo).
 
 
-Por ello se han desarrollado los métodos llamado de mecáninca molecular (MM). En estos métodos los átomos son tratados cómo esferas cargadas y las uniones químicas como resortes (potenciales armónicos).
-De esta manera los electrónes no son tratados explicitamente lo que reduce drásticamente el consto computacional asociado. Esta técnica permite es muy poderosa para representar sistemas (o procesos) en los que no cambia la distribución
-electrónica.
+Por ello se han desarrollado los m\'etodos llamado de mec\'aninca molecular (MM). En estos m\'etodos los \'atomos son tratados c\'omo esferas cargadas y las uniones qu\'imicas como resortes (potenciales arm\'onicos).
+De esta manera los electr\'ones no son tratados explicitamente lo que reduce dr\'asticamente el consto computacional asociado. Esta t\'ecnica permite es muy poderosa para representar sistemas (o procesos) en los que no cambia la distribuci\'on
+electr\'onica.
 
-Sin embargo en muchos de los problemas de interés en química y bioquímica (por ejemplo una reacción química en solución o en el seno de una proteína)
- el modelado requiere de la representación de miles de átomos y un tratamiento explícito de los electrónes a la vez.
+Sin embargo en muchos de los problemas de inter\'es en qu\'imica y bioqu\'imica (por ejemplo una reacci\'on qu\'imica en soluci\'on o en el seno de una prote\'ina)
+ el modelado requiere de la representaci\'on de miles de \'atomos y un tratamiento expl\'icito de los electr\'ones a la vez.
 
-Para resolver esto, se han desarrolado técnicas híbridas QM/MM (\textit{Quantum Mechanical / Molecular Mechanical}).
+Para resolver esto, se han desarrolado t\'ecnicas h\'ibridas QM/MM (\textit{Quantum Mechanical / Molecular Mechanical}).
 
-Dentro de este esquema se subdivide el sistema en dos. El primero, donde la estructura electr\'onica cambia, se lo modela usando mecánica cuántica mientras que al resto se le aplica un campo de 
-fuerzas clásico. De esta manera se puede expresar la energía de el sistema QM/MM cómo.
+Dentro de este esquema se subdivide el sistema en dos. El primero, donde la estructura electr\'onica cambia, se lo modela usando mec\'anica cu\'antica mientras que al resto se le aplica un campo de 
+fuerzas cl\'asico. De esta manera se puede expresar la energ\'ia de el sistema QM/MM c\'omo.
 
 \begin{equation}
     E = E_{QM} + E_{QM/MM} + E_{MM}
@@ -135,7 +135,7 @@ Nuestro trabajo se realiza en base a programas ya existentes. El c\'alculo de $E
 distintas arquitecturas de CPU y GPGPU. Esta librer\'ia
 se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el c\'alculo
 de $E_{MM}$. Nos concentraremos en las partes computacionalmente m\'as intensivas de LIO, que corresponden a la
-implementaci\'on de los c\'alculos de los términos de intercambio y correlación introducidos en esta secci\'on.
+implementaci\'on de los c\'alculos de los t\'erminos de intercambio y correlaci\'on introducidos en esta secci\'on.
 
 \section{C\'omputo de alto rendimiento}
 
