@@ -5,6 +5,28 @@ import numpy as np
 sys.path.insert(0, '../comun')
 from graphs import *
 
+def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
+               scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
+  pylab.title(title)
+  pylab.ylabel(ylabel)
+  pylab.xlabel(xlabel)
+  base = range(len(yvalues))
+  fig, ax = plt.subplots()
+  if hasScipy:
+    f = interp1d(base, yvalues)
+    ax.plot(base,yvalues,'o',base,f(base),'-', label=ylegend)
+  else:
+    ax.plot(base,yvalues,'o', label=ylegend)
+  if ticks:
+    locs, labels = plt.xticks()
+    plt.xticks(locs,ticks)
+
+  pylab.legend(loc='best')
+  pylab.savefig(filename, bbox_inches='tight')
+  pylab.close()
+
+
+
 def texture():
 #hemo k40 2075 solo density
   ref_c2075 = 1153238.9
@@ -149,7 +171,7 @@ def globalMemoryDetailed():
       'xvalues':np.concatenate(([0],(10**np.array(range(5)))*53/(1000.**1))),
       'ylegend':'Aceleracion kernel functions',
       'filename':"global-detailed-fullereno.png"}
-  lineGraph(**params)
+  lineGraphConOtroEje(**params)
 
 def acumuladoGlobalMemory():
 #Acumulando los runtimes de funciones en Fullereno 2090 Giol
