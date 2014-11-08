@@ -1,12 +1,12 @@
 \section{Aceleraciones alcanzadas}
-
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidth]{plots/cuda/final.png}
-   \caption{Speedup en veces de correr Hemoglobina comparando implementacion original en CUDA contra
-   las versiones optimizadas definitivas}
-   \label{plt:cuda-final}
-\end{figure}
+%
+%\begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=\plotwidth]{plots/cuda/final.png}
+%   \caption{Speedup en veces de correr Hemoglobina comparando implementaci\'on original en CUDA contra
+%   las versiones optimizadas definitivas}
+%   \label{plt:cuda-final}
+%\end{figure}
 
 
 \section{?`Qu\'e me conviene comprar?}
@@ -15,3 +15,41 @@
 \section{Importancia del problema}
 \section{Impacto de trabajar correctamente con la arquitectura}
 \section{Posible trabajo a futuro}
+
+\begin{enumerate}
+  \item Hacer un algoritmo adaptativo que busque la mejor configuraci\'on de par\'ametros de tama\~no de cubos y esferas.
+  \item Hacer una versi\'on h\'ibrida CPU-GPU.
+  \item Hacer una versi\'on h\'ibrida CPU-XeonPhi como offloading.
+  \item Hacer una versi\'on h\'ibrida CPU-GPU-XeonPhi
+  \item Probar si vale la pena escalar a m\'ultiples XeonPhi.
+  \item Implementar una versi\'on MPI para poder resolver una iteraci\'on distribuyendo
+    a m\'ultiples CPU/GPU/XeonPhi en distintos nodos.
+  \item Estudiar como paralelizar y vectorizar functions en CPU para poder escalar a m\'ultiples cores.
+  \item Hacer alg\'un m\'etodo de aprendizaje autom\'atico para hacer un pretuneo de ciertas constantes en GPU como
+    BLOCK\_SIZE para evitar tener que reajustar en cada nueva generaci\'on de dispositivos.
+  \item Estudiar el problema de partici\'on y sus funciones de costos para sean acertadas tanto en CPU
+    como en GPU.
+  \item Repensar el algoritmo de partici\'on de trabajos para hacer m\'as equitativas las cargas sin
+    tener que recurrir al balanceo durante la iteraci\'on.
+  \item Estudiar alg\'un m\'etodo para elegir en automaticamente CPU cuando particionar a nivel
+    de m\'ultiples grupos y cuando a nivel interno por grupo.
+  \item Analizar otras estrategias de paralelismo en sistemas distribuidos como MapReduce para sistemas muy grandes.
+  \item Acelerar los pasos de SCF actualmente single-core y no en CPU.
+  \item Acelerar el c\'alculo de las contribuciones de Coulomb para las fuerzas \'inter at\'omicas.
+  \item Analizar la posibilidad de usar CUDA Streams para intentar lograr kernels concurrentes y maximizar
+    el uso de una placa.
+  \item Analizar el consumo energ\'etico de la aplicaci\'on e intentar buscar otras arquitecturas para maximizar
+    la eficiencia por Watt.
+  \item Experimentar el comportamiento de sistemas muy grandes que no entren en memoria; como fraccionarlos.
+  \item Investigar el uso de librer\'ias BLAS (Magma, MKL, CUBLAS, ATLAS, etc.) para offloadear fragmentos del
+    c\'alculo de SCF.
+  \item Probar implementar en FPGA los c\'alculos de SCF para poder resolverlos por hardware en procesadores
+    Atom.
+  \item Portear LIO a OpenCL para poder unificar el c\'odigo.
+  \item Explotar paralelismo de etapas a nivel mas granular, como realizar las densidades en CPU y las matrices
+    de Fock en GPU.
+  \item Integrar LIO a otros sistemas de MM como GROMACS y CHARMM.
+  \item Modificar el algoritmo de generaci\'on de grilla que genere grupos m\'as equitativos para poder
+    distribuir mejor las cargas.
+
+\end{enumerate}
