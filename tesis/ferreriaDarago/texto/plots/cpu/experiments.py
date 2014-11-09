@@ -93,7 +93,26 @@ def reduce_summing_matrix_plot():
 
     lineGraph(**params)
 
+def amdahl(B, n):
+    return 1.0 / ((1-B) + (1.0 / n) * B)
+
+def amdahl_plot():
+    xs = np.arange(1, 101, 1)
+
+    percentages = [0.9, 0.95, 0.99]
+
+    pointstyle = ["-","o","+", "."]
+    for i,p in enumerate(percentages):
+        pylab.plot(xs, amdahl(p, xs), label="%d%% paralelo" % int(100.0 * p))
+
+    pylab.legend(loc="upper left")
+    pylab.xlabel(u"Cantidad de núcleos")
+    pylab.ylabel("Speedup (en veces)")
+    pylab.savefig("./amdahl.png", bbox_inches="tight")
+    pylab.close()
+
 if __name__ == '__main__':
     hemo_group_sizes_histogram()
     plot_cost_function()
     reduce_summing_matrix_plot()
+    amdahl_plot()
