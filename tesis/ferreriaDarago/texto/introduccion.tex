@@ -150,7 +150,7 @@ Esto benefici\'o durante mucho tiempo a los desarrolladores de aplicaciones, qui
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\textwidth]{images/moore-law.pdf}
+   \includegraphics[width=\plotwidth]{images/moore-law.pdf}
    \caption{Cantidad de transistores en procesadores emblem\'aticos desde 1971}
    \label{moore-law}
 \end{figure}
@@ -173,7 +173,10 @@ La revalorizaci\'on de las placas gr\'aficas (GPUs) para problemas de c\'omputo 
 El impacto de este enfoque hacia m\'ultiples hilos de ejecuci\'on en paralelo en el desarrollo de aplicaciones es significativo.
 En simulaciones para las \'areas de biolog\'ia, medicina, qu\'imica o meteorolog\'ia es de invaluable utilidad minimizar los tiempos de ejecuci\'on, para permitir mejores implementaciones de los modelos utilizados, permitiendo realizar predicciones de mayor calidad.
 Aprovechar las nuevas arquitecturas multiprocesador requiere modificaciones en el c\'odigo que resultan no triviales, a diferencia del crecimiento en velocidad de \textit{clock} que no requer\'ia modificaciones en el dise\~no del programa.
-Los intentos de escribir programas que conviertan programas seriales (dise\~nados para un solo procesador) a paralelos, en lenguajes de prop\'osito general como C, C++ o Fortran, han sido relativamente infructuosos \todo{ACA DEBERIAN IR ALGUNOS EJEMPLOS Y CITAS}.
+Los intentos de escribir programas que conviertan programas seriales (dise\~nados para un solo procesador) a paralelos, en lenguajes de prop\'osito general como C, C++ o Fortran, han sido relativamente infructuosos~\cite{Pacheco}.
+
+Existen sin embargo herramientas que realizan transformaciones de c\'odigo fuente serial a c\'odigo fuente con anotaciones de paralelizaci\'on autom\'aticas (usando librer\'ias de paralelizaci\'on asistida como OpenMP para las anotaciones).
+Ejemplos de estas herramientas incluyen Par4All~\cite{Par4AllThesis} y Cetus~\cite{CetusPaper}. Estas herramientas pretenden adem\'as generar c\'odigo para aceleradores especiales como GPGPUs.
 
 El resultado es que es necesario trabajo a nivel de escritura del \textit{software} para utilizar m\'ultiples procesadores.
 La aparici\'on de nuevas herramientas ayudan al programador en esta tarea.
