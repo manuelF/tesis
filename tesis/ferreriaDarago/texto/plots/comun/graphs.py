@@ -37,14 +37,16 @@ def barGraph(xlabel, ylabel, yvalues, ticks, ylim, filename, title=u""):
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-def lineGraph(xlabel, ylabel, yvalues, filename,
-               scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u"", ylim=None):
+def lineGraph(yvalues, filename,
+               xlabel=u"", ylabel=u"", scale=u'linear',xvalues=None,
+               ylegend=u'',ticks=None, title=u"", ylim=None):
   if xvalues is None:
     xvalues = range(len(yvalues))
   fig, ax = plt.subplots()
   if hasScipy:
     f = interp1d(xvalues, yvalues)
-    ax.plot(xvalues,yvalues,'o', xvalues,f(xvalues),'-', label=ylegend)
+    ax.plot(xvalues,yvalues,'o')
+    ax.plot(xvalues,f(xvalues),'-', label=ylegend)
   else:
     ax.plot(xvalues,yvalues,'o', label=ylegend)
 
