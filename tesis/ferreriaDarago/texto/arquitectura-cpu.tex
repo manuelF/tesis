@@ -7,7 +7,7 @@ cuando Intel introduce los modelos 4004 y 8008. Actualmente las arquitecturas
 de procesadores de 64 bits basadas en la l\'inea x86-64 de Intel
 dominan no solo el mercado de computadoras personales sino que tambi\'en el de
 servidores y \textit{clusters} de c\'omputo. Dado que utilizaremos el CPU
-estandar como punto de comparaci\'on para las dem\'as arquitecturas, y que estas
+est\'andar como punto de comparaci\'on para las dem\'as arquitecturas, y que estas
 est\'an basadas en parte en su dise\~no, daremos una breve rese\~na de los aspectos
 m\'as importantes y desarrollos modernos con respecto a la performance dentro de
 los procesadores modernos.
@@ -20,19 +20,19 @@ en el \'ultimo tiempo en el dise\~no de procesadores.
 
 \begin{itemize}
     \item \textit{Instruction Level Parallelism}: Este tipo de optimizaciones buscan
-    ejecutar la mayor cantidad de instrucciones en un mismo hilo de ejecuci\'on simultaneamente.
+    ejecutar la mayor cantidad de instrucciones en un mismo hilo de ejecuci\'on simult\'aneamente.
     Optimizaciones de este estilo incluyen
     \textit{pipelines} de procesador para ejecutar m\'ultiples instrucciones de manera solapada,
-    ejecuci\'on superescalar fuera de \'orden para ejecutar multiples instrucciones que
+    ejecuci\'on superescalar fuera de orden para ejecutar m\'ultiples instrucciones que
     utilizan unidades del procesador distintas o que no dependen una de la otra, ejecuci\'on
-    especulativa (basada en predicci\'on de resultados todavia no finalizados de procesar), etc.
+    especulativa (basada en predicci\'on de resultados todav\'ia no finalizados de procesar), etc.
 
     \item \textit{Data Level Parallelism}: Consideran las optimizaciones cuyo prop\'osito es
-    lograr aplicar una misma operaci\'on a cada elemento de un conjunto datos simultaneamente
+    lograr aplicar una misma operaci\'on a cada elemento de un conjunto datos simult\'aneamente
     en un mismo hilo de ejecuci\'on. Esta t\'ecnica se denomina SIMD
     (\textit{Single Instruction, Multiple Data}).
 
-    \item \textit{Thread Level Parallelism}: Concierne al uso de multiples hilos de ejecuci\'on
+    \item \textit{Thread Level Parallelism}: Concierne al uso de m\'ultiples hilos de ejecuci\'on
     simult\'aneos, lo cual requiere el uso de procesadores que usualmente
     comparten la memoria principal (arquitectura SMP, \textit{Symmetric Multiprocessing}).
     Esto conlleva esfuerzo adicional para mantener consistencia y coherencia de la misma
@@ -41,7 +41,7 @@ en el \'ultimo tiempo en el dise\~no de procesadores.
 
 A continuaci\'on detallamos algunos aspectos de cada una de estas t\'ecnicas.
 
-\subsection{Pipeline y Ejecuci\'on fuera de \'orden}
+\subsection{Pipeline y Ejecuci\'on fuera de orden}
 
 Los primeras implementaciones de paralelismo a nivel de un solo procesador fueron a nivel de instrucciones, mediante el uso
 de \textit{pipelines} de m\'ltiples etapas. Estas llegaron a ser tantas como 20 distintas, en la arquitectura
@@ -49,11 +49,11 @@ Intel Pentium 4. Cada etapa corresponde a una actividad distinta en el proceso d
 Al tiempo que una instrucci\'on es decodificada, por ejemplo, otra instrucci\'on puede estar siendo le\'ida
 de memoria ya que, idealmente, las etapas previas no dependen de las posteriores. Este mecanismo funciona bien
 si una instrucci\'on no depende de los resultados de otra que viene anterior a ella. Sin embargo, esto puede
-ocurrir, produciendose entonces un \textit{pipe stall} que requiere ejecutar las instrucciones de manera no solapada
+ocurrir, produci\'endose entonces un \textit{pipe stall} que requiere ejecutar las instrucciones de manera no solapada
 (con el costo de \textit{throughput} de instrucciones que ello implica).
 
-Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de \'orden (\textit{Out of Order
-Execution}). Mediante el uso de algoritmos y circuitos complejos, un procesador puede no depender del \'orden dado
+Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order
+Execution}). Mediante el uso de algoritmos y circuitos complejos, un procesador puede no depender del orden dado
 de las instrucciones, sino solo de las dependencias entre las mismas, ejecutando etapas independientes para
 instrucciones que no requieren datos entre si. De esta manera todas las unidades del procesador pueden estar
 ocupadas el mayor tiempo posible.
@@ -65,7 +65,7 @@ pero sus ventajas fueron disminuyendo hacia principios del siglo XXI.
 
 Si bien las t\'ecnicas SIMD fueron desarrolladas por las supercomputadoras de los 70 y 80, su aparici\'on en los
 microprocesadores x86 modernos ocurre en 1996 con el nombre MMX (\textit{MultiMedia eXtensions}), con refuerzos luego en las
-extensiones SSE y AVX. AVX y AVX2 representan la \'ultima versi\'on de las instrucciones de vectorizaci\'on y estan presentes
+extensiones SSE y AVX. AVX y AVX2 representan la \'ultima versi\'on de las instrucciones de vectorizaci\'on y est\'an presentes
 en la l\'inea Intel Xeon de procesadores de alta gama y en las m\'as recientes generaciones de procesadores de consumidores.
 
 El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones
@@ -88,11 +88,11 @@ en la jerga \textit{memory wall}).
 Empleando el concepto de \textit{localidad}, producto de la observaci\'on de que los datos con los que opera una
 secci\'on de un programa suelen estar cerca en memoria, los dise\~nos de procesadores empezaron a incluir distintos
 tipos de caches: unas memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos
-recientemente usados. Su eficacia impuls\'o el uso de una jerarqu\'ia de las mismas, organizadas en \'orden creciente
+recientemente usados. Su eficacia impuls\'o el uso de una jerarqu\'ia de las mismas, organizadas en orden creciente
 de tama\~no y decreciente en velocidad, empezando por las caches L1 y siguiendo por las L2 y L3.
 
-El tama\~no de una cache L1 moderna est\'a en el \'orden de los 64 Kb, una cache L2 en el \'orden de los 2 Mb y
-una L3 en el \'orden de 6 Mb en adelante.
+El tama\~no de una cache L1 moderna est\'a en el orden de los 64 Kb, una cache L2 en el \'orden de los 2 Mb y
+una L3 en el orden de 6 Mb en adelante.
 
 Si bien idealmente la aparici\'on de caches es invisible al programador, y usualmente lo es, accesos irregulares a la
 memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, causando que datos posteriormente
@@ -118,7 +118,7 @@ aunque la cantidad de los mismos crezca.
 
 Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}, que establece una relaci\'on entre
 el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje
-de la aplicaci\'on que es paralelizable y el porcentaje que no lo \'es. Matem\'aticamente,
+de la aplicaci\'on que es paralelizable y el porcentaje que no lo es. Matem\'aticamente,
 
 \begin{equation}
     \label{eq:amdahl}

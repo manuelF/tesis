@@ -80,7 +80,7 @@ Los 4 threads de un core son multiplexados por el pipeline del mismo, de manera 
 \textit{stalleado} se elija a otro que tenga trabajo para hacer. Se sugiere entonces el uso de al menos dos
 \textit{threads} por core para esconder latencias de memoria y de instrucciones vectoriales, y as\'i aumentar la performance.
 
-Una vez que una instrucci\'on ha sido elegida para decodificarse, pasa a los estad\'ios D0 y D1, a una velocidad de
+Una vez que una instrucci\'on ha sido elegida para decodificarse, pasa a las etapas D0 y D1, a una velocidad de
 decodificaci\'on de 2 instrucciones por ciclo de \textit{clock}. De ahi son enviadas a cada pipeline para ejecutarse.
 Por \'ultimo se pasa a la etapa de \textit{writeback} (WB). No necesariamente cuando una instrucci\'on llega a esta
 fase ha terminado de ejecutarse, puesto que si la operaci\'on es vectorial reci\'en termina de ejecutarse en la unidad
@@ -121,22 +121,22 @@ La unidad de procesamiento vectorial lee y escribe los datos de cache con una gr
 \textit{bus} dedicado de 512 bits. Los accesos son alineados antes de ser escritos al \textit{write-commit} buffer de la
 cach\'e.
 
-Una cosa interesante de esta arquitectura, es que la pol\'tica de cach\'e puede modificarse mediante \textit{hints} al coprocesador. Por defecto la pol\'itica del subsistema
+Una cosa interesante de esta arquitectura, es que la pol\'itica de cach\'e puede modificarse mediante \textit{hints} al coprocesador. Por defecto la pol\'itica del subsistema
 de cach\'e es pseudo-LRU (\textit{Least Recently Used}). Antes de escribir una l\'inea de cache el procesador debe leerla a su propia
-cache (pol\'tica conocida como RFO, \textit{Read For Ownership}). Dado que esto puede implicar que datos \'utiles de cache
-sean removidos para dejar lugar a datos que solo se van a escribir, la arquitectura da soporte a stores \textit{stremeados},
+cache (pol\'itica conocida como RFO, \textit{Read For Ownership}). Dado que esto puede implicar que datos \'utiles de cache
+sean removidos para dejar lugar a datos que solo se van a escribir, la arquitectura da soporte a stores \textit{streameados},
 que pasan de largo a los caches. Tambi\'en se dispone de un \textit{prefetcher} por hardware.
 
 \subsection{Arquitectura de instrucciones}
 
 Si bien la base del conjunto de instrucciones de la arquitectura del Xeon Phi es la P54C de Pentium (IA-32), nuevas instrucciones
 se han incluido con el prop\'osito de aumentar la idoneidad del procesador para computo de alta performance.
-Estas operaciones incluyen implementaciones por \textit{hardware} de operaciones com\'unes en HPC: rec\'iproco de un valor,
+Estas operaciones incluyen implementaciones por \textit{hardware} de operaciones comunes en HPC: rec\'iproco de un valor,
 ra\'iz cuadrada, potencia y exponenciaci\'on, y operaciones m\'as relacionadas con la memoria como por ejemplo \textit{scatter and gatter}
 y stores \textit{streameados} de manera de aprovechar mejor el ancho de banda de memoria que permite la arquitectura.
 
 El dise\~no de las instrucciones vectoriales es ternario, con dos operandos fuentes y uno destino codificados en la instrucci\'on.
-Esta configuraci\'on permite una ganancia de hasta 20\% sobre la configuraci\'on usual binaria de otras arquictecturas SIMD (como
+Esta configuraci\'on permite una ganancia de hasta 20\% sobre la configuraci\'on usual binaria de otras arquitecturas SIMD (como
 por ejemplo SSE o AVX)~\cite{BookXeonPhi}. Tambi\'en el \textit{set} de instrucciones cuenta con operaciones FMA (\textit{Fused
 Multiply Add}) que utilizan los tres operandos como fuente y uno de ellos como el destino.
 
@@ -233,7 +233,7 @@ distintos C-states. El procesador puede correr a su m\'axima capacidad (C0), pue
 (C1), o puede estar apagado en su totalidad (C6). Existen estados similares para los controladores de memoria (M-states).
 
 Con el objetivo de proveer informaci\'on de temperatura y uso al sistema operativo y aplicaciones, el coprocesador dispone de
-hardware dedicado de colecci\'ion de estos datos para uso posterior. Con esto se puede hacer uso inteligente de los diferentes
+hardware dedicado de colecci\'on de estos datos para uso posterior. Con esto se puede hacer uso inteligente de los diferentes
 estados del procesador de acuerdo a la carga de trabajo del sistema y su comportamiento.
 
 Esta interfaz con el hardware es utilizada por tanto el sistema operativo incluido en la placa como por el \textit{stack} de
