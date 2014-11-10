@@ -18,13 +18,13 @@ Instituto de Qu\'imica y Fisicoqu\'imica Biol\'ogica\\
 Facultad de Farmacia y Bioqu\'imica\\
 Universidad de Buenos Aires \\
 +54+11-4064-8289/90/91 (108)\\
-\\ 
+\\
 {\Large Esteban Eduardo Mocskos} (\url{emocskos@dc.uba.ar})\\
 Departamento de Computaci\'on\\
 Facultad de Ciencias Exactas y Naturales\\
 Universidad de Buenos Aires\\
 +54+11-4576-3390 (709)\\
-\\ 
+\\
 {\Large Dami\'an Ariel Scherlis Perel} (\url{damian@qi.fcen.uba.ar})\\
 Departamento de Qu\'imica Inorg\'anica, Anal\'itica y Qu\'imica F\'isica\\
 Facultad de Ciencias Exactas y Naturales\\
@@ -53,41 +53,41 @@ The amount of Cost Share (if any): XXXXXXXXX\\
 
 \section{Executive Summary}
 % {1 page}.
-% Define and highlight the focus of this proposal by clearly articulating the scientific challenges to be overcome, computational complexities, and the industry impact of modernizing these particular codes. 
-% 
+% Define and highlight the focus of this proposal by clearly articulating the scientific challenges to be overcome, computational complexities, and the industry impact of modernizing these particular codes.
+%
 % Note: Emphasis should be put into this summary as it will be utilized by the review committee
 % for the initial proposal review.
 
-Quantum atomistic simulation has dramatically modified the possibilities of research in the molecular sciences, from structural biology to chemistry of materials. 
+Quantum atomistic simulation has dramatically modified the possibilities of research in the molecular sciences, from structural biology to chemistry of materials.
 These fields have attained at the experimental level an unprecedented knowledge and control of matter, all the way down to the nanometer scale, thanks to the development and refinement of revolutionary microscopies and spectroscopies.
-However, the technological breakthrough toward smaller and faster structures, or the exploration of the dynamics of biomolecular systems, demands tools capable to offer a very high resolution in space and time, which is often extremely difficult to be accessed experimentally. 
-This is precisely the domain of quantum simulation methods; state of the art modeling in these areas has achieved such a level of accuracy as to provide a precise correlate of the experimental observations at the molecular scale but also to produce reliable predictions. 
+However, the technological breakthrough toward smaller and faster structures, or the exploration of the dynamics of biomolecular systems, demands tools capable to offer a very high resolution in space and time, which is often extremely difficult to be accessed experimentally.
+This is precisely the domain of quantum simulation methods; state of the art modeling in these areas has achieved such a level of accuracy as to provide a precise correlate of the experimental observations at the molecular scale but also to produce reliable predictions.
 The impact of these methodologies in modern science has been recognized through the Chemistry Nobel Prizes in 1998 and 2013 to Pople and Kohn for their contributions to quantum chemistry
-and density functional theory (DFT), and to Levitt, Karplus and Warshell for devising and promoting multiscale quantum mechanics-molecular mechanics (QM-MM) models. 
+and density functional theory (DFT), and to Levitt, Karplus and Warshell for devising and promoting multiscale quantum mechanics-molecular mechanics (QM-MM) models.
 In the words of Sven Lidin, chairman of the Nobel Committee and an experimental chemist: \textsl{``Today, when theoreticians come with a prediction that we cannot prove is correct, or
-disprove, well, normally we as experimentalists go back and check our experiments again, because it may just as likely be we who are in the wrong way.''} 
+disprove, well, normally we as experimentalists go back and check our experiments again, because it may just as likely be we who are in the wrong way.''}
 
 In the present project, we propose the optimization, parallelization and application of a powerful, state of the art code developed in our group, to perform QM-MM molecular
-dynamics simulations [Ref JCTC, referencias del grupo]. 
-This code, which is a joint effort of a multidisciplinary team from three different academic units (Computer Science, Physical Chemistry, and Biochemistry), is based on density functional theory and allows for the representation of large molecular systems in a complex chemical environment, as for example an enzymatic active site or a liquid-solid inteface. 
-For this reason, its range of applicability goes from biochemistry to materials science to almost every subfield within chemistry. 
-In recent years these kind of methodologies have been applied to a number of mainstream problems in medicine and engineering, e.g., the design of drugs with anticancer activity [Nature Comm 5, 3462], enzymes for cocaine detoxification [Nature Comm 5, 3457], or crack propagation in brittle materials [Nature Comm 4, 2441]. 
+dynamics simulations [Ref JCTC, referencias del grupo].
+This code, which is a joint effort of a multidisciplinary team from three different academic units (Computer Science, Physical Chemistry, and Biochemistry), is based on density functional theory and allows for the representation of large molecular systems in a complex chemical environment, as for example an enzymatic active site or a liquid-solid inteface.
+For this reason, its range of applicability goes from biochemistry to materials science to almost every subfield within chemistry.
+In recent years these kind of methodologies have been applied to a number of mainstream problems in medicine and engineering, e.g., the design of drugs with anticancer activity [Nature Comm 5, 3462], enzymes for cocaine detoxification [Nature Comm 5, 3457], or crack propagation in brittle materials [Nature Comm 4, 2441].
 Yet, in spite of its potential for research in so many areas of science, the major limitation of these schemes continues to be the computationally accessible simulation times, now in the
-order of picoseconds ($10^{-12}$ secs), and the size of the molecular systems which can be addressed quantum-mechanically, of just a few tens of atoms. 
+order of picoseconds ($10^{-12}$ secs), and the size of the molecular systems which can be addressed quantum-mechanically, of just a few tens of atoms.
 Hence, one of the main goals of this proposal is, through algorithmic optimization and parallelization, to extend the boundaries of applicability of this methodology to be able to describe physically more realistic systems for long time windows.
 
-Very recently, we have incorporated a routine to model electron dynamics based on real time time-dependent density functional theory (TDDFT) [Ref JCP]. 
-To the best of our knowledge, this is the first code offering the possibility of TDDFT simulations in real time in a QM-MM framework. 
+Very recently, we have incorporated a routine to model electron dynamics based on real time time-dependent density functional theory (TDDFT) [Ref JCP].
+To the best of our knowledge, this is the first code offering the possibility of TDDFT simulations in real time in a QM-MM framework.
 This feature opens the door to study very fundamental phenomena involving out of equilibrium electron transport in large structures, which is out of reach of
-standard simulation techniques. 
+standard simulation techniques.
 Electron transport across different regions in a molecular structure is at the core of many essential processes in chemistry, physics and biology.
-Examples of these are the mechanisms controlling solar cells, photosynthesis, or themitochondrial respiratory chain. 
-A major challenge that chemists are facing today is the development of sustainable energy resources. 
-In this context, there is a lot of interest in dye-sensitized solar cells, for its low cost, ease of construction, and tunable properties [Nature Photonics 6, 162; Nature Chemistry 6, 242]. 
-Quantum simulations have been already employed to investigate and optimize the main factors determining energetic conversion efficiency in photovoltaic devices, as light trapping and electron-hole separation [Nature Chemistry 6, 242; Phys. Rev. Lett. 97, 208301]. 
+Examples of these are the mechanisms controlling solar cells, photosynthesis, or themitochondrial respiratory chain.
+A major challenge that chemists are facing today is the development of sustainable energy resources.
+In this context, there is a lot of interest in dye-sensitized solar cells, for its low cost, ease of construction, and tunable properties [Nature Photonics 6, 162; Nature Chemistry 6, 242].
+Quantum simulations have been already employed to investigate and optimize the main factors determining energetic conversion efficiency in photovoltaic devices, as light trapping and electron-hole separation [Nature Chemistry 6, 242; Phys. Rev. Lett. 97, 208301].
 To go a step forward, however, it becomes mandatory the representation of electron dynamics in a model consisting of hundreds of quantum atoms (QM subsystem) surrounded by thousands of
-classical particles to include the electrolyte (MM subsystem), a computation well beyond the possibilities of any available scientific software. 
-Our code, properly accelerated, would be particularly suited to this kind of simulations, with which we plan to address the design of dye-sensitized solar cells 
+classical particles to include the electrolyte (MM subsystem), a computation well beyond the possibilities of any available scientific software.
+Our code, properly accelerated, would be particularly suited to this kind of simulations, with which we plan to address the design of dye-sensitized solar cells
 
 \newpage
 
@@ -104,7 +104,7 @@ Debida a esta restricciones, surgi\'o la familia de los modelos basados en Molec
 Estos modelos simplificados disminuyen notoriamente el costo computacional asociado, pero no pueden describir procesos reactivos, es decir aquellos en los cuales los cambios en la estructura electronica es importante (por ejemplo reaccion quimica, interaccion con luz, etc).
 
 El estudio de fenomenos reactivos en quimica, bioquimica y nuevos materiales requiere el modelado de sistemas de gran tama\~no (que incluyen miles de atomos) que no pueden ser tratados mediante modelos QM por su tama\~no ni por modelos MM por ser procesos reactivos.
-En este contexto, surgen los metodos QM/MM en los cuales una porcion del sistema (la porcion reactiva) es tratada usando un modelo cuantico y el resto mediante mecanica molecular. 
+En este contexto, surgen los metodos QM/MM en los cuales una porcion del sistema (la porcion reactiva) es tratada usando un modelo cuantico y el resto mediante mecanica molecular.
 
 De esta manera, se pueden simular procesos en sistemas de gran tamanio en los que el cambio de la estructura electronica resulta fundamental, pero con un costo computacional asociado que no resulta prohibitivo.
 
@@ -114,17 +114,34 @@ Caracteristicas fundamentales de QM que se deben describir:
 2) + de 92\% del tiempo de cada iteracion autoconsistente se consume en el calculo en un solo termino, denominado exchange-correlation.
 3) Se acompla con Amber (entre los dos esta el QM/MM).
 
-Description of the code in the original state (GPU version), cite the papers. 
+Description of the code in the original state (GPU version), cite the papers.
 
+%% jpdarago - Lo que hice yo esta a continuacion, contado como si lo fuera a hacer
 
+The current CPU implementation of the program has several unexplored opportunities
+for optimization, in order to exploit the facilities offered by Xeon and Xeon Phi
+architectures.
 
+One possibility is to restructure the most computational intensive calculations
+in order to utilize matrix operations in BLAS. That would allow the code to utilize
+a highly tuned implementation of this library, such as Intel MKL.
 
+The implementation was considered state-of-the-art in the moment of it's development,
+as it used the latest vectorized architecture offered by processors of the time,
+SSE 4. Modifying the code to better utilize compiler autovectorization and
+other advanced techniques present in Intel C++ compiler could also lead to
+much better performance.
 
+Parallelization is another opportunity to explore, specially considering the
+multicore systems currently available. We have already pursued this road with
+the CUDA implementation of G2G, which showed that the problem benefitted from
+the resources of a highly parallel architecture such as GPGPUs. An algorithm for
+work distribution, specially tailored to the type of workloads in the problem,
+has been developed for the purpose of adapting the core routines to multicore CPUs.
 
+%% fin de lo que hice yo hasta ahora
 
-
-
-\subsection{Schedule} 
+\subsection{Schedule}
 
 Due to the interdisciplinary nature of this project, the activities have a computational side and an application side.
 
@@ -169,7 +186,7 @@ Prototypes & & & & & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolo
 
 
 
-pedirle a Juan Pablo que ponga lo que hizo hasta ahora, incluir optimizaciones de CPU solo. 
+pedirle a Juan Pablo que ponga lo que hizo hasta ahora, incluir optimizaciones de CPU solo.
 Mencionar o ver MKL.
 
 \subsection{Milestones \& Deliverables}
@@ -184,7 +201,7 @@ Mencionar o ver MKL.
 \end{itemize}
 
 \begin{framed}
-\textbf{Success Criteria}: At least, obtain a speedup of 5X comparing against the original CPU version. 
+\textbf{Success Criteria}: At least, obtain a speedup of 5X comparing against the original CPU version.
 \end{framed}
 
 
@@ -195,7 +212,7 @@ Mencionar o ver MKL.
 % {1-2 pages}. Summarize the members of the program team, their qualifications, and their level of participation in the project. The proposal may consist of individuals from multiple departments and institutions. Interdisciplinary teams are encouraged to apply.
 This project will be jointly developed by researchers from the following institutions:
 \begin{enumerate}[i)]
-% \itemsep0em 
+% \itemsep0em
 \item GRUPO DE DAMIAN leaded by Dar\'io Ariel Estr\'in: Description of the group and short bio.
 
 
@@ -207,7 +224,7 @@ This project will be jointly developed by researchers from the following institu
 
 The project will be XXX  by the following professors:
 \begin{enumerate}[i)]
-% \itemsep0em 
+% \itemsep0em
 
 \item Mariano Camilo Gonz\'alez Lebrero: short bio
 
@@ -217,7 +234,7 @@ The project will be XXX  by the following professors:
 
 \end{enumerate}
 
-One of the key aspects of the proposed team is its tematic complimentary 
+One of the key aspects of the proposed team is its tematic complimentary
 
 Additionally, PhD students will be involved in some of the stages of the project:
 \begin{itemize}
@@ -227,7 +244,7 @@ Additionally, PhD students will be involved in some of the stages of the project
 
 \item Francisco Ram\'irez
 
-\item Nicol\'as Foglia 
+\item Nicol\'as Foglia
 
 \item David Gonz\'alez M\'arquez (LICAR)
 
@@ -266,7 +283,7 @@ Each PhD student: 9000 ARS per month, totallizing 12KUSD per year.
 
 This group have some ongoing research proyects, their objective are related with the current proposal and some of their funding can be use to support the included activities:
 UBACyT Gonzalez Lebrero
-UBACyT Mocskos 
+UBACyT Mocskos
 SCHERLIS
 PIP Compartido
 
@@ -309,23 +326,23 @@ PIP Compartido
 
 
 % \begin{abstract}
-% Neglected diseases are a group of infectious diseases, infecting over one Billion people, and which are especially endemic in low-income populations in the developing regions of Africa, Asia, and the southern region of America (Latin America and the Caribbean), including tuberculosis, malaria, trypanosomiasis (i.e. Chagas disease), filariasis and schistosomiasis among others. 
-% 
+% Neglected diseases are a group of infectious diseases, infecting over one Billion people, and which are especially endemic in low-income populations in the developing regions of Africa, Asia, and the southern region of America (Latin America and the Caribbean), including tuberculosis, malaria, trypanosomiasis (i.e. Chagas disease), filariasis and schistosomiasis among others.
+%
 % For many of them, no drug treatment is available, and even for those that can be pharmacologically treated, the use is limited by factors such as high cost, toxicity, low efficacy and the growing emergence of resistant strains.
-% 
-% The process of development new drug costs can be drastically reduce by the usage of computing tools. 
+%
+% The process of development new drug costs can be drastically reduce by the usage of computing tools.
 % To complement the complexity of drug design, several computational tools must be used, all of them are computationally very intensive and constitutes a great demand in every HPC site in the world.
-% 
+%
 % Setting up a facility capable of running all these tools, having them optimized for high performance computing with an ubiquitous and easy use design, training the staff to configure each tool and mastering the process of computational drug design involves resources that are out of scope for most of the organizations or, even, countries in the world.
 
-% 
-% Cloud computing provides a paradigm that accounts for the the use of hardware and software resources, which are delivered as a service over a network, showing a significant workload shift: local computers no longer have to do all the heavy computing. 
-% The network of computers that conforms the cloud (usually installed in large specialized computing facilities) handles them instead and behaves as service providers. 
-% 
-% The only thing the user should care about is to be able to run the cloud computing system's interface. 
+%
+% Cloud computing provides a paradigm that accounts for the the use of hardware and software resources, which are delivered as a service over a network, showing a significant workload shift: local computers no longer have to do all the heavy computing.
+% The network of computers that conforms the cloud (usually installed in large specialized computing facilities) handles them instead and behaves as service providers.
+%
+% The only thing the user should care about is to be able to run the cloud computing system's interface.
 % The main outcome of this project is a tool that can be broadly used by the scientific community, physicians, Federal and Local Government, Non Profit Organizations and healthcare related enterprises (Drug Companies, Biotechnology Companies, Bioinformatic Companies, etc.).
-% This tool has to be easy-enough to be used, has a very intuitive interface both for end users and for advanced users and administrators and be deployed in the Cloud, allowing the users to access the resources from anywhere and paying only for the time and resources consumed. 
-% 
+% This tool has to be easy-enough to be used, has a very intuitive interface both for end users and for advanced users and administrators and be deployed in the Cloud, allowing the users to access the resources from anywhere and paying only for the time and resources consumed.
+%
 % The combination of both aspects in one tool will open the proposed computational methodology to new markets and possibilities that were previously inaccessible.
 
 % In addition, a database containing i) the relevant biological data available in the literature related to the pathogens genome-proteome and ii) the newly computed druggability related data and analysis in digital format will be developed and implemented during the project, making them available for public use after the end of the project to improve its impact.
@@ -337,12 +354,12 @@ PIP Compartido
 
 The project will be jointly developed by the following groups:
 \begin{enumerate}[i)]
-\itemsep0em 
+\itemsep0em
 \item The Structural Bioinformatics group (SBIG) hosted at the Facultad de Ciencias Exactas y Naturales de la Universidad de Buenos Aires (FCEN-UBA), and leaded by Principal Investigator (PI) Dr Adri\'an Turjanski, Dr. Esteban Mocskos(Co-PI) and Dr. Marcelo A. Mart\'i(Co-PI). This institution is a LACCIR partner.
 
 \item The Numerical Computing Center, Universidad de la Rep\'ublica (Uruguay), leaded by Dr. Franco Robledo (PI). This institution is a LACCIR partner.
 
-\item The HPC group of the School of Industrial Engineering of the Universidad de Valpara\'iso leaded by Dr. Gonzalo Hern\'andez Oliva (PI), Dr. Luis Salinas (Co-PI) and Ing. Roberto Le\'on (Co-PI). 
+\item The HPC group of the School of Industrial Engineering of the Universidad de Valpara\'iso leaded by Dr. Gonzalo Hern\'andez Oliva (PI), Dr. Luis Salinas (Co-PI) and Ing. Roberto Le\'on (Co-PI).
 \end{enumerate}
 
 \singlespacing
@@ -363,29 +380,29 @@ In this way, the proposed tool will be ubiquitous, a property that will facilita
 \section{Problem Statement}
 
 \doublespacing
-Neglected diseases are a group of infectious diseases, infecting over one Billion people, and which are especially endemic in low-income populations in the developing regions of Africa, Asia, and the southern region of America (Latin America and the Caribbean), including tuberculosis, malaria, trypanosomiasis (i.e. Chagas disease), filariasis and schistosomiasis among others. 
+Neglected diseases are a group of infectious diseases, infecting over one Billion people, and which are especially endemic in low-income populations in the developing regions of Africa, Asia, and the southern region of America (Latin America and the Caribbean), including tuberculosis, malaria, trypanosomiasis (i.e. Chagas disease), filariasis and schistosomiasis among others.
 
 For many of them, no drug treatment is available, and even for those that can be pharmacologically treated, the use is limited by factors such as high cost, toxicity, low efficacy and the growing emergence of resistant strains\cite{Hotez2010,Nwaka2006,Aguero2008}.
-Development of new drugs to fight them has been disadvantaged by two main factors which are an anticipated low return of investment (the cost of bringing a novel drug to the market is huge) and the limited understanding of the pathogen potential targets that might be treated with a drug like compound. 
-Interestingly, the recent developments in the fields of genome sequencing and in-silico based drug development strategies\cite{Macarron2011} could begin to tilt the tide if properly exploited. 
+Development of new drugs to fight them has been disadvantaged by two main factors which are an anticipated low return of investment (the cost of bringing a novel drug to the market is huge) and the limited understanding of the pathogen potential targets that might be treated with a drug like compound.
+Interestingly, the recent developments in the fields of genome sequencing and in-silico based drug development strategies\cite{Macarron2011} could begin to tilt the tide if properly exploited.
 
-In this scenario, the availability of complete genomic data for the pathogens opens up the possibility of a deep exploration of the proteome as potential drug targets. 
+In this scenario, the availability of complete genomic data for the pathogens opens up the possibility of a deep exploration of the proteome as potential drug targets.
 However, the selection of an adequate target-drug pair to be thoroughly tested in in-vitro and in-vivo resembles a ``\emph{needle in a haystack}'' type of problem that requires proper integration of available biological data, which combined with the adequate in-silico methods for predicting the \emph{druggability} of a potential target (defined as its propensity to be inhibited by a drug like compound), and for selecting potential compounds that will bind the target efficiently (i.e. virtual screening) allows the development of new drugs faster and at lower costs than traditional high throughput experimental screening protocols.
 
-The costs related to the process of development new drugs can be drastically reduced by the usage of computational tools. 
+The costs related to the process of development new drugs can be drastically reduced by the usage of computational tools.
 To complement the inherent complexity of target selection for drug design, several computational tools can be combined\cite{Case2005,VanDerSpoel2005,Brooks2009}, all of which are computationally very demanding constituting one of the main cpu consumers in every HPC site in the world.
 
 Setting up a facility capable of running all these tools, having them optimized for high performance computing with an ubiquitous and easy use design, training the staff to configure each tool and mastering the process of computational drug design involves resources that are out of scope for most of the organizations or, even, countries in the world.
 
-In this context, Cloud computing provides a paradigm that accounts for the the use of hardware and software resources\cite{Armbrust2010}, which are delivered as a service over a network (typically, Internet), in order to attack complex problems (like the one tackled in this project) achieving portability, scalability, and reducing the running costs. 
-In a cloud computing system, there is a significant workload shift: \emph{local} computers no longer have to do all the heavy computing when it comes to running applications. 
-The network of computers that conforms the cloud (usually installed in large computing facilities) handles them instead and behaves as service providers. 
-Hardware and software demands on the user's side decrease. 
+In this context, Cloud computing provides a paradigm that accounts for the the use of hardware and software resources\cite{Armbrust2010}, which are delivered as a service over a network (typically, Internet), in order to attack complex problems (like the one tackled in this project) achieving portability, scalability, and reducing the running costs.
+In a cloud computing system, there is a significant workload shift: \emph{local} computers no longer have to do all the heavy computing when it comes to running applications.
+The network of computers that conforms the cloud (usually installed in large computing facilities) handles them instead and behaves as service providers.
+Hardware and software demands on the user's side decrease.
 The only thing the user should care about is to be able to run the cloud computing system's interface, which can be as simple as a Web browser.
 
 The main outcome of this project is a tool that can be broadly used by the scientific community, physicians, Federal and Local Government, Non Profit Organizations and health care related enterprises (Drug Companies, Biotechnology Companies, Bioinformatic Companies, etc.).
-This tool has to be easy-enough to be used, has a very intuitive interface both for end users and for advanced users and administrators. 
-On the other hand, this tool will be deployed in the Cloud, allowing the users to access the resources from anywhere and paying only for the time and resources consumed. 
+This tool has to be easy-enough to be used, has a very intuitive interface both for end users and for advanced users and administrators.
+On the other hand, this tool will be deployed in the Cloud, allowing the users to access the resources from anywhere and paying only for the time and resources consumed.
 The combination of both aspects in one tool will open the proposed computational methodology to new markets and possibilities that were previously inaccessible.
 
 \singlespacing
@@ -393,10 +410,10 @@ The combination of both aspects in one tool will open the proposed computational
 \section{Expected Outcomes and Dissemination}
 
 \doublespacing
-The main objective of the project is the development of a structural genome and quimio-informatic based tool for the prediction of new protein targets, and their potential small drug like molecule inhibitors, against neglected diseases. 
+The main objective of the project is the development of a structural genome and quimio-informatic based tool for the prediction of new protein targets, and their potential small drug like molecule inhibitors, against neglected diseases.
 The corresponding set of tools, built and optimized for large scale processing with an interface ready to be used in mobile devices or in a web browser on the cloud, is the main expected outcome of the project.
 
-In addition, a database containing i) the relevant biological data available in the literature related to the pathogens genome-proteome and ii) the newly computed druggability related data and analysis in digital format are another direct outcome which will be developed and implemented during the project. 
+In addition, a database containing i) the relevant biological data available in the literature related to the pathogens genome-proteome and ii) the newly computed druggability related data and analysis in digital format are another direct outcome which will be developed and implemented during the project.
 Moreover, we expect to make the database and tools available for public use after the end of the project to improve its impact.
 
 The expected dissemination activities include: a) the publication of the digitized data of best possible target-inhibitor pairs for the analyzed pathogens b) the creation of a website for on-line access to the database and tools that can be used both by researchers and enterprises; available under GPL license terms, c) the diffusion in research groups from Latin America and Europe under the scope of present bilateral research collaborations that will lead to a further development of HPC field in the region; d) the writing of scientific articles and publications in reviewed journals and conferences; e) The education of research assistants and thesis students in the subjects addressed by this proposal.
@@ -410,11 +427,11 @@ Due to the interdisciplinary nature of this project, the activities have a compu
 The SBI is mainly responsible for determining the Biological relevance and properties of the data to be treated, the analysis of the project outcome data and, of course, will provide the needs and problems to be the target of the new tool.
 The computational aspect will be a coordinated effort of the three groups leaded by Dr. Mocskos(Argentina), Dr. Robledo(Uruguay) and Dr. Hernández Oliva(Chile).
 
-The proposed project can be divided in two phases. Each phase is expected to be completed in 12 months. 
-The first phase (Phase 1) consists in the developing of the structural genome database for a set of neglected disease responsible pathogens and the tools for predicting the druggability of each potential target. 
+The proposed project can be divided in two phases. Each phase is expected to be completed in 12 months.
+The first phase (Phase 1) consists in the developing of the structural genome database for a set of neglected disease responsible pathogens and the tools for predicting the druggability of each potential target.
 On the other hand, three main activities will be done: the design of general architecture of the application, the selection of devices to be supported and the corresponding proposed interfaces, and the development of initial prototypes.
 
-The second phase (Phase 2) concerns the performance and analysis of a virtual screening for a group of selected targets. 
+The second phase (Phase 2) concerns the performance and analysis of a virtual screening for a group of selected targets.
 On the computational side, the main services will be developed, an initial set of work-flows will be written derived from the input of SBI, a functional and performance analysis will be done to check the behavior of the tool and re-orient the design in case of being necessary.
 
 \subsection{Activities related to Phase I}
@@ -459,27 +476,27 @@ Prototypes & & & & & & \cellcolor[gray]{0.6} & \cellcolor[gray]{0.6} & \cellcolo
 
 The general planning for the first year is shown in the table \ref{Tab:Firstyear}, but we include a more detailed description for the mentioned activities:
 \begin{enumerate}[i)]
-\itemsep0em 
+\itemsep0em
 
 \item \textbf{Design and implementation of a structural genomics database of neglected disease responsible pathogens.}
-This task will take ca. 3-6 months and will be performed jointly by students of both groups. In this stage four major diseases whose complete genome sequences are available will be selected (Mycobacterium tuberculosis, Trypanosoma Cruzi, Plasmodium falciparum and Leishmania major). 
-The database will start by assigning to all the corresponding Open Reading Frames (ORFs), all possible domains (according to Protein Family Database, PFAM)\cite{Finn2008}, reference sequence (according to UniprotKB \cite{Consortium2012}), available active sites (according to the catalytic site atlas CSA\cite{Porter2004}), protein structure (derived from the Protein Data Bank, PDB\cite{Berman2000} if available or modeled using our developed homology modeling pipeline, see below), gene ontology classification, small molecule inhibition and binding information (derived from ligand binding database) and other relevant biological meta-data that could be considered important. 
+This task will take ca. 3-6 months and will be performed jointly by students of both groups. In this stage four major diseases whose complete genome sequences are available will be selected (Mycobacterium tuberculosis, Trypanosoma Cruzi, Plasmodium falciparum and Leishmania major).
+The database will start by assigning to all the corresponding Open Reading Frames (ORFs), all possible domains (according to Protein Family Database, PFAM)\cite{Finn2008}, reference sequence (according to UniprotKB \cite{Consortium2012}), available active sites (according to the catalytic site atlas CSA\cite{Porter2004}), protein structure (derived from the Protein Data Bank, PDB\cite{Berman2000} if available or modeled using our developed homology modeling pipeline, see below), gene ontology classification, small molecule inhibition and binding information (derived from ligand binding database) and other relevant biological meta-data that could be considered important.
 The expected outcome of the present milestones are the above described database and the corresponding on-line access system for the stored information.
 
 \item \textbf{Generation of the structural genome.}
-We will generate a 3D structure of all possible genes belonging to the four major selected diseases. 
-We have already set up a pipeline that uses comparative modeling techniques in conjunction with secondary structure, unstructured and profile matching techniques to develop a database of protein structural information. 
-This task is expected to require ca $3$ months. 
-Expected outcome of this milestone is the set of all possible structures for the pathogens ORFs (i.e the pathogens available structurome). 
+We will generate a 3D structure of all possible genes belonging to the four major selected diseases.
+We have already set up a pipeline that uses comparative modeling techniques in conjunction with secondary structure, unstructured and profile matching techniques to develop a database of protein structural information.
+This task is expected to require ca $3$ months.
+Expected outcome of this milestone is the set of all possible structures for the pathogens ORFs (i.e the pathogens available structurome).
 The computing power needed to perform this task will be harvested from different available clusters (like the ones that the three groups have access) as this task have only to be completed once.
 
 \item \textbf{Determination of the druggability for each protein with available structure.}
-To determine each protein druggability we will use a combination of structural and biological information (i.e meta-data) related criteria.             
+To determine each protein druggability we will use a combination of structural and biological information (i.e meta-data) related criteria.
 
 \item \textbf{Overall analysis of the data and target prioritization.}
-This task is expected to be performed mainly during the last $6$ months of the project first year. 
-Although the tools and database will remain available afterwards to the general public. 
-In order to select those targets that will have the best chance of success, (i.e those targets that can be effectively inhibited by drug-like molecule and, when inhibited, kill the corresponding organism), we will analyze the results from previous task and integrate the available literature data on the corresponding protein. 
+This task is expected to be performed mainly during the last $6$ months of the project first year.
+Although the tools and database will remain available afterwards to the general public.
+In order to select those targets that will have the best chance of success, (i.e those targets that can be effectively inhibited by drug-like molecule and, when inhibited, kill the corresponding organism), we will analyze the results from previous task and integrate the available literature data on the corresponding protein.
 In particular we will prioritize those targets that are \emph{very likely to be druggable} corresponding also to essential proteins (i.e those that are strictly required for organism survival), soluble proteins, with an easy (ideally optical) experimental activity/inhibition assay to designed (a fact that can be inferred from functional class assignment).
 \end{enumerate}
 
@@ -519,17 +536,17 @@ Performing of virtual screening on the Cloud & & & & & & & & & \cellcolor[gray]{
 The general planning for the second year is shown in the table \ref{Tab:Secondyear}, but we include a more detailed description for the mentioned activities:
 
 \begin{enumerate}[i)]
-\itemsep0em 
+\itemsep0em
 
 \item \textbf{Prefiltering of drug like compounds database to match target pocket properties.}
 This task is expected to take the first 2-4 months of the project second year and consists mainly in the developing of a pre-filtering tool based on the selected target druggable pocket properties filtering those drug-like compounds that are more likely to fit.
 
 \item \textbf{Development of a Virtual screening tool on the Cloud.}
-A virtual screening procedure consists of in-silico testing which of the many thousands of drug-like compounds will possibly bind, with high affinity (in the nano to micromolar range) to a desired protein target. 
-To in-silico test whether, and how, a given compound binds the given target, a Molecular Docking (or just Docking) calculations needs to be performed, whose result is an estimation of the affinity (usually in binding energy units) between the protein-drug pair. 
-A single docking simulation usually takes between $2$ to $5$ minutes on a single cpu-core. 
-To successfully perform a screening, usually between from $100$ to $500$ thousand compounds need to be tested against ca. $5$ to $50$ different target structures (or conformations), which results in about $5$ to $120$ thousand single core cpu hours. 
-If several targets (from the same or different pathogens) need to be tested, then the use of massive computing power is mandatory. 
+A virtual screening procedure consists of in-silico testing which of the many thousands of drug-like compounds will possibly bind, with high affinity (in the nano to micromolar range) to a desired protein target.
+To in-silico test whether, and how, a given compound binds the given target, a Molecular Docking (or just Docking) calculations needs to be performed, whose result is an estimation of the affinity (usually in binding energy units) between the protein-drug pair.
+A single docking simulation usually takes between $2$ to $5$ minutes on a single cpu-core.
+To successfully perform a screening, usually between from $100$ to $500$ thousand compounds need to be tested against ca. $5$ to $50$ different target structures (or conformations), which results in about $5$ to $120$ thousand single core cpu hours.
+If several targets (from the same or different pathogens) need to be tested, then the use of massive computing power is mandatory.
 The usage of the proposed set of tools will aim in two aspects of this problem: allowing to easily setup and overview the procedure of doing the virtual screening, and controlling the amount of resources used during the procedure, making easy to explore and check the result according to the compromised budget and in a single.
 
 \item \textbf{Performing of virtual screening on the Cloud}. Taking two or three selected test cases (target proteins) we will perform the virtual screening and then publish the obtained results.
@@ -542,7 +559,7 @@ The usage of the proposed set of tools will aim in two aspects of this problem: 
 Funding Scheme solicited for the First year of the Project:
 
 \begin{tabular}{|p{5cm}| p{5cm} | p{3.5cm} | p{1.5cm}|}
-\hline 
+\hline
 & LACCIR funding & Participating institution funding & Other funds \\
 \hline
 Fees for graduate students & $36.000$ USD (fees for $3$ grad student $20$hs/week, one for each site) & $36.000$ USD (fees for $3$ grad students $20$hs/week each) & - \\
@@ -564,7 +581,7 @@ External Services & N.S & $5.000$ USD & - \\
 Funding Scheme solicited for the Second year of the Project:
 
 \begin{tabular}{|p{5cm}| p{5cm} | p{3.5cm} | p{1.5cm}|}
-\hline 
+\hline
 & LACCIR funding & Participating institution funding & Other funds \\
 \hline
 Fees for graduate students & $36.000$ USD (fees for $3$ grad student $20$hs/week, one for each site) & $36.000$ USD (fees for three grad students $20$hs/week each) & - \\
@@ -583,10 +600,10 @@ Materials (Consumables) & $1000$ USD (Office consumables, Computer spare parts) 
 \section{Additional Funding Sources}
 
 \doublespacing
-The participating institutions will contribute with the salaries of the researchers involved in the project and the stipends for three part-time students. 
-Local agencies and programs for scientific research will contribute with part of the cost for the travel expenses for meetings and dissemination. 
+The participating institutions will contribute with the salaries of the researchers involved in the project and the stipends for three part-time students.
+Local agencies and programs for scientific research will contribute with part of the cost for the travel expenses for meetings and dissemination.
 
-The research performed by the SBIG at FCEN-UBA, of which the present project is an essential part, is additionally funded by grants from the Argentine National Research Council (CONICET PIPca. $20000$ USD/year for three year period 2013-2015) and Argentinian National Science Agency (ANPCyT PICT Nro 20.000 USD/year for three year period 2012-2014). 
+The research performed by the SBIG at FCEN-UBA, of which the present project is an essential part, is additionally funded by grants from the Argentine National Research Council (CONICET PIPca. $20000$ USD/year for three year period 2013-2015) and Argentinian National Science Agency (ANPCyT PICT Nro 20.000 USD/year for three year period 2012-2014).
 
 The projects of the HPC group of the School of Industrial Engineering of the U. de Valparaíso related to this proposal are funded by the Chilean National Comission for Research in Sciences and Technology (FONDECYT Project No. $1120679$ with a total budget of USD $300000$ approx. for period 2012 - 2015) and the Chilean Corporation for the Promotion of Production (CORFO Project No. 12IDL1-13263 with a total budget of USD $32000$ approx. for period 2012 - 2013).
 
@@ -597,9 +614,9 @@ We envisage submitting a companion proposal to the respective local research fun
 \section{Sustainability}
 
 \doublespacing
-SBIG at FCEN-UBA hosts a local medium-sized ($500$ cores) computer cluster and $4$ servers for database hosting, and has access to the institutional computing shared facility consisting of 224 cores with very low latency network. 
+SBIG at FCEN-UBA hosts a local medium-sized ($500$ cores) computer cluster and $4$ servers for database hosting, and has access to the institutional computing shared facility consisting of 224 cores with very low latency network.
 CeCal at UdelaR hosts a local medium-sized cluster with $1400$ (CPU and GPU) cores.
-In Uruguay, the systematic development, usage, and update of the system proposed in this project is envisaged to be carried over by research groups at PEDECIBA Bioinformática. 
+In Uruguay, the systematic development, usage, and update of the system proposed in this project is envisaged to be carried over by research groups at PEDECIBA Bioinformática.
 Further agreements with other public (i.e. Public Health Secretary) and non-public agencies (i.e. Pasteur Institute, Montevideo) are envisaged to promote, disseminate and take advantage of the applicability of the developed tools.
 
 Given that one of the project aims is to develop tools for analyzing/processing biological data (protein sequences and structures) in order to select better drug targets and drug candidates towards a small selected group of diseases, the project outcomes can be easily replicated or applied in other countries/institutions towards other diseases.
@@ -612,11 +629,11 @@ Finally, since one of the main expected outcomes is the developing of an on-line
 
 \doublespacing
 
-The main dissemination activities planned include: i) the publication of the digitized data and the creation of a website for on-line access to the database and tools, in order to promote that experimental groups from around the globe choose and validate experimentally the proposed target-drug pairs. ii) the organization of seminars, workshops and training courses to present the database and tools for predicting the best targets and possible inhibitors to the Latin American research community, the national agencies, and other agents in the health sector, both public research entities and private drug development companies. 
+The main dissemination activities planned include: i) the publication of the digitized data and the creation of a website for on-line access to the database and tools, in order to promote that experimental groups from around the globe choose and validate experimentally the proposed target-drug pairs. ii) the organization of seminars, workshops and training courses to present the database and tools for predicting the best targets and possible inhibitors to the Latin American research community, the national agencies, and other agents in the health sector, both public research entities and private drug development companies.
 Relevant to this context is the membership of the SBIG of the Centro de Biologia Estructural del Mercosur (CeBEM), the Argentine Association for Bioinformatics and Computational Biology (A2B2C), National Bioinformatics Platform in Argentina PPL-2011 and their participation in the Latin American Protein Society meetings and local Bio-related meetings.
 
-Also, and taking into account the academic relevance of the research areas involved in the project (Drug discovery in neglected infectious diseases), it is expected that the project activities, products, and results will have an immediate impact to be published in international conferences and refereed journals. 
-At least two articles in high-impact ISI journals are expected to be published from the project. 
+Also, and taking into account the academic relevance of the research areas involved in the project (Drug discovery in neglected infectious diseases), it is expected that the project activities, products, and results will have an immediate impact to be published in international conferences and refereed journals.
+At least two articles in high-impact ISI journals are expected to be published from the project.
 The first one concerning the presentation of the database and druggability tools with a description of the most relevant targets found, and a second one dealing with the use of Cloud Computing to perform Virtual screening.
 
 \singlespacing
@@ -628,8 +645,8 @@ The first one concerning the presentation of the database and druggability tools
 The Project mainly involves working with technologies for large biodatabases, high performance scientific computing (mathematical methods and algorithms) and distributed computing.
 In particular, there are three main topics requiring the integration of existing or development of new computing technology:
 \begin{enumerate}[i)]
-\itemsep0em 
-\item User interfaces: The Project Hawaii focuses on developing Cloud-enhanced Windows Phone applications that access a set of cloud services and Windows Azure for computation and data storage, 
+\itemsep0em
+\item User interfaces: The Project Hawaii focuses on developing Cloud-enhanced Windows Phone applications that access a set of cloud services and Windows Azure for computation and data storage,
 
 \item Cloud-based web services: the performance of the system will be analyzed using a tool like \textsl{Azure Throughput Analyzer}, the map-reduce strategy is usually very well suited to the kind of problems that can arise in this project, the Project Daytona(\url{http://research.microsoft.com/en-us/projects/daytona/default.aspx}) is a tool prepared for scaling to thousands of cores.
 
@@ -644,6 +661,6 @@ In particular, there are three main topics requiring the integration of existing
 
 % \section{Support Letter}
 % \includegraphics[keepaspectratio,width=\textwidth]{2012_09_19_supportLetter(published).jpg}
-% 
+%
 
 \end{document}
