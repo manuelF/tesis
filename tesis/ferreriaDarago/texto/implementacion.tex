@@ -34,11 +34,11 @@ estos pasos todav\'ia insumen una gran cantidad de tiempo, incluso en las versio
 Estudiaremos distintos cambios hechos a las rutinas para minimizar los tiempos,
 sin cambiar la estructura general del c\'alculo, ya probado en la literatura.
 
-\section{Implementacion en CUDA}
+\section{Implementaci\'on en CUDA}
 
 \input{implementacion-cuda}
 
-\section{Implementacion en CPU}
+\section{Implementaci\'on en CPU}
 
 \input{implementacion-cpu}
 
@@ -85,7 +85,7 @@ de los datos se construyen directamente en la placa y se recuperan las matrices 
 de la operaci\'on.
 
 Teniendo las mediciones de tiempo para los $k$ dispositivos, se construye la matriz de
-correcci\'on de runtimes con los $k^2$ los coeficientes de correcci\'on para poder estimar el tiempo de
+correcci\'on de tiempos de ejecuci\'on con los $k^2$ los coeficientes de correcci\'on para poder estimar el tiempo de
 ejecuci\'on en el nuevo dispositivo. Si los dispositivos presentes son id\'enticos, entonces
 la matriz va a tener solamente valores muy cercanos a 1, l\'ogicamente.
 

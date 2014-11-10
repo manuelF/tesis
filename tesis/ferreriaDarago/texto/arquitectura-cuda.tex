@@ -203,7 +203,8 @@ es de cientos de ciclos~\cite{Demystifying}, sumamente lenta en comparaci\'on co
 La memoria global tambi\'en puede ser mapeada, o \textit{pinneada}. Esto quiere decir que va a existir
 una copia de esa reserva de memoria en la placa en la memoria principal del procesador. El driver
 de CUDA va a mantener la consistencia entre ambas de manera as\'incrona, evitando la necesidad de hacer
-copias de memoria explicitas.
+copias de memoria explicitas. No es ilimitada la cantidad de memoria mapeada posible, por lo que
+es importante saber elegir que elementos van a ir en esta.
 
 La memoria compartida, o \textit{shared}, es una memoria que es visible para todos los threads dentro
 de un mismo SM. Cada thread puede escribir en cualquier parte de la memoria compartida dentro de su bloque y
@@ -232,13 +233,13 @@ Estas se dividen en tres:
 La cach\'e L1 es dedicada por SM. Esta cach\'e fue introducida en Fermi y su dise\~no hace que
 tambi\'en esta dedicada a la memoria compartida, por lo que es posible en tiempo de ejecuci\'on
 darle directivas a la GPGPU que asigne m\'as memoria cach\'e o m\'as memoria compartida,
-permitiendo a los bloques tener mayores espacios de memorias compartidas o mayores hit rate de cach\'es.
+permitiendo a los bloques tener mayores espacios de memorias compartidas o mayores hit rate de caches.
 
 La cach\'e L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en \nvidia, todos
 los accesos de lectura y escritura a memoria global y textura pasan a trav\'es de esta. ~\cite{NvidiaFermi}
 
 La cach\'e de textura es una cach\'e sobre la memoria global que presenta no solo localidad espacial,
-como la mayor\'ia de las caches de procesadores normales (i.e. dato-1, dato, dato+1, etc.), sino que se le
+como la mayor\'ia de las caches de procesadores normales (es decir, dato-1, dato, dato+1, etc.), sino que se le
 puede agregar el concepto de dimensiones, para poder modelar datos en mas de una dimensi\'on.
 Esto se adapta de muy bien a los problemas de gr\'aficos en el 2D y 3D, por lo tanto se convierte
 en una herramienta clave a la hora de minimizar los accesos a matrices

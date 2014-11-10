@@ -600,13 +600,15 @@ Como cada dispositivo va a tener que copiarse un fragmento de la matriz global d
 y acumular en la matriz de Fock de salida, va a existir una contenci\'on entre los threads que manejan
 cada uno una GPU para leer y escribir en la memoria principal. Esto ocasiona que el speedup entre
 m\'ultiples placas no sea lineal; al haber una cantidad limitada de trabajo que hacer en GPU y un fragmento de
-resoluci\'on que necesariamente tiene que leer y escribir en memoria es una contenci\'on necesaria.
+resoluci\'on que necesariamente tiene que leer y escribir en memoria es una contenci\'on necesaria. Se puede
+ver en la figura \ref{plt:4placas-simple} que no escala linealmente la aceleraci\'on del trabajo, los cuellos
+de botella se notan a partir de la tercera placa, haciendo casi in\'util el uso de una cuarta.
 
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/4placas-simple.png}
    \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on simple}
-   \label{plt:4placas-doble}
+   \label{plt:4placas-simple}
 \end{figure}
 
 Una importante excepci\'on a lo anterior es la realizaci\'on del c\'alculo en doble precisi\'on. La iteraci\'on
