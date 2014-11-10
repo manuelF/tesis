@@ -53,13 +53,41 @@ The amount of Cost Share (if any): XXXXXXXXX\\
 
 \section{Executive Summary}
 % {1 page}.
-Define and highlight the focus of this proposal by clearly articulating the scientific challenges to be overcome, computational complexities, and the industry impact of modernizing these particular codes. 
+% Define and highlight the focus of this proposal by clearly articulating the scientific challenges to be overcome, computational complexities, and the industry impact of modernizing these particular codes. 
+% 
+% Note: Emphasis should be put into this summary as it will be utilized by the review committee
+% for the initial proposal review.
 
-Note: Emphasis should be put into this summary as it will be utilized by the review committee
-for the initial proposal review.
+Quantum atomistic simulation has dramatically modified the possibilities of research in the molecular sciences, from structural biology to chemistry of materials. 
+These fields have attained at the experimental level an unprecedented knowledge and control of matter, all the way down to the nanometer scale, thanks to the development and refinement of revolutionary microscopies and spectroscopies.
+However, the technological breakthrough toward smaller and faster structures, or the exploration of the dynamics of biomolecular systems, demands tools capable to offer a very high resolution in space and time, which is often extremely difficult to be accessed experimentally. 
+This is precisely the domain of quantum simulation methods; state of the art modeling in these areas has achieved such a level of accuracy as to provide a precise correlate of the experimental observations at the molecular scale but also to produce reliable predictions. 
+The impact of these methodologies in modern science has been recognized through the Chemistry Nobel Prizes in 1998 and 2013 to Pople and Kohn for their contributions to quantum chemistry
+and density functional theory (DFT), and to Levitt, Karplus and Warshell for devising and promoting multiscale quantum mechanics-molecular mechanics (QM-MM) models. 
+In the words of Sven Lidin, chairman of the Nobel Committee and an experimental chemist: \textsl{``Today, when theoreticians come with a prediction that we cannot prove is correct, or
+disprove, well, normally we as experimentalists go back and check our experiments again, because it may just as likely be we who are in the wrong way.''} 
 
-ESTA PARTE LA LLENA DAMIAN
+In the present project, we propose the optimization, parallelization and application of a powerful, state of the art code developed in our group, to perform QM-MM molecular
+dynamics simulations [Ref JCTC, referencias del grupo]. 
+This code, which is a joint effort of a multidisciplinary team from three different academic units (Computer Science, Physical Chemistry, and Biochemistry), is based on density functional theory and allows for the representation of large molecular systems in a complex chemical environment, as for example an enzymatic active site or a liquid-solid inteface. 
+For this reason, its range of applicability goes from biochemistry to materials science to almost every subfield within chemistry. 
+In recent years these kind of methodologies have been applied to a number of mainstream problems in medicine and engineering, e.g., the design of drugs with anticancer activity [Nature Comm 5, 3462], enzymes for cocaine detoxification [Nature Comm 5, 3457], or crack propagation in brittle materials [Nature Comm 4, 2441]. 
+Yet, in spite of its potential for research in so many areas of science, the major limitation of these schemes continues to be the computationally accessible simulation times, now in the
+order of picoseconds ($10^{-12}$ secs), and the size of the molecular systems which can be addressed quantum-mechanically, of just a few tens of atoms. 
+Hence, one of the main goals of this proposal is, through algorithmic optimization and parallelization, to extend the boundaries of applicability of this methodology to be able to describe physically more realistic systems for long time windows.
 
+Very recently, we have incorporated a routine to model electron dynamics based on real time time-dependent density functional theory (TDDFT) [Ref JCP]. 
+To the best of our knowledge, this is the first code offering the possibility of TDDFT simulations in real time in a QM-MM framework. 
+This feature opens the door to study very fundamental phenomena involving out of equilibrium electron transport in large structures, which is out of reach of
+standard simulation techniques. 
+Electron transport across different regions in a molecular structure is at the core of many essential processes in chemistry, physics and biology.
+Examples of these are the mechanisms controlling solar cells, photosynthesis, or themitochondrial respiratory chain. 
+A major challenge that chemists are facing today is the development of sustainable energy resources. 
+In this context, there is a lot of interest in dye-sensitized solar cells, for its low cost, ease of construction, and tunable properties [Nature Photonics 6, 162; Nature Chemistry 6, 242]. 
+Quantum simulations have been already employed to investigate and optimize the main factors determining energetic conversion efficiency in photovoltaic devices, as light trapping and electron-hole separation [Nature Chemistry 6, 242; Phys. Rev. Lett. 97, 208301]. 
+To go a step forward, however, it becomes mandatory the representation of electron dynamics in a model consisting of hundreds of quantum atoms (QM subsystem) surrounded by thousands of
+classical particles to include the electrolyte (MM subsystem), a computation well beyond the possibilities of any available scientific software. 
+Our code, properly accelerated, would be particularly suited to this kind of simulations, with which we plan to address the design of dye-sensitized solar cells 
 
 \newpage
 
