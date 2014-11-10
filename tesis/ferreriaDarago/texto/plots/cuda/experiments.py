@@ -6,20 +6,21 @@ sys.path.insert(0, '../comun')
 from graphs import *
 
 def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
-               scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
+               ylim=None,scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
   pylab.title(title)
   pylab.ylabel(ylabel)
   pylab.xlabel(xlabel)
-  base = range(len(yvalues))
   fig, ax = plt.subplots()
+  base = range(len(yvalues))
+  ax.plot(base,yvalues,"o")
   if hasScipy:
     f = interp1d(base, yvalues)
-    ax.plot(base,yvalues,'o',base,f(base),'-', label=ylegend)
-  else:
-    ax.plot(base,yvalues,'o', label=ylegend)
+    ax.plot(base,f(base),"-",label=ylegend)
   if ticks:
     locs, labels = plt.xticks()
     plt.xticks(locs,ticks)
+  if ylim:
+    plt.ylim(ylim)
 
   pylab.legend(loc='best')
   pylab.savefig(filename, bbox_inches='tight')
@@ -38,17 +39,17 @@ def texture():
 
   params =  { #'title': u"Speedup de uso de memorias de textura",
       'xlabel':u"Arquitectura GPU",
-      'ylabel':u"Aceleración (en veces)",
+      'ylabel':u"Aceleración del kernel density (en veces)",
       'yvalues':measures,
-      'ylim':(0.0,1.5),
-      'ticks':(u'Mejora Textura Fermi', u'Mejora Textura Kepler'),
+      'ylim':(1.0,1.3),
+      'ticks':(u'Mejora Textura (Fermi)', u'Mejora Textura (Kepler)'),
       'filename':"texture.png"}
   barGraph(**params)
 
 def speedupSimple():
   params =  {#'title': u"Speedup en multiples M2090 (simple precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
-      'ylabel':u"Aceleración (en veces)",
+      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
       'yvalues':(1.0,1.83,2.6,2.86),
       'ylim':(0.0,4.0),
       'ticks':(u'1 placa', u'2 placas', u'3 placas', u'4 placas'),
@@ -58,7 +59,7 @@ def speedupSimple():
 def speedupDoble():
   params =  {#'title': u"Speedup en multiples M2090 (doble precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
-      'ylabel':u"Aceleración (en veces)",
+      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
       'yvalues':(1.0,2.03,2.92,3.8),
       'ylim':(0.0,4.0),
       'ticks':(u'1 placa', u'2 placas', u'3 placas', u'4 placas'),
@@ -75,10 +76,10 @@ def threading():
 
   params =  {#'title': u"Aceleracion de density cambiando el threading",
       'xlabel':u"Arquitecturas GPU",
-      'ylabel':u"Aceleración (en veces)",
+      'ylabel':u"Aceleración del kernel density (en veces)",
       'yvalues':measures,
-      'ylim':(0.0,3.),
-      'ticks':(u'Aceleracion Fermi', u'Aceleracion Kepler'),
+      'ylim':(1.0,2.5),
+      'ticks':(u'Mejora Threading (Fermi)', u'Mejora Threading (Kepler)'),
       'filename':"threading.png"}
   barGraph(**params)
 
@@ -94,7 +95,7 @@ def variandoDBS():
   measures = (m2090_32, m2090_64, m2090_128,
     k40_32, k40_64, k40_128)
 
-  params =  {'title': u"Tiempo del computo de density variando el tamaño del bloque",
+  params =  {#'title': u"Tiempo del computo de density variando el tamaño del bloque",
       'xlabel':u"Tamaño del bloque",
       'ylabel':u"Tiempo del kernel density [ms]",
       'yvalues':np.divide(measures,1000),
@@ -115,11 +116,11 @@ def shared4vs3():
 
   params =  {#'title': u"Speedup del computo de density variando el tamaño de la estructuras",
       'xlabel':u"Tamaño de los elementos en la shared",
-      'ylabel':u"Aceleracion en veces del kernel density [us]",
+      'ylabel':u"Aceleracion del kernel density (en veces)",
       'yvalues':measures,
       'ylim':(0.0,1.2),
-      'ticks':(u'Fermi float3 contra float4',
-        u'Kepler float3 contra float4',),
+      'ticks':(u'float3 v. float4 (Fermi)',
+        u'float3 v. float4 (Kepler)',),
       'filename':"shared-4vs3.png"}
   barGraph(**params)
 
@@ -140,12 +141,13 @@ def globalMemory():
   measures =  tuple( map((lambda x: (1/x) * (m2090_gpu0)), vals))
 
   params =  {#'title': u"Speedup del computo de densidad electronica variando el tamaño del cacheo",
-      'xlabel':u"Tamaño de la memoria global disponible [Mb]",
-      'ylabel':u"Aceleración (en veces)",
+ #     'xlabel':u"Tamaño de la memoria global disponible [Mb]",
+ #     'ylabel':u"Aceleración (en veces)",
       'yvalues':measures,
-      'ylegend':'Aceleracion kernel functions',
+      'ylegend':'Aceleracion SCF',
       'ticks':(u'0',u'530', u'1060',u'1590',
 		    u'2650',u'3180', u'3710',u'4240',),
+      'ylim':(1,1.25),
       'filename':"global-fullereno.png"}
   lineGraph(**params)
 
@@ -165,11 +167,12 @@ def globalMemoryDetailed():
 
   params =  {#'title': u"Aceleracion del computo de densidad electronica variando el tamaño del cacheo",
       'xlabel':u"Tamaño de la memoria global disponible [Mb]",
-      'ylabel':u"Aceleración (en veces)",
+      'ylabel':u"Aceleración de SCF (en veces)",
       'yvalues':measures,
       'ticks':(u'0',u'0.053', u'0.53',u'5.3',u'53',u'530'),
       'xvalues':np.concatenate(([0],(10**np.array(range(5)))*53/(1000.**1))),
-      'ylegend':'Aceleracion kernel functions',
+      'ylegend':'Aceleracion SCF',
+      'ylim':(1,1.25),
       'filename':"global-detailed-fullereno.png"}
   lineGraphConOtroEje(**params)
 
@@ -217,21 +220,39 @@ def speedupTotal():
   ref_1x2090 = 5005751
   change_iteration_1x2090 = 909456
   change_iteration_4x2090 = 320102
-  measures = (ref_1x2090/ref_1x2090,
+  measures = (#ref_1x2090/ref_1x2090,
       ref_1x2090/change_iteration_1x2090,
       ref_1x2090/change_iteration_4x2090)
-  params =  {'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
+  params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"",
-      'ylabel':u"Aceleración (en veces)",
+      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
       'yvalues':measures,
-      'ylim':(0.0,16),
-      'ticks':(u'Referencia Fermi', u'Optimizado Fermi 1 placa', u'Optimizado Fermi 4 placas'),
+      'ylim':(1.0,16.0),
+      'ticks':(#u'Referencia Fermi',
+        u'Optimizado Fermi 1 placa', u'Optimizado Fermi 4 placas'),
       'filename':"final.png"}
   barGraph(**params)
 
 def coalescienciaTranspose():
-  # Medir runtime antes y despues del transpose
-  pass
+  #runtime density cecar hemo k40 c2075
+  c2075_sin_transpose = 1030980.5102041
+  c2075_con_transpose = 761192.87755102
+
+  k40_sin_transpose = 467947.62
+  k40_con_transpose = 372734.08
+
+  measures = (c2075_sin_transpose/c2075_con_transpose, k40_sin_transpose/k40_con_transpose)
+
+  params =  {#'title': u"Speedup del computo de density variando el tamaño de la estructuras",
+      'xlabel':u"Arquitectura GPU",
+      'ylabel':u"Aceleración del kernel density (en veces)",
+      'yvalues':measures,
+      'ylim':(1.0,1.5),
+      'ticks':(u'Mejora Transpose (Fermi)', u'Mejora Transpose (Kepler)'),
+      'filename':"transpose.png"}
+  barGraph(**params)
+
+
 
 
 if __name__ == '__main__':
@@ -246,3 +267,4 @@ if __name__ == '__main__':
   globalMemoryDetailed()
   acumuladoGlobalMemory()
   predictorSizeInGpu()
+  coalescienciaTranspose()

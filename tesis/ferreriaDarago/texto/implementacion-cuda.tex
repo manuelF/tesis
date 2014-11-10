@@ -9,27 +9,6 @@ en las GPU m\'as veloces del mercado (Tesla K40, GeForce GTX 780).
 A continuaci\'on detallaremos muchos de los cambios que fueron realizados para aumentar
 la performance del c\'omputo de SCF.
 
-\subsection{Falta de accesos coalescentes}
-As\'i como en CPU es importante realizar accesos alineados a memoria, en GPU es aun m\'as critico.
-El termino coalescencia de memoria se define en GPU como la organizaci\'on de los accesos a memoria de secuencial, ordenada y predecible.
-La l\'ogica detr\'as de esto es que cuando el GPU accede a memoria de manera alineada, puede traer entre 16 y 64 bytes en una sola lectura, suficiente para
-cada uno de los threads del warp. Si en cambio debe acceder de manera no
-alineada a memoria, o con threads que no acceden de manera predecible, entonces
-se deber\'an serializar los accesos y separar en m\'ultiples transacciones a memoria global para satisfacer
-el pedido. Este problema solamente se agrava si se debe hacer accesos frecuentes
-por cientos de threads, como es el caso de los bloques con gran nivel de paralelismo explicito.
-
-En el paso del c\'alculo de la densidades el acceso a las funciones calculadas
-se realizaba por columnas en vez de por filas. Esto ocasionaba que por cada acceso,
-un warp tuviera que realizar 32 accesos secuenciales a memoria, ya que no se pod\'ian alinear
-en una transacci\'on. Esto, ademas, se repet\'ia para las funciones, las derivadas y los
-hessianos, por lo cual los accesos eran sumamente costosos.
-
-Para realizar el cambio de coalescencia, se tuvieron que transponer las matrices de
-valores de funciones, gradientes y hessianos. La transposici\'on de matrices es un ejemplo
-sumamente estudiado por la literatura de CUDA ya que ataca un punto d\'ebil de la arquitectura,
-el ancho de banda de transferencia. La transposici\'on se tiene que realizar
-
 \subsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que est\'en listos para correr
 c\'odigo pero que no puedan hacerlo porque tienen contenci\'on en algunos de sus recursos.
@@ -161,8 +140,8 @@ cantidad de bloques adicionales con respecto al m\'etodo anterior.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/threading.png}
-   \caption{Speedup en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia}
-   \label{plt:speedup-threading}
+   \caption{Aceleraci\'on en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia}
+   \label{plt:threading}
 \end{figure}
 
 %%
@@ -210,7 +189,7 @@ el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/dbs.png}
-   \caption{Speedup en veces del kernel density corriendo Hemoglobina variando
+   \caption{Aceleraci\'on en veces del kernel density corriendo Hemoglobina variando
    la arquitectura y tama\~no de \textit{BLOCK\_SIZE}.}
    \label{plt:dbs-runtime}
 \end{figure}
@@ -218,7 +197,7 @@ el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
 
 \subsection{Cambios en la reducci\'on}
 %Hubo que agregar reducci\'on de suma a nivel punto porque ya no se comparten mas la info
-La reorganizaci\'on de la paralelizaci\'on del kernel del calculo de la densidad creo la necesidad
+La reorganizaci\'on de la paralelizaci\'on del kernel del c\'alculo de la densidad creo la necesidad
 de varios pasos de reducci\'on que antes se hac\'ian impl\'icitamente.
 
 El primer paso, al ya no haber un bloque por punto, habr\'a que totalizar el c\'alculo de la
@@ -273,13 +252,59 @@ adem\'as la latencia para accederla es muy elevada. Es decir, el paradigma de
 programaci\'on de las GPGPU gira entorno a esconder la gran latencia de los accesos
 a las memorias globales.
 
-Una de las memorias intermedias entre entre el procesador y la memoria global es
-la memoria de textura. La memoria de textura es un cach\'e sobre la memoria global,
-que esta focalizado alrededor de los accesos a memoria en varias dimensiones.
-Estas memorias reciben su nombre de su funci\'on principal, que es en el \'area de los
-sistemas de v\'ideo. Los mapas de textura suelen ser grandes matrices que definen
+As\'i como en CPU es importante realizar accesos alineados a memoria, en GPU es aun m\'as cr\'itico.
+El termino coalescencia de memoria se define en GPU como la organizaci\'on de los accesos a memoria de secuencial, ordenada y predecible.
+La l\'ogica detr\'as de esto es que cuando el GPU accede a memoria de manera alineada, puede traer 16, 32 o 64 elementos de 32 bits en una sola lectura, suficiente para
+cada uno de los threads del warp. Si, en cambio, debe acceder de manera no
+alineada a memoria o con threads que no acceden de manera predecible, entonces
+se deber\'an serializar los accesos y separar en m\'ultiples transacciones a memoria global para satisfacer
+el pedido. Este problema se agrava si se debe hacer accesos frecuentes
+por cientos de threads, como es el caso de los bloques con gran nivel de paralelismo explicito.
+
+En el paso del c\'alculo de la densidades el acceso a las funciones calculadas
+se realizaba por columnas en vez de por filas. Esto ocasionaba que por cada acceso,
+un warp tuviera que realizar 32 accesos secuenciales a memoria, ya que no se pod\'ian alinear
+en una transacci\'on. Esto, ademas, se realizaba para las funciones, las derivadas y los
+hessianos, por lo cual los accesos eran sumamente costosos. En el kernel original este comportamiento
+no suced\'ia, ya que todos los threads realizaban cuentas para puntos independientes y no se compartian las
+lecturas de las matrices. Esto aprovechaba las dimensiones originales de las matrices y hacian que las lecturas de
+funciones fueran menos costosas, ya que se las usaba en el sentido correcto de la memoria (por filas).
+Al haber cambiado la cuenta realizada para aprovechar mejor el threading (descripto en las secciones anteriores),
+los accesos pasaron a ser por columnas y no por filas, rompiendo la coalescencia de las matrices. El
+problema de los accesos se suele mitigar en CPU con el uso de las cach\'e, pero como las GPU cuentan
+con L1 y L2 muy peque\~nas, el costo de acceder desalineado sigue siendo elevado.
+
+Esto se soluciona transponiendo las matrices de valores de funciones, gradientes y hessianos.
+La transposici\'on de matrices es un ejemplo sumamente estudiado por la literatura de CUDA
+ya que ataca un punto d\'ebil de la arquitectura, el ancho de banda de transferencia. En la figura
+\ref{plt:transpose} podemos ver que tanto en Fermi como en Kepler es muy notoria la diferencia
+de performance, simplemente repensando los accesos a memoria. Kepler, al contar con una cach\'e L2
+del doble de tama\~no que Fermi, lo mitiga un poco mas los accesos desalineados, pero todav\'ia recibe
+grandes mejoras.
+
+%Una cosa a tener en cuenta, pensando con respecto a la secci\'on anterior donde discutimos
+%el cambio del threading, es que adem\'as se disminuyeron los accesos de lectura a las matrices de funcion.
+%Al compartirlas entre threads usando las memorias shared, ahora se realizan muchos menos accesos a memoria global,
+%ya que cada thread BLOCK\_SIZe elementos de cada matriz de funciones, pero todos salvo uno los leen de
+%memoria compartida, ordenes de magnitud mas r\'apida que la global. Es decir, el impacto de este cambio
+%es tan o m\'as importante a\'un que la coalescencia
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cuda/transpose.png}
+   \caption{Aceleraci\'on en veces del kernel density de correr Hemoglobina en distintas arquitecturas habiendo transpuesto las matrices
+   de funci\'on (incluyendo el costo de transponerlas).}
+   \label{plt:transpose}
+\end{figure}
+
+Otra de las t\'ecnicas con la que cuenta CUDA para mitigar la latencia de acceso a memoria
+es mediante el uso de memorias intermedias entre el procesador y la memoria global. Una de ellas es
+la cach\'e de textura (siendo la otra la memoria constante). Esta es una cach\'e que
+esta focalizada alrededor de los accesos a memoria de varias dimensiones.
+Estas memorias reciben su nombre de su funci\'on principal, que es en el \'area de las
+aplicaci\'ones de render de video. Los mapas de textura suelen ser grandes matrices que definen
 tanto los colores sobre las superficies de los pol\'igonos como los relieves.
-El detalle crucial de estas memorias es que un miss en estas cache, provoca
+El detalle crucial de estas memorias es que un miss en estas cach\'e, provoca
 que se traigan datos no solo contiguos en memoria, como pasa en las caches de
 CPU normalmente, sino que ademas se traigan los datos en posiciones l\'ogicas contiguas,
 es decir, variando las distintas dimensiones de la matriz subyacente.
@@ -290,7 +315,7 @@ dividir en bloques con threads en $x$, $y$, $z$, entonces tiene mucho sentido pe
 que las estructuras de datos subyacentes se van a acceder usando indices multidimensionales.
 
 En nuestro problema, la memoria de textura se presenta como una soluci\'on para
-los accesos bidimensionales de la matriz de coeficientes para el grupo de puntos.
+los accesos bidimensionales de la matriz de coeficientes variacionales para el grupo de puntos.
 Como esta matriz debe ser multiplicada por todos los valores de las funciones,
 derivadas primeras y segundas, se va a acceder a toda la matriz de coeficientes mas de
 una vez por cada thread. Adem\'as, como se va a usar toda la matriz, y esta suele
@@ -352,7 +377,7 @@ de funciones a este m\'etodo.
 Una de las principales limitaciones de las GPGPU es la cantidad fija de memoria. Esta no es
 expandible dado que esta soldada a la placa. Esto era aun m\'as notorio cuando las placas
 contaban con menos de 1Gb de memoria (A\~nos 2007-2008).
-Para problemas de calculo num\'erico, esto era un limitante muy serio; los problemas que
+Para problemas de c\'alculo num\'erico, esto era un limitante muy serio; los problemas que
 normalmente entraban en la memoria principal de un CPU, no entraban completos en las GPU.
 La decisi\'on tomada por muchas aplicaciones de entonces es compensar esto calculando
 datos intermedios y tir\'andolos al final; teniendo que ser recalculados en las pr\'oximas iteraciones.
@@ -398,39 +423,36 @@ cantidad de memoria disponible para el cacheo.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\plotwidth]{plots/cuda/global-fullereno.png}
+   \begin{subfigure}[b]{\plotwidthtres}
+     \includegraphics[width=\plotwidthtres]{plots/cuda/global-detailed-fullereno.png}
+     \caption{Entre 0 y 530 Mb.}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidthtres}
+     \includegraphics[width=\plotwidthtres]{plots/cuda/global-fullereno.png}
+     \caption{Entre 0 y 4240 Mb.}
+   \end{subfigure}
    \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria libre de
-   la placa usada para almacenar las funciones, entre 0 y 4240 Mb.}
+   la placa usada para almacenar las funciones.}
    \label{plt:global-fullereno}
 \end{figure}
 
-
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidth]{plots/cuda/global-detailed-fullereno.png}
-   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria libre de
-   la placa usada para almacenar las funciones, entre 0 y 530 Mb.}
-   \label{plt:global-detailed-fullereno}
-\end{figure}
-
-Como se puede ver en las figuras \ref{plt:global-fullereno} y \ref{plt:global-detailed-fullereno}, el
-uso de el almacenamiento de las funciones produce una mejora de hasta el 25\% en el tiempo de ejecuci\'on
-de toda una iteraci\'on de SCF. Es muy interesante notar que son los primeros grupos los que causan mayor
+Como se puede ver en la figura \ref{plt:global-fullereno}, el
+almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
+de toda una iteraci\'on de SCF. Es interesante notar que son los primeros grupos los que causan mayor
 diferencia en los tiempos de ejecuci\'on. Con 5.3 Mb, se pueden guardar los 23 grupos mas peque\~nos del
-fullereno $C_{60}$  y de ah\'i en m\'as, el impacto de la mejora decae. Esto es as\'i porque en grupos
-chicos, el overhead del c\'alculo usando kernel de funciones es muy elevado en comparaci\'on a las
+fullereno $C_{60}$; de ah\'i en m\'as, el impacto de la mejora decae. Esto sucede porque en grupos
+chicos el overhead del c\'alculo usando kernel de funciones es muy elevado en comparaci\'on a las
 cuentas (se desperdician muchos threads). Este comportamiento se puede ver
 bien en en la figura~\ref{plt:runtime-functions-fullereno}, donde se puede apreciar el importante
-peso de los grupos chicos en el tiempo total del calculo de las funciones. Decidimos no intentar
+peso de los grupos chicos en el tiempo total del c\'alculo de las funciones. Decidimos no intentar
 optimizar el c\'alculo ya que al almacenar las matrices este costo directamente se hace cero para
 casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
 
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/global-functions-acc.png}
-   \caption{Acumulado del runtime del calculo de las funciones de los grupos ordenados
-     por tama\~no de las matrices de funciones en funci\'on del tama\~no acumulado de estas,
-     en un Fullereno $C_{60}$.}
+   \caption{Fracci\'on del total del tiempo de c\'alculo de las matrices de funciones en una iteraci\'on en funci\'on
+   del ordenada por el tama\~no acumulado de estas en un fullereno $C_{60}$}
    \label{plt:runtime-functions-fullereno}
 \end{figure}
 
