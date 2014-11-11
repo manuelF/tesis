@@ -13,7 +13,7 @@ posible. En particular, se prioriz\'o lograr una gran escalabilidad en
 n\'umero de procesadores, especialmente en las pruebas realizadas en el
 Xeon.
 
-De acuerdo a la bibliografi\'ia~\cite{Jeffers}, es necesario lograr que
+De acuerdo a la bibliografia~\cite{Jeffers}, es necesario lograr que
 el c\'odigo este no solamente bien vectorizado sino que escale con la
 cantidad de procesadores para poder hacer uso de las prestaciones del
 coprocesador Xeon Phi. Por lo tanto, las pruebas iniciales se concentraron
@@ -24,13 +24,13 @@ base a experimentos con prototipos representativos de las diversas operaciones,
 incluiremos algunos detalles del dispositivo utilizado para las pruebas.
 
 La computadora utilizada para las pruebas fue un servidor \textit{dual-socket}
-con 12 procesadores Intel Xeon CPU E5-2620 v2, dividos en dos grupos de 6. Los
+con 2 Intel Xeon CPU E5-2620 v2, con 6 cores cada uno. Los
 procesadores corren a una frecuencia de clock de 2.10 GHz, y soportan el set
 de instrucciones x86-64 con AVX 1.
-Cada procesador cuenta con 64 Kb de cache L1, 2 Mb de cache L2 para cada par de cores, y
-15 Mb de cache L3 compartida.
+Cada procesador cuenta con 64 Kb de cach\'e L1, 2 Mb de cach\'e L2 para cada par de cores, y
+15 Mb de cach\'e L3 compartida.
 El mismo contaba con 32 GB de memoria RAM DDR3 a 4 canales de memoria, dando
-una transferencia te\'orica m\'axima de 42.6 GB/s, con ciclo de clock a 1.3 MHz.
+una transferencia te\'orica m\'axima de 42.6 GB/s, con ciclo de clock a 1.3 GHz.
 
 La familia de procesadores Xeon cuenta con tecnolog\'ia Turbo Boost. La misma
 incluye una funcionalidad en el chip que ajusta din\'amicamente la frecuencia
@@ -42,7 +42,7 @@ frecuencia de los procesadores disminuye. Para evitar este efecto en nuestro
 an\'alisis se deshabilito Turbo Boost al realizar las pruebas.
 
 Asimismo, originalmente los procesadores Intel Xeon cuentan con Hyperthreading,
-dando un total de 24 procesadores virtuales en vez de 12 n\'ucleos f\'isicos.
+dando un total de 24 procesadores l\'ogicos en vez de 12 f\'isicos.
 Sin embargo, los dos hilos de ejecuci\'on (\textit{hyperthreads}) en un mismo
 procesador comparten unidades b\'asicas como las ALU. Al no ser totalmente
 independientes, esto tambi\'en dificulta el an\'alisis. Para no tomar esto en
@@ -55,7 +55,7 @@ Xeon Phi.
 
 La secci\'on de c\'odigo trabajada corresponde a la parte del procesamiento
 de LIO optimizada mediante CUDA. Esta parte del c\'odigo estaba ya implementada
-en C++, utilizando extensiones de Intel ICC para vectorizaci\'on . No se busc\'o
+en C++, utilizando extensiones de Intel ICC para vectorizaci\'on. No se busc\'o
 optimizar otras secciones de c\'odigo ya que las mismas no contaban con una
 contrapartida en CUDA, haciendo entonces imposible comparar esta arquitectura con
 Intel Xeon y Xeon Phi. Si bien el tiempo de ejecuci\'on de esas secciones, por su
@@ -68,10 +68,11 @@ Como caso de estudio para las modificaciones, se utiliz\'o como ejemplo el c\'om
 de DFT sobre una mol\'ecula de hemoglobina. El caso es considerado de tama\~no
 mediano para las pruebas usuales que se realizan con el paquete LIO. Si bien la
 cantidad de \'atomos es peque\~na, el n\'umero de electrones y sus interacciones
-hacen que sea necesario muchas funciones y muchos puntos de integraci\'on para
+hacen que sea necesaria una base con muchas funciones gaussianas y muchos puntos de integraci\'on para
 modelarlo correctamente. En particular, uno de los \'atomos (el \'atomo de hierro)
 posee muchas capas electr\'onicas y por ende una gran cantidad de puntos y
-funciones a calcular. Los datos espec\'ificos se encuentran en el ap\'endice.
+funciones a calcular. Los datos espec\'ificos de este, y otros sistemas
+se encuentran en el ap\'endice.
 
 % TODO(jpdarago): Agregar datos de hemoglobina en el apendice
 
@@ -90,7 +91,7 @@ a alto nivel mostrado en la figura~\ref{fig:lio-steps}.
 
 Las matrices $G$ y $H$ corresponden a matrices de vectores $\mathbb{R}^3$, y
 la matriz $F$ de valores de funciones es de escalares. Las operaciones entre
-vectores y vectores y escalares tienen la sem\'antica esperable de algebra
+vectores y vectores y escalares tienen la sem\'antica esperable de \'algebra
 lineal. El producto entre dos vectores debe ser interpretado como producto
 componente a componente, no como producto escalar o vectorial.
 
@@ -99,7 +100,7 @@ Para aprovechar el set de instrucciones SSE 4, la ultima versi\'on disponible al
 momento de realizar la implementaci\'on, la clase que implementa un vector de 3
 componentes (\texttt{cvector3}) se adapt\'o mediante herencia para mapear a un
 registro de SSE 4. Dado que el ancho de estos registros es de 128 bits, los mismos
-permiten realizar calculos de a 4 punto flotante a la vez. Al ser 3, uno de los
+permiten realizar c\'alculos de a 4 elementos de punto flotante a la vez. Al ser 3, uno de los
 elementos del registro SSE no se utiliza.
 
 La representaci\'on de un vector de tres componentes de esta manera, si bien da
@@ -109,7 +110,7 @@ vez m\'as espacio. Asimismo, se desperdician oportunidades por parte del compila
 para optimizar mejor haciendo uso de todos los registros y operaciones que dispone
 la arquitectura.
 
-Uno de los computos, \texttt{ssyr}, utilizaba la GSL (\textit{GNU Scientific Library}).
+Uno de los c\'alculos, \texttt{ssyr}, utilizaba la GSL (\textit{GNU Scientific Library}).
 La misma se reemplazo por la MKL (\textit{Math Kernel Library}) de Intel ya que
 la operaci\'on corresponde a una subrutina de BLAS nivel 2 muy conocida. Esto se
 realiz\'o principalmente para evitar tener que hacer una compilaci\'on y linkeo
@@ -229,10 +230,10 @@ valores de la memoria principal~\cite{AutovectorizationGuide}.
 Para alinear el comienzo de todas las matrices a 64 bytes se emplea la funci\'on
 de la librer\'ia MKL de Intel \texttt{mkl\_malloc}.
 
-Esto sin embargo no resulta sufiicente en el caso del ciclo m\'as interno de
-la iteraci\'on. Para esto, necesitamos que cada fila de las matrices esten alineadas.
+Esto sin embargo no resulta suficiente en el caso del ciclo m\'as interno de
+la iteraci\'on. Para esto, necesitamos que cada fila de las matrices est\'en alineadas.
 Dado que la cantidad de columnas de una matriz corresponde a la cantidad de funciones,
-alineamos las mismas con un \texttt{padding} de ceros hasta el multiplo m\'as
+alineamos las mismas con un \texttt{padding} de ceros hasta el m\'ultiplo m\'as
 cercano de 64 bytes. Esto introduce un m\'aximo de 16 valores nulos de precisi\'on
 simple u 8 de precisi\'on doble (de acuerdo a cual se este empleando) en cada
 fila.
@@ -242,11 +243,11 @@ en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
 
 %TODO(jpdarago): Agregar este grafico con regresion
 
-\subsection{Prototipos de paralelizacion}
+\subsection{Prototipos de paralelizaci\'on}
 
 Con la optimizaci\'on anterior observamos que los ciclos principales del c\'odigo
 estaban vectorizados y buscamos entonces obtener mejor \textit{performance} haciendo
-uso de los multiples procesadores disponibles. Para esto, buscamos una soluci\'on
+uso de los m\'ultiples procesadores disponibles. Para esto, buscamos una soluci\'on
 que nos permitiera escalar lo mejor posible en cantidad de procesadores: Utilizar
 $n$ procesadores debiera mejorar la performance lo m\'as cerca de $n$-veces posible.
 
@@ -254,7 +255,7 @@ $n$ procesadores debiera mejorar la performance lo m\'as cerca de $n$-veces posi
 
 Con el prop\'osito de simplificar la tarea sin perder control o performance,
 usamos el soporte para OpenMP del compilador ICC de Intel. OpenMP corresponde a
-un \textit{estandar} de compiladores para paralelismo asistido por el usuario,
+un \textit{est\'andar} de compiladores para paralelismo asistido por el usuario,
 mediante \texttt{pragmas} de compilador y una librer\'ia de soporte sobre
 primitivas del sistema operativo.
 
@@ -288,15 +289,15 @@ con OpenMP son puntos de sincronizaci\'on y tienen un \textit{overhead} asociado
     sera asignado una cantidad fija de iteraciones consecutivas.}
 \end{figure}
 
-El caracter asistido de OpenMP implica que nosotros debemos indicar como
-realizar la partici\'on de trabajo. En un primer momento vimos dos posibles rutas
+El car\'acter asistido de OpenMP implica que el programador debe indicar como
+realizar la partici\'on de trabajo. En un primer momento se plantearon dos posibles rutas
 hacia paralelizar el c\'odigo: dividir los grupos entre \textit{threads} de
-procesamiento, o utilizar multiples procesadores para dividirse el trabajo
+procesamiento, o utilizar m\'ultiples procesadores para dividirse el trabajo
 correspondiente los puntos y funciones dentro de un mismo grupo. Esta segunda
 posibilidad corresponde a lo que se realiza ya en la implementaci\'on para placas
 de video.
 
-La decisi\'on no es trivial debido a las caracter\'sticas del trabajo a realizar
+La decisi\'on no es trivial debido a las caracter\'isticas del trabajo a realizar
 y la arquitectura de los procesadores Xeon y Xeon Phi. A diferencia de las GPGPU,
 estos no cuentan con una gran cantidad de procesadores y exhiben un costo alto
 para lanzar un hilo de ejecuci\'on. Los hilos de ejecuci\'on comparten memorias
@@ -308,13 +309,13 @@ Esto hace entonces, en primera instancia, inviable realizar una partici\'on id\'
 la de los \textit{kernels} implementados en CUDA, donde la cuenta se realiza para
 grupos chicos de puntos.
 
-Por otro lado, tampoco es trivial partir los grupos entre los procesadores disponibles,
-y tampoco es trivial dividir los puntos de un grupo entre procesadores para resolverlos.
-El motivo es la forma que tiene la grilla de integraci\'on con la que se trabaja.
+Por otro lado, tampoco es trivial partir los grupos entre los procesadores disponibles
+ni dividir los puntos de un grupo entre procesadores para resolverlos.
+El motivo de esto es la forma que tiene la grilla de integraci\'on con la que se trabaja.
 
-Esta grilla de integraci\'on, como ya hemos explicado, se divide en cubos y
-esferas. Las esferas corresponden a los n\'ucleos de los \'atomos del sistema.
-Los cubos son determinados por la grilla de integraci\'on y tienen tama\~no
+Esta, como ya se detall\'o anteriormente, se divide en cubos y
+esferas. Las esferas corresponden a los n\'ucleos de los \'atomos del sistema,
+mientras que los cubos son determinados por la grilla de integraci\'on y tienen tama\~no
 variable.
 
 Tomamos como ejemplo el caso de la hemoglobina, el empleado para ajustar los
@@ -339,7 +340,7 @@ figura~\ref{fig:lio-histo-groups}.
 
 Como puede verse, tanto la cantidad de grupos como de funciones para un grupo es altamente
 variable. Los grupos m\'as pesados como las esferas tienen una cantidad dentro de los
-miles de puntos y cientos de funciones, mientras ha 748 grupos (65\%
+miles de puntos y cientos de funciones, mientras hay 748 grupos (65\%
 del total) con menos de 50 funciones a calcular por punto, y 927 (80\% del total)
 que poseen menos de 100 puntos.
 
@@ -357,7 +358,7 @@ Por lo tanto, identificamos las siguientes dificultades:
     procesadores en juego.
     \item Recorrer cada grupo y dividir los puntos a procesar entre procesadores
     tiene como desventaja que muchos grupos tienen una muy peque\~na cantidad de
-    puntos, con lo cual incrementar la cantidad de procesadores no nos ser\'a util
+    puntos, con lo cual incrementar la cantidad de procesadores no nos ser\'a \'util
     para resolver los mismos (porque no hay un punto que darle a uno o m\'as procesadores).
     Este desbalance tambi\'en nos parece indeseable.
 
@@ -447,7 +448,7 @@ y que minimiza el valor m\'aximo de peso para una partici\'on, es decir:
 Un aspecto importante a se\~nalar de este problema es que pertenece a la clase
 de problemas computacionales \textit{NP-hard}. Esta clase de problemas forma una
 clase de equivalencia con respecto a su dificultad e incluye problemas para los
-cuales no se conocen soluciones que esten acotadas por una cantidad polinomial
+cuales no se conocen soluciones que est\'en acotadas por una cantidad polinomial
 de operaciones en funci\'on de la entrada.
 
 Esto es desalentador en un principio puesto que un algoritmo exacto para resolver
@@ -458,13 +459,13 @@ m\'as conocidas de la computaci\'on~\cite{Cormen}.
 En particular, este problema es muy similar a otro problema muy conocido,
 denominado \textit{Bin Packing Problem}. Este problema consiste en, dados $n$
 objetos con vol\'umenes $V_1, \dots, V_n$, y disponiendo de contenedores de
-vol\'umen m\'aximo $C$, dar la m\'inima cantidad de contenedores necesarios para
+volumen m\'aximo $C$, dar la m\'inima cantidad de contenedores necesarios para
 empaquetar todos los objetos.
 
 La relaci\'on entre ambos problemas puede hacerse expl\'icita mediante una simple
 reducci\'on de uno al otro.
 
-Observemos que si conocieramos, para nuestro problema de dividir el trabajo entre
+Observemos que si conoci\'eramos, para nuestro problema de dividir el trabajo entre
 hilos de ejecuci\'on, el valor $M$ de carga m\'axima que uno de estos tiene que
 procesar, podemos usar un algoritmo que resuelva \textit{Bin packing} para
 obtener la m\'inima cantidad de hilos de ejecuci\'on que necesitamos para distribuir
@@ -485,9 +486,9 @@ siguientes tres observaciones:
     soluci\'on para $M$, es imposible que obtengamos una para $M', M' \leq M$.
 \end{itemize}
 
-Con esto, utilizamos busqueda binaria para encontrar el $M$. En cada paso, para
+Con esto, utilizamos b\'usqueda binaria para encontrar el $M$. En cada paso, para
 un $M$ candidato, usamos un algoritmo de \textit{bin packing} para obtener
-cuantos hilos de ejecuci\'on necesitariamos para dividir el trabajo de manera que
+cuantos hilos de ejecuci\'on necesitar\'iamos para dividir el trabajo de manera que
 ning\'un procesador reciba m\'as trabajo que $M$. Si esta cantidad es mayor que
 la cantidad de n\'ucleos de procesamiento m\'aximos que disponemos, entonces
 necesitamos que al menos uno de los procesadores este m\'as cargado. Sino, podemos
@@ -495,7 +496,7 @@ intentar cargarlos menos.
 
 Un pseudoc\'odigo para esta secci\'on del algoritmo esta disponible en la figura~\ref{algo:partition-algo}.
 
-Un problemad de esta estrategia es que, como se se\~nalo anteriormente,
+Un problema de esta estrategia es que, como se se\~nalo anteriormente,
 \textit{Bin packing} es un problema \textit{NP-hard}~\cite{NPCompleteness}. Sin
 embargo, se conocen buenos algoritmos aproximados para resolver el problema. Los
 mismos pueden devolver una respuesta que no es \'optima, pero razonablemente cerca
@@ -503,7 +504,7 @@ de la \'optima.
 
 Una estrategia posible de este estilo es la estrategia denominada \textit{First
 fit decreasing}, que es la utilizada en este trabajo. Esta estrategia consiste en
-iterativamente ubicar los objetos, en \'orden de mayor a menor en costo,
+iterativamente ubicar los objetos, en orden de mayor a menor en costo,
 en el primer contenedor en el que entre. De no disponerse ninguno, se utiliza
 uno nuevo y se repite el algoritmo. Se sabe que este algoritmo da una respuesta
 que como m\'aximo es $\frac{11}{9} O + 1$, donde $O$ es el \'optimo para el
@@ -523,7 +524,7 @@ nuestra implementaci\'on.
             \State $sort(C)$
             \State $L = min(C)-1, R = sum(C)$
             \While{$R - L > 1$}
-                \Comment{Invariante: $(L, \dots, R]$ contiene la capacidad maxima.}
+                \Comment{Invariante: $(L, \dots, R]$ contiene la capacidad m\'axima.}
                 \State $Capacity \gets \frac{L+R}{2}$
                 \State $Partition \gets splitbins(C,Capacity)$
                 \If{$\# Partition \leq m$}
@@ -567,10 +568,11 @@ prop\'ositos:
     tambi\'en se aprovechan del multiprocesamiento.
 \end{itemize}
 
-Para resolver el primer punto, utilizamos una matriz de Fock y una matriz de
+Para resolver el primer punto, se utiliz\'o una matriz de Fock y una matriz de
 fuerzas distinta para cada hilo de ejecuci\'on, de manera que sus grupos asignados
-usaran esta matrices en vez de las globales. Al finalizar la iteraci\'on, todas
-las contribuciones de estas matrices son devueltas a la matriz global una a la
+usaran esta matrices en vez de las globales para hacer los almacenamientos temporales.
+Al finalizar la iteraci\'on, todas
+las contribuciones de estas matrices son acumuladas en la matriz global una a la
 vez. Dado que este paso solo se hace una vez por iteraci\'on, su tiempo de ejecuci\'on resulta
 despreciable en CPU (v\'ease la secci\'on de resultados para estas mediciones, y
 la secci\'on sobre el Xeon Phi para ver que esto puede no ser necesariamente as\'i).
@@ -579,26 +581,26 @@ la secci\'on sobre el Xeon Phi para ver que esto puede no ser necesariamente as\
 
 %TODO(jpdarago): Ver que este paso en el xeon phi es muy muy caro.
 
-Para la segunda parte, hicimos un an\'alisis del c\'odigo de la iteraci\'on para
-reestructurarlo para que fuese ameno a la paralelizaci\'on mediante OpenMP.
+Para la segunda parte, se realiz\'o un an\'alisis del c\'odigo de la iteraci\'on para
+reestructurarlo para que se adapte bien a la paralelizaci\'on mediante OpenMP.
 
-A partir del pseudoc\'odigo presentado en la figura~\ref{algo:lio-iteration} vemos
-que hay tres ciclos claves: El c\'alculo de la energ\'ia de intercambio y
+A partir del pseudoc\'odigo presentado en la figura~\ref{algo:lio-iteration} se observan
+tres ciclos claves: El c\'alculo de la energ\'ia de intercambio y
 correlaci\'on, que tambi\'en calcula valores usados por los dem\'as, el
 c\'alculo de fuerzas y el c\'alculo de la matriz de salida. El segundo de estos
-ciclos solo se realiza en la \'ultima iteraci\'on si se busca calcular las fuerzas
-y por lo tanto no fue el principal foco de nuestra optimizaci\'on.
+ciclos solo se realiza en la \'ultima iteraci\'on si se busca calcular las fuerzas,
+por lo que no fue el principal foco de nuestra optimizaci\'on.
 
 El primero de los ciclos, que tambi\'en resulta ser el m\'as computacionalmente
 costoso, resulta sencillo de paralelizar, en base a que no hay dependencias entre
-las iteraciones m\'as alla de que se debe calcular la energ\'ia total sumando
+las iteraciones m\'as all\'a de que se debe calcular la energ\'ia total sumando
 las contribuciones de cada punto. Esto es sencillo de realizar utilizando un
 \textit{feature} de OpenMP que se denomina reducciones, y que permite especificar
 que cada \textit{thread} debe tener una copia local de la variable y al finalizar
 todos los hilos de ejecuci\'on, el resultado debe juntarse. Los factores pueden
 almacenarse en arreglos separados.
 
-El segudo ciclo, esquematizado en la figura~\ref{algo:lio-rmm-output}, no es tan
+El segundo ciclo, esquematizado en la figura~\ref{algo:lio-rmm-output}, no es tan
 sencillo de paralelizar. Dado que los resultados de juntado se realizar sobre
 una misma matriz, una soluci\'on posible ser\'ia tener una matriz para cada
 \textit{thread} y que cada uno junte los resultados para su thread. Si bien se
@@ -611,14 +613,14 @@ resulta una opci\'on atractiva.
     a la global se realizaba una vez por iteraci\'on (siendo por lo tanto
     una operaci\'on relativamente barata), en este caso deber\'ia realizarse para
     cada grupo en cada iteraci\'on, da\~nando las ventajas obtenidas por dividir
-    las iteraciones entre los multiples procesadores.
+    las iteraciones entre los m\'ultiples procesadores.
     \item La operaci\'on de reducir las matrices a una matriz global es una
     operaci\'on fuertemente \textit{memory-bound}, con lo cual esta limitada por
     la capacidad del ancho de bus y no por el computo a realizar.
 \end{enumerate}
 
 El segundo punto enumerado anteriormente merece un an\'alisis especial. Para ello
-utilizamos un \textit{benchmark} dise\~nado para ilustrar la falta
+se dise\~no un \textit{benchmark} para ilustrar la falta
 de escalabilidad de este problema (la reducci\'on de matrices) con respecto
 a la cantidad de procesadores.
 
@@ -639,12 +641,12 @@ las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
         }
     }
     \end{lstlisting}
-    \caption{Ciclo principal de la implementacion de un algoritmo de suma paralelo de matrices.
-    El codigo para \texttt{sum}, que suma una matriz con la otra, se encuentra en el apendice.}
+    \caption{Ciclo principal de la implementaci\'on de un algoritmo de suma paralelo de matrices.
+    El c\'odigo para \texttt{sum}, que suma una matriz con la otra, se encuentra en el ap\'endice.}
 \end{figure}
 %TODO(jpdarago): Poner este codigo en un apendice
 Claramente este algoritmo debiera producir un mejor tiempo de ejecuci\'on, en
-teor\'ia, utilizando multiples procesadores. Esto suena razonable considerando
+teor\'ia, utilizando m\'ultiples procesadores. Esto suena razonable considerando
 que al menos algunas operaciones son delegadas a otros procesadores.
 
 Medimos los tiempos de reducir 128 matrices de $1024 \times 1024$ elementos de punto
@@ -669,11 +671,11 @@ son desalentadores: el uso de multiprocesamiento no es \'util para este problema
 Observando el problema en si, notamos lo siguiente: Cada elemento de las
 matrices a sumar es accedido de memoria una \'unica vez y el \'unico computo
 realizado con este elemento es una suma con los dem\'as. La relaci\'on entre
-lecturas de memoria y operaciones con los datos leidos es por lo tanto muy baja.
+lecturas de memoria y operaciones con los datos le\'idos es por lo tanto muy baja.
 
-Observemos adem\'as que, al no utilizarse los datos multiples veces, cada l\'inea
+Observemos adem\'as que, al no utilizarse los datos m\'ultiples veces, cada l\'inea
 de datos tiene un \textit{cache miss} asociado (el de la l\'inea donde reside) que
-no se ve compensado por uso del mismo mientras reside en cache.
+no se ve compensado por uso del mismo mientras reside en cach\'e.
 
 Este tipo de problemas se denomina \textit{memory bound}, ya que la velocidad del
 \textit{bus} de memoria y la organizaci\'on de la misma es el factor determinante,
@@ -686,15 +688,15 @@ lo que se puede ver en la figura~\ref{fig:sum-matrix-bench-result}.
 Ver que ese es el caso en la prueba de concepto realizada requiere herramientas
 de an\'alisis m\'as sofisticadas. En nuestro caso utilizamos la herramienta de
 c\'odigo abierto \textit{perf}. Esta herramienta usa los contadores de
-\textit{performance} que presentamos en las secciones anteriores, para dar estad\'
-sticas a nivel arquitectural de la aplicaci\'on y de muy fino detalle, como por
-ejemplo cantidad de \textit{cache-misses}, \textit{stalls} en el pipeline,
+\textit{performance} que presentamos en las secciones anteriores, para dar estad\'isticas
+a nivel arquitectural de la aplicaci\'on y de muy fino detalle, como por
+ejemplo cantidad de \textit{cache misses}, \textit{stalls} en el pipeline,
 cantidad de \textit{branch mispredictions}, etc.
 
 %TODO(jpdarago): Agregar una introduccion a los contadores de perf
 
 A continuaci\'on se muestran los resultados de correr
-un an\'alisis de \textit{perf} para 1 y 12 hilos simultaneos en la m\'aquina de
+un an\'alisis de \textit{perf} para 1 y 12 hilos simult\'aneos en la m\'aquina de
 prueba. De inter\'es es el valor de \texttt{stalled-cycles-frontend}. Este valor
 corresponde al contador de \textit{performance} \texttt{UOPS\_ISSUED.ANY}. Este
 contador registra los eventos en los que el procesador esta \textit{stalleado},
@@ -744,15 +746,15 @@ $ perf stat -B ./benchmark 1024 128 12
 \end{verbatim}
 }
 
-Esto nos lleva a concluir que esta operaci\'on final impactar\'ia muy
+Esto lleva a concluir que esta operaci\'on final impactar\'ia muy
 negativamente en la escalabilidad de la implementaci\'on, y que por lo tanto a
 medida que la cantidad de procesadores se incrementara esta secci\'on del
-c\'odigo se har\'ia mucho m\'as pesada. Por lo tanto, buscamos reorganizar
+c\'odigo se har\'ia mucho m\'as pesada. Por lo tanto, se busc\'o reorganizar
 este ciclo para no necesitar una matriz separada.
 
 El ciclo a modificar esta en la figura~\ref{fig:rmm.output-previous}.
-Se ve f\'acilmente que esto es posible si invertimos los ciclos del algoritmo en
-el algoritmo, podemos dividir los \'indices de la matriz global entre multiples
+Se ve f\'acilmente que esto es posible si se invierten los ciclos del algoritmo en
+el algoritmo, para poder dividir los \'indices de la matriz global entre m\'ultiples
 hilos de ejecuci\'on.
 
 \begin{algorithm}[H]
@@ -774,9 +776,9 @@ hilos de ejecuci\'on.
 \end{algorithm}
 
 La versi\'on modificada puede verse en la figura~\ref{fig:rmm-output-new}. Lo que
-hacemos para este caso es recorrer los \'indices a actualizar de la matriz total
+se hace para este caso es recorrer los \'indices a actualizar de la matriz total
 y luego obtener la contribuci\'on de todos los puntos. Dado que cada \'indice debe
-ser actualizado por a lo sumo un solo hilo de ejecuci\'on, no hay necesidad de
+ser actualizado por, a lo sumo, un solo hilo de ejecuci\'on, no hay necesidad de
 clonar matrices y reducirlas.
 
 \begin{algorithm}[H]
@@ -793,20 +795,20 @@ clonar matrices y reducirlas.
 \end{algorithm}
 
 Un problema provocado por la implementaci\'on es que recorre la matriz de funciones
-en \'orden de columnas, en lugar de \'orden por filas. Este \'orden es poco amigable
+en orden de columnas, en lugar de orden por filas. Este orden es poco amigable
 para los caches ya que cada fila de la matriz probablemente resida en l\'ineas de
-cache diferentes. Esto puede disminuir apreciablemente la performance del algoritmo.
+cach\'e diferentes. Esto puede disminuir apreciablemente la performance del algoritmo.
 Adem\'as, lastima su escalabilidad en procesadores, al incrementarse la cantidad de
-invalidaciones de cache y por lo tanto el \textit{overhead} del algoritmo de
+invalidaciones de cach\'e y por lo tanto el \textit{overhead} del algoritmo de
 coherencia entre caches intreprocesadores.
 
 La soluci\'on a este problema es sin embargo sencilla, trasponiendo la matriz de
 valores de funciones. La misma puede trasponerse una vez y almacenarse en memoria
 RAM al iniciar las iteraciones, teniendo por lo tanto un relativo bajo costo de
-creaci\'on, y el impacto que tiene en la cantidad de \textit{misses} de cache.
+creaci\'on, y el impacto que tiene en la cantidad de \textit{misses} de cach\'e.
 
 Esta modificaci\'on del algoritmo introduce un nuevo aspecto a considerar, similar
-a las consideraciones que hicimos para la cantidad de puntos y funciones: una poca
+a las consideraciones hechas para la cantidad de puntos y funciones: una poca
 cantidad de \'indices a actualizar en un mismo grupo eclipsa el \textit{overhead}
 que introduce el uso de OpenMP. La cantidad de \'indices de la matriz de Fock a
 actualizar tambi\'en tiene una distribuci\'on bastante dispar, como puede verse
@@ -836,7 +838,7 @@ tiempo de ejecuci\'on de la iteraci\'on.
 Por \'ultimo, si bien el algoritmo de particionado y la funci\'on de costo son
 buenas para los casos estudiados, no son perfectas. Como puede verse en la
 figura~\ref{fig:lio-imbalance-between-loads}, hay una diferencia entre cargas
-no negligible en algunos casos, con lo cual todav\'ia se puede obtener algo de
+no despreciable en algunos casos, con lo cual todav\'ia se puede obtener algo de
 mejoras en \textit{performance} entre iteraciones utilizando balanceo de cargas.
 
 Para aliviar esta situaci\'on ligeramente, introdujimos un algoritmo de balanceo
@@ -851,7 +853,7 @@ m\'as ligero (el que termino primero). Esto solo se realiza si la diferencia
 de tiempos entre la carga m\'as pesada y la m\'as ligera es de m\'as del 5\%.
 
 Al elegir el grupo m\'as chico nos aseguramos que no movemos un grupo muy
-grande por error, potencialmente desbalanceando la partici\'on . La desventaja
+grande por error, potencialmente desbalanceando la partici\'on. La desventaja
 es que la convergencia es mucho m\'as lenta, pero esto no es demasiado
 problema puesto que como ya mencionamos, las diferencias de cargas
 experimentalmente resultan peque\~nas.
