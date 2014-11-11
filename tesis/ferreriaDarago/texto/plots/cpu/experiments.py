@@ -127,6 +127,24 @@ def post_caching_matrices():
     }
     comparisonBarGraph(**params)
 
+def escalabilidad_final():
+    for exp in ["hemoglobina","caroteno", "fullereno"]:
+        with open("measures/escalabilidad-%s.txt" % exp) as f:
+            pylab.xlabel("Cantidad de threads")
+            pylab.ylabel("Speedup en veces")
+            pylab.title("Prueba de escalabilidad para %s" % exp)
+
+            lines = [v.split(" ") for v in f.readlines()]
+            data = [(int(u), float(v)) for u,v in lines]
+            threads, speedups = zip(*data)
+
+            pylab.plot(threads, speedups,"o-", label="Experimental")
+            pylab.plot(threads, threads, "o-", label="Obtenido")
+            pylab.legend(loc="best")
+
+            pylab.savefig( "escalabilidad-%s.png" % exp)
+            pylab.close()
+
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
@@ -152,3 +170,4 @@ if __name__ == '__main__':
     amdahl_plot()
     post_matrix_splits()
     post_caching_matrices()
+    escalabilidad_final()
