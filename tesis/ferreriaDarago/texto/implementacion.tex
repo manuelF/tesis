@@ -11,6 +11,13 @@ la energ\'ia del sistema.
    \label{fig:lio-steps}
 \end{figure}
 
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=100px]{images/grilla.pdf}
+   \caption{Esquema del mallado de integracion, partido en cubos y esferas para un sistema de dos \'atomos.}
+   \label{fig:grilla}
+\end{figure}
+
 Este esquema esta basado en el trabajo de Stratmann~\cite{Stratmann}, donde se propone
 agrupar puntos en vez de resolver el computo uno por uno. El agrupamiento permite determinar
 cuales funciones tienen una contribuci\'on significativa al computo final. Dado que las
@@ -18,6 +25,15 @@ funciones Gaussianas decaen r\'apidamente a la distancia, el tama\~no del conjun
 funciones significativas no depende del n\'umero de \'atomos del sistema. Es decir, el tama\~no
 tiene orden constante en t\'erminos de complejidad computacional. Como consecuencia, es posible
 subdividir el c\'alculo de la DFT computando los grupos independientemente.
+
+Para construir estos grupos se genera un mallado en cubos y esferas para poder englobar todos los puntos
+de la grilla. Como los puntos no se distribuyen equidistantemente, estos volumenes no son identicos;
+se construyen con un tama\~no m\'aximo para los cubos, y un radio m\'aximo para las esferas. Existe
+una esfera por cada n\'ucleo at\'omico, de reducido tama\~no pero con una gran densidad de puntos y funciones.
+Los cubos luego engloban todos los puntos que no fueron ya seleccionados por las esferas, por lo que
+su tama\~no puede variar considerablemente. Este esquema de construcci\'on se detalla en la figura~\ref{fig:grilla}
+y el detalle algoritmico de la generaci\'on se estudio previamente~\cite{LIO}~\cite{TesisNitsche},
+sin modificaciones para este trabajo.
 
 Un diagrama simplificando la estructura del c\'alculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
 Los pasos (a) a (e) corresponden a la etapa de inicializaci\'on, y se calculan una \'unica vez
@@ -41,97 +57,5 @@ sin cambiar la estructura general del c\'alculo, ya probado en la literatura.
 \section{Implementaci\'on en CPU}
 
 \input{implementacion-cpu}
-
-\section{Balance de cargas}
-{ \Huge reescribir esto} \\
-El balanceo de cargas optimo consiste en repartir $P$, el conjunto de problemas en
-$n$ conjuntos disjuntos $P_i$, tal que $\bigcup_{i<n} P_i = P$. Este problema, conocido como PARTITION,
-es NP-Completo en su versi\'on exacta, aunque son conocidos algoritmos pseudo-polinomiales para resolverlo.
-La complejidad de ese algoritmo que usa programaci\'on din\'amica es $O(Nn)$, con $N$ el valor
-de la suma de $P$ y $n$ la cantidad de elementos de $P$. Como nuestra m\'etrica para las
-particiones es el runtime de estas expresados con precisi\'on de microsegundo, el costo computacional
-de este algoritmo puede ser elevado en sistemas con cientos de particiones de miles de puntos.
-La principal desventaja de usar \'unicamente este algoritmo es que no contempla, o no al menos
-en sus versiones m\'as directas, el uso de recursos asim\'etricos. Es decir, resolver la partici\'on
-optima del problema de particiones cuando se sabe que el costo de resolver $P_i$ en el dispositivo
-$A$ es distinto a resolverlo en el dispositivo $B$. Por este motivo, no podemos particionarlo est\'aticamente
-usando este algoritmo y decidimos usar una soluci\'on h\'ibrida est\'atica y din\'amica, reutilizando
-la informaci\'on de runtime para decidir como rebalancear las particiones entre iteraciones.
-
-Est\'aticamente definimos un orden para realizar toda la resoluci\'on del sistema y
-se las distribuye de manera round-robin entre todos los dispositivos, para generar la
-partici\'on inicial y cargando a cada placa con una cantidad similar de tareas. Esto no significa
-que todas tarden lo mismo, y es posible notarlo en las mediciones.
-
-Para hacer el balanceo din\'amico, debemos determinar de ante mano la performance de cada
-dispositivo con el que contemos. Para esto, se usa la tradicional t\'ecnica de definir un
-caso de prueba representativo del problema, ejecutarlo en cada uno de los dispositivos y anotar
-cuanto tarda en cada uno de ellos. Una gran ventaja de esto es que permite balancear f\'acilmente las
-cargas cuando se realizan operaciones de doble precisi\'on en conjuntos de dispositivos que incluyan
-placas Tesla y placas GeForce. En simple precisi\'on, los topes de linea de cada una pueden tener
-performance similares (por ejemplo, GTX 580 y M2090, GTX 780 y K20), pero en doble precisi\'on
-usualmente las Tesla suelen ser entre 2 y 6 veces mas veloces. Como las cuentas se realizan
-o todas en precisi\'on simple, o todas en precisi\'on doble, es sumamente importante particionar el
-sistema tomando todo esto en cuenta.
-
-El problema ejemplar elegido en este caso es realizar $10$ iteraciones del kernel de computo de la matriz RMM.
-Consideramos que realizar este computo nos da una evaluaci\'on
-emp\'irica de los recursos necesarios para resolver este problema. Este kernel utiliza muchos
-de los recursos del dispositivo: realiza gran cantidad de accesos a memoria a trav\'es
-de la unidad de textura, usa principalmente instrucciones FMA, tiene una m\'axima ocupaci\'on de los SM
-y tiene un uso total de la memoria shared. No contabilizamos las copias de memoria desde y hacia la
-placa de los par\'ametros puesto que, al igual que en el c\'odigo de la simulaci\'on, casi la totalidad
-de los datos se construyen directamente en la placa y se recuperan las matrices reducidas solamente al final
-de la operaci\'on.
-
-Teniendo las mediciones de tiempo para los $k$ dispositivos, se construye la matriz de
-correcci\'on de tiempos de ejecuci\'on con los $k^2$ los coeficientes de correcci\'on para poder estimar el tiempo de
-ejecuci\'on en el nuevo dispositivo. Si los dispositivos presentes son id\'enticos, entonces
-la matriz va a tener solamente valores muy cercanos a 1, l\'ogicamente.
-
-El pseudo c\'odigo del algoritmo de balanceo se detalla a continuaci\'on.
-\begin{algorithm}
-  \caption{Balanceo de duraci\'on de threads}
-  \label{ThreadBalancing}
-\begin{algorithmic}
-  \State $tiempo_{\min} \gets duracion[T_{\min}]$
-  \State $tiempo_{\max} \gets duracion[T_{\max}]$
-
-  \While {$tiempo_{\max} < tiempo_{\min} * k$}
-    \State $\Delta T \gets (tiempo_{\max} - tiempo_{\min}) /2$
-    \ForAll{$G_i \in Trabajos[T_{\max}]$}
-      \If{$duracion[G_i] * correccion[T_{\max}][T_{\min}] * penalidad\_migracion - \Delta T < duracion_{G_{mejor\_candidato}}$}
-        \State $G_{mejor\_candidato} \gets G_i$
-      \EndIf
-    \EndFor
-   \State Liberar la memoria de las marices cacheadas de $G_{mejor\_candidato}$
-   \State Mover $G_{mejor\_candidato}$ de $T_{\max}$ a $T_{\min}$
-   \State Actualizar la duraci\'on total de $T_{\max}$ a $T_{\min}$, aplicando la correcci\'on de tiempos
-  \EndWhile
-\end{algorithmic}
-\end{algorithm}
-
-En el algoritmo \ref{ThreadBalancing} se definen dos constantes adicionales, $k$ y $penalidad\_migracion$.
-$k$ representa el coeficiente de m\'axima diferencia de tiempo entre el thread de mas larga duraci\'on y el de menor
-duraci\'on. Para nuestros usos, un valor de $k \approx 5\%$ es aceptable.
-$penalidad\_migracion$ es un coeficiente que agrega un costo al migrar el grupo a otra placa, ya que va
-a tener que recalcular las matrices que ya se guardaba en memoria. Cuando cambie de placa, va a tener
-que desalojarlas ya que, si bien es posible que entre las placas se accedan mutuamente a memoria global,
-no vale la pena la latencia introducida, que se adicionar\'a a lo largo de todas las iteraciones de la resoluci\'on.
-Este coeficiente es equivalente a definir una penalidad por romper la \textit{afinidad de las caches} en CPU.
-
-Adicionalmente, el algoritmo \ref{ThreadBalancing} agrega dos contadores para este balanceo. El contador de
-$ronda\_threads$ es el que sirve para balancear threads de a pares, necesario si hay mas de dos dispositivos.
-El contador de $ronda\_trabajos$ es el que balancea, para el thread m\'as r\'apido y el m\'as lento, los
-trabajos que van a migrar de un lado al otro. Es necesario agregar este contador por varios motivos. Por
-un lado, si se mueven demasiados trabajos de un momento a otro, tal vez la estimaci\'on final deje de ser realista,
-por lo que no tiene sentido seguir moviendo sin tener m\'as informaci\'on de otra corrida. Por otro lado, esta
-heur\'istica puede ciclar infinitamente si no se cumple la condici\'on de que se puedan balancear los tiempos
-con menos de diferencia $k$. En ninguno de nuestros casos de prueba nos hemos topado con que suceda esto, pero
-consideramos que es correcto dejarlo.
-
-Otra ventaja de usar este algoritmo adicionalmente a la partici\'on est\'atica es que, si bien se considera la matriz
-de correcci\'on, la finalidad es balancear la carga minimizando los tiempos, por lo que incluso si la estimaci\'on original
-de performance relativa era err\'onea, igualmente se redistribuir\'an los distintos grupos.
 
 

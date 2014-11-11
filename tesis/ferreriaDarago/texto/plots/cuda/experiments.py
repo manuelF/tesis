@@ -199,7 +199,7 @@ def predictorSizeInGpu():
   fileformat = {'names': ('index','size','cost','runtime'),
         'formats' :('uint64','uint64','uint64','uint64')}
   files = [("measures/tiempos_frac_costos/fullereno/index_size_cost_tiempo","sizeingpu-predictor-fullereno.png","cost-predictor-fullereno.png"),
-      ("measures/tiempos_frac_costos/hemo/index_size_cost_tiempo","sizeingpu-predictor-hemo.png","cost-predicto-hemo.png"),
+      ("measures/tiempos_frac_costos/hemo/index_size_cost_tiempo","sizeingpu-predictor-hemo.png","cost-predictor-hemo.png"),
       ("measures/tiempos_frac_costos/caroteno/index_size_cost_tiempo","sizeingpu-predictor-caroteno.png","cost-predictor-caroteno.png")]
   for f,fsizename,fcostname in files:
     measures = np.loadtxt(f, fileformat)
