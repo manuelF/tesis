@@ -74,21 +74,47 @@ posee muchas capas electr\'onicas y por ende una gran cantidad de puntos y
 funciones a calcular. Los datos espec\'ificos de este, y otros sistemas
 se encuentran en el ap\'endice.
 
+El par\'ametro de tama\~no de los cubos utilizado es 3, de manera de que hay muchos
+cubos presentes pero los mismos son chicos. Un an\'alisis m\'as detallado de la
+partici\'on obtenida ser\'a estudiado en secciones futuras.
+
+El an\'alisis realizado corresponde a la implementaci\'on con precisi\'on simple.
+
 % TODO(jpdarago): Agregar datos de hemoglobina en el apendice
 
 \subsection{Estructura original del c\'odigo}
+
+El marco general de la aplicaci\'on a nivel pseudoc\'odigo se encuentra en la
+figura~\ref{algo:lio-general-schematics}, para el caso de los c\'omputos realizados
+por el m\'odulo G2G. Corresponde al detalle del esquema
+a alto nivel mostrado en la figura~\ref{fig:g2g-steps}. En el caso de la
+implementaci\'on en CPU, el ciclo de iteraci\'on realiza todos los c\'alculos del
+ciclo interno.
+
+\begin{algorithm}[hptb]
+    \caption{Pseudoc\'odigo de la estructura del c\'odigo de CPU para G2G.}
+    \label{algo:lio-general-schematics}
+    \begin{algorithmic}
+        \State $Partition \gets regenerate_partition()$
+        \State $Weights \gets compute_weights(Partition)$
+        \State $MatKohnSham \gets matriz_inicial(Partition)$
+        \While{$\neg converged(MatKohnSham)$}
+            \ForAll{$Group \in PointGroups(Partition)$}
+                \State $compute_functions(Group)$
+                \State $Density \gets densidad(iGroup)$
+                \State $MatKohnSham \gets matrix_kohn_sham(Group, Density, MatKohnSham)$
+            \EndFor
+        \EndWhile
+        \State $e \gets compute_energy(Partition, MatKohnSham)$
+    \end{algorithmic}
+\end{algorithm}
 
 Un esquema de alto nivel del computo m\'as intensivo realizado por el paquete
 G2G se encuentra en la figura~\ref{algo:lio-iteration}. Este c\'omputo corresponde
 a una iteraci\'on de c\'omputo de la matriz de Kohn-Sham. El pseudoc\'odigo
 corresponde a la implementaci\'on en C++ del mismo para los casos donde se
 utiliza GGA (\textit{Gradient Global Approximation}) y se calculan tanto las
-fuerzas como la matriz resultado.
-
-El marco general de la aplicaci\'on a nivel pseudoc\'odigo se encuentra en la
-figura~\ref{algo:lio-general-schematics}. Corresponde al detalle del esquema
-a alto nivel mostrado en la figura~\ref{fig:lio-steps}.
-
+fuerzas como la energia.
 Las matrices $G$ y $H$ corresponden a matrices de vectores $\mathbb{R}^3$, y
 la matriz $F$ de valores de funciones es de escalares. Las operaciones entre
 vectores y vectores y escalares tienen la sem\'antica esperable de \'algebra
@@ -127,10 +153,9 @@ optimizar dado que la MKL ya se utilizaba en otras secciones del programa.
               \State $G \gets gradient(PG)$
               \State $H \gets hessian(PG)$
               \State $energy \gets 0$
-              \State $n,m \gets \# functions(PG), \# points(G)$
-              \ForAll{$p \in [0..m)$}
+              \ForAll{$p \in Points(PG)$}
                   \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
-                  \ForAll{$i \in [0..n)$}
+                  \ForAll{$i \in functions(PG, p)$}
                       \State $w \gets \Sigma_{0 \leq j \leq i} F_{p,j} \cdot RMM_{ij}$
                       \State $w3 \gets \Sigma_{0 \leq j \leq i} G_{p,j} \cdot RMM_{ij}$
                       \State $ww1 \gets \Sigma_{0 \leq j \leq i} H_{p,2j} \cdot RMM_{ij}$
@@ -193,8 +218,17 @@ de la figura~\ref{fig:lio-pseudo-dividir}.
 
 La figura~\ref{fig:lio-post-partir-mats} muestra los resultados de realizar esta
 optimizaci\'on en el caso de prueba de hemoglobina en la computadora de prueba.
+Como puede verse, la optimizaci\'on es m\'as que significativa, resultando en
+una aceleraci\'on de un poco m\'as que 2 veces.
 
-%TODO(jpdarago): Agregar este grafico con regresion.
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/post-split-matrices.png}
+   \caption{Tiempo en segundos para la iteraci\'on de G2G para el caso de la
+   mol\'ecula de hemoglobina, antes y despu\'es de proyectar las componentes
+   de las matrices.}
+   \label{fig:lio-post-partir-mats}
+\end{figure}
 
 \subsection{Almacenamiento de las matrices}
 
@@ -217,7 +251,14 @@ del mismo.
 La figura~\ref{fig:lio-post-cachear} muestra la diferencia entre el programa
 optimizado en la secci\'on anterior, y el actual despu\'es de esta modificaci\'on.
 
-%TODO(jpdarago): Agregar este grafico con regresion.
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/post-split-matrices.png}
+   \caption{Tiempo en segundos para la iteraci\'on de G2G para el caso de la
+   mol\'ecula de hemoglobina, antes y despu\'es de proyectar las componentes
+   de las matrices.}
+   \label{fig:lio-post-cachear}
+\end{figure}
 
 \subsection{Alineamiento de matrices}
 
@@ -240,6 +281,9 @@ fila.
 
 La figura~\ref{fig:lio-post-align} muestra el resultado de aplicar esta optimizaci\'on
 en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
+
+Si bien la diferencia de performance es peque\~na, la importancia de la
+alineaci\'on
 
 %TODO(jpdarago): Agregar este grafico con regresion
 

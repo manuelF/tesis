@@ -7,6 +7,11 @@ import numpy as np
 sys.path.insert(0, '../comun')
 from graphs import *
 
+MSEC = 1000000.0
+def time2secs(s):
+    sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    return float(sec) + float(msec) / MSEC
+
 def time2micros(s):
     return int(re.search("(\d+)us.",s).group(1))
 
@@ -93,6 +98,35 @@ def reduce_summing_matrix_plot():
 
     lineGraph(**params)
 
+def post_matrix_splits():
+    post = time2secs("15s. 200498us.")
+    pre = time2secs("31s. 680109us.")
+
+    params = {
+        'xlabel': u"Programa",
+        'ylabel': u"Tiempo por iteración [s]",
+        'xvalues': ['Pre-optimizacion', 'Post-optimizacion'],
+        'yvalues': [pre,post],
+        'filename': u'post-split-matrices.png',
+    }
+    comparisonBarGraph(**params)
+
+def post_caching_matrices():
+    post = time2secs("11s. 834914us.")
+    pre = time2secs("15s. 200498us.")
+
+
+    params = {
+        'xlabel': u"Programa",
+        'ylabel': u"Tiempo por iteración [s]",
+        'xvalues': ['Pre-optimizacion', 'Post-optimizacion'],
+        'yvalues': [pre,post],
+        'filename': u'post-cachear-matrices.png',
+    }
+    comparisonBarGraph(**params)
+
+def post_alignment_matrices():
+
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
@@ -116,3 +150,5 @@ if __name__ == '__main__':
     plot_cost_function()
     reduce_summing_matrix_plot()
     amdahl_plot()
+    post_matrix_splits()
+    post_caching_matrices()
