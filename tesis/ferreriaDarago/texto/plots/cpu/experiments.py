@@ -145,6 +145,58 @@ def escalabilidad_final():
             pylab.savefig( "escalabilidad-%s.png" % exp)
             pylab.close()
 
+def diferencias_de_grupos_por_split():
+    timesstr = [
+        "271622us.",
+        "274914us.",
+        "275384us.",
+        "275467us.",
+        "276620us.",
+        "283192us.",
+        "284217us.",
+        "290966us.",
+        "294136us.",
+        "301388us.",
+        "306992us.",
+        "314068us.",
+    ]
+
+    times = comparison_in_times([time2micros(t)*1.0 for t in timesstr])
+    params = {
+        'xlabel': u'Grupo de trabajo',
+        'ylabel': u'Tiempo en veces',
+        'xvalues': ["%d" % t for t in range(1,len(times)+1)],
+        'yvalues': times,
+        'filename': u'group-split-differences.png',
+    }
+    comparisonBarGraph(**params)
+
+def diferencias_de_grupos_balanceadas():
+    timesstr = [
+        "275456us.",
+        "275536us.",
+        "278971us.",
+        "280285us.",
+        "282625us.",
+        "286209us.",
+        "287627us.",
+        "291019us.",
+        "293823us.",
+        "294335us.",
+        "299576us.",
+        "300984us.",
+    ]
+
+    times = comparison_in_times([time2micros(t)*1.0 for t in timesstr])
+    params = {
+        'xlabel': u'Grupo de trabajo',
+        'ylabel': u'Tiempo en veces',
+        'xvalues': ["%d" % t for t in range(1,len(times)+1)],
+        'yvalues': times,
+        'filename': u'group-split-differences-post-balance.png',
+    }
+    comparisonBarGraph(**params)
+
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
@@ -171,3 +223,5 @@ if __name__ == '__main__':
     post_matrix_splits()
     post_caching_matrices()
     escalabilidad_final()
+    diferencias_de_grupos_por_split()
+    diferencias_de_grupos_balanceadas()
