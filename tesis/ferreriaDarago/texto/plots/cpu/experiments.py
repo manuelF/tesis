@@ -98,15 +98,18 @@ def reduce_summing_matrix_plot():
 
     lineGraph(**params)
 
+def comparison_in_times(l):
+    return [v / min(l) for v in l]
+
 def post_matrix_splits():
     post = time2secs("15s. 200498us.")
     pre = time2secs("31s. 680109us.")
 
     params = {
-        'xlabel': u"Programa",
-        'ylabel': u"Tiempo por iteración [s]",
+        'xlabel': u"Resultados para proyección de matrices en componentes",
+        'ylabel': u"Tiempo por iteración en veces",
         'xvalues': ['Pre-optimizacion', 'Post-optimizacion'],
-        'yvalues': [pre,post],
+        'yvalues': comparison_in_times([pre,post]),
         'filename': u'post-split-matrices.png',
     }
     comparisonBarGraph(**params)
@@ -115,12 +118,11 @@ def post_caching_matrices():
     post = time2secs("11s. 834914us.")
     pre = time2secs("15s. 200498us.")
 
-
     params = {
-        'xlabel': u"Programa",
-        'ylabel': u"Tiempo por iteración [s]",
+        'xlabel': u"Resultados para cacheo de matrices iniciales",
+        'ylabel': u"Tiempo por iteración en veces",
         'xvalues': ['Pre-optimizacion', 'Post-optimizacion'],
-        'yvalues': [pre,post],
+        'yvalues': comparison_in_times([pre,post]),
         'filename': u'post-cachear-matrices.png',
     }
     comparisonBarGraph(**params)
