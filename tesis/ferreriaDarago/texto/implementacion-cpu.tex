@@ -259,7 +259,8 @@ el uso de instrucciones vectoriales especiales del procesador para tomar los
 valores de la memoria principal~\cite{AutovectorizationGuide}.
 
 Para alinear el comienzo de todas las matrices a 64 bytes se emplea la funci\'on
-de la librer\'ia MKL de Intel \texttt{mkl\_malloc}.
+de la librer\'ia MKL de Intel \texttt{mkl\_malloc}. Esta funci\'on retorna la
+memoria alineada a la potencia de dos que se desee~\cite{IntelMKLDoc}.
 
 Esto sin embargo no resulta suficiente en el caso del ciclo m\'as interno de
 la iteraci\'on. Para esto, necesitamos que cada fila de las matrices est\'en alineadas.
@@ -272,10 +273,17 @@ fila.
 La figura~\ref{fig:lio-post-align} muestra el resultado de aplicar esta optimizaci\'on
 en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
 
-Si bien la diferencia de performance es peque\~na, la importancia de la
-alineaci\'on
+Si bien la diferencia de performance es peque\~na en este caso, la importancia
+de esta optimizaci\'on en desarrollos futuros es tal que decidimos mantenerla,
+especialmente considerando la vectorizaci\'on en Xeon Phi~\cite{Jeffers}.
 
-%TODO(jpdarago): Agregar este grafico con regresion
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/post-alinear-matrices.png}
+   \caption{Speedup en veces para la iteraci\'on de G2G para el caso de la
+   mol\'ecula de hemoglobina, antes y despu\'es de alinear las matrices.}
+   \label{fig:lio-post-align}
+\end{figure}
 
 \subsection{Prototipos de paralelizaci\'on}
 
@@ -422,7 +430,7 @@ y un algoritmo que, dados los costos de los grupos y la cantidad de threads a
 utilizar, asigne cada grupo a cada thread.
 
 Para tener una idea del costo de cada grupo, usamos el estimador de operaciones
-dado por~\cite{LIO} junto con un ajuste fijo para considerar overheads fijos a
+dado por~\cite{LIO} junto con un ajuste fijo para considerar \textit{overheads} fijos a
 cada grupo. Matem\'aticamente el estimador utilizado es:
 
 \begin{equation}
@@ -431,8 +439,7 @@ cada grupo. Matem\'aticamente el estimador utilizado es:
 
 donde $f(PG)$ son las funciones del grupo y $p(PG)$ los puntos del grupo. La
 constante fue ajustada experimentalmente de acuerdo a los ejemplos disponibles y
-su impacto en el tiempo de ejecuci\'on para los mismos ser\'a descripto en
-secciones posteriores.
+se decidi\'o utilizar el valor 250000 para experimentos futuros.
 
 Un interrogante que nos planteamos es si era conveniente en CPU utilizar el mismo
 estimador de trabajo \textit{size\_in\_gpu} para el problema estudiado. Sin
@@ -666,7 +673,7 @@ matrices consecutivas, luego todas las resultado de estas, etc. Un esquema de
 las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
 
 \begin{figure}[htbp]
-    \label{cod:sum-matrix-bench-code}
+    \label{code:sum-matrix-bench-code}
     \begin{lstlisting}
     for(int step = 1; step <= mats; step *= 2) {
         #pragma omp parallel for schedule(static) num\_threads(threads)
@@ -679,7 +686,9 @@ las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
     \caption{Ciclo principal de la implementaci\'on de un algoritmo de suma paralelo de matrices.
     El c\'odigo para \texttt{sum}, que suma una matriz con la otra, se encuentra en el ap\'endice.}
 \end{figure}
-%TODO(jpdarago): Poner este codigo en un apendice
+
+%TODO(jpdarago): Poner el total del codigo en un apendice
+
 Claramente este algoritmo debiera producir un mejor tiempo de ejecuci\'on, en
 teor\'ia, utilizando m\'ultiples procesadores. Esto suena razonable considerando
 que al menos algunas operaciones son delegadas a otros procesadores.
