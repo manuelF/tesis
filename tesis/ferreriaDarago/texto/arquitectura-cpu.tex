@@ -41,22 +41,26 @@ en el \'ultimo tiempo en el dise\~no de procesadores.
 \end{itemize}
 
 En base a estos tipos de paralelismo, surgieron grandes avances en la arquitectura de procesadores desde
-1950 en adelante. Estos se detallan cronologicamente en la tabla \ref{tbl:historia-cpu}, como tambien
+1950 en adelante. Estos se detallan cronol\'ogicamente en la tabla \ref{tbl:historia-cpu}, como tambi\'en
 la motivaci\'on de su existencia.
 
+\newcommand{\blap}[1]{\begin{minipage}[t]{3in}#1\end{minipage}}
+
+
 \begin{table}[h]
+\renewcommand{\arraystretch}{2.0}
 \centering
 \begin{tabular}{lll}
 \hline
 A\~no & Evento & Motivo \\ \hline
-1950s & Agregar Pipelines & Usar independientemente las distintas unidades del procesador para aumentar las instrucciones por ciclo. \\
-1970s & Agregar Vectorizacion & Poder realizar las mismas operaciones en muchos datos simult\'aneamente. \\
-1980s & Agregar Cache & La diferencia de velocidad entre la memoria y el procesador se segu\'ia acrecentando. \\
-1987 & Agregar M\'ultiples ALUs & Poder compensar las ALU que mas latencia tienen, se multiplican las unidades para procesar mas instrucciones en paralelo. \\
-1988 & Agregar Predicci\'on de Saltos & Disminuir y hasta evitar los costos de tener que recalcular el pipeline cuando hay saltos. \\
-1995 & Agregar Fuera de Orden & Seguir ejecutando instrucciones mientras se esperan datos anteriores. \\
-2002 & Agregar SMT & Poder procesar de a mas de un thread de OS en un solo core. \\
-2005 & Agregar Multi-core & Aumentar el poder de computo sin aumentar la velocidad de clock ni consumo. \\ \hline
+1950s & Agregar Pipelines &  \blap{Usar independientemente las distintas unidades del procesador para aumentar las instrucciones por ciclo.} \\
+1970s & Agregar Vectorizaci\'on & \blap{Poder realizar las mismas operaciones en muchos datos simult\'aneamente.} \\
+1980s & Agregar Cach\'e & \blap{La diferencia de velocidad entre la memoria y el procesador se segu\'ia acrecentando.} \\
+1987 & Agregar M\'ultiples ALUs & \blap{Poder compensar las ALU que mas latencia tienen, se multiplican las unidades para procesar mas instrucciones en paralelo.} \\
+1988 & Agregar Predicci\'on de Saltos & \blap{Disminuir y hasta evitar los costos de tener que recalcular el pipeline cuando hay saltos.} \\
+1995 & Agregar Fuera de Orden & \blap{Seguir ejecutando instrucciones mientras se esperan datos anteriores.} \\
+2002 & Agregar SMT & \blap{Poder procesar de a mas de un thread de OS en un solo core.} \\
+2005 & Agregar Multi-core & \blap{Aumentar el poder de computo sin aumentar la velocidad de clock ni consumo.} \\
 \end{tabular}
   \caption{Cronolog\'ia de los avances de arquitectura de CPU.}
   \label{tbl:historia-cpu}
