@@ -195,16 +195,16 @@ def acumuladoGlobalMemory():
   stackGraph(**params)
 
 def predictorSizeInGpu():
-#Runtime total por grupo vs sizeingpu en Fullereno 2090 Giol
-  fileformat = {'names': ('index','size','rmm','density','functions'),
-        'formats' :('uint64','uint64','uint64','uint64','uint64')}
-  files = [("measures/tiempos_frac/fullerenos/size_tiempos","sizeingpu-predictor-fullereno.png"),
-      ("measures/tiempos_frac/hemo/size_tiempos","sizeingpu-predictor-hemo.png"),
-      ("measures/tiempos_frac/caroteno/size_tiempos","sizeingpu-predictor-caroteno.png")]
-  for f,fname in files:
+#Runtime total por grupo vs sizeingpu vs cost en Fullereno k40 cecar
+  fileformat = {'names': ('index','size','cost','runtime'),
+        'formats' :('uint64','uint64','uint64','uint64')}
+  files = [("measures/tiempos_frac_costos/fullereno/index_size_cost_tiempo","sizeingpu-predictor-fullereno.png","cost-predictor-fullereno.png"),
+      ("measures/tiempos_frac_costos/hemo/index_size_cost_tiempo","sizeingpu-predictor-hemo.png","cost-predictor-hemo.png"),
+      ("measures/tiempos_frac_costos/caroteno/index_size_cost_tiempo","sizeingpu-predictor-caroteno.png","cost-predictor-caroteno.png")]
+  for f,fsizename,fcostname in files:
     measures = np.loadtxt(f, fileformat)
     ordered = np.sort(measures, order='size')
-    a_total = ordered['rmm'] + ordered['density'] + ordered['functions']
+    a_total = ordered['runtime']
 
     params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
         'xlabel':u"Tamaño de las matrices del grupo [Mb]",
@@ -213,8 +213,13 @@ def predictorSizeInGpu():
         'xvalues':np.divide(ordered['size'],1024.**2),
         'ylegend': 'Runtime de un grupo',
         'fitlegend': 'Fit lineal',
-        'filename':fname}
+        'filename':fsizename}
     scatterGraphFitLineal(**params)
+    params['xlabel'] = u"Estimado de costo computacional"
+    params['xvalues'] = ordered['cost']
+    params['filename'] = fcostname
+    scatterGraphFitLineal(**params)
+
 
 def speedupTotal():
   ref_1x2090 = 5005751
