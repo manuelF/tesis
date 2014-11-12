@@ -316,7 +316,6 @@ programa. Esto quiere decir que el inicio y fin de un \textit{loop} paralelizado
 con OpenMP son puntos de sincronizaci\'on y tienen un \textit{overhead} asociado.
 
 \begin{figure}[htbp]
-    \label{fig:openmp-example}
     \begin{lstlisting}
         #pragma omp parallel for num_threads(12) schedule(static)
         for(int i = 0; i < n; i++) {
@@ -329,6 +328,7 @@ con OpenMP son puntos de sincronizaci\'on y tienen un \textit{overhead} asociado
     \end{lstlisting}
     \caption{Ejemplo de programa paralelizado con OpenMP para correr en 12 threads. Cada thread
     sera asignado una cantidad fija de iteraciones consecutivas.}
+    \label{fig:openmp-example}
 \end{figure}
 
 El car\'acter asistido de OpenMP implica que el programador debe indicar como
@@ -466,7 +466,7 @@ memoria.
    \end{subfigure}
    \caption{Tiempos de ejecuci\'on de cada grupo considerado peque\~no de acuerdo
     al costo del mismo seg\'un predictor, para el ejemplo de la hemoglobina.}
-   \label{fig:lio-histo-groups}
+   \label{fig:comp-size-cost}
 \end{figure}
 
 \subsection{Algoritmo de particionado}
@@ -642,7 +642,7 @@ que cada \textit{thread} debe tener una copia local de la variable y al finaliza
 todos los hilos de ejecuci\'on, el resultado debe juntarse. Los factores pueden
 almacenarse en arreglos separados.
 
-El segundo ciclo, esquematizado en la figura~\ref{algo:lio-rmm-output}, no es tan
+El segundo ciclo, esquematizado en la figura~\ref{algo:rmm-output-previous}, no es tan
 sencillo de paralelizar. Dado que los resultados de juntado se realizar sobre
 una misma matriz, una soluci\'on posible ser\'ia tener una matriz para cada
 \textit{thread} y que cada uno junte los resultados para su thread. Si bien se
@@ -673,7 +673,6 @@ matrices consecutivas, luego todas las resultado de estas, etc. Un esquema de
 las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
 
 \begin{figure}[htbp]
-    \label{code:sum-matrix-bench-code}
     \begin{lstlisting}
     for(int step = 1; step <= mats; step *= 2) {
         #pragma omp parallel for schedule(static) num\_threads(threads)
@@ -685,6 +684,7 @@ las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
     \end{lstlisting}
     \caption{Ciclo principal de la implementaci\'on de un algoritmo de suma paralelo de matrices.
     El c\'odigo para \texttt{sum}, que suma una matriz con la otra, se encuentra en el ap\'endice.}
+    \label{code:sum-matrix-bench-code}
 \end{figure}
 
 %TODO(jpdarago): Poner el total del codigo en un apendice
@@ -694,7 +694,7 @@ las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
    \includegraphics[width=\plotwidth]{images/reductions.png}
    \caption{Esquema de las reducciones realizadas en cada iteraci\'on del ciclo de la
    figura~\ref{code:sum-matrix-bench-code}.}
-   \label{fig:sum-matrix-bench-result}
+   \label{fig:sum-matrix-bench-reduce}
 \end{figure}
 
 Claramente este algoritmo debiera producir un mejor tiempo de ejecuci\'on, en
@@ -710,7 +710,6 @@ trabajo.
 
 Como puede verse en la figura~\ref{fig:sum-matrix-bench-result}, los resultados
 son desalentadores: el uso de multiprocesamiento no es \'util para este problema.
-
 
 \begin{figure}[htbp]
    \centering
@@ -805,15 +804,15 @@ medida que la cantidad de procesadores se incrementara esta secci\'on del
 c\'odigo se har\'ia mucho m\'as pesada. Por lo tanto, se busc\'o reorganizar
 este ciclo para no necesitar una matriz separada.
 
-El ciclo a modificar esta en la figura~\ref{fig:rmm.output-previous}.
-Se ve f\'acilmente que esto es posible si se invierten los ciclos del algoritmo en
+El ciclo a modificar esta en la figura~\ref{algo:rmm-output-previous}.
+Se ve f\'acilmente que esto es posible si se invierten los ciclos internos y externos en
 el algoritmo, para poder dividir los \'indices de la matriz global entre m\'ultiples
 hilos de ejecuci\'on.
 
 \begin{algorithm}[H]
     \centering
-    \label{algo:rmm-output-previous}
     \caption{C\'alculo original de la matriz de Kohn-Sham}
+    \label{algo:rmm-output-previous}
     \begin{algorithmic}
         \State $R \gets 0_{m,n}$
         \State $F \gets functions(PG)$
@@ -828,7 +827,7 @@ hilos de ejecuci\'on.
     \end{algorithmic}
 \end{algorithm}
 
-La versi\'on modificada puede verse en la figura~\ref{fig:rmm-output-new}. Lo que
+La versi\'on modificada puede verse en la figura~\ref{algo:rmm-output-new}. Lo que
 se hace para este caso es recorrer los \'indices a actualizar de la matriz total
 y luego obtener la contribuci\'on de todos los puntos. Dado que cada \'indice debe
 ser actualizado por, a lo sumo, un solo hilo de ejecuci\'on, no hay necesidad de
@@ -836,8 +835,8 @@ clonar matrices y reducirlas.
 
 \begin{algorithm}[H]
     \centering
-    \label{algo:rmm-output-new}
     \caption{C\'alculo de la matriz de Kohn-Sham reestructurado para paralelismo}
+    \label{algo:rmm-output-new}
     \begin{algorithmic}
         \State $R \gets 0_{m,n}$
         \State $F \gets functions(PG)^T$
