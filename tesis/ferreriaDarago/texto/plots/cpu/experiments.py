@@ -127,6 +127,19 @@ def post_caching_matrices():
     }
     comparisonBarGraph(**params)
 
+def post_aligning_matrices():
+    post = time2secs("11s. 834914us.")
+    pre = time2secs("11s. 667524us.")
+
+    params = {
+        'xlabel': u"Resultados para alineacion de matrices iniciales",
+        'ylabel': u"Speedup de la iteración en veces",
+        'xvalues': ['Pre-optimización', 'Post-optimización'],
+        'yvalues': comparison_in_times([pre,post]),
+        'filename': u'post-alinear-matrices.png',
+    }
+    comparisonBarGraph(**params)
+
 def escalabilidad_final():
     for exp in ["hemoglobina","caroteno", "fullereno"]:
         with open("measures/escalabilidad-%s.txt" % exp) as f:
@@ -222,6 +235,7 @@ if __name__ == '__main__':
     amdahl_plot()
     post_matrix_splits()
     post_caching_matrices()
+    post_aligning_matrices()
     escalabilidad_final()
     diferencias_de_grupos_por_split()
     diferencias_de_grupos_balanceadas()
