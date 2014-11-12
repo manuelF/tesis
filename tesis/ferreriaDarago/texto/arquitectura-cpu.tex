@@ -85,6 +85,14 @@ tan significativa, como se puede ver en la figura~\ref{fig:cpu_vs_mem}. Como con
 empez\'o a convertirse en un serio cuello de botella a la velocidad de ejecuci\'on de los programas (llamado
 en la jerga \textit{memory wall}).
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\plotwidth]{images/cpu_vs_memory.png}
+    \caption{Comaparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, mostrando
+    el denominado \textit{memory gap}}
+    \label{fig:cpu_vs_mem}
+\end{figure}
+
 Empleando el concepto de \textit{localidad}, producto de la observaci\'on de que los datos con los que opera una
 secci\'on de un programa suelen estar cerca en memoria, los dise\~nos de procesadores empezaron a incluir distintos
 tipos de caches: unas memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos
