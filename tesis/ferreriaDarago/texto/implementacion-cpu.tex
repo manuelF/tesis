@@ -489,16 +489,19 @@ y que minimiza el valor m\'aximo de peso para una partici\'on, es decir:
     \displaystyle \max_i \sum_{p \in P_i} C_p
 \end{align}
 
-Un aspecto importante a se\~nalar de este problema es que pertenece a la clase
-de problemas computacionales \textit{NP-hard}. Esta clase de problemas forma una
-clase de equivalencia con respecto a su dificultad e incluye problemas para los
-cuales no se conocen soluciones que est\'en acotadas por una cantidad polinomial
-de operaciones en funci\'on de la entrada.
+Un aspecto importante, como ya mencionamos, es que este problema pertenece a la clase
+de problemas computacionales \textit{NP-hard}, con lo cual es tan dif\'icil de
+resolver como los dem\'as problemas dentro de esta categor\'ia.
 
 Esto es desalentador en un principio puesto que un algoritmo exacto para resolver
 este problema y que sea pr\'actico para utilizar en entradas no triviales no es
 conocido, y la pregunta de si existe es parte de una de las preguntas abiertas
 m\'as conocidas de la computaci\'on~\cite{Cormen}.
+
+A diferencia de en el caso de GPU, resolvemos el problema sim\'etrico, el cual
+corresponde a la versi\'on est\'andar. En este, todos los procesadores son
+iguales entre si. Asumiremos tambi\'en que no hay costo inherente en la
+divisi\'on de trabajo y que todos ejecutan perfectamente en paralelo.
 
 En particular, este problema es muy similar a otro problema muy conocido,
 denominado \textit{Bin Packing Problem}. Este problema consiste en, dados $n$

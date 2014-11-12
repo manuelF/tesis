@@ -12,6 +12,10 @@ def time2secs(s):
     sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
     return float(sec) + float(msec) / MSEC
 
+def time2milis(s):
+    sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    return float(sec) * 1000.0 + float(msec) / 1000.0
+
 def time2micros(s):
     return int(re.search("(\d+)us.",s).group(1))
 
@@ -69,7 +73,7 @@ def hemo_group_sizes_histogram():
     histogram(**params)
 
     params = {
-        'xlabel': u"Indices de fock por grupo",
+        'xlabel': u"Indices a actualizar en Kohm-Sham, por grupo",
         'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
@@ -102,40 +106,40 @@ def comparison_in_times(l):
     return [v / min(l) for v in l]
 
 def post_matrix_splits():
-    post = time2secs("14s. 424535us.")
-    pre = time2secs("20s. 772551us.")
+    post = time2milis("14s. 424535us.")
+    pre = time2milis("20s. 772551us.")
 
     params = {
         'xlabel': u"Resultados para proyección de matrices en componentes",
-        'ylabel': u"Speedup por iteración en veces",
+        'ylabel': u"Tiempo de iteración [ms]",
         'xvalues': [u'Pre-optimizacion', u'Post-optimización'],
-        'yvalues': comparison_in_times([pre,post]),
+        'yvalues': [pre,post],
         'filename': u'post-split-matrices.png',
     }
     comparisonBarGraph(**params)
 
 def post_caching_matrices():
-    post = time2secs("11s. 329844us.")
-    pre = time2secs("14s. 424535us.")
+    post = time2milis("11s. 329844us.")
+    pre = time2milis("14s. 424535us.")
 
     params = {
         'xlabel': u"Resultados para cacheo de matrices iniciales",
-        'ylabel': u"Speedup por iteración en veces",
+        'ylabel': u"Tiempo de iteración [ms]",
         'xvalues': [u'Pre-optimización', u'Post-optimización'],
-        'yvalues': comparison_in_times([pre,post]),
+        'yvalues': [pre,post],
         'filename': u'post-cachear-matrices.png',
     }
     comparisonBarGraph(**params)
 
 def post_aligning_matrices():
-    pre = time2secs("11s. 329844us.")
-    post = time2secs("11s. 380037us.")
+    pre = time2milis("11s. 329844us.")
+    post = time2milis("11s. 380037us.")
 
     params = {
         'xlabel': u"Resultados para alineacion de matrices iniciales",
-        'ylabel': u"Speedup de la iteración en veces",
+        'ylabel': u"Tiempo de iteración [ms]",
         'xvalues': [u'Pre-optimización', u'Post-optimización'],
-        'yvalues': comparison_in_times([pre,post]),
+        'yvalues': [pre,post],
         'filename': u'post-alinear-matrices.png',
     }
     comparisonBarGraph(**params)
