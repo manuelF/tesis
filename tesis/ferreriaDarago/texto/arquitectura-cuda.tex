@@ -44,7 +44,7 @@ la supercomputadora m\'as potente del mundo en Noviembre 2001.~\cite{Top500Novem
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\plotwidth]{images/cuda-gflops.png}
-    \caption{Picos te\'oricos de performance en GFLOPS/s. Tomado de~\cite{cudaProgrammingGuide}}
+    \caption{Picos te\'oricos de performance en GFLOPS/s. Tomado de~\cite{cudaProgrammingGuide}.}
     \label{cuda-gflops}
 \end{figure}
 
@@ -88,7 +88,7 @@ cuando se lo necesita. ~\cite{CudaOverview}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\plotwidth]{images/fermi-sm.pdf}
-    \caption{Diagrama de bloques del SM de GF100 Fermi. Tomado de~\cite{NvidiaFermi}}
+    \caption{Diagrama de bloques del SM de GF100 Fermi. Tomado de~\cite{NvidiaFermi}.}
     \label{fermi_sm}
 \end{figure}
 
@@ -109,7 +109,7 @@ compartida com\'un a todos los threads como cach\'e L1 para todos los accesos a 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\plotwidth]{images/fermi-gpu-block.png}
-    \caption{Diagrama de bloques de GF100 Fermi. Tomado de~\cite{NvidiaFermi}}
+    \caption{Diagrama de bloques de GF100 Fermi. Tomado de~\cite{NvidiaFermi}.}
     \label{fermi_gpu_block}
 \end{figure}
 
@@ -254,7 +254,7 @@ accesos a memoria globales podr\'ia servir, as\'i que hay que usarla juiciosamen
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=250px]{images/cuda-memories.png}
-    \caption{Jerarqu\'ia de memorias en GPU. Tomado de~\cite{farberCuda}}
+    \caption{Jerarqu\'ia de memorias en GPU. Tomado de~\cite{farberCuda}.}
     \label{fig:cuda-memories}
 \end{figure}
 
@@ -325,7 +325,7 @@ un procesador m\'as escalable y de prop\'osito general.
   Pico GFLOPS Simple       & 933             & 1345            & 3977             \\
   GFLOPS/Watt              & 3.95            & 5.38            & 15.9             \\ \bottomrule
   \end{tabular}
-\caption{Tabla comparativa de las caracter\'isticas mas prominentes de las tres arquitecturas de CUDA}
+\caption{Tabla comparativa de las caracter\'isticas mas prominentes de las tres arquitecturas de CUDA.}
 \label{tab:CudaGenerations}
 \end{table}
 
@@ -452,14 +452,12 @@ invertir el tiempo necesario de la implementaci\'on y ajuste fino.
 
 
 \subsection{Diferencia entre CPU y GPU - Procesadores especulativos}
-Hasta ahora, solo consideramos GPGPU de forma aislada, viendo las prestaciones del hardware y un m\'inimo
+Hasta ahora, solo se consideraron a los GPGPU de forma aislada, viendo las prestaciones del hardware y un m\'inimo
 de como se escriben los programas para esta arquitectura. La esencia de GPGPU se puede apreciar mejor
 compar\'andola contra los motivos de la evoluci\'on de CPU, y los problemas que se fueron enfrentando
-los dise\~nos siguiendo la historia de los componentes que fueron apareciendo en estos.
-
-(insertar foto de die de nehalem)
-
-cach\'es - Pipelines - Predictores - M\'as cach\'e - M\'as controladores de memoria - Multiple issues
+los dise\~nos siguiendo la historia de los componentes que fueron apareciendo en estos. Esto se vio
+en la tabla \ref{tbl:historia-cpu}, que detalla algunos de los eventos m\'as importantes que aceleraron
+la performance de los CPU.
 
 Lo importante ac\'a es observar el patr\'on: ``no desechar algo que pudi\'eramos necesitar pronto'',
 ``intentar predecir el futuro de los condicionales'', ``intentar correr m\'ultiples instrucciones a la vez
@@ -467,7 +465,7 @@ porque puede llegar a bloquear en alguna de ellas.''
 
 Todos estos problemas han convertido al CPU en un dispositivo que gira alrededor de la especulaci\'on,
 de los valores futuros que pueden tener las ejecuciones, del probable reuso de datos.
-Podemos observar entonces que las unidades que verdaderamente realizan las operaciones l\'ogico-aritm\'eticas,
+En un CPU moderno (por ej. Intel Xeon E7-8800~\cite{XeonE78800Spec}) las unidades que verdaderamente realizan las operaciones l\'ogico-aritm\'eticas,
 las ALU, son muy pocas en comparaci\'on con la cantidad de dispositivos de soporte que est\'an
 sobre el silicio del CPU.
 
