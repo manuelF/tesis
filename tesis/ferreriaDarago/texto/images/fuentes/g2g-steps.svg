@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="714.84241"
-   height="1018.0436"
+   width="647.1925"
+   height="983.86188"
    id="svg2987"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
@@ -53,17 +53,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.67875283"
-     inkscape:cx="357.42121"
-     inkscape:cy="509.02182"
+     inkscape:zoom="0.8310401"
+     inkscape:cx="422.32397"
+     inkscape:cy="842.14245"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1115"
-     inkscape:window-height="852"
+     inkscape:window-width="1600"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="22"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -76,7 +76,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -84,15 +84,15 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Recuadros"
-     transform="translate(-26.446571,-17.775465)" />
+     transform="translate(-26.446571,-51.957211)" />
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-26.446571,-17.775465)">
+     transform="translate(-26.446571,-51.957211)">
     <g
        id="g5943"
-       transform="translate(-15.97682,19.468727)">
+       transform="translate(-11.183935,19.468727)">
       <rect
          y="952.66272"
          x="84.452461"
@@ -113,43 +113,8 @@
            sodipodi:role="line">Salida: Función de onda y energía</tspan></text>
     </g>
     <g
-       id="g4527"
-       transform="translate(16.752605,0)">
-      <g
-         id="g4520">
-        <rect
-           style="fill:#b3b3b3;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-           id="rect3194"
-           width="558.92462"
-           height="194.93829"
-           x="83.762543"
-           y="42.64275"
-           rx="60.675644" />
-        <rect
-           style="fill:#f9f9f9;fill-opacity:1;stroke:#000000;stroke-opacity:1"
-           id="rect3966"
-           width="389.87659"
-           height="54.826393"
-           x="155.34145"
-           y="18.275465"
-           rx="1"
-           ry="1" />
-      </g>
-      <text
-         sodipodi:linespacing="125%"
-         id="text2995"
-         y="56.349361"
-         x="167.52512"
-         style="font-size:36px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="56.349361"
-           x="167.52512"
-           id="tspan2997"
-           sodipodi:role="line">Generación de grilla</tspan></text>
-    </g>
-    <g
        id="g4730"
-       transform="translate(10.660785,26.332298)">
+       transform="matrix(0.90343424,0,0,1,13.541005,26.332298)">
       <g
          id="g4566">
         <rect
@@ -182,43 +147,6 @@
            id="tspan2997-9"
            sodipodi:role="line">Construcción matriz Kohn-Sham</tspan></text>
     </g>
-    <g
-       id="g4874"
-       transform="translate(71.579005,25.304114)">
-      <rect
-         rx="58.295891"
-         y="662.12769"
-         x="109.4828"
-         height="155.43184"
-         width="537.00305"
-         id="rect3194-0-9"
-         style="fill:#cccccc;stroke:#000000;stroke-width:0.56540376;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-      <g
-         transform="translate(-49.966141,-9.4503626)"
-         id="g4650">
-        <rect
-           style="fill:#f9f9f9;fill-opacity:1;stroke:#000000;stroke-width:1.06674409;stroke-opacity:1"
-           id="rect3966-3-4"
-           width="477.16287"
-           height="50.976574"
-           x="189.36903"
-           y="643.08911"
-           rx="1.2238818"
-           ry="0.92978162" />
-        <text
-           xml:space="preserve"
-           style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-           x="206.29901"
-           y="676.7215"
-           id="text2999-3-4"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan3001-2-2"
-             x="206.29901"
-             y="676.7215"
-             style="font-size:28px">Fuerzas Intercambio Correlación</tspan></text>
-      </g>
-    </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:1.01000392px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1Lend)"
        d="m 351.64958,936.61757 -324.698007,0 0,-514.75892 332.465897,0 0,22.84433"
@@ -241,145 +169,89 @@
          x="44.165707"
          y="409.67499">Repetir hasta convergencia SCF</tspan></text>
     <g
-       id="g4424"
-       transform="translate(24.388596,1.1464857)">
-      <text
-         sodipodi:linespacing="125%"
-         id="text2999"
-         y="112.41625"
-         x="125.47585"
-         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="112.41625"
-           x="125.47585"
-           id="tspan3001"
-           sodipodi:role="line">Posición y grupo por cada punto</tspan></text>
+       id="g3311"
+       transform="translate(55.75101,10.499164)">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="rect4040-4-5"
+         width="22.772001"
+         height="24.825336"
+         x="164.4745"
+         y="265.24741"
+         rx="0.61000341"
+         ry="0.44576916" />
+      <g
+         id="g3197">
+        <g
+           id="g4451"
+           transform="translate(73.449951,-12.451417)">
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999-2"
+             y="297.21304"
+             x="125.58235"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               y="297.21304"
+               x="125.58235"
+               id="tspan3001-6"
+               sodipodi:role="line">Aproximación inicial</tspan></text>
+        </g>
+        <text
+           sodipodi:linespacing="125%"
+           id="text4036-0-79"
+           y="286.60733"
+           x="168.67105"
+           style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+           xml:space="preserve"><tspan
+             y="286.60733"
+             x="168.67105"
+             id="tspan4038-7-4"
+             sodipodi:role="line">d</tspan></text>
+      </g>
     </g>
-    <rect
-       ry="0.44576916"
-       rx="0.61000341"
-       y="94.528976"
-       x="119.02132"
-       height="24.825336"
-       width="22.772001"
-       id="rect4040-4-7"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <text
-       sodipodi:linespacing="125%"
-       id="text4036-0-2"
-       y="113.49242"
-       x="123.42294"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       xml:space="preserve"><tspan
-         y="113.49242"
-         x="123.42294"
-         id="tspan4038-7-7"
-         sodipodi:role="line">a</tspan></text>
     <g
-       id="g4433"
-       transform="translate(24.388596,-2.5244694)">
-      <text
-         sodipodi:linespacing="125%"
-         id="text2999-8"
-         y="182.60367"
-         x="125.47585"
-         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="182.60367"
-           x="125.47585"
-           id="tspan3001-1"
-           sodipodi:role="line">Funciones significativas para cada grupo</tspan></text>
-    </g>
-    <rect
-       ry="0.44576916"
-       rx="0.61000341"
-       y="161.04544"
-       x="119.02132"
-       height="24.825336"
-       width="22.772001"
-       id="rect4040-4-8"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <text
-       sodipodi:linespacing="125%"
-       id="text4036-0-7"
-       y="180.0089"
-       x="123.89169"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       xml:space="preserve"><tspan
-         y="180.0089"
-         x="123.89169"
-         id="tspan4038-7-2"
-         sodipodi:role="line">c</tspan></text>
-    <g
-       id="g4451"
-       transform="translate(73.449951,-12.451417)">
-      <text
-         sodipodi:linespacing="125%"
-         id="text2999-2"
-         y="297.21304"
-         x="125.58235"
-         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="297.21304"
-           x="125.58235"
-           id="tspan3001-6"
-           sodipodi:role="line">Aproximación inicial</tspan></text>
-    </g>
-    <rect
-       ry="0.44576916"
-       rx="0.61000341"
-       y="265.24741"
-       x="164.4745"
-       height="24.825336"
-       width="22.772001"
-       id="rect4040-4-5"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <text
-       sodipodi:linespacing="125%"
-       id="text4036-0-79"
-       y="286.60733"
-       x="168.67105"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       xml:space="preserve"><tspan
-         y="286.60733"
-         x="168.67105"
-         id="tspan4038-7-4"
-         sodipodi:role="line">d</tspan></text>
-    <g
-       id="g4442"
-       transform="translate(73.449951,4.0276736)">
-      <text
-         sodipodi:linespacing="125%"
-         id="text2999-3"
-         y="348.25992"
-         x="123.41438"
-         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="348.25992"
+       id="g3330"
+       transform="translate(3.7059189,0)">
+      <g
+         transform="translate(74.028415,4.0276736)"
+         id="g4442">
+        <text
+           xml:space="preserve"
+           style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
            x="123.41438"
-           id="tspan3001-2"
-           sodipodi:role="line">Precomputo de ERI y QM/MM</tspan></text>
+           y="348.25992"
+           id="text2999-3"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3001-2"
+             x="123.41438"
+             y="348.25992">Precomputo de ERI y QM/MM</tspan></text>
+      </g>
+      <g
+         id="g3325">
+        <rect
+           ry="0.44576916"
+           rx="0.61000341"
+           y="333.25381"
+           x="164.4745"
+           height="24.825336"
+           width="22.772001"
+           id="rect4040-4-2"
+           style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text4036-0-3"
+           y="352.21725"
+           x="169.03271"
+           style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+           xml:space="preserve"><tspan
+             y="352.21725"
+             x="169.03271"
+             id="tspan4038-7-0"
+             sodipodi:role="line">e</tspan></text>
+      </g>
     </g>
-    <rect
-       ry="0.44576916"
-       rx="0.61000341"
-       y="333.25381"
-       x="164.4745"
-       height="24.825336"
-       width="22.772001"
-       id="rect4040-4-2"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <text
-       sodipodi:linespacing="125%"
-       id="text4036-0-3"
-       y="352.21725"
-       x="168.45425"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       xml:space="preserve"><tspan
-         y="352.21725"
-         x="168.45425"
-         id="tspan4038-7-0"
-         sodipodi:role="line">e</tspan></text>
     <g
        id="g4460"
        transform="translate(18.84288,31.780349)">
@@ -393,7 +265,7 @@
            y="520.61725"
            x="78.370735"
            id="tspan3001-2-3"
-           sodipodi:role="line">ERI</tspan></text>
+           sodipodi:role="line">Contribuciónes ERI</tspan></text>
     </g>
     <g
        id="g4099-2-84"
@@ -432,7 +304,7 @@
            y="554.41919"
            x="78.370735"
            id="tspan3001-2-8"
-           sodipodi:role="line">Fuerzas Un electrón</tspan></text>
+           sodipodi:role="line">Contribuciónes Un electrón</tspan></text>
     </g>
     <g
        id="g4214-03-30"
@@ -474,7 +346,7 @@
            y="593.9751"
            x="78.370735"
            id="tspan3001-2-5"
-           sodipodi:role="line">Fuerzas QM/MM</tspan></text>
+           sodipodi:role="line">Contribuciónes QM/MM</tspan></text>
     </g>
     <g
        id="g4214-03-88"
@@ -504,202 +376,382 @@
       </g>
     </g>
     <g
-       id="g4487"
-       transform="translate(-3.50029,17.376707)">
-      <text
-         sodipodi:linespacing="125%"
-         id="text2999-3-99-1"
-         y="726.09595"
-         x="247.94092"
-         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="726.09595"
-           x="247.94092"
-           id="tspan3001-2-5-8"
-           sodipodi:role="line">Valores de las funciones</tspan></text>
-    </g>
-    <g
-       id="g4214-03-74"
-       transform="translate(156.29029,479.21502)">
+       id="g3155"
+       transform="translate(0.00204712,0)">
       <g
-         id="g4099-2-44">
+         id="g3148">
         <rect
-           ry="0.44576916"
-           rx="0.61000341"
-           y="242.56226"
-           x="50.931843"
-           height="24.825336"
-           width="22.772001"
-           id="rect4040-4-9"
-           style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-        <text
-           sodipodi:linespacing="125%"
-           id="text4036-0-5"
-           y="264.0921"
-           x="62.306126"
-           style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-           xml:space="preserve"><tspan
-             y="264.0921"
-             x="62.306126"
-             id="tspan4038-7-03"
-             sodipodi:role="line">i</tspan></text>
+           style="fill:#cccccc;stroke:#000000;stroke-width:0.61024356;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="rect3194-0-9"
+           width="625.55542"
+           height="155.43184"
+           x="44.045807"
+           y="674.17218"
+           rx="67.908943" />
+        <g
+           id="g4650"
+           transform="translate(-115.40314,2.5941384)">
+          <rect
+             ry="0.92978162"
+             rx="1.4775138"
+             y="643.08911"
+             x="189.36903"
+             height="50.976574"
+             width="576.04803"
+             id="rect3966-3-4"
+             style="fill:#f9f9f9;fill-opacity:1;stroke:#000000;stroke-width:1.1720773;stroke-opacity:1" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999-3-4"
+             y="676.7215"
+             x="206.29901"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               style="font-size:28px"
+               y="676.7215"
+               x="206.29901"
+               id="tspan3001-2-2"
+               sodipodi:role="line">Contribuciónes Intercambio Correlación</tspan></text>
+        </g>
+      </g>
+      <g
+         transform="translate(-137.016,-13.259613)"
+         id="g3097">
+        <g
+           id="g4487"
+           transform="translate(-3.50029,17.376707)">
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999-3-99-1"
+             y="726.09595"
+             x="247.94092"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               y="726.09595"
+               x="247.94092"
+               id="tspan3001-2-5-8"
+               sodipodi:role="line">Valores de las funciones</tspan></text>
+        </g>
+        <g
+           id="g4214-03-74"
+           transform="translate(156.29029,479.21502)">
+          <g
+             id="g4099-2-44">
+            <rect
+               ry="0.44576916"
+               rx="0.61000341"
+               y="242.56226"
+               x="50.931843"
+               height="24.825336"
+               width="22.772001"
+               id="rect4040-4-9"
+               style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+            <text
+               sodipodi:linespacing="125%"
+               id="text4036-0-5"
+               y="264.0921"
+               x="62.306126"
+               style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+               xml:space="preserve"><tspan
+                 y="264.0921"
+                 x="62.306126"
+                 id="tspan4038-7-03"
+                 sodipodi:role="line">i</tspan></text>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(-137.016,-13.259613)"
+         id="g6321">
+        <g
+           id="g4496"
+           transform="translate(-3.50029,12.491888)">
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999-3-99-5"
+             y="762.50909"
+             x="245.77295"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               y="762.50909"
+               x="245.77295"
+               id="tspan3001-2-5-3"
+               sodipodi:role="line">Densidad y derivadas</tspan></text>
+        </g>
+        <g
+           id="g4214-03-71"
+           transform="translate(156.29029,512.76379)">
+          <g
+             id="g4099-2-1">
+            <rect
+               ry="0.44576916"
+               rx="0.61000341"
+               y="243.20343"
+               x="50.931843"
+               height="24.825336"
+               width="22.772001"
+               id="rect4040-4-78"
+               style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+            <text
+               sodipodi:linespacing="125%"
+               id="text4036-0-30"
+               y="262.23718"
+               x="60.325657"
+               style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+               xml:space="preserve"><tspan
+                 y="262.23718"
+                 x="60.325657"
+                 id="tspan4038-7-78"
+                 sodipodi:role="line">j</tspan></text>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(-137.016,-13.259613)"
+         id="g3107">
+        <g
+           id="g4505"
+           transform="translate(-3.50029,17.376707)">
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999-3-99-2"
+             y="790.73944"
+             x="245.77295"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               y="790.73944"
+               x="245.77295"
+               id="tspan3001-2-5-1"
+               sodipodi:role="line">Elementos matriz Kohn-Sham</tspan></text>
+        </g>
+        <g
+           id="g4214-03-1"
+           transform="translate(156.8314,544.14814)">
+          <g
+             id="g4099-2-17">
+            <rect
+               ry="0.44576916"
+               rx="0.61000341"
+               y="242.56226"
+               x="50.931843"
+               height="24.825336"
+               width="22.772001"
+               id="rect4040-4-1"
+               style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+            <text
+               sodipodi:linespacing="125%"
+               id="text4036-0-15"
+               y="263.92218"
+               x="54.267063"
+               style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+               xml:space="preserve"><tspan
+                 y="263.92218"
+                 x="54.267063"
+                 id="tspan4038-7-8"
+                 sodipodi:role="line">k</tspan></text>
+          </g>
+        </g>
       </g>
     </g>
     <g
-       id="g6321">
+       id="g6341"
+       transform="translate(-63.875018,0)">
       <g
-         transform="translate(-3.50029,12.491888)"
-         id="g4496">
-        <text
-           xml:space="preserve"
-           style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-           x="245.77295"
-           y="762.50909"
-           id="text2999-3-99-5"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan3001-2-5-3"
-             x="245.77295"
-             y="762.50909">Densidad y derivadas</tspan></text>
-      </g>
-      <g
-         transform="translate(156.29029,512.76379)"
-         id="g4214-03-71">
+         id="g3134">
         <g
-           id="g4099-2-1">
+           id="g4610"
+           transform="translate(93.952626,20.434884)">
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999-3-99-7"
+             y="879.53998"
+             x="118.28503"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               y="879.53998"
+               x="118.28503"
+               id="tspan3001-2-5-6"
+               sodipodi:role="line">Diagonalización matriz de Kohn-Sham</tspan></text>
+        </g>
+        <g
+           id="g3129">
           <rect
              style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-             id="rect4040-4-78"
+             id="rect4040-4-22"
              width="22.772001"
              height="24.825336"
-             x="50.931843"
-             y="243.20343"
+             x="174.75558"
+             y="880.46063"
              rx="0.61000341"
              ry="0.44576916" />
           <text
              xml:space="preserve"
              style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-             x="60.325657"
-             y="262.23718"
-             id="text4036-0-30"
+             x="182.80174"
+             y="901.99048"
+             id="text4036-0-59"
              sodipodi:linespacing="125%"><tspan
                sodipodi:role="line"
-               id="tspan4038-7-78"
-               x="60.325657"
-               y="262.23718">j</tspan></text>
+               id="tspan4038-7-87"
+               x="182.80174"
+               y="901.99048">l</tspan></text>
         </g>
       </g>
     </g>
     <g
-       id="g4505"
-       transform="translate(-3.50029,17.376707)">
-      <text
-         sodipodi:linespacing="125%"
-         id="text2999-3-99-2"
-         y="790.73944"
-         x="245.77295"
-         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="790.73944"
-           x="245.77295"
-           id="tspan3001-2-5-1"
-           sodipodi:role="line">Elementos matriz Kohn-Sham</tspan></text>
-    </g>
-    <g
-       id="g4214-03-1"
-       transform="translate(156.8314,544.14814)">
+       id="g3281"
+       transform="translate(-24.636576,25.981912)">
       <g
-         id="g4099-2-17">
+         id="g3274">
+        <g
+           id="g4520"
+           transform="matrix(1,0,0,0.86828622,18.237286,10.572874)">
+          <rect
+             rx="60.675644"
+             y="42.64275"
+             x="83.762543"
+             height="194.93829"
+             width="558.92462"
+             id="rect3194"
+             style="fill:#b3b3b3;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+          <rect
+             ry="1"
+             rx="1"
+             y="18.275465"
+             x="155.34145"
+             height="54.826393"
+             width="389.87659"
+             id="rect3966"
+             style="fill:#f9f9f9;fill-opacity:1;stroke:#000000;stroke-opacity:1" />
+        </g>
+        <text
+           xml:space="preserve"
+           style="font-size:36px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="183.30836"
+           y="61.545742"
+           id="text2995"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan2997"
+             x="183.30836"
+             y="61.545742">Generación de grilla</tspan></text>
+      </g>
+      <g
+         id="g3234">
         <rect
            ry="0.44576916"
            rx="0.61000341"
-           y="242.56226"
-           x="50.931843"
+           y="94.528976"
+           x="119.02132"
            height="24.825336"
            width="22.772001"
-           id="rect4040-4-1"
+           id="rect4040-4-7"
            style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        <g
+           id="g4424"
+           transform="translate(24.388596,1.1464857)">
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999"
+             y="112.41625"
+             x="125.47585"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               y="112.41625"
+               x="125.47585"
+               id="tspan3001"
+               sodipodi:role="line">Posición y grupo por cada punto</tspan></text>
+        </g>
         <text
            sodipodi:linespacing="125%"
-           id="text4036-0-15"
-           y="263.92218"
-           x="54.267063"
+           id="text4036-0-2"
+           y="113.49242"
+           x="123.42294"
            style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
            xml:space="preserve"><tspan
-             y="263.92218"
-             x="54.267063"
-             id="tspan4038-7-8"
-             sodipodi:role="line">k</tspan></text>
+             y="113.49242"
+             x="123.42294"
+             id="tspan4038-7-7"
+             sodipodi:role="line">a</tspan></text>
       </g>
-    </g>
-    <g
-       id="g6341">
       <g
-         transform="translate(93.952626,20.434884)"
-         id="g4610">
+         id="g3260">
+        <g
+           id="g4433"
+           transform="translate(24.388596,-2.5244694)">
+          <text
+             sodipodi:linespacing="125%"
+             id="text2999-8"
+             y="182.60367"
+             x="125.47585"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               y="182.60367"
+               x="125.47585"
+               id="tspan3001-1"
+               sodipodi:role="line">Funciones significativas para cada grupo</tspan></text>
+        </g>
+        <g
+           id="g3255">
+          <rect
+             style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+             id="rect4040-4-8"
+             width="22.772001"
+             height="24.825336"
+             x="119.02132"
+             y="161.04544"
+             rx="0.61000341"
+             ry="0.44576916" />
+          <text
+             xml:space="preserve"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+             x="123.89169"
+             y="180.0089"
+             id="text4036-0-7"
+             sodipodi:linespacing="125%"><tspan
+               sodipodi:role="line"
+               id="tspan4038-7-2"
+               x="123.89169"
+               y="180.0089">c</tspan></text>
+        </g>
+      </g>
+      <g
+         id="g3247">
         <text
            xml:space="preserve"
            style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-           x="118.28503"
-           y="879.53998"
-           id="text2999-3-99-7"
+           x="149.86446"
+           y="145.21684"
+           id="text2999-9"
            sodipodi:linespacing="125%"><tspan
              sodipodi:role="line"
-             id="tspan3001-2-5-6"
-             x="118.28503"
-             y="879.53998">Diagonalización matriz de Fock</tspan></text>
+             id="tspan3001-8"
+             x="149.86446"
+             y="145.21684">Peso de cada punto</tspan></text>
+        <g
+           id="g3242">
+          <rect
+             style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+             id="rect4040-4-7-5"
+             width="22.772001"
+             height="24.825336"
+             x="119.02132"
+             y="126.18308"
+             rx="0.61000341"
+             ry="0.44576916" />
+          <text
+             xml:space="preserve"
+             style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+             x="122.35654"
+             y="147.54301"
+             id="text4036-0-2-4"
+             sodipodi:linespacing="125%"><tspan
+               sodipodi:role="line"
+               id="tspan4038-7-7-1"
+               x="122.35654"
+               y="147.54301">b</tspan></text>
+        </g>
       </g>
-      <rect
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         id="rect4040-4-22"
-         width="22.772001"
-         height="24.825336"
-         x="174.75558"
-         y="880.46063"
-         rx="0.61000341"
-         ry="0.44576916" />
-      <text
-         xml:space="preserve"
-         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-         x="182.80174"
-         y="901.99048"
-         id="text4036-0-59"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan4038-7-87"
-           x="182.80174"
-           y="901.99048">l</tspan></text>
     </g>
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="149.86446"
-       y="145.21684"
-       id="text2999-9"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3001-8"
-         x="149.86446"
-         y="145.21684">Peso de cada punto</tspan></text>
-    <rect
-       ry="0.44576916"
-       rx="0.61000341"
-       y="126.18308"
-       x="119.02132"
-       height="24.825336"
-       width="22.772001"
-       id="rect4040-4-7-5"
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.4888334;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <text
-       sodipodi:linespacing="125%"
-       id="text4036-0-2-4"
-       y="147.54301"
-       x="122.35654"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       xml:space="preserve"><tspan
-         y="147.54301"
-         x="122.35654"
-         id="tspan4038-7-7-1"
-         sodipodi:role="line">b</tspan></text>
   </g>
 </svg>
