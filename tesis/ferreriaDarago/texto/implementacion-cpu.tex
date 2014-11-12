@@ -689,11 +689,19 @@ las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
 
 %TODO(jpdarago): Poner el total del codigo en un apendice
 
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{images/reductions.png}
+   \caption{Esquema de las reducciones realizadas en cada iteraci\'on del ciclo de la
+   figura~\ref{code:sum-matrix-bench-code}.}
+   \label{fig:sum-matrix-bench-result}
+\end{figure}
+
 Claramente este algoritmo debiera producir un mejor tiempo de ejecuci\'on, en
 teor\'ia, utilizando m\'ultiples procesadores. Esto suena razonable considerando
 que al menos algunas operaciones son delegadas a otros procesadores.
 
-Medimos los tiempos de reducir 128 matrices de $1024 \times 1024$ elementos de punto
+Medimos los tiempos de reducir $128$ matrices de $1024 \times 1024$ elementos de punto
 flotante de precisi\'on simple, variando la cantidad de hilos de ejecuci\'on a
 utilizar. Para compensar por primeras lecturas y otros factores, se tomo un promedio
 de los resultados despu\'es de realizar 20 mediciones sucesivas con la misma
@@ -702,6 +710,7 @@ trabajo.
 
 Como puede verse en la figura~\ref{fig:sum-matrix-bench-result}, los resultados
 son desalentadores: el uso de multiprocesamiento no es \'util para este problema.
+
 
 \begin{figure}[htbp]
    \centering
