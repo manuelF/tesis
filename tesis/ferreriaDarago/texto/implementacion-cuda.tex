@@ -421,8 +421,6 @@ se nota principalmente en la linea GeForce, que cuentan con aproximadamente entr
 de la memoria global que tienen su equivalente en la linea Tesla. Esto es mitigado cuando se computa
 m\'ultiples placas, que tambi\'en distribuyen el almacenamiento ademas del computo.
 
-Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
-cantidad de memoria disponible para el cacheo.
 
 \begin{figure}[htbp]
    \centering
@@ -434,13 +432,14 @@ cantidad de memoria disponible para el cacheo.
      \includegraphics[width=\plotwidthtres]{plots/cuda/global-fullereno.png}
      \caption{Entre 0 y 4240 Mb.}
    \end{subfigure}
-   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria libre de
+   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria de
    la placa usada para almacenar las funciones.}
    \label{plt:global-fullereno}
 \end{figure}
 
-Como se puede ver en la figura \ref{plt:global-fullereno}, el
-almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
+Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
+cantidad de memoria disponible para el cacheo. Los resultados se pueden ver en la figura \ref{plt:global-fullereno}.
+Se puede observar que el almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
 de toda una iteraci\'on de SCF. Es interesante notar que son los primeros grupos los que causan mayor
 diferencia en los tiempos de ejecuci\'on. Con 5.3 Mb, se pueden guardar los 23 grupos mas peque\~nos del
 fullereno $C_{60}$; de ah\'i en m\'as, el impacto de la mejora decae. Esto sucede porque en grupos
