@@ -107,8 +107,8 @@ def post_matrix_splits():
 
     params = {
         'xlabel': u"Resultados para proyección de matrices en componentes",
-        'ylabel': u"Tiempo por iteración en veces",
-        'xvalues': ['Pre-optimizacion', 'Post-optimizacion'],
+        'ylabel': u"Speedup por iteración en veces",
+        'xvalues': [u'Pre-optimizacion', u'Post-optimización'],
         'yvalues': comparison_in_times([pre,post]),
         'filename': u'post-split-matrices.png',
     }
@@ -120,21 +120,21 @@ def post_caching_matrices():
 
     params = {
         'xlabel': u"Resultados para cacheo de matrices iniciales",
-        'ylabel': u"Tiempo por iteración en veces",
-        'xvalues': ['Pre-optimizacion', 'Post-optimizacion'],
+        'ylabel': u"Speedup por iteración en veces",
+        'xvalues': [u'Pre-optimización', u'Post-optimización'],
         'yvalues': comparison_in_times([pre,post]),
         'filename': u'post-cachear-matrices.png',
     }
     comparisonBarGraph(**params)
 
 def post_aligning_matrices():
-    post = time2secs("11s. 834914us.")
-    pre = time2secs("11s. 667524us.")
+    pre = time2secs("11s. 834914us.")
+    post = time2secs("11s. 667524us.")
 
     params = {
         'xlabel': u"Resultados para alineacion de matrices iniciales",
         'ylabel': u"Speedup de la iteración en veces",
-        'xvalues': ['Pre-optimización', 'Post-optimización'],
+        'xvalues': [u'Pre-optimización', u'Post-optimización'],
         'yvalues': comparison_in_times([pre,post]),
         'filename': u'post-alinear-matrices.png',
     }
