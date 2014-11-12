@@ -12,6 +12,7 @@ est\'an basadas en parte en su dise\~no, daremos una breve rese\~na de los aspec
 m\'as importantes y desarrollos modernos con respecto a la performance dentro de
 los procesadores modernos.
 
+
 \subsection{Tipos de paralelismo}
 
 Existen tres categor\'ias de paralelismo que una arquitectura puede aprovechar
@@ -38,6 +39,28 @@ en el \'ultimo tiempo en el dise\~no de procesadores.
     Esto conlleva esfuerzo adicional para mantener consistencia y coherencia de la misma
     para que no se convierta en un cuello de botella.
 \end{itemize}
+
+En base a estos tipos de paralelismo, surgieron grandes avances en la arquitectura de procesadores desde
+1950 en adelante. Estos se detallan cronologicamente en la tabla \ref{tbl:historia-cpu}, como tambien
+la motivaci\'on de su existencia.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\hline
+A\~no & Evento & Motivo \\ \hline
+1950s & Agregar Pipelines & Usar independientemente las distintas unidades del procesador para aumentar las instrucciones por ciclo. \\
+1970s & Agregar Vectorizacion & Poder realizar las mismas operaciones en muchos datos simult\'aneamente. \\
+1980s & Agregar Cache & La diferencia de velocidad entre la memoria y el procesador se segu\'ia acrecentando. \\
+1987 & Agregar M\'ultiples ALUs & Poder compensar las ALU que mas latencia tienen, se multiplican las unidades para procesar mas instrucciones en paralelo. \\
+1988 & Agregar Predicci\'on de Saltos & Disminuir y hasta evitar los costos de tener que recalcular el pipeline cuando hay saltos. \\
+1995 & Agregar Fuera de Orden & Seguir ejecutando instrucciones mientras se esperan datos anteriores. \\
+2002 & Agregar SMT & Poder procesar de a mas de un thread de OS en un solo core. \\
+2005 & Agregar Multi-core & Aumentar el poder de computo sin aumentar la velocidad de clock ni consumo. \\ \hline
+\end{tabular}
+  \caption{Cronolog\'ia de los avances de arquitectura de CPU.}
+  \label{tbl:historia-cpu}
+\end{table}
 
 A continuaci\'on detallamos algunos aspectos de cada una de estas t\'ecnicas.
 
