@@ -50,7 +50,7 @@ def hemo_group_sizes_histogram():
 
     params = {
         'xlabel': u"Funciones por grupo",
-        'ylabel': u"Fracción de los grupos",
+        'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
         'values': [int(f) for f in allfunctions],
@@ -60,7 +60,7 @@ def hemo_group_sizes_histogram():
 
     params = {
         'xlabel': u"Puntos por grupo",
-        'ylabel': u"Fracción de los grupos",
+        'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
         'values': [int(p) for p in allpoints],
@@ -70,7 +70,7 @@ def hemo_group_sizes_histogram():
 
     params = {
         'xlabel': u"Indices de fock por grupo",
-        'ylabel': u"Fracción de los grupos",
+        'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
         'values': [int(p) for p in allindexes],
