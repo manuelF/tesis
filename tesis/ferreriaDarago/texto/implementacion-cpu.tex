@@ -874,40 +874,37 @@ Por \'ultimo, si bien el algoritmo de particionado y la funci\'on de costo son
 buenas para los casos estudiados, no son perfectas. Como puede verse en la
 figura~\ref{fig:lio-imbalance-between-loads}, hay una diferencia entre cargas
 no despreciable en algunos casos, con lo cual todav\'ia se puede obtener algo de
-mejoras en \textit{performance} entre iteraciones utilizando balanceo de cargas.
+mejoras en \textit{performance} entre iteraciones utilizando balanceo de cargas,
+que obtuvo buenos resultados en la implementaci\'on para GPGPUS.
 
-Para aliviar esta situaci\'on ligeramente, introdujimos un algoritmo de balanceo
-de cargas similar al utilizado para distribuir cargas en GPU, usando pasaje de
-trabajos. Un esquema del mismo puede verse en el pseudoc\'odigo de la figura
-\ref{algo:algo-work-stealing-cpu}.
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/group-split-differences.png}
+   \caption{Comparaci\'on de los tiempos de ejecuci\'on para las distintas
+   cargas asignadas a cada hilo de ejecuci\'on en el caso de la hemoglobina.}
+   \label{fig:lio-imbalance-between-loads}
+\end{figure}
 
-El algoritmo es deliberadamente simple, para tener poco \textit{overhead}. Se
-mide el costo de cada grupo y luego se pasa el trabajo de menor costo (seg\'un
-nuestra estimaci\'on) del grupo m\'as pesado (el que termino \'ultimo) al
-m\'as ligero (el que termino primero). Esto solo se realiza si la diferencia
-de tiempos entre la carga m\'as pesada y la m\'as ligera es de m\'as del 5\%.
+El algoritmo es muy similar, se mide el tiempo de \textit{runtime} para cada
+grupo de cada carga, y cuanto dura cada una de ellas. Luego, se repite una
+cantidad de veces (5 veces, como la implementaci\'on de balanceo en multiplaca)
+que se mueve una cierta cantidad de grupos desde la carga m\'as pesada a la
+m\'as liviana, de manera de no pasarse de la diferencia temporal que hay entre
+ellas. Una vez movidos los grupos correspondientes, y tal que la diferencia
+entre los dos estimativos es menor que el 5\% del peso total de la carga m\'as
+pesada, se prosigue por encontrar las otras dos cargas m\'as dispares y
+rebalancearlas. Para m\'as detalles del algoritmo puede verse la secci\'on
+de balanceo de cargas de la implementaci\'on en GPU.
 
-Al elegir el grupo m\'as chico nos aseguramos que no movemos un grupo muy
-grande por error, potencialmente desbalanceando la partici\'on. La desventaja
-es que la convergencia es mucho m\'as lenta, pero esto no es demasiado
-problema puesto que como ya mencionamos, las diferencias de cargas
-experimentalmente resultan peque\~nas.
+El costo computacional ya se vi\'o anteriormente que resulta bajo. En el caso
+de la hemoglobina se consigue menos del 5\% de diferencia en una iteraci\'on
+de rebalanceo, obteniendose los resultados de la figura~\ref{fig:lio-imbalance-fixed}.
 
-\begin{algorithm}[H]
-    \caption{Pseudoc\'odigo para algoritmo de robo de trabajos}
-    \label{algo:algo-work-stealing-cpu}
-    \begin{algorithmic}
-        \Function{rebalance}{$T : Times, W : Workload$}
-            \State $largest \gets \arg\max T$
-            \State $smallest \gets \arg\min T$
-            \If{$\frac{T[largest] - T[smallest]}{T[largest]} > 0.05$}
-                \State $minwork \gets \arg\min W[largest]$
-                \State mover $minwork$ de $smallest$ a $largest$
-            \EndIf
-        \EndFunction
-    \end{algorithmic}
-\end{algorithm}
-
-El costo computacional resulta bajo pues requiere de una iteraci\'on para cada
-grupo, y no requiere medir granularmente (es decir, para cada grupo), aunque si
-para cada carga de un hilo de ejecuci\'on.
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/group-split-differences-post-balance.png}
+   \caption{Comparaci\'on de los tiempos de ejecuci\'on para las distintas
+   cargas asignadas a cada hilo de ejecuci\'on en el caso de la hemoglobina,
+   luego de rebalancear}
+   \label{fig:lio-imbalance-fixed}
+\end{figure}
