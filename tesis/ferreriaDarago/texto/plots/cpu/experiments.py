@@ -102,8 +102,8 @@ def comparison_in_times(l):
     return [v / min(l) for v in l]
 
 def post_matrix_splits():
-    post = time2secs("15s. 200498us.")
-    pre = time2secs("31s. 680109us.")
+    post = time2secs("14s. 424535us.")
+    pre = time2secs("20s. 772551us.")
 
     params = {
         'xlabel': u"Resultados para proyección de matrices en componentes",
@@ -115,8 +115,8 @@ def post_matrix_splits():
     comparisonBarGraph(**params)
 
 def post_caching_matrices():
-    post = time2secs("11s. 834914us.")
-    pre = time2secs("15s. 200498us.")
+    post = time2secs("11s. 329844us.")
+    pre = time2secs("14s. 424535us.")
 
     params = {
         'xlabel': u"Resultados para cacheo de matrices iniciales",
@@ -128,8 +128,8 @@ def post_caching_matrices():
     comparisonBarGraph(**params)
 
 def post_aligning_matrices():
-    pre = time2secs("11s. 834914us.")
-    post = time2secs("11s. 667524us.")
+    pre = time2secs("11s. 329844us.")
+    post = time2secs("11s. 380037us.")
 
     params = {
         'xlabel': u"Resultados para alineacion de matrices iniciales",
