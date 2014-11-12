@@ -173,18 +173,18 @@ def diferencias_de_grupos_por_split():
 
 def diferencias_de_grupos_balanceadas():
     timesstr = [
-        "275456us.",
-        "275536us.",
-        "278971us.",
-        "280285us.",
-        "282625us.",
-        "286209us.",
-        "287627us.",
-        "291019us.",
-        "293823us.",
-        "294335us.",
-        "299576us.",
-        "300984us.",
+        "241149us.",
+        "242012us.",
+        "241986us.",
+        "239921us.",
+        "242605us.",
+        "243379us.",
+        "243551us.",
+        "243860us.",
+        "245598us.",
+        "246323us.",
+        "249045us.",
+        "251391us.",
     ]
 
     times = comparison_in_times([time2micros(t)*1.0 for t in timesstr])
