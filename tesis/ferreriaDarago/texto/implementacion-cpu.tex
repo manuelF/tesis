@@ -209,8 +209,10 @@ de la figura~\ref{fig:lio-pseudo-dividir}.
 
 La figura~\ref{fig:lio-post-partir-mats} muestra los resultados de realizar esta
 optimizaci\'on en el caso de prueba de hemoglobina en la computadora de prueba.
-Como puede verse, la optimizaci\'on es m\'as que significativa, resultando en
-una aceleraci\'on de un poco m\'as que 2 veces.
+Como puede verse, la optimizaci\'on es muy significativa, incluso considerando
+que incrementa el tiempo de c\'alculo de funciones (que toda\'ia se realiza en
+todas las iteraciones) a\'un as\'i logra una aceleraci\'on sobre la versi\'on
+original.
 
 \begin{figure}[htbp]
    \centering
@@ -250,40 +252,40 @@ optimizado en la secci\'on anterior, y el actual despu\'es de esta modificaci\'o
    \label{fig:lio-post-cachear}
 \end{figure}
 
-\subsection{Alineamiento de matrices}
+%\subsection{Alineamiento de matrices}
 
-De modo de facilitar la vectorizaci\'on de las operaciones realizadas en el
-ciclo principal de la iteraci\'on, se tuvo en cuenta la alineaci\'on de las
-matrices de funciones, hessiano y gradiente. La alineaci\'on a 64 bytes facilita
-el uso de instrucciones vectoriales especiales del procesador para tomar los
-valores de la memoria principal~\cite{AutovectorizationGuide}.
+%De modo de facilitar la vectorizaci\'on de las operaciones realizadas en el
+%ciclo principal de la iteraci\'on, se tuvo en cuenta la alineaci\'on de las
+%matrices de funciones, hessiano y gradiente. La alineaci\'on a 64 bytes facilita
+%el uso de instrucciones vectoriales especiales del procesador para tomar los
+%valores de la memoria principal~\cite{AutovectorizationGuide}.
 
-Para alinear el comienzo de todas las matrices a 64 bytes se emplea la funci\'on
-de la librer\'ia MKL de Intel \texttt{mkl\_malloc}. Esta funci\'on retorna la
-memoria alineada a la potencia de dos que se desee~\cite{IntelMKLDoc}.
+%Para alinear el comienzo de todas las matrices a 64 bytes se emplea la funci\'on
+%de la librer\'ia MKL de Intel \texttt{mkl\_malloc}. Esta funci\'on retorna la
+%memoria alineada a la potencia de dos que se desee~\cite{IntelMKLDoc}.
 
-Esto sin embargo no resulta suficiente en el caso del ciclo m\'as interno de
-la iteraci\'on. Para esto, necesitamos que cada fila de las matrices est\'en alineadas.
-Dado que la cantidad de columnas de una matriz corresponde a la cantidad de funciones,
-alineamos las mismas con un \texttt{padding} de ceros hasta el m\'ultiplo m\'as
-cercano de 64 bytes. Esto introduce un m\'aximo de 16 valores nulos de precisi\'on
-simple u 8 de precisi\'on doble (de acuerdo a cual se este empleando) en cada
-fila.
+%Esto sin embargo no resulta suficiente en el caso del ciclo m\'as interno de
+%la iteraci\'on. Para esto, necesitamos que cada fila de las matrices est\'en alineadas.
+%Dado que la cantidad de columnas de una matriz corresponde a la cantidad de funciones,
+%alineamos las mismas con un \texttt{padding} de ceros hasta el m\'ultiplo m\'as
+%cercano de 64 bytes. Esto introduce un m\'aximo de 16 valores nulos de precisi\'on
+%simple u 8 de precisi\'on doble (de acuerdo a cual se este empleando) en cada
+%fila.
 
-La figura~\ref{fig:lio-post-align} muestra el resultado de aplicar esta optimizaci\'on
-en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
+%La figura~\ref{fig:lio-post-align} muestra el resultado de aplicar esta optimizaci\'on
+%en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
 
-Si bien la diferencia de performance es peque\~na en este caso, la importancia
-de esta optimizaci\'on en desarrollos futuros es tal que decidimos mantenerla,
-especialmente considerando la vectorizaci\'on en Xeon Phi~\cite{Jeffers}.
+%Si bien la diferencia de performance es peque\~na en este caso, la importancia
+%de esta optimizaci\'on en desarrollos futuros es tal que decidimos mantenerla,
+%especialmente considerando la vectorizaci\'on en Xeon Phi~\cite{Jeffers}.
 
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidth]{plots/cpu/post-alinear-matrices.png}
-   \caption{Speedup en veces para la iteraci\'on de G2G para el caso de la
-   mol\'ecula de hemoglobina, antes y despu\'es de alinear las matrices.}
-   \label{fig:lio-post-align}
-\end{figure}
+%\begin{figure}[htbp]
+   %\centering
+   %\includegraphics[width=\plotwidth]{plots/cpu/post-alinear-matrices.png}
+   %\caption{Speedup en veces para la iteraci\'on de G2G para el caso de la
+   %mol\'ecula de hemoglobina, antes y despu\'es de alinear las matrices.}
+   %\label{fig:lio-post-align}
+%\end{figure}
 
 \subsection{Prototipos de paralelizaci\'on}
 
