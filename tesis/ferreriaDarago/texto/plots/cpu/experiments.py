@@ -125,8 +125,6 @@ def post_caching_matrices():
     }
     comparisonBarGraph(**params)
 
-def post_alignment_matrices():
-
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
