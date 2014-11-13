@@ -1,10 +1,12 @@
-\subsection{Cuellos de botellas originales, limitantes estructurales}
+\subsection{Cuellos de botellas originales}
 
 De las etapas descriptas en la figura \ref{fig:lio-steps}, el m\'as costoso
 en la implementaci\'on existente para GPU es el paso (j). En el c\'alculo de un sistema
 de tama\~no medio, este paso solo representaba el 95\% del tiempo total. Esto hacia
-que esta etapa llevara tanto tiempo como todos los dem\'as c\'alculos combinados, incluso
-en las GPU m\'as veloces del mercado (Tesla K40, GeForce GTX 780).
+que esta etapa llevara tanto tiempo como todos los dem\'as c\'alculos de SCF combinados, incluso
+en las GPU m\'as veloces del mercado (Tesla K40, GeForce GTX 780). Adem\'as, en Fermi
+el tiempo de c\'omputo de SCF era menor que en Kepler, yendo en contra de lo que prometen
+las especificaciones de estos dispositivos.
 
 A continuaci\'on detallaremos muchos de los cambios que fueron realizados para aumentar
 la performance del c\'omputo de SCF.
@@ -53,8 +55,9 @@ solamente se cuenta con hasta 48Kb (Fermi-Kepler) de memoria de este tipo para s
 todos los bloques que est\'en corriendo en todos los SM, el scheduler deber\'a decidir no poner a ejecutar
 m\'as bloques simult\'aneamente que los que pueda soportar la cantidad de memoria compartida.
 
-El problema tratado dentro de esta tesis cont\'o con todos estos limitantes. Afortunadamente,
-las herramientas de profiling usadas remarca estos limitantes constantemente, haci\'endolas
+El problema de optimizar el c\'omputo del t\'ermino de intercambio-correlaci\'on tratado  cont\'o
+con todos estos limitantes. Afortunadamente,
+las herramientas de profiling usadas remarcan estos limitantes, haci\'endolas
 fundamentales a la hora de evaluar como proseguir en la b\'usqueda de optimizaciones de c\'odigo.
 
 \subsection{Cambios en el threading}
@@ -140,7 +143,7 @@ cantidad de bloques adicionales con respecto al m\'etodo anterior.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/threading.png}
-   \caption{Aceleraci\'on en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia}
+   \caption{Aceleraci\'on en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia.}
    \label{plt:threading}
 \end{figure}
 
@@ -237,7 +240,7 @@ Finalmente, la acumulaci\'on finaliza, generando un valor por cada punto, lo mis
 anteriormente pero utilizando mucho mejor los recursos del dispositivo.
 
 
-%%%%%%%%%%%%%%%5
+%%%%%%%%%%%%%%%
 
 
 \subsection{Cambios en los accesos globales}
@@ -452,7 +455,7 @@ casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/global-functions-acc.png}
    \caption{Fracci\'on del total del tiempo de c\'alculo de las matrices de funciones en una iteraci\'on en funci\'on
-   del ordenada por el tama\~no acumulado de estas en un fullereno $C_{60}$}
+   del ordenada por el tama\~no acumulado de estas en un fullereno $C_{60}$.}
    \label{plt:runtime-functions-fullereno}
 \end{figure}
 
@@ -612,11 +615,11 @@ la cantidad de memoria necesaria para operar.
    \centering
    \begin{subfigure}[b]{\plotwidthtres}
     \includegraphics[width=\textwidth]{plots/cuda/sizeingpu-predictor-hemo.png}
-     \caption{Predictor con \textit{size\_in\_gpu}}
+     \caption{Predictor con \textit{size\_in\_gpu}.}
    \end{subfigure}
    \begin{subfigure}[b]{\plotwidthtres}
     \includegraphics[width=\textwidth]{plots/cuda/cost-predictor-hemo.png}
-     \caption{Predictor con funci\'on de costo}
+     \caption{Predictor con funci\'on de costo.}
    \end{subfigure}
    \caption{Tiempos de ejecuci\'on de hemoglobina en Tesla K40 de acuerdo al costo del mismo seg\'un predictor.}
    \label{plt:runtime-predictor}
@@ -649,7 +652,7 @@ la informaci\'on de runtime para decidir como rebalancear las particiones entre 
 de haber hecho una aproximaci\'on inicial usando el predictor est\'atico antes mencionado.
 
 Inicialmente definimos un orden para realizar toda la resoluci\'on del sistema y
-se las distribuye de manera round-robin entre todos los dispositivos, para generar la
+se las distribuye de manera \textit{round-robin} entre todos los dispositivos, para generar la
 partici\'on inicial y cargando a cada placa con una cantidad similar de tareas. Esto no significa
 que todas tarden lo mismo, y es posible notarlo en las mediciones. Luego, utilizando el tama\~no
 de los dispositivos como proxy del tiempo de ejecuci\'on, aplicamos una ronda del algoritmo de balanceo din\'amico
@@ -750,7 +753,7 @@ de botella se notan a partir de la tercera placa, haciendo casi in\'util el uso 
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/4placas-simple.png}
-   \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on simple}
+   \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on simple.}
    \label{plt:4placas-simple}
 \end{figure}
 
@@ -770,7 +773,7 @@ lineal en la cantidad de dispositivos usados.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/4placas-doble.png}
-   \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on doble}
+   \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on doble.}
    \label{plt:4placas-doble}
 \end{figure}
 
