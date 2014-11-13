@@ -130,11 +130,11 @@ de la aplicaci\'on que es paralelizable y el porcentaje que no lo es. Matem\'ati
 
 \begin{equation}
     \label{eq:amdahl}
-    S(n) = \frac{1}{1 + \frac{1}{n} (1 - B)}
+    S(n) = \frac{1}{(1 - B) + \frac{B}{n}}
 \end{equation}
 
-Donde $S$ es el porcentaje m\'aximo de mejora alcanzable, $B$ es la fracci\'on del algoritmo a ejecutar que debe ejecutarse
-serialmente, y $n$ la cantidad de hilos de ejecuci\'on paralelos que se dispone.
+Donde $S$ es el porcentaje m\'aximo de mejora alcanzable, $B$ es la fracci\'on del algoritmo a ejecutar que se encuentra
+paralelizada, y $n$ la cantidad de hilos de ejecuci\'on paralelos que se dispone.
 
 \begin{figure}[htbp]
     \centering
@@ -165,3 +165,6 @@ ilustra esto es el de \textit{false sharing}. Este fen\'omeno sucede cuando una 
 reside en la misma l\'inea de cache con una que si, requiriendo entonces que sea pasada de lado a lado entre cores aunque
 nunca fuese esto necesario, decrementando la escalabilidad del algoritmo a muchos procesadores y siendo
 dif\'icil de descubrir al depender intr\'insecamente del sistema en el que se corre.
+
+Los desaf\'ios generados por la adici\'on de cores influencia fuertemente los dise\~nos de una arquitectura, no solo en
+procesadores est\'andar sino tambi\'en en aceleradores como las GPGPUs y coprocesadores num\'ericos.
