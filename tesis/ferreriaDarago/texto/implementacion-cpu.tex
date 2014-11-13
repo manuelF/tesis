@@ -156,26 +156,17 @@ optimizar dado que la MKL ya se utilizaba en otras secciones del programa.
               \ForAll{$p \in Points(PG)$}
                   \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
                   \ForAll{$i \in functions(PG, p)$}
-                      \State $w \gets \Sigma_{0 \leq j \leq i} F_{p,j} \cdot RMM_{ij}$
-                      \State $w3 \gets \Sigma_{0 \leq j \leq i} G_{p,j} \cdot RMM_{ij}$
-                      \State $ww1 \gets \Sigma_{0 \leq j \leq i} H_{p,2j} \cdot RMM_{ij}$
-                      \State $ww2 \gets \Sigma_{0 \leq j \leq i} H_{p,2j+1} \cdot RMM_{ij}$
-                      \State $pd \gets pd + F_{p,i} w$
-                      \State $dxyz \gets dxyz + G_{p,i} \cdot w + w3 \cdot F_{p,i}$
-                      \State $dd1 \gets dd1 + 2 \cdot w3 \cdot G_{p,i} + H_{p,2i} \cdot w + ww1 \cdot F_{p,i}$
-                      \State $FgXXY \gets (G_{p,i}^x, G_{p,i}^x, G_{p,i}^y)$
-                      \State $w3XXY \gets (w3^x, w3^x, w3^y)$
-                      \State $w3YYZ \gets (w3^y, w3^y, w3^z)$
-                      \State $FgYZZ \gets (G_{p,i}^y, G_{p,i}^z, G_{p,i}^z)$
-                      \State $dd2 \gets dd2 + FgXXY \cdot w3YYZ + FgYYZ \cdot w3XXY + H_{p,2j+1} \cdot w + ww2 \cdot F_{p,i}$
+                       \State Calcular densidad $pd$ para el punto usando valores entre $[0,i]$
+                       \State Calcular gradiente de la densidad $dxyz$ para el punto usando valores entre $[0,i]$
+                       \State Calcular hessianos $dd1$ y $dd2$ de la densidad para el punto usando valores entre $[0,i]$
                   \EndFor
-                  \State $exch, corr, y2a \gets potencial(pd, dxyz, dd1, dd2)$
-                  \State $energy \gets energy + (weight(p) \cdot pd) \cdot (exch + corr)$
-                  \State $FR_p \gets y2a \cdot weight(p)$
+                  \State Calcular potencial usando $pd,dxyz, dd1, dd2$ obteniendo energ\'ia de intercambio $exch$, de correlaci\'on $corr$ y contribuci\'on a fock $y2a$
+                  \State Sumar a la energ\'ia total las contribuciones, usando el peso $weight(p)$ del punto.
+                  \State Calcular factor de contribuci\'on a fuerzas y fock $FR_p$ con la contribuci\'on $y2a$ y el peso $weight(p)$ del punto.
               \EndFor
-              \State $RMM^{OUT}_{i,j} \gets \Sigma_{k < m} F_k \cdot F_k' \cdot FR_k$
+              \State $KohnShamContributions_{i,j} \gets \Sigma_{k < m} F_k \cdot F_k' \cdot FR_k$
               \ForAll{$i,j \gets rmm\_indexes(PG)$}
-                  \State $RMMO_{i,j} \gets RMMO_{i,j} + RMM^{OUT}_{i,j}$
+                  \State $KohnSham_{i,j} \gets KohnSham_{i,j} + KohnShamContributions_{i,j}$
               \EndFor
             \EndFunction
         \end{algorithmic}
