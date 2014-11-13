@@ -76,7 +76,11 @@ Este kernel computa resoluci\'on num\'erica de la integral descripta en la secci
     $\Downarrow$
 \end{center}
 \begin{equation}
-    E_{XC} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
+  E_{XC} \approx \sum^{puntos}_k \rho^k \epsilon_{xc} (\rho^k,\nabla \rho^k) W_j
+\end{equation}
+donde
+\begin{equation}
+  \rho^k = \sum_{i<m} F^k_i \sum_{j<i} F^k_j C_{i,j}
 \end{equation}
 Esta calcula el termino de la energ\'ia de intercambio correlaci\'on, usando una grilla
 de puntos con peso. Esta cuenta se realiza por cada partici\'on de los grupos en el mallado
@@ -88,7 +92,7 @@ en el procesador es
 \end{equation}
 
 Donde $F_i$, $F_j$ son los valores del mallado de las funciones de la base en un punto dado,
-$m$ es la cantidad de funciones de la base y $C_{i,j}$ son los $\epsilon_{xc}$.
+$m$ es la cantidad de funciones de la base y $C_{i,j}$ son los coeficientes de la matriz densidad.
 
 El cuello de botella fundamental en la ejecuci\'on radicaba en como se distribu\'ia el trabajo de computo
 entre los kernels. La estrategia de paralelizaci\'on original determinaba la partici\'on
@@ -318,7 +322,7 @@ dividir en bloques con threads en $x$, $y$, $z$, entonces tiene mucho sentido pe
 que las estructuras de datos subyacentes se van a acceder usando indices multidimensionales.
 
 En nuestro problema, la memoria de textura se presenta como una soluci\'on para
-los accesos bidimensionales de la matriz de coeficientes variacionales para el grupo de puntos.
+los accesos bidimensionales de la matriz densidad para el grupo de puntos.
 Como esta matriz debe ser multiplicada por todos los valores de las funciones,
 derivadas primeras y segundas, se va a acceder a toda la matriz de coeficientes mas de
 una vez por cada thread. Adem\'as, como se va a usar toda la matriz, y esta suele
@@ -331,7 +335,7 @@ y por columnas a la matriz.
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/texture.png}
    \caption{Aceleracion del c\'alculo de densidad corriendo Hemoglobina en Fermi y Kepler
-   usando memoria de textura para leer los coeficientes variacionales.}
+   usando memoria de textura para leer la matriz densidad.}
    \label{plt:texture}
 \end{figure}
 
