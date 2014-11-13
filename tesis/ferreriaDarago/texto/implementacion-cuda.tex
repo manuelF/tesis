@@ -221,7 +221,7 @@ minimizar a\'un mas el tiempo empleado en esta reducci\'on, pero considerando qu
 Como va a haber $altura\_{bloque}$ cantidad de escrituras para cada punto, va a entonces
 hacer falta guardar estas cuentas parciales en memoria global. Para eso definimos una matriz
 por cada uno de los par\'ametros que debemos acumular, con tama\~no id\'entico a la cantidad de bloques
-del kernel \texttt{compute\_energy}, para que cada uno de estos escriba \'unicamente en una posici\'on
+del kernel del computo de densidad electr\'onica, para que cada uno de estos escriba \'unicamente en una posici\'on
 un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura_{bloque})$,
 menos de 1Mb en el caso m\'as grande.
 
@@ -636,7 +636,7 @@ del sistema en m\'ultiples GPU.
 \subsubsection{Balance de cargas}
 El balanceo de cargas \'optimo consiste en repartir $P$, el conjunto de problemas en
 $n$ conjuntos disjuntos $P_i$, tal que $\bigcup_{i<n} P_i = P$. Este problema, conocido como PARTITION,
-es NP-Completo en su versi\'on exacta, aunque son conocidos algoritmos pseudo-polinomiales para resolverlo.
+es NP-Hard en su versi\'on exacta, aunque son conocidos algoritmos pseudo-polinomiales para resolverlo.
 La complejidad de ese algoritmo que usa programaci\'on din\'amica es $O(Nn)$, con $N$ el valor
 de la suma de $P$ y $n$ la cantidad de elementos de $P$. Como nuestra m\'etrica de comparaci\'on para las
 particiones es el runtime de estas expresados con precisi\'on de microsegundo, el costo computacional
