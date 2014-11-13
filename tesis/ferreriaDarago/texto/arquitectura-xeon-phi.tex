@@ -175,17 +175,6 @@ Esto nos da un l\'imite de ancho de banda te\'orico de 352 GB/s pero detalles de
 Las controladores reciben los pedidos mediante el anillo de direcciones y convierten estos en comandos para GDDR5, retornando finalmente los datos en
 el anillo de datos. Los dispositivos GDDR5 tienen el espacio de direcciones interlineado entre distintos bancos de memoria para distribuir mejor la carga de pedidos.
 
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidth]{images/xeon-phi-addressing.png}
-   \caption{Esquema de paginaci\'on del Xeon Phi}
-   \label{fig::xeon_phi_addressing}
-\end{figure}
-
-La memoria esta dividida en p\'aginas utilizando un esquema de 4 niveles, con direcciones de 64 bits~\ref{fig::xeon_phi_addressing}. El tama\~no de p\'agina soportado es de 4 Kb
-o 2 Mb, siendo el esquema de 2 Mb preferido en aplicaciones de computo cient\'ifico. Como es de esperar, el Xeon Phi utiliza TLBs (\textit{Translation Lookaside
-Buffers}) para disminuir la cantidad de accesos a memoria necesarios para resolver una p\'agina de memoria virtual en una f\'isica.
-
 \subsection{Conexi\'on Host - Coprocesador}
 
 El Xeon Phi se conecta con su host mediante el uso de un bus PCI Express 2.0 de 16 lineas. Las transferencias pueden ser
