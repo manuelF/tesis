@@ -4,6 +4,9 @@ tesis.pdf: *.tex bibliografia.bib
 	pdflatex tesis.tex
 	pdflatex tesis.tex
 
+fast:
+	pdflatex tesis.tex
+
 plots:
 	bash regenerate_plots.sh
 
