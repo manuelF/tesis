@@ -95,6 +95,16 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
+def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename):
+  pylab.xlabel(xlabel)
+  pylab.ylabel(ylabel)
+  ticks = range(0,len(xvalues))
+  pylab.bar(ticks, yvalues, align="center")
+  pylab.xticks(ticks, xvalues)
+  pylab.legend(loc="best")
+  pylab.savefig(filename, bbox_inches="tight")
+  pylab.close()
+
 def initialize():
   mpl.rcParams['savefig.dpi'] = 150
 
