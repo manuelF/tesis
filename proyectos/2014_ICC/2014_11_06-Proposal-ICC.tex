@@ -113,31 +113,19 @@ Caracteristicas fundamentales de QM que se deben describir:
 1) Autoconsistencia
 2) + de 92\% del tiempo de cada iteracion autoconsistente se consume en el calculo en un solo termino, denominado exchange-correlation.
 3) Se acompla con Amber (entre los dos esta el QM/MM).
-
-Description of the code in the original state (GPU version), cite the papers.
+4) Podr\'ia ser facilmente acoplable a gromacs.
 
 %% jpdarago - Lo que hice yo esta a continuacion, contado como si lo fuera a hacer
 
-The current CPU implementation of the program has several unexplored opportunities
-for optimization, in order to exploit the facilities offered by Xeon and Xeon Phi
-architectures.
+The current CPU implementation of the QM/MM application has several unexplored opportunities for exploiting parallelization, in order to take advantage of the facilities offered by Xeon and Xeon Phi architectures.
 
-One possibility is to restructure the most computational intensive calculations
-in order to utilize matrix operations in BLAS. That would allow the code to utilize
-a highly tuned implementation of this library, such as Intel MKL.
+One possibility is to restructure the most computational demanding calculations in order to utilize matrix operations in BLAS. That would allow the code to utilize a highly tuned implementation of this library, such as Intel MKL.
 
-The implementation was considered state-of-the-art in the moment of it's development,
-as it used the latest vectorized architecture offered by processors of the time,
-SSE 4. Modifying the code to better utilize compiler autovectorization and
-other advanced techniques present in Intel C++ compiler could also lead to
-much better performance.
+The implementation was considered state-of-the-art in the moment of it's development, as it used the latest vectorized architecture offered by processors of the time, SSE 4. 
+Modifying the code to better utilize compiler autovectorization and other advanced techniques present in Intel C++ compiler could also lead to much better performance.
 
-Parallelization is another opportunity to explore, specially considering the
-multicore systems currently available. We have already pursued this road with
-the CUDA implementation of G2G, which showed that the problem benefitted from
-the resources of a highly parallel architecture such as GPGPUs. An algorithm for
-work distribution, specially tailored to the type of workloads in the problem,
-has been developed for the purpose of adapting the core routines to multicore CPUs.
+Parallelization is another opportunity to explore, specially considering the multicore systems currently available. We have already pursued this road with the CUDA implementation of G2G, which showed that the problem benefitted from the resources of a highly parallel architecture such as GPGPUs. 
+An algorithm for work distribution, specially tailored to the type of workloads in the problem, has been developed for the purpose of adapting the core routines to multicore CPUs.
 
 %% fin de lo que hice yo hasta ahora
 
@@ -256,6 +244,9 @@ Additionally, PhD students will be involved in some of the stages of the project
 \newpage
 
 \section{Bibliography}
+
+\bibliographystyle{unsrt}
+\bibliography{citasdami}
 
 \newpage
 
