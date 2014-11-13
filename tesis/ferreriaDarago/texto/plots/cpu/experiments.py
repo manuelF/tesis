@@ -12,6 +12,10 @@ def time2secs(s):
     sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
     return float(sec) + float(msec) / MSEC
 
+def time2milis(s):
+    sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    return float(sec) * 1000.0 + float(msec) / 1000.0
+
 def time2micros(s):
     return int(re.search("(\d+)us.",s).group(1))
 
@@ -50,7 +54,7 @@ def hemo_group_sizes_histogram():
 
     params = {
         'xlabel': u"Funciones por grupo",
-        'ylabel': u"Fracción de los grupos",
+        'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
         'values': [int(f) for f in allfunctions],
@@ -60,7 +64,7 @@ def hemo_group_sizes_histogram():
 
     params = {
         'xlabel': u"Puntos por grupo",
-        'ylabel': u"Fracción de los grupos",
+        'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
         'values': [int(p) for p in allpoints],
@@ -69,8 +73,8 @@ def hemo_group_sizes_histogram():
     histogram(**params)
 
     params = {
-        'xlabel': u"Indices de fock por grupo",
-        'ylabel': u"Fracción de los grupos",
+        'xlabel': u"Indices a actualizar en Kohm-Sham, por grupo",
+        'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
         'values': [int(p) for p in allindexes],

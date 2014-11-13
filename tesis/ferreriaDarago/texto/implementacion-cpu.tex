@@ -371,14 +371,14 @@ figura~\ref{fig:lio-histo-groups}.
    \centering
    \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\textwidth]{plots/cpu/histogram-functions-hemo.png}
-     \caption{Cantidad de funciones}
+     \caption{Cantidad de funciones.}
    \end{subfigure}
    \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\textwidth]{plots/cpu/histogram-points-hemo.png}
-     \caption{Cantidad de puntos}
+     \caption{Cantidad de puntos.}
    \end{subfigure}
    \caption{Histogramas para la cantidad de puntos y funciones para los grupos correspondientes al caso de prueba
-   de hemoglobina}
+   de hemoglobina.}
    \label{fig:lio-histo-groups}
 \end{figure}
 
@@ -460,11 +460,11 @@ memoria.
    \centering
    \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\textwidth]{plots/cpu/fit-func-size_in_gpu.png}
-     \caption{Predictor con \textit{size\_in\_gpu}}
+     \caption{Predictor con \textit{size\_in\_gpu}.}
    \end{subfigure}
    \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\textwidth]{plots/cpu/fit-func-cost.png}
-     \caption{Predictor con funci\'on de costo}
+     \caption{Predictor con funci\'on de costo.}
    \end{subfigure}
    \caption{Tiempos de ejecuci\'on de cada grupo considerado peque\~no de acuerdo
     al costo del mismo seg\'un predictor, para el ejemplo de la hemoglobina.}
@@ -499,6 +499,11 @@ Esto es desalentador en un principio puesto que un algoritmo exacto para resolve
 este problema y que sea pr\'actico para utilizar en entradas no triviales no es
 conocido, y la pregunta de si existe es parte de una de las preguntas abiertas
 m\'as conocidas de la computaci\'on~\cite{Cormen}.
+
+A diferencia de en el caso de GPU, resolvemos el problema sim\'etrico, el cual
+corresponde a la versi\'on est\'andar. En este, todos los procesadores son
+iguales entre si. Asumiremos tambi\'en que no hay costo inherente en la
+divisi\'on de trabajo y que todos ejecutan perfectamente en paralelo.
 
 En particular, este problema es muy similar a otro problema muy conocido,
 denominado \textit{Bin Packing Problem}. Este problema consiste en, dados $n$
@@ -561,7 +566,7 @@ solo debe ser ejecutado antes de la primer iteraci\'on, decidimos utilizarlo par
 nuestra implementaci\'on.
 
 \begin{algorithm}[H]
-    \caption{Pseudoc\'odigo del algoritmo para particionar trabajo entre \textit{threads}}
+    \caption{Pseudoc\'odigo del algoritmo para particionar trabajo entre \textit{threads}.}
     \label{algo:partition-algo}
     \begin{algorithmic}
         \Function{partition}{$C = \{C_1, \dots, C_n\}, m$}
@@ -918,6 +923,7 @@ de balanceo de cargas de la implementaci\'on en GPU.
 El costo computacional ya se vi\'o anteriormente que resulta bajo. En el caso
 de la hemoglobina se consigue menos del 5\% de diferencia en una iteraci\'on
 de rebalanceo, obteniendose los resultados de la figura~\ref{fig:lio-imbalance-fixed}.
+
 
 \begin{figure}[htbp]
    \centering
