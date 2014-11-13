@@ -603,7 +603,7 @@ prop\'ositos:
     tambi\'en se aprovechan del multiprocesamiento.
 \end{itemize}
 
-Para resolver el primer punto, se utiliz\'o una matriz de Fock y una matriz de
+Para resolver el primer punto, se utiliz\'o una matriz de Kohn-Sham y una matriz de
 fuerzas distinta para cada hilo de ejecuci\'on, de manera que sus grupos asignados
 usaran esta matrices en vez de las globales para hacer los almacenamientos temporales.
 Al finalizar la iteraci\'on, todas
@@ -795,7 +795,7 @@ hilos de ejecuci\'on.
 \begin{algorithm}[H]
     \centering
     \label{algo:rmm-output-previous}
-    \caption{C\'alculo original de la matriz de Fock}
+    \caption{C\'alculo original de la matriz de Kohn-Sham}
     \begin{algorithmic}
         \State $R \gets 0_{m,n}$
         \State $F \gets functions(PG)$
@@ -805,7 +805,7 @@ hilos de ejecuci\'on.
             \EndFor
         \EndFor
         \ForAll{$i,j \in fock\_indexes(PG)$}
-            \State $Fock_{i,j} \gets Fock_{i,j} + R_{i,j}$
+            \State $KS_{i,j} \gets KS_{i,j} + R_{i,j}$
         \EndFor
     \end{algorithmic}
 \end{algorithm}
@@ -819,12 +819,12 @@ clonar matrices y reducirlas.
 \begin{algorithm}[H]
     \centering
     \label{algo:rmm-output-new}
-    \caption{C\'alculo de la matriz de Fock reestructurado para paralelismo}
+    \caption{C\'alculo de la matriz de Kohn-Sham reestructurado para paralelismo}
     \begin{algorithmic}
         \State $R \gets 0_{m,n}$
         \State $F \gets functions(PG)^T$
         \ForAll{$i,j \in indexes$}
-            \State $Fock_{i,j} \gets Fock_{i,j} + \displaystyle \Sigma_{p \in points(PG)} F_{p,i} \cdot F_{p,j} \cdot factors_{p}$
+            \State $KS_{i,j} \gets KS_{i,j} + \displaystyle \Sigma_{p \in points(PG)} F_{p,i} \cdot F_{p,j} \cdot factors_{p}$
         \EndFor
     \end{algorithmic}
 \end{algorithm}
@@ -845,14 +845,14 @@ creaci\'on, y el impacto que tiene en la cantidad de \textit{misses} de cach\'e.
 Esta modificaci\'on del algoritmo introduce un nuevo aspecto a considerar, similar
 a las consideraciones hechas para la cantidad de puntos y funciones: una poca
 cantidad de \'indices a actualizar en un mismo grupo eclipsa el \textit{overhead}
-que introduce el uso de OpenMP. La cantidad de \'indices de la matriz de Fock a
+que introduce el uso de OpenMP. La cantidad de \'indices de la matriz de Kohn-Sham a
 actualizar tambi\'en tiene una distribuci\'on bastante dispar, como puede verse
 para el caso de ejemplo de hemoglobina en la figura~\ref{fig:histogram-indexes-hemo}.
 
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cpu/histogram-functions-hemo.png}
-   \caption{Cantidad de \'indices a actualizar de la matriz de Fock}
+   \caption{Cantidad de \'indices a actualizar de la matriz de Kohn-Sham}
    \label{fig:histogram-indexes-hemo}
 \end{figure}
 
@@ -862,7 +862,7 @@ cuanto trabajo se le asigna a los \textit{threads}.
 
 Estos dos factores se tienen en cuenta en la funci\'on que determina si un grupo
 es considerado grande o no. Para considerar un grupo grande, el mismo debe tener
-una cantidad de puntos y una cantidad de \'indices en la matriz de Fock mayor que
+una cantidad de puntos y una cantidad de \'indices en la matriz de Kohn-Sham mayor que
 un valor de frontera (\textit{threshold}) multiplicado por la cantidad de hilos de
 ejecuci\'on a realizar. Este valor es ajustable y mostraremos los resultados
 correspondientes a tomar la mejor elecci\'on, siendo interesante su efecto en el

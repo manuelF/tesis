@@ -547,11 +547,11 @@ como con incluso un 25\% mas de operaciones de lecto-escritura, el tiempo de eje
 
 \subsection{Escalando m\'as all\'a de un GPU}
 Una vez que fueron solucionados muchos limitantes de performance en los kernels del computo
-de la densidad electr\'onica y del c\'alculo de la matriz de Fock, nos encontramos en un punto donde
+de la densidad electr\'onica y del c\'alculo de la matriz de Kohn-Sham, nos encontramos en un punto donde
 no fue posible determinar mejoras significativas en el c\'alculo para reducir tiempos.
 Decidimos subir un nivel m\'as el paralelismo, de modo de poder solucionar m\'ultiples particiones
 simult\'aneamente. Dado que es independiente el computo de cada partici\'on (salvo la acumulaci\'on
-en la matriz de Fock de salida y en la matriz de fuerzas interat\'omicas), nos pareci\'o que seria
+en la matriz de Kohn-Sham de salida y en la matriz de fuerzas interat\'omicas), nos pareci\'o que seria
 interesante ver como escala distribuir el computo a lo largo de m\'ultiples GPU.
 
 Para dividir el problema entre varios dispositivos usamos, al igual que en CPU, OpenMP. Definimos
@@ -653,7 +653,7 @@ se las distribuye de manera round-robin entre todos los dispositivos, para gener
 partici\'on inicial y cargando a cada placa con una cantidad similar de tareas. Esto no significa
 que todas tarden lo mismo, y es posible notarlo en las mediciones. Luego, utilizando el tama\~no
 de los dispositivos como proxy del tiempo de ejecuci\'on, aplicamos una ronda del algoritmo de balanceo din\'amico
-para terminar de balancear est\'aticamente. Esto lo podemos hacer ya que, como mostramos en la figura~\ref{fig:runtime-fullereno},
+para terminar de balancear est\'aticamente. Esto lo podemos hacer ya que, como mostramos en la figura~\ref{plt:global-fullereno},
 existe una fuerte correlaci\'on entre el tama\~no de las matrices de funci\'on y el tiempo de ejecuci\'on, la m\'etrica que realmente
 nos interesa. El paso de balanceo din\'amico es necesario para solventar el problema de la distribuci\'on
 round-robin con grupos grandes, donde el thread que tenga que resolver el grupo con mas puntos va a tardar
@@ -672,7 +672,7 @@ usualmente las Tesla suelen ser entre 2 y 6 veces mas veloces. Como las cuentas 
 o todas en precisi\'on simple, o todas en precisi\'on doble, es sumamente importante particionar el
 sistema tomando todo esto en cuenta.
 
-El problema ejemplar elegido en este caso es realizar $10$ iteraciones del kernel de c\'omputo de la matriz de Fock.
+El problema ejemplar elegido en este caso es realizar $10$ iteraciones del kernel de c\'omputo de la matriz de Kohn-Sham.
 Consideramos que realizar este c\'omputo nos da una evaluaci\'on
 emp\'irica de los recursos necesarios para resolver este problema. Este kernel utiliza muchos
 de los recursos del dispositivo: realiza gran cantidad de accesos a memoria a trav\'es
@@ -740,7 +740,7 @@ Resolver un sistema, en principio, debiera ser inherentemente paralelo; resolver
 no afecta resolver para otro. Sin embargo, escalar este problema entre m\'ultiples placas crea
 nuevos problemas que no exist\'ian antes, como la concurrencia de escrituras sobre el bus de memoria.
 Como cada dispositivo va a tener que copiarse un fragmento de la matriz global de coeficientes
-y acumular en la matriz de Fock de salida, va a existir una contenci\'on entre los threads que manejan
+y acumular en la matriz de Kohn-Sham de salida, va a existir una contenci\'on entre los threads que manejan
 cada uno una GPU para leer y escribir en la memoria principal. Esto ocasiona que el speedup entre
 m\'ultiples placas no sea lineal; al haber una cantidad limitada de trabajo que hacer en GPU y un fragmento de
 resoluci\'on que necesariamente tiene que leer y escribir en memoria es una contenci\'on necesaria. Se puede
