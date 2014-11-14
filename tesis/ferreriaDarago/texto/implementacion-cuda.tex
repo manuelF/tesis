@@ -51,7 +51,7 @@ la cantidad m\'axima de registros presentes en el register file. Esto fuerza a q
 no pueda poner a ejecutar m\'as bloques que los que pueda soportar este recurso, dejando SP ociosos.
 
 Finalmente, al igual que con los registros, la memoria compartida es un recurso limitado. Como
-solamente se cuenta con hasta 48Kb (Fermi-Kepler) de memoria de este tipo para ser repartida entre
+solamente se cuenta con hasta 48KB (Fermi-Kepler) de memoria de este tipo para ser repartida entre
 todos los bloques que est\'en corriendo en todos los SM, el scheduler deber\'a decidir no poner a ejecutar
 m\'as bloques simult\'aneamente que los que pueda soportar la cantidad de memoria compartida.
 
@@ -102,8 +102,6 @@ Los threads serv\'ian para reutilizar la memoria compartida; cada thread le\'ia 
 elemento de la matriz de coeficientes ($C_{i,j})$) y luego lo compart\'ian con los
 dem\'as threads.
 
-Esta distribuci\'on resultaba natural al problema, pero visto con mayor detalle, esto
-implicaba una cantidad de cuentas innecesarias que pod\'ian ser eliminadas.
 
 \begin{figure}[htbp]
    \centering
@@ -129,14 +127,25 @@ y se compartan entre threads los valores de $F_i$ le\'idos.
 Esta estrategia se ve en la parte inferior de la figura \ref{fig:cuda-xc-parallelism}.
 
 La nueva estrategia permite una mucho mayor reutilizaci\'on de las lecturas a memoria
-global (uno de los grandes limitantes de esta arquitectura). Este cambio es posible ahora
-dado el tama\~no de las memorias compartidas (16Kb en la generaci\'on de
-dispositivos existentes en implementaci\'on original, actualmente 48Kb). Finalmente
+global, uno de los grandes limitantes de esta arquitectura.
+La distribuci\'on original resultaba natural al problema, pero visto en detalle, esto
+implicaba una cantidad elevada de lecturas a memoria global. Como cada thread realizaba un
+punto dentro de un bloque, los $F_i$ que iba a leer no se pod\'ian compartir al ser
+propios de cada punto. Como la cuenta ahora se realiza parcialmente por cada thread,
+cada lectura de $F_i$ se agrega a la memoria compartida. El resto de los threads no van
+a leer las funciones  de memoria global, sino de la compartida que ya cargaron los dem\'as. Esto
+se traduce en que se realiza una lectura global y $BLOCK\_SIZE-1$ lecturas
+de memoria compartida por cada thread. Como la latencia de acceso a memoria compartida
+es, al menos, diez veces mas r\'apida que la memoria global~\cite{Demystifying}, esto incurre en grandes
+beneficios con respecto a la velocidad del c\'omputo.
+
+Este cambio solo es posible gracias al crecimiento de las memorias compartidas (16KB en la generaci\'on de
+dispositivos existentes en implementaci\'on original, actualmente 48KB). Finalmente
 esto tambi\'en se beneficia del incremento en tanto la cantidad de SM y la de SP por
 SM. Todos estos factores permitieron una gran aceleraci\'on.
 
-El otro cambio importantes fue partir en problema en m\'as bloques, para las grupos que tengan
-m\'as funciones. Decidimos agregar otra dimensi\'on a la grilla de bloques (\texttt{blockId.y}),
+El otro cambio importantes fue partir en problema en m\'as bloques para las grupos que tengan
+m\'as funciones significativas. Se decidi\'o agregar otra dimensi\'on a la grilla de bloques (\texttt{blockId.y}),
 para determinar cuantos grupos de threads van a hacer falta para procesar completamente
 todas las funciones de ese punto. Llamamos a este par\'ametro $altura\_bloques$. Se
 calcula para cada partici\'on como $altura\_bloques = {m}/{BLOCK\_SIZE}$.
@@ -168,7 +177,7 @@ procesamiento contar con uno o m\'as warps por bloque. Una ventaja de usar bloqu
 32 threads, es que el costo de la sincronizaci\'on es exactamente cero. No se precisa
 sincronizar nada puesto que los threads trabajan en lock-step sincronizados por warp.
 Un bloque chico ademas nos permite usar mas memoria compartida por thread, dado que hay una
-cantidad fija de memoria por bloque (entre 32Kb y 64Kb). Cuando se cuentan con muchos m\'as
+cantidad fija de memoria por bloque (entre 32KB y 64KB). Cuando se cuentan con muchos m\'as
 threads, se debe reducir este uso por thread de modo que todos puedan ejecutar concurrentemente.
 
 Dicho esto, la literatura~\cite{farberCuda} sugiere siempre que sea posible
@@ -202,7 +211,7 @@ el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
 \end{figure}
 
 
-\subsection{Cambios en la reducci\'on}
+\subsection{Reducci\'on anterior}
 %Hubo que agregar reducci\'on de suma a nivel punto porque ya no se comparten mas la info
 La reorganizaci\'on de la paralelizaci\'on del kernel del c\'alculo de la densidad creo la necesidad
 de varios pasos de reducci\'on que antes se hac\'ian impl\'icitamente.
@@ -227,7 +236,7 @@ hacer falta guardar estas cuentas parciales en memoria global. Para eso definimo
 por cada uno de los par\'ametros que debemos acumular, con tama\~no id\'entico a la cantidad de bloques
 del kernel del computo de densidad electr\'onica, para que cada uno de estos escriba \'unicamente en una posici\'on
 un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura_{bloque})$,
-menos de 1Mb en el caso m\'as grande.
+menos de 1MB en el caso m\'as grande.
 
 El siguiente paso de la reducci\'on consiste en acumular los $altura\_{bloque}$ valores descriptos
 reci\'en en un solo por punto. Esto implica encontrar donde est\'an en las matrices temporales las
@@ -245,6 +254,21 @@ anteriormente pero utilizando mucho mejor los recursos del dispositivo.
 
 
 %%%%%%%%%%%%%%%
+
+\subsection{Tama\~no de los grupos}
+Un punto que afecta fuertemente el tiempo de ejecucion del calculo de Intercambio Correlacion
+es el tama\~no de los grupos que particionan los puntos del mallado. Los grupos son generados
+en base a constantes ajustables particulares a cada sistema, como se menciona en la seccion \ref{implementacion}.
+Estas constantes definenen el tama\~no de cada cubo y el radio de cada esfera. El impacto de
+estos parametros consiste en la cantidad de funciones significativas y puntos que van a ser
+capturados en cada grupo. Grupos muy chicos van a contar con pocas funciones y puntos, necesitando
+cientos o miles de grupos para poder representar un sistema de manera completa. Hacer grupos grandes,
+en cambio, permite que tengan miles de puntos y cientos de funciones, siendo aproximadamente un orden
+de magnitud m\'as grupos que en particiones chicas. Esto, sin embargo, no implica que todos
+los grupos sean grandes, simplemente que los cubos y las esferan cubriran espacios mayores
+pero que dentro de estas puede haber pocos puntos.
+
+
 
 
 \subsection{Cambios en los accesos globales}
@@ -383,7 +407,7 @@ de funciones a este m\'etodo.
 \subsection{Cambios en el almacenamiento de matrices temporales}
 Una de las principales limitaciones de las GPGPU es la cantidad fija de memoria. Esta no es
 expandible dado que esta soldada a la placa. Esto era aun m\'as notorio cuando las placas
-contaban con menos de 1Gb de memoria (A\~nos 2007-2008).
+contaban con menos de 1GB de memoria (A\~nos 2007-2008).
 Para problemas de c\'alculo num\'erico, esto era un limitante muy serio; los problemas que
 normalmente entraban en la memoria principal de un CPU, no entraban completos en las GPU.
 La decisi\'on tomada por muchas aplicaciones de entonces es compensar esto calculando
@@ -430,11 +454,11 @@ m\'ultiples placas, que tambi\'en distribuyen el almacenamiento ademas del compu
    \centering
    \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\plotwidthtres]{plots/cuda/global-detailed-fullereno.png}
-     \caption{Entre 0 y 530 Mb.}
+     \caption{Entre 0 y 530 MB.}
    \end{subfigure}
    \begin{subfigure}[b]{\plotwidthtres}
      \includegraphics[width=\plotwidthtres]{plots/cuda/global-fullereno.png}
-     \caption{Entre 0 y 4240 Mb.}
+     \caption{Entre 0 y 4240 MB.}
    \end{subfigure}
    \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria de
    la placa usada para almacenar las funciones.}
@@ -445,7 +469,7 @@ Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$
 cantidad de memoria disponible para el cacheo. Los resultados se pueden ver en la figura \ref{plt:global-fullereno}.
 Se puede observar que el almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
 de toda una iteraci\'on de SCF. Es interesante notar que son los primeros grupos los que causan mayor
-diferencia en los tiempos de ejecuci\'on. Con 5.3 Mb, se pueden guardar los 23 grupos mas peque\~nos del
+diferencia en los tiempos de ejecuci\'on. Con 5.3 MB, se pueden guardar los 23 grupos mas peque\~nos del
 fullereno $C_{60}$; de ah\'i en m\'as, el impacto de la mejora decae. Esto sucede porque en grupos
 chicos el overhead del c\'alculo usando kernel de funciones es muy elevado en comparaci\'on a las
 cuentas (se desperdician muchos threads). Este comportamiento se puede ver
@@ -471,7 +495,7 @@ convertirlo en una aceleraci\'on notoria.
 Otro de los problemas existentes del c\'odigo que quisimos atacar fue el mejor empleo de las
 memorias shared. Estas son un recurso finito y muy importante, ya que son un limitante de
 la ocupancia de los multiprocesadores. Como pueden correr una cantidad de bloques que, a lo sumo,
-no superen los 48Kb de memoria shared simult\'aneamente entre todos, es imprescindible minimizar el
+no superen los 48KB de memoria shared simult\'aneamente entre todos, es imprescindible minimizar el
 alocacion de la memoria shared de modo que no estemos subutilizando los SM.
 
 Una cosa que probamos, con un grado de \'exito variable, fue disminuir el tama\~no de los vectores
@@ -584,45 +608,27 @@ configuraciones de memoria, cantidad de SM y anchos de banda.
 
 Para distribuir las tareas utilizamos dos t\'ecnicas combinadas, una para distribuir las
 tareas est\'aticamente y otra para redistribuirlas din\'amicamente de acuerdo al runtime de
-cada tarea. Para la distribuci\'on est\'atica, usamos como estimador del runtime el tama\~no
-de las matrices de funciones de un grupo.
+cada tarea.
 
 
 \subsubsection{Estimaci\'on de cargas est\'aticas}
-Esta heur\'istica resulta un acertado predictor del tiempo de computo de todos los
+Para la distribuci\'on est\'atica, usamos como estimador del runtime el tama\~no
+de las matrices de funciones de un grupo. Esta heur\'istica resulta un acertado predictor
+del tiempo de computo de todos los
 kernels de un grupo confirmando que el problema actualmente es memory-bound. Esto se ve en la figura
 \ref{plt:runtime-predictor}, como el tiempo de resoluci\'on de un kernel escala linealmente con
-la cantidad de memoria necesaria para operar.
+la cantidad de memoria necesaria para operar. Comparamos tambien contra el predictor usado
+para estimar tiempo en CPU que se detallar\'a m\'as adelante en la secci\'on \ref{PredictorCPU}.
 
-%\begin{figure}[htbp]
-%  \centering
-%   %\begin{subfigure}[b]{\plotwidthtres}
-%   % \includegraphics[width=\textwidth]{plots/cuda/sizeingpu-predictor-fullereno.png}
-%   % \includegraphics[width=\textwidth]{plots/cuda/cost-predictor-fullereno.png}
-%   % \caption{Fullereno}
-%   %\end{subfigure}
-%   \begin{subfigure}[b]{\plotwidthtres}
-%    \caption{Hemoglobina}
-%   \end{subfigure}
-%   %\begin{subfigure}[b]{\plotwidthtres}
-%   % \includegraphics[width=\textwidth]{plots/cuda/sizeingpu-predictor-caroteno.png}
-%   % \includegraphics[width=\textwidth]{plots/cuda/cost-predictor-caroteno.png}
-%   % \caption{Caroteno}
-%   %\end{subfigure}
-%
-%  \caption{Tiempo de de resoluci\'on de los grupos de fullereno, hemoglobina y caroteno en
-%    funci\'on del tama\~no de las matrices de funciones para una iteraci\'on de SCF.}
-%\end{figure}
-%
 \begin{figure}[htbp]
    \centering
    \begin{subfigure}[b]{\plotwidthtres}
     \includegraphics[width=\textwidth]{plots/cuda/sizeingpu-predictor-hemo.png}
-     \caption{Predictor con \textit{size\_in\_gpu}.}
+     \caption{Predictor de tiempo usando \textit{size\_in\_gpu}.}
    \end{subfigure}
    \begin{subfigure}[b]{\plotwidthtres}
     \includegraphics[width=\textwidth]{plots/cuda/cost-predictor-hemo.png}
-     \caption{Predictor con funci\'on de costo.}
+     \caption{Predictor de tiempo usando funci\'on de costo.}
    \end{subfigure}
    \caption{Tiempos de ejecuci\'on de hemoglobina en Tesla K40 de acuerdo al costo del mismo seg\'un predictor.}
    \label{plt:runtime-predictor}
@@ -632,10 +638,16 @@ Como podemos apreciar, esta directamente relacionado el tiempo de resoluci\'on c
 de los elementos con los que trabaja. Esto da una pauta de la complejidad computacional del problema
 que estamos resolviendo. Como al menos se necesita cada uno de los elementos de cada matriz de funciones
 para resolver un punto de cada grupo. Al menos se deben hacer una lectura de cada matriz. Estas lecturas
-son tan costosas que incluso solo sabiendo el tama\~no de las matrices podemos predecir, aproximadamente
-el tiempo de ejecuci\'on que va a tener un grupo. Esto nos permite tener un estimador del tiempo de
-iteraci\'on para un sistema, y sirve como un punto de partida para realizar una partici\'on
-del sistema en m\'ultiples GPU.
+son tan costosas que, incluso solo sabiendo el tama\~no de las matrices, podemos predecir aproximadamente
+el tiempo de ejecuci\'on que va a tener un grupo.
+
+El predictor usando el tama\~no, si bien es posible observar que tiene una buena correlaci\'on con el tiempo de ejecuci\'on,
+no tiene la precisi\'on que tiene el predictor basado en la funci\'on de costo en CPU, visto en la figura~\ref{fig:comp-size-cost}.
+No se pudo encontrar par\'ametros que permitan ajustarlo para que funcione en GPU. Como \nvidia no publica toda la informac\'ion
+interna de los procesadores GPU y dada la cantidad de lugares adicionales donde se puede incurrir en latencias
+imprevistas, al funcionar as\'incronos al CPU, no es posible predecir runtime con excesiva confianza dado \'unicamente
+las cuentas a realizar. Al tener ambos predictores performance similares, se decidi\'o usar el m\'as sencillo, el
+tama\~no de la matriz, como punto de partida para realizar una partici\'on del sistema en m\'ultiples GPU.
 
 \subsubsection{Balance de cargas}
 El balanceo de cargas \'optimo consiste en repartir $P$, el conjunto de problemas en
