@@ -94,12 +94,18 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename):
+def piechart(labels, values, filename, title):
+    pylab.pie(values, labels=labels, autopct="%1.1f%%", startangle=90)
+    pylab.axis('equal')
+    pylab.savefig(filename, bbox_inches="tight")
+    pylab.close()
+
+def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename, rotation=0):
   pylab.xlabel(xlabel)
   pylab.ylabel(ylabel)
   ticks = range(0,len(xvalues))
   pylab.bar(ticks, yvalues, align="center")
-  pylab.xticks(ticks, xvalues)
+  pylab.xticks(ticks, xvalues, rotation=rotation)
   pylab.legend(loc="best")
   pylab.savefig(filename, bbox_inches="tight")
   pylab.close()

@@ -14,6 +14,7 @@ def time2secs(s):
 
 def time2milis(s):
     sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    sec = sec or 0
     return float(sec) * 1000.0 + float(msec) / 1000.0
 
 def time2micros(s):
@@ -82,6 +83,27 @@ def hemo_group_sizes_histogram():
     }
     histogram(**params)
 
+def initial_profile():
+    parts = {
+        u"Kohm Sham": time2milis("1s. 672459"),
+        u"Densidad": time2milis("17s. 526542"),
+        u"Fuerzas": time2milis("6s. 573524us"),
+        u"Funciones": time2milis("1s. 369108"),
+        u"Potencial": time2milis("130999"),
+    }
+    names = parts.keys();
+    values = [parts[key] for key in names]
+    total = sum(values)
+
+    params = {
+        'title': '',
+        'labels': names,
+        'values': values,
+        'filename': u'initial-iteration-parts-hemo.png',
+    }
+    piechart(**params)
+
+
 def reduce_summing_matrix_plot():
     threads, measures = [],[]
     with open("./measures/experimento-reducir-matrices.txt") as f:
@@ -106,40 +128,40 @@ def comparison_in_times(l):
     return [v / min(l) for v in l]
 
 def post_matrix_splits():
-    post = time2secs("14s. 424535us.")
-    pre = time2secs("20s. 772551us.")
+    post = time2milis("14s. 424535us.")
+    pre = time2milis("20s. 772551us.")
 
     params = {
         'xlabel': u"Resultados para proyección de matrices en componentes",
-        'ylabel': u"Speedup por iteración en veces",
+        'ylabel': u"Tiempo de la iteración [ms]",
         'xvalues': [u'Pre-optimizacion', u'Post-optimización'],
-        'yvalues': comparison_in_times([pre,post]),
+        'yvalues': [pre,post],
         'filename': u'post-split-matrices.png',
     }
     comparisonBarGraph(**params)
 
 def post_caching_matrices():
-    post = time2secs("11s. 329844us.")
-    pre = time2secs("14s. 424535us.")
+    post = time2milis("11s. 329844us.")
+    pre = time2milis("14s. 424535us.")
 
     params = {
         'xlabel': u"Resultados para cacheo de matrices iniciales",
-        'ylabel': u"Speedup por iteración en veces",
+        'ylabel': u"Tiempo de la iteración [ms]",
         'xvalues': [u'Pre-optimización', u'Post-optimización'],
-        'yvalues': comparison_in_times([pre,post]),
+        'yvalues': [pre,post],
         'filename': u'post-cachear-matrices.png',
     }
     comparisonBarGraph(**params)
 
 def post_aligning_matrices():
-    pre = time2secs("11s. 329844us.")
-    post = time2secs("11s. 380037us.")
+    pre = time2milis("11s. 329844us.")
+    post = time2milis("11s. 380037us.")
 
     params = {
         'xlabel': u"Resultados para alineacion de matrices iniciales",
-        'ylabel': u"Speedup de la iteración en veces",
+        'ylabel': u"Tiempo de la iteración [ms]",
         'xvalues': [u'Pre-optimización', u'Post-optimización'],
-        'yvalues': comparison_in_times([pre,post]),
+        'yvalues': [pre,post],
         'filename': u'post-alinear-matrices.png',
     }
     comparisonBarGraph(**params)
@@ -233,6 +255,7 @@ def amdahl_plot():
     pylab.close()
 
 if __name__ == '__main__':
+    initial_profile()
     hemo_group_sizes_histogram()
     plot_cost_function()
     reduce_summing_matrix_plot()

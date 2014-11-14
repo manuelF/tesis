@@ -3,7 +3,7 @@
 Asi como ya exist\'ia una base de c\'odigo original de CUDA, el
 trabajo sobre CPU tambi\'en se realiz\'o sobre el c\'odigo original
 existente. El mismo fue dise\~nado de manera uniprocesador, y teniendo
-en mente un set de instrucciones SIMD anterior a AVX, donde el tama\~no
+en mente un conjunto de instrucciones SIMD anterior a AVX, donde el tama\~no
 de los registros de procesador era de 128 bits.
 
 Con el prop\'osito de adaptar el c\'odigo para procesadores
@@ -17,7 +17,7 @@ De acuerdo a la bibliografia~\cite{Jeffers}, es necesario lograr que
 el c\'odigo este no solamente bien vectorizado sino que escale con la
 cantidad de procesadores para poder hacer uso de las prestaciones del
 coprocesador Xeon Phi. Por lo tanto, las pruebas iniciales se concentraron
-en lograr buena escalabilidad y vectorizac\'on en CPU.
+en lograr buena escalabilidad y vectorizac\'on en CPU \'unicamente.
 
 Puesto que muchas decisiones arquitecturales del c\'odigo se realizaron en
 base a experimentos con prototipos representativos de las diversas operaciones,
@@ -55,14 +55,14 @@ Xeon Phi.
 
 La secci\'on de c\'odigo trabajada corresponde a la parte del procesamiento
 de LIO optimizada mediante CUDA. Esta parte del c\'odigo estaba ya implementada
-en C++, utilizando extensiones de Intel ICC para vectorizaci\'on. No se busc\'o
+en C++, utilizando librer\'ias de Intel ICC para vectorizaci\'on. No se busc\'o
 optimizar otras secciones de c\'odigo ya que las mismas no contaban con una
 contrapartida en CUDA, haciendo entonces imposible comparar esta arquitectura con
 Intel Xeon y Xeon Phi. Si bien el tiempo de ejecuci\'on de esas secciones, por su
 caracter serial y poco optimizado, terminan consumiendo una fracci\'on del tiempo
 no despreciable, se consider\'o fuera del enfoque de este trabajo trabajar sobre
 ellas. La optimizaci\'on de las mismas para aprovechar de las arquitecturas
-estudiadas queda como trabajo a futuro.
+estudiadas queda como trabajo posible a futuro.
 
 Como caso de estudio para las modificaciones, se utiliz\'o como ejemplo el c\'omputo
 de DFT sobre una mol\'ecula de hemoglobina. El caso es considerado de tama\~no
@@ -76,9 +76,16 @@ se encuentran en el ap\'endice.
 
 El par\'ametro de tama\~no de los cubos utilizado es 3, de manera de que hay muchos
 cubos presentes pero los mismos son chicos. Un an\'alisis m\'as detallado de la
-partici\'on obtenida ser\'a estudiado en secciones futuras.
+partici\'on obtenida se har\'a en secciones futuras, as\'i como experimentos con
+este valor de tama\~no de los cubos. La raz\'on para elegirlo inicialmente es que
+corresponde al mejor valor de este par\'ametro en t\'erminos del tiempo de
+ejecuci\'on de los ejemplos estudiados.
 
-El an\'alisis realizado corresponde a la implementaci\'on con precisi\'on simple.
+El an\'alisis realizado corresponde a la implementaci\'on con precisi\'on simple,
+aunque los mismos aplican de igual manera para precisi\'on doble (no se necesita
+m\'as que recompilar el c\'odigo para utilizar precisi\'on doble). Posteriores
+experimentos detallan como se modifica el tiempo de ejecuci\'on al usar
+precisi\'on doble.
 
 % TODO(jpdarago): Agregar datos de hemoglobina en el apendice
 
@@ -88,111 +95,139 @@ El marco general de la aplicaci\'on a nivel pseudoc\'odigo se encuentra en la
 figura~\ref{algo:lio-general-schematics}, para el caso de los c\'omputos realizados
 por el m\'odulo G2G. Corresponde al detalle del esquema
 a alto nivel mostrado en la figura~\ref{fig:lio-steps}. En el caso de la
-implementaci\'on en CPU, el ciclo de iteraci\'on realiza todos los c\'alculos del
-ciclo interno.
+implementaci\'on en CPU, el ciclo de iteraci\'on (la funci\'on \texttt{solve} de
+la clase \texttt{Partition}) realiza todos los c\'alculos del
+ciclo interno. Inicialmente las funciones de cada grupo se calculan en cada
+iteraci\'on.
 
 \begin{algorithm}[hptb]
     \caption{Pseudoc\'odigo de la estructura del c\'odigo de CPU para G2G.}
     \label{algo:lio-general-schematics}
     \begin{algorithmic}
-        \State $Partition \gets regenerate_partition()$
-        \State $Weights \gets compute_weights(Partition)$
-        \State $MatKohnSham \gets matriz_inicial(Partition)$
-        \While{$\neg converged(MatKohnSham)$}
-            \ForAll{$Group \in PointGroups(Partition)$}
-                \State $compute_functions(Group)$
-                \State $Density \gets densidad(iGroup)$
-                \State $MatKohnSham \gets matrix_kohn_sham(Group, Density, MatKohnSham)$
+        \State $Particion \gets regenerar()$
+        \State $Pesos \gets calcular\_pesos(Partition)$
+        \State $MatKohnSham \gets matriz\_inicial(Partition)$
+        \While{$\neg convergio(MatKohnSham)$}
+            \ForAll{$Grupo \in Grupos(Particion)$}
+                \State $calcular\_funciones(Grupo)$
+                \State $MatDensidad \gets calcular\_densidad(Grupo)$
+                \State $MatKohnSham \gets matriz\_kohn\_sham(Grupo, MatDensidad, MatKohnSham)$
             \EndFor
         \EndWhile
-        \State $e \gets compute_energy(Partition, MatKohnSham)$
+        \State $energia \gets calcular\_energia(Particion, MatKohnSham)$
     \end{algorithmic}
 \end{algorithm}
 
 Un esquema de alto nivel del computo m\'as intensivo realizado por el paquete
-G2G se encuentra en la figura~\ref{algo:lio-iteration}. Este c\'omputo corresponde
-a una iteraci\'on de c\'omputo de la matriz de Kohn-Sham. El pseudoc\'odigo
-corresponde a la implementaci\'on en C++ del mismo para los casos donde se
-utiliza GGA (\textit{Gradient Global Approximation}) y se calculan tanto las
-fuerzas como la energia.
-Las matrices $G$ y $H$ corresponden a matrices de vectores $\mathbb{R}^3$, y
-la matriz $F$ de valores de funciones es de escalares. Las operaciones entre
-vectores y vectores y escalares tienen la sem\'antica esperable de \'algebra
-lineal. El producto entre dos vectores debe ser interpretado como producto
-componente a componente, no como producto escalar o vectorial.
-
-La implementaci\'on de las operaciones entre vectores merece particular atenci\'on.
-Para aprovechar el set de instrucciones SSE 4, la ultima versi\'on disponible al
-momento de realizar la implementaci\'on, la clase que implementa un vector de 3
-componentes (\texttt{cvector3}) se adapt\'o mediante herencia para mapear a un
-registro de SSE 4. Dado que el ancho de estos registros es de 128 bits, los mismos
-permiten realizar c\'alculos de a 4 elementos de punto flotante a la vez. Al ser 3, uno de los
-elementos del registro SSE no se utiliza.
-
-La representaci\'on de un vector de tres componentes de esta manera, si bien da
-un \textit{speedup} significativo, no es portable ni escalable. Al incrementar el
-ancho de registro SIMD m\'as de los campos deben ser ignorados, malgastando cada
-vez m\'as espacio. Asimismo, se desperdician oportunidades por parte del compilador
-para optimizar mejor haciendo uso de todos los registros y operaciones que dispone
-la arquitectura.
-
-Uno de los c\'alculos, \texttt{ssyr}, utilizaba la GSL (\textit{GNU Scientific Library}).
-La misma se reemplazo por la MKL (\textit{Math Kernel Library}) de Intel ya que
-la operaci\'on corresponde a una subrutina de BLAS nivel 2 muy conocida. Esto se
-realiz\'o principalmente para evitar tener que hacer una compilaci\'on y linkeo
-de la librer\'ia GSL en el Xeon Phi, y para disminuir la cantidad de c\'odigo a
-optimizar dado que la MKL ya se utilizaba en otras secciones del programa.
+G2G se encuentra en la figura~\ref{algo:lio-iteration}. Este c\'odigo corresponde
+a una iteraci\'on del c\'alculo de la matriz de Kohn-Sham.
 
 \begin{algorithm}[H]
         \caption{Pseudoc\'odigo de la iteraci\'on original de LIO}
         \label{algo:lio-iteration}
         \begin{algorithmic}
-            \Function{iteration}{$PG : PointGroup, Forces: \mathbb{R}^{fr \times fc}, RMMO: \mathbb{R}^{rr \times rc}$}
-              \State $RMM^{IN} \gets rmm\_input(G)$
-              \State $F \gets functions(PG)$
-              \State $G \gets gradient(PG)$
-              \State $H \gets hessian(PG)$
-              \State $energy \gets 0$
-              \ForAll{$p \in Points(PG)$}
+            \Function{solve}{$PG : PointGroup$}
+              \State Leer la matriz de coeficientes inicial.
+              \State Calcular funciones, gradiente de la densidad y hessiano.
+              \ForAll{$p \in puntos(PG)$}
                   \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
                   \ForAll{$i \in functions(PG, p)$}
-                       \State Calcular densidad $pd$ para el punto usando valores entre $[0,i]$
-                       \State Calcular gradiente de la densidad $dxyz$ para el punto usando valores entre $[0,i]$
-                       \State Calcular hessianos $dd1$ y $dd2$ de la densidad para el punto usando valores entre $[0,i]$
+                       \State Calcular la contribución a la densidad, $dens$
+                       \State Calcular la contribución al gradiente, $grad$
+                       \State Calcular la contribución a los hessianos, $hess_1$ y $hess_2$
                   \EndFor
-                  \State Calcular potencial usando $pd,dxyz, dd1, dd2$ obteniendo energ\'ia de intercambio $exch$, de correlaci\'on $corr$ y contribuci\'on a fock $y2a$
-                  \State Sumar a la energ\'ia total las contribuciones, usando el peso $weight(p)$ del punto.
-                  \State Calcular factor de contribuci\'on a fuerzas y fock $FR_p$ con la contribuci\'on $y2a$ y el peso $weight(p)$ del punto.
+                  \State Calcular potencial usando las contribuciones $dens$,$grad$,$hess_1$ y $hess_2$.
+                  \State Sumar a la energ\'ia resultado $energy$ las contribuciones, usando el peso del punto $p$.
+                  \State Calcular ontribuci\'on a Fuerzas y Kohn Sham $FR_p$ con el potencial y el peso del punto.
               \EndFor
-              \State $KohnShamContributions_{i,j} \gets \Sigma_{k < m} F_k \cdot F_k' \cdot FR_k$
-              \ForAll{$i,j \gets rmm\_indexes(PG)$}
-                  \State $KohnSham_{i,j} \gets KohnSham_{i,j} + KohnShamContributions_{i,j}$
-              \EndFor
+              \State Calcular fuerzas usando los factores $FR$ y los n\'ucleos de los \'atomos.
+              \State Sumar la contribución de cada punto a la matriz de Kohn Sham General
             \EndFunction
         \end{algorithmic}
 \end{algorithm}
 
-%TODO(jpdarago): Explicar cada una de estas partes del codigo de lio por separado
+Un aspecto importante a se\~nalar es la representaci\'on de las matrices en el
+programa.
+
+Las matrices del gradiente y hessiano tienen como elementos vectores $\mathbb{R}^3$, y
+la matriz de valores de funciones es una matriz de escalares. Las operaciones entre
+vectores y vectores y entre vectores y escalares tienen la sem\'antica esperable de \'algebra
+lineal. El producto entre dos vectores en el c\'odigo debe ser interpretado como producto
+componente a componente, no como producto escalar o vectorial.
+
+La implementaci\'on de las operaciones entre vectores merece particular atenci\'on.
+Para aprovechar el set de instrucciones SSE 4, la ultima versi\'on disponible al
+momento de realizar la implementaci\'on, el tipo de datos para un vector de 3
+componentes (\texttt{cvector3}) se adapt\'o para corresponderse a un
+registro de SSE 4. Dado que el ancho de estos registros es de 128 bits, los mismos
+permiten realizar c\'alculos de a 4 elementos de punto flotante a la vez. Al ser 3, uno de los
+elementos del registro SSE no se utiliza (fijandole el valor en 0).~\cite{LIO}.
+Es tarea del compilador luego traducir las operaciones usuales a instrucciones
+vectoriales.
+
+La representaci\'on de un vector $\mathbb{R}^3$ de esta manera, si bien da
+un \textit{speedup} significativo, no es portable ni escalable a otras extensiones
+SIMD. Al incrementar el ancho de registro m\'as de los campos deben ser ignorados, malgastando cada
+vez m\'as espacio \'util. Asimismo, se desperdician oportunidades por parte del compilador
+para optimizar mejor haciendo uso de todos los registros y operaciones que dispone
+la arquitectura sobre la cual se esta compilando, ya que se le dice explicitamente
+que operaciones tiene que hacer y como.
+
+Profiling de la implementaci\'on inicial se encuentra en la figura~\ref{fig:initial-profiling}.
+Como puede verse, el gran dominante son los c\'alculos correspondientes a la densidad,
+que incluyen los dos primeros ciclos del pseudoc\'odigo de
+la figura~\ref{algo:lio-iteration}. Tambi\'en vemos la importancia de fuerzas y
+la actualizaci\'on de la matriz de Kohn Sham. Para este trabajo nos enfocaremos
+en esta \'ultima, a pesar de su menor importancia relativa, puesto que se realiza
+en todas las iteraciones intermedias, y no solo en la \'ultima como si ocurre
+con el c\'alculo de las fuerzas. Sin embargo nos ocuparemos de acelerar este
+c\'alculo tambi\'en.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/initial-iteration-parts-hemo.png}
+   \caption{Divisi\'on de los tiempos de iteración para la hemoglobina en la versión
+   original en CPU}
+   \label{fig:initial-profiling}
+\end{figure}
 
 \subsection{Cambios en la vectorizaci\'on}
 
-Uno de los primeros cambios fue la estructura de vectorizaci\'on para el ciclo
-interno de la iteraci\'on de LIO.
+Dado el peso los c\'omputos internos para la densidad electr\'onica y la energ\'ia
+de intercambio y correlaci\'on, empezamos por eliminar la dependencia expl\'icita
+con SIMD, eliminando la herencia de esta clase con los tipos de datos de SSE.
 
-En base a la necesidad de que el c\'odigo escale correctamente con el ancho de registros
-SIMD (256 bits para AVX 1 en Xeon y 512 bits para AVX 2 y MMIC), se elimin\'o el
-uso de clases SIMD expl\'icitas para vectores de 3 componentes.
+Esto deleg\'o al compilador la tarea de vectorizar el c\'odigo apropiadamente. En consecuencia
+se produjo al principio una degradaci\'on importante de performance, dado que las operaciones
+de suma, multiplicaci\'on, etc. involucrando vectores ya no eran vectorizadas por defecto, y
+las mismas son parte muy importante del algoritmo de c\'alculo de la energ\'ia.
 
-Esto deleg\'o al compilador la tarea de vectorizar el c\'odigo apropiadamente. Inicialmente
-esto produjo una degradaci\'on importante de performance, dado que la organizaci\'on del
-c\'odigo no permite al compilador vectorizar efectivamente.
+Esto se resolvi\'o con una reorganizaci\'on en memoria de las matrices. La observaci\'on clave
+para esto es que las operaciones se realizan de a una componente por vez. En particular,
+el ciclo m\'as intensivo de c\'omputo (el interior de la iteraci\'on, detallado en el pseudoc\'odigo
+de la figura~\ref{algo:lio-inner-cicle}) puede dividirse
+en cada componente para convertirse en 10 operaciones de suma sobre un producto de
+dos vectores.
 
-Para revertir esta regresi\'on, se modific\'o la organizaci\'on del c\'odigo de manera de
-realizar los c\'omputos de manera m\'as amena a la optimizaci\'on. La observaci\'on clave
-para esto es que los computos se realizan siempre componente a componente. En particular,
-el ciclo m\'as intensivo de c\'omputo (el interior de la iteraci\'on) puede dividirse
-en cada componente para convertirse en 10 operaciones de suma sobre un vector de
-elementos.
+\begin{algorithm}[H]
+        \caption{Pseudoc\'odigo del ciclo principal del c\'alculo de la energ\'ia de intercambio y correlaci\'on}
+        \label{algo:lio-inner-cicle}
+        \begin{algorithmic}
+            \Function{solve}{$PG : PointGroup$}
+              \ForAll{$p \in puntos(PG)$}
+                  \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
+                  \ForAll{$i \in functions(PG, p)$}
+                     \State $dens \gets \Sigma_{j = 0}^{i} MC_{i,j} \cdot F_{p,j}$
+                     \State $grad \gets \Sigma_{j = 0}^{i} MC_{i,j} \cdot F_{p,j}$
+                     \State $hess_1 \gets \Sigma_{j = 0}^{i} MC_{i,j} \cdot H_{2p,j}$
+                     \State $hess_2 \gets \Sigma_{j = 0}^{i} MC_{i,j} \cdot H_{2p+1,j}$
+                  \EndFor
+                  \State Usar $dens$,$grad$,$hess_1$ y $hess_2$ para calcular las
+                  contribuciones correspondientes a la funci\'on
+              \EndFor
+            \EndFunction
+        \end{algorithmic}
+\end{algorithm}
 
 Una heur\'istica de optimizaci\'on para estos casos es convertir los arreglos de
 estructuras (como por ejemplo las matrices de gradiente $G$ y de hessiano $H$, que
@@ -202,10 +237,34 @@ componente), sino tambi\'en dividir el hessiano en sus componentes pares e impar
 De esta manera, cada componente es un valor escalar y los ciclos pueden reescribirse
 para utilizar operaciones de punto flotante usuales sobre cada elemento.
 
-El c\'odigo resultante para el ciclo m\'as interno puede verse en el pseudoc\'odigo
-de la figura~\ref{fig:lio-pseudo-dividir}.
+Un esquema sencillo para visualizar la proyecci\'on realizada se muestra en
+la figura~\ref{fig:matrix-split-img}. La clave es observar que ahora todos los
+elementos de una misma componente est\'an consecutivos en memoria, con lo cual
+pueden ser le\'idos y procesados de a tantos a la vez como se disponga mediante
+registros SIMD. Anteriormente se pod\'ia procesar de a menos valores por
+componente a la vez. Adem\'as, el c\'omputo puede aprovechar operaciones como
+por ejemplo FMA (\textit{Fused Multiply Add}) que explicamos en secciones
+anteriores.
 
-%TODO(jpdarago): Agregar pseudocodigo para esta parte
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{images/matrix-split-img.png}
+   \caption{Esquema de la proyecci\'on por componente realizada.}
+   \label{fig:matrix-split-img}
+\end{figure}
+
+Tambi\'en notamos que los accesos de $hess_1$ y $hess_2$ se producen en las componetnes
+pares e impares del hessiano, respectivamente. Si separamos estas en dos matrices
+separadas, entonces tambi\'en tendremoms que todas las componentes estar\'an
+consecutivas en memoria y las operaciones pueden proyectarse f\'acilmente componente
+a componente.
+
+Debido a la complejidad de los c\'alculos, y tratando de evitar introducir
+errores sutiles, decidimos que al calcular las matrices de funciones, las
+mismas se hicieran utilizando el c\'odigo  anterior pero con las versiones de
+vectores sin SIMD, y luego proyectar las componentes a matrices en un \'ultimo
+paso. Esto introduce un \textit{overhead} en los c\'omputos de funciones no
+despreciable, pero veremos que este se puede palear con otras t\'ecnicas.
 
 La figura~\ref{fig:lio-post-partir-mats} muestra los resultados de realizar esta
 optimizaci\'on en el caso de prueba de hemoglobina en la computadora de prueba.
@@ -230,10 +289,12 @@ similar a la utilizada en el c\'odigo de GPU para evitar el c\'alculo de las mis
 en cada iteraci\'on. A diferencia de GPU, la memoria principal es de f\'acil y
 amplia disponibilidad para procesadores est\'andar, con lo cual es posible en ese
 caso calcular para cada grupo de puntos, el gradiente hessiano y valores de
-funciones una \'unica vez antes de empezar las iteraciones.
+funciones una \'unica vez antes de empezar las iteraciones. Con esto, el
+\textit{overhead} introducido por calcular las matrices y luego proyectarlas
+disminuye considerablemente.
 
-De manera de poder controlar esto, se habilit\'o como una opci\'on en tiempo de
-compilaci\'on al programa.
+De manera de poder controlar esto, en casos de memoria m\'as restringida, se
+habilit\'o como una opci\'on en tiempo de compilaci\'on al programa.
 
 Esta modificaci\'on es sencilla ya que podemos utilizar el mismo flag
 \textit{inGlobal} de GPU para marcar que las funciones de un grupo se encuentran
@@ -252,56 +313,28 @@ optimizado en la secci\'on anterior, y el actual despu\'es de esta modificaci\'o
    \label{fig:lio-post-cachear}
 \end{figure}
 
-%\subsection{Alineamiento de matrices}
-
-%De modo de facilitar la vectorizaci\'on de las operaciones realizadas en el
-%ciclo principal de la iteraci\'on, se tuvo en cuenta la alineaci\'on de las
-%matrices de funciones, hessiano y gradiente. La alineaci\'on a 64 bytes facilita
-%el uso de instrucciones vectoriales especiales del procesador para tomar los
-%valores de la memoria principal~\cite{AutovectorizationGuide}.
-
-%Para alinear el comienzo de todas las matrices a 64 bytes se emplea la funci\'on
-%de la librer\'ia MKL de Intel \texttt{mkl\_malloc}. Esta funci\'on retorna la
-%memoria alineada a la potencia de dos que se desee~\cite{IntelMKLDoc}.
-
-%Esto sin embargo no resulta suficiente en el caso del ciclo m\'as interno de
-%la iteraci\'on. Para esto, necesitamos que cada fila de las matrices est\'en alineadas.
-%Dado que la cantidad de columnas de una matriz corresponde a la cantidad de funciones,
-%alineamos las mismas con un \texttt{padding} de ceros hasta el m\'ultiplo m\'as
-%cercano de 64 bytes. Esto introduce un m\'aximo de 16 valores nulos de precisi\'on
-%simple u 8 de precisi\'on doble (de acuerdo a cual se este empleando) en cada
-%fila.
-
-%La figura~\ref{fig:lio-post-align} muestra el resultado de aplicar esta optimizaci\'on
-%en precisi\'on simple para el ejemplo utilizado y la m\'aquina de prueba usada.
-
-%Si bien la diferencia de performance es peque\~na en este caso, la importancia
-%de esta optimizaci\'on en desarrollos futuros es tal que decidimos mantenerla,
-%especialmente considerando la vectorizaci\'on en Xeon Phi~\cite{Jeffers}.
-
-%\begin{figure}[htbp]
-   %\centering
-   %\includegraphics[width=\plotwidth]{plots/cpu/post-alinear-matrices.png}
-   %\caption{Speedup en veces para la iteraci\'on de G2G para el caso de la
-   %mol\'ecula de hemoglobina, antes y despu\'es de alinear las matrices.}
-   %\label{fig:lio-post-align}
-%\end{figure}
-
 \subsection{Prototipos de paralelizaci\'on}
 
 Con la optimizaci\'on anterior observamos que los ciclos principales del c\'odigo
 estaban vectorizados y buscamos entonces obtener mejor \textit{performance} haciendo
 uso de los m\'ultiples procesadores disponibles. Para esto, buscamos una soluci\'on
 que nos permitiera escalar lo mejor posible en cantidad de procesadores: Utilizar
-$n$ procesadores debiera mejorar la performance lo m\'as cerca de $n$-veces posible.
-
-%TODO(jpdarago): Esta parte de OpenMP no deberia ir en la introduccion?
+$n$ procesadores debiera mejorar la performance lo m\'as cerca de $n$-veces posible,
+ya que sino agregar m\'as procesadores al problema dar\'a cada vez menos dividendos
+como predice la ley de Amdahl.
 
 Con el prop\'osito de simplificar la tarea sin perder control o performance,
 usamos el soporte para OpenMP del compilador ICC de Intel. OpenMP corresponde a
 un \textit{est\'andar} de compiladores para paralelismo asistido por el usuario,
-mediante \texttt{pragmas} de compilador y una librer\'ia de soporte sobre
-primitivas del sistema operativo.
+mediante \texttt{pragmas} de compilador y una librer\'ia de soporte a estos
+pragmas sobre primitivas del sistema operativo.
+
+Asistido por el usuario se refiere a que nosotros hemos de indicarle a OpenMP
+que ciclos paralelizar, nosotros debemos asegurarnos de no introducir efectos
+adversos como condiciones de carrera por memoria compartida, \textit{deadlocks},
+etc. Tambi\'en debemos darle nosotros a OpenMP que estrategia usar para dividir
+las iteraciones de un ciclo entre los hilos de ejecuci\'on, cuantos
+\textit{threads} utilizar, etc~\cite{OpenMPIntel}.
 
 Un ejemplo de como se puede utilizar esta librer\'ia para paralelizar un ciclo
 sencillo se encuentra en el c\'odigo de C++ de la figura~\ref{fig:openmp-example}.
@@ -309,7 +342,10 @@ En el ejemplo, las iteraciones del ciclo principal ser\'an divididas entre los
 distintos \textit{threads} en porciones iguales y consecutivas, y cada uno
 ejecutara el cuerpo interno del ciclo para sus iteraciones. La cantidad de
 hilos de ejecuci\'on a lanzar y como se dividen las iteraciones son controladas
-mediante los par\'ametros del pragma pasado al compilador.
+mediante los par\'ametros del pragma pasado al compilador: el valor
+\texttt{schedule(static)} sirve para indicar que los valores de $i$ a iterar
+deben ser dividos en partes iguales y consecutivas. \texttt{num\_threads} indica
+cuantos \textit{threads} debemos utilizar para este ciclo.
 
 No solo al encontrarse la secci\'on cr\'itica los hilos de ejecuci\'on deben
 sincronizarse para iniciar el trabajo, sino que al terminar cada uno debe esperar
@@ -333,25 +369,26 @@ con OpenMP son puntos de sincronizaci\'on y tienen un \textit{overhead} asociado
     \label{fig:openmp-example}
 \end{figure}
 
-El car\'acter asistido de OpenMP implica que el programador debe indicar como
-realizar la partici\'on de trabajo. En un primer momento se plantearon dos posibles rutas
+Queda pendiente como realizar la divisi\'on de trabajo.  En un primer momento se plantearon dos posibles rutas
 hacia paralelizar el c\'odigo: dividir los grupos entre \textit{threads} de
 procesamiento, o utilizar m\'ultiples procesadores para dividirse el trabajo
 correspondiente los puntos y funciones dentro de un mismo grupo. Esta segunda
-posibilidad corresponde a lo que se realiza ya en la implementaci\'on para placas
-de video.
+posibilidad corresponde a una estrategia similar a lo que se realiza ya en la
+implementaci\'on para placas de video.
 
-La decisi\'on no es trivial debido a las caracter\'isticas del trabajo a realizar
+La decisi\'on no es sencilla debido a las caracter\'isticas del trabajo a realizar
 y la arquitectura de los procesadores Xeon y Xeon Phi. A diferencia de las GPGPU,
 estos no cuentan con una gran cantidad de procesadores y exhiben un costo alto
 para lanzar un hilo de ejecuci\'on. Los hilos de ejecuci\'on comparten memorias
-cach\'e y, si su cantidad es mayor que la cantidad de procesadores disponible,
+cach\'e y principal, si su cantidad es mayor que la cantidad de procesadores disponible,
 deben ser asignados a procesadores por parte del \textit{scheduler} del sistema
-operativo.
+operativo. El \textit{overhead} de decidir que hilos de ejecuci\'on corren en cada
+momento puede seriamente da\~nar la performance.
 
 Esto hace entonces, en primera instancia, inviable realizar una partici\'on id\'entica a
 la de los \textit{kernels} implementados en CUDA, donde la cuenta se realiza para
-grupos chicos de puntos.
+grupos chicos de puntos: no es obvio si el costo de orquestar los procesadores para
+realizar los c\'omputos es comparable al trabajo mismo a realizar.
 
 Por otro lado, tampoco es trivial partir los grupos entre los procesadores disponibles
 ni dividir los puntos de un grupo entre procesadores para resolverlos.
@@ -360,7 +397,8 @@ El motivo de esto es la forma que tiene la grilla de integraci\'on con la que se
 Esta, como ya se detall\'o anteriormente, se divide en cubos y
 esferas. Las esferas corresponden a los n\'ucleos de los \'atomos del sistema,
 mientras que los cubos son determinados por la grilla de integraci\'on y tienen tama\~no
-variable.
+variable. En l\'ineas generales, las esferas suelen tener muchos puntos para procesar,
+mientras los cubos suelen tener tama\~no mediano o peque\~no.
 
 Tomamos como ejemplo el caso de la hemoglobina, el empleado para ajustar los
 par\'ametros de nuestra implementaci\'on. Un histograma de la cantidad de
@@ -390,8 +428,7 @@ que poseen menos de 100 puntos.
 
 Adicionalmente, el grupo m\'as grande en cantidad de puntos tiene 5238 veces m\'as
 puntos que el m\'as chico, y el m\'as grande en cantidad de funciones tiene 24
-veces m\'as puntos (debido al ajuste de alineaci\'on que se explic\'o en la
-secci\'on anterior).
+veces m\'as puntos
 
 Por lo tanto, identificamos las siguientes dificultades:
 
@@ -400,6 +437,7 @@ Por lo tanto, identificamos las siguientes dificultades:
     los grupos m\'as grandes dominan a los m\'as chicos, pudiendo producir un serio
     desbalance de carga de trabajo, especialmente cuando se incrementa la cantidad de
     procesadores en juego.
+
     \item Recorrer cada grupo y dividir los puntos a procesar entre procesadores
     tiene como desventaja que muchos grupos tienen una muy peque\~na cantidad de
     puntos, con lo cual incrementar la cantidad de procesadores no nos ser\'a \'util
@@ -752,8 +790,6 @@ a nivel arquitectural de la aplicaci\'on y de muy fino detalle, como por
 ejemplo cantidad de \textit{cache misses}, \textit{stalls} en el pipeline,
 cantidad de \textit{branch mispredictions}, etc.
 
-%TODO(jpdarago): Agregar una introduccion a los contadores de perf
-
 A continuaci\'on se muestran los resultados de correr
 un an\'alisis de \textit{perf} para 1 y 12 hilos simult\'aneos en la m\'aquina de
 prueba. De inter\'es es el valor de \texttt{stalled-cycles-frontend}. Este valor
@@ -875,7 +911,7 @@ para el caso de ejemplo de hemoglobina en la figura~\ref{fig:histogram-indexes-h
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\plotwidth]{plots/cpu/histogram-functions-hemo.png}
+   \includegraphics[width=\plotwidth]{plots/cpu/histogram-indexes-hemo.png}
    \caption{Cantidad de \'indices a actualizar de la matriz de Kohn-Sham}
    \label{fig:histogram-indexes-hemo}
 \end{figure}
