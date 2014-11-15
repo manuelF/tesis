@@ -20,6 +20,60 @@ def time2milis(s):
 def time2micros(s):
     return int(re.search("(\d+)us.",s).group(1))
 
+def mejora_weights():
+    post = time2milis("768018us")
+    pre = time2milis("7s. 906529us")
+
+    params = {
+        'xlabel': u"Resultados para paralelización de computo de pesos",
+        'ylabel': u"Tiempo de iteración [ms]",
+        'xvalues': [u'Con 1 thread', u'Con 12 threads'],
+        'yvalues': [pre,post],
+        'filename': u'post-paralelizar-pesos.png',
+    }
+    comparisonBarGraph(**params)
+
+def hemo_post_paralelizar():
+    pre = time2milis("11s. 329844us")
+    post = time2milis("9s. 268631us")
+    params = {
+        'xlabel': u"Resultados para versión final en un core",
+        'ylabel': u"Tiempo de cómputo [ms]",
+        'xvalues': [u'Pre-optimización', u'Post-optimización'],
+        'yvalues': [pre,post],
+        'filename': u'post-paralelizar-iteracion-single.png',
+    }
+    comparisonBarGraph(**params)
+
+
+def hemo_scale():
+    pre = time2milis("9275027.0")
+    post = time2milis("816929.0")
+
+    params = {
+        'xlabel': u"Resultados para paralelización de la iteración",
+        'ylabel': u"Tiempo de cómputo [ms]",
+        'xvalues': [u'Con 1 thread', u'Con 12 threads'],
+        'yvalues': [pre,post],
+        'filename': u'post-paralelizar-iteracion.png',
+    }
+    comparisonBarGraph(**params)
+
+def mejora_functions():
+    pre = time2milis("3s. 859577us.")
+    post = time2milis("2s. 343960us.")
+    postext = time2milis("1s. 214527us.")
+
+    params = {
+        'xlabel': u"Resultados para paralelización de computo de funciones",
+        'ylabel': u"Tiempo de cómputo [ms]",
+        'xvalues': [u'Con 1 thread', u'Con 12 threads interno', u'Con 12 threads externo'],
+        'yvalues': [pre,post, postext],
+        'filename': u'post-paralelizar-functions.png',
+        'rotation': 20,
+    }
+    comparisonBarGraph(**params)
+
 def plot_cost_function():
     with open("measures/times-for-groups.txt") as f:
         data = []
@@ -103,6 +157,20 @@ def initial_profile():
     }
     piechart(**params)
 
+def valor_split():
+    vals = [(0, 874753), (10, 859975.0), (20, 853951.0), (40, 848703.0), (80, 831835.0), (100, 834029.0)]
+    dvals = dict(vals)
+    xaxis = sorted([u for u,v in vals])
+    yaxis = [dvals[x] for x in xaxis]
+    params = {
+        'xlabel': u"Resultados para paralelización de computo de pesos",
+        'ylabel': u"Tiempo de ejecucion [ms]",
+        'xvalues': ["split = %d" % v for v in xaxis],
+        'yvalues': yaxis,
+        'filename': u'different-splits.png',
+        'rotation': 20,
+    }
+    comparisonBarGraph(**params)
 
 def reduce_summing_matrix_plot():
     threads, measures = [],[]
@@ -256,6 +324,8 @@ def amdahl_plot():
 
 if __name__ == '__main__':
     initial_profile()
+    mejora_weights()
+    mejora_functions()
     hemo_group_sizes_histogram()
     plot_cost_function()
     reduce_summing_matrix_plot()
@@ -264,5 +334,8 @@ if __name__ == '__main__':
     post_caching_matrices()
     post_aligning_matrices()
     escalabilidad_final()
+    valor_split()
     diferencias_de_grupos_por_split()
     diferencias_de_grupos_balanceadas()
+    hemo_scale()
+    hemo_post_paralelizar()
