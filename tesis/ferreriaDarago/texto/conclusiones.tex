@@ -10,19 +10,105 @@
 
 
 \section{?`Qu\'e me conviene comprar?}
+Luego de todas las mejoras realizadas a la aplicaci\'on LIO, queda la interrogante pendiente. Si quiero
+correr simulaciones de QM, ?`Qu\'e versi\'on voy a correr, CPU o GPU?
 
+Esta pregunta es siempre capciosa y es susceptible a cambios tecnol\'ogicos muy r\'apidamente. Intentaremos
+responderla utilizando dos \textit{tiers} donde correr LIO, uno para una estaci\'on de trabajo
+y el otro para un servidor de c\'omputo. Definimos, para cada configuraci\'on, una versi\'on para GPU y otra
+para CPU de modo de priorizar los recursos invertidos. Intentamos que los costos de ambos niveles
+sean parejos, de modo de hacer la comparaci\'on realista de que conviene invertir.
+
+Configuraci\'on 1 - Estaci\'on de trabajo GPU:
+Intel Core i5-4460 Haswell Quad-Core 3.2GHz
+8GB RAM DDR3
+GeForce GTX 780 3GB
+
+Configuraci\'on 1 - Estaci\'on de trabajo CPU:
+Intel Core i7-4790K Haswell Quad-Core 4.0GHz
+16GB RAM DDR3
+
+Configuraci\'on 2 - Servidor con GPU:
+Procesador E3 low end
+16GB RAM DDR3
+NVIDIA Tesla K40 12GB GDDR5 GPU
+%en hemo k40
+%total iter = 1s 331302
+%iteration = 522937
+
+Configuraci\'on 2 - Servidor con CPU:
+Procesador 2 x Xeon E5
+32GB RAM
+%TODO especificar bien en algo medible.
+
+Lo que primero se debe notar en GPU es que se usan dos placas que tienen potencia de c\'alculo casi equivalente
+para las cuentas en simple precisi\'on. Sin embargo, elegimos una Tesla para configuraci\'on de servidor
+porque son las placas mejor preparadas para HPC. Estas cuentan con cuatro veces mas memoria en la placa
+que tiene ECC y con mucho mayor MTFB (\textit{Mean Time Between Failures}), factor vital en servidores
+que deben correr confiablemente.
+
+La m\'etrica que usaremos para comparar los distintos sistemas es cuantas iteraciones del calculo de
+SCF se pueden ejecutar por d\'ia. Esto lo hacemos para medir estrictamente la performance
+de QM, importante en simulaciones de \textit{Time-Dependant Density Functional Theory} por ejemplo, y no
+hablar de las implementaciones de los sistemas de QM/MM que utilizan LIO.
+Esta m\'etrica es similar a las que se usan en el \'area de MM. Programas como Amber\cite{Amber} la usan para comparar
+distintas configuraciones de hardware sobre la cual correr mejor.
+
+\subsection{Discusi\'on}
+La principal ventaja que se obtiene de correr en las estaciones de trabajo con GPU es la potencia
+de calculo concentrado en los dispositivos GPU. La mayor aceleraci\'on del calculo de XC se obtiene
+con una GeForce 780, en comparaci\'on con el procesador. Esto da la raz\'on a las hip\'otesis discutidas
+anteriormente sobre que el procesador se encuentra completamente ocupado.
+En cambio, las estaciones de trabajo con CPU cuentan con la ventaja de que se acelera tambi\'en el
+resto de las cuentas que componen una iteraci\'on de SCF. Estas cuentas, son de menor peso computacional
+comparada con las de XC, pero tienen peso tambi\'en. Como estas otras funciones no est\'an
+aceleradas con GPU, ese recurso se subutiliza fuera de XC.
+
+Cuando se comparan las configuraciones de servidores, el panorama cambia sustancialmente.
+Las aceleraciones obtenidas en la versi\'on GPU provienen principalmente de un solo factor,
+la mayor memoria del acelerador GPU. Esta memoria permite entonces mantener las matrices
+de funciones en memoria sin tener que recalcularlas. Esta optimizaci\'on se detall\'o en la secci\'on
+\ref{GuardarFunctionsGPU}. Como la GeForce 780 cuenta con una velocidad de clock mayor a
+la K40 (probablemente porque en la linea de placas para v\'ideo juegos sea mas importante
+la performance que la estabilidad) las cuentas se realizan incluso mas r\'apido en la
+versi\'on de consumidor. Sin embargo, la K40 tiene un costo alrededor de diez veces mayor.
+
+La configuraci\'on de CPU en cambio, escala linealmente en la cantidad de cores la performance.
+Dadas las optimizaciones realizadas en CPU primordiando la escalabilidad, es de notar la gran
+diferencia de performance con respecto a la versi\'on estaci\'on de trabajo. Esta configuraci\'on
+favorece tambi\'en a todo el resto del calculo de SCF. La mayor\'ia de las cuentas que no son
+de intercambio-correlaci\'on se resuelven, o bien a trav\'es de librer\'ias BLAS en CPU, o bien
+aprovechando las t\'ecnicas de paralelizaci\'on autom\'atica que brindan los compiladores usados.
 
 \section{Importancia del problema}
 \section{Impacto de trabajar correctamente con la arquitectura}
 \section{Posible trabajo a futuro}
-De este trabajo pudimos observar al menos cinco categorias de problemas que se
+El trabajo pendiente obvio que se ve ac\'a, que brindar\'ia inicialmente la mayor aceleraci\'on
+es la realizaci\'on de una versi\'on h\'ibrida de LIO. Como pudimos observar, las cuentas son
+totalmente independientes (salvo una reducci\'on final). Esto se explot\'o en forma de paralelismo
+de m\'ultiples placas GPU y en m\'ultiples n\'ucleos de procesador. Nada, \textit{a priori}, previene
+que se pueda usar simult\'aneamente como recursos asim\'etricos para resolver de forma h\'ibrida los sistemas.
+
+La exploraci\'on preliminar que se realizo con el Xeon-Phi en este trabajo no trajo los resultados
+prometidos por las especificaciones del fabricante. La velocidad de los cores y la de la memoria
+presentaron cuellos de botella fundamentales que, al menos en nuestra investigaci\'on, no se
+pudieron resolver. Una versi\'on h\'ibrida con offloading es prometedora, pero las aceleraciones m\'aximas
+estar\'an limitadas por los costos de transferencia de memoria entre CPU y el Xeon Phi.
+
+Un \'area de inter\'es para estudiar en la aplicaci\'on es la construcci\'on de las particiones
+con los mejores par\'ametros para cada configuraci\'on. Si la aplicaci\'on pudiera descubrirlos
+independientemente de tener que cargarlos a mano, seria un gran progreso para evitar mucho
+tiempo de ajuste fino manual. Esto tambi\'en se puede expandir para muchos de los par\'ametros
+que se optimizar en GPU (el tama\~no de los bloques de todos los kernels) y en CPU (TODO).
+Esto permitir\'ia que, simplemente con una recompilaci\'on del c\'odigo, se pueda correr en generaciones
+pr\'oximas de GPU y CPU, sin tener que reescribir estas secciones de c\'odigo cada 2 o 3 a\~nos.
+
+Adem\'as de estas anteriores, pudimos observar al menos cinco categor\'ias de trabajos futuros que se
 desprenden para poder extender LIO y estudiar posibles mejoras performance considerando
 las arquitecturas disponibles en el mercado.
 \subsection{Versiones h\'ibridas}
 \begin{enumerate}
-  \item Hacer una versi\'on h\'ibrida CPU-GPU.
-  \item Hacer una versi\'on h\'ibrida CPU-XeonPhi con offloading.
-  \item Hacer una versi\'on h\'ibrida CPU-GPU-XeonPhi
+ \item Hacer una versi\'on h\'ibrida CPU-GPU-XeonPhi
   \item Probar implementar en FPGA los c\'alculos de SCF para poder resolverlos por hardware en procesadores
     Atom.
   \item Implementar una versi\'on MPI para poder resolver una iteraci\'on distribuyendo
@@ -33,7 +119,6 @@ las arquitecturas disponibles en el mercado.
 
 \subsection{Balance de cargas}
 \begin{enumerate}
-  \item Probar si vale la pena escalar a m\'ultiples XeonPhi.
   \item Repensar el algoritmo de partici\'on de trabajos para hacer m\'as equitativas las cargas sin
     tener que recurrir al balanceo durante la iteraci\'on.
   \item Modificar el algoritmo de generaci\'on de grilla que genere grupos m\'as equitativos para poder
@@ -52,16 +137,13 @@ las arquitecturas disponibles en el mercado.
   \item Acelerar los pasos de SCF actualmente single-core y no en CPU.
   \item Acelerar el c\'alculo de las contribuciones de Coulomb para las fuerzas \'inter at\'omicas.
   \item Analizar otras estrategias de paralelismo en sistemas distribuidos como MapReduce para sistemas muy grandes.
-  \item Estudiar alg\'un m\'etodo para elegir en automaticamente CPU cuando particionar a nivel
+  \item Estudiar alg\'un m\'etodo para elegir en autom\'aticamente CPU cuando particionar a nivel
     de m\'ultiples grupos y cuando a nivel interno por grupo.
 \end{enumerate}
 
 \subsection{Estudio autom\'atico de par\'ametros}
 \begin{enumerate}
-  \item Hacer un algoritmo adaptativo que busque la mejor configuraci\'on de par\'ametros de tama\~no de cubos y esferas.
-  \item Estudiar como paralelizar y vectorizar functions en CPU para poder escalar a m\'ultiples cores.
-  \item Hacer alg\'un m\'etodo de aprendizaje autom\'atico para hacer un pretuneo de ciertas constantes en GPU como
-    BLOCK\_SIZE para evitar tener que reajustar en cada nueva generaci\'on de dispositivos.
+  \item Estudiar como paralelizar y vectorizar el calculo de funciones en CPU para poder escalar a m\'ultiples cores.
   \item Analizar el consumo energ\'etico de la aplicaci\'on e intentar buscar otras arquitecturas para maximizar
     la eficiencia por Watt.
 \end{enumerate}
