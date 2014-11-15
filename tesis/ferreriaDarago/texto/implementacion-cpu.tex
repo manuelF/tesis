@@ -132,16 +132,16 @@ a una iteraci\'on del c\'alculo de la matriz de Kohn-Sham.
               \ForAll{$p \in puntos(PG)$}
                   \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
                   \ForAll{$i \in functions(PG, p)$}
-                       \State Calcular la contribución a la densidad, $dens$
-                       \State Calcular la contribución al gradiente, $grad$
-                       \State Calcular la contribución a los hessianos, $hess_1$ y $hess_2$
+                       \State Calcular la contribuci\'on a la densidad, $dens$
+                       \State Calcular la contribuci\'on al gradiente, $grad$
+                       \State Calcular la contribuci\'on a los hessianos, $hess_1$ y $hess_2$
                   \EndFor
                   \State Calcular potencial usando las contribuciones $dens$,$grad$,$hess_1$ y $hess_2$.
                   \State Sumar a la energ\'ia resultado $energy$ las contribuciones, usando el peso del punto $p$.
                   \State Calcular ontribuci\'on a Fuerzas y Kohn Sham $FR_p$ con el potencial y el peso del punto.
               \EndFor
               \State Calcular fuerzas usando los factores $FR$ y los n\'ucleos de los \'atomos.
-              \State Sumar la contribución de cada punto a la matriz de Kohn Sham General
+              \State Sumar la contribuci\'on de cada punto a la matriz de Kohn Sham General
             \EndFunction
         \end{algorithmic}
 \end{algorithm}
@@ -186,7 +186,7 @@ c\'alculo tambi\'en.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cpu/initial-iteration-parts-hemo.png}
-   \caption{Divisi\'on de los tiempos de iteración para la hemoglobina en la versión
+   \caption{Divisi\'on de los tiempos de iteraci\'on para la hemoglobina en la versi\'on
    original en CPU}
    \label{fig:initial-profiling}
 \end{figure}
