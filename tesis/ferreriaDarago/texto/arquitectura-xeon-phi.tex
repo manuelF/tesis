@@ -6,7 +6,7 @@
 La arquitectura Xeon Phi es la culminaci\'on de un trabajo iniciado por Intel en 2004, previendo
 la necesidad de paralelismo masivo para aplicaciones futuras. Saliendo al mercado al final de 2012,
 con el prop\'osito de competir en computo intensivo con \nvidia CUDA, ha ganado gran tracci\'on dentro
-de HPC a pesar de ser reciente. Por ejemplo, ha sido fuertemente utilizada en la supercomputadora Tianhe-2
+de HPC a pesar de ser muy reciente. Por ejemplo, ha sido fuertemente utilizada en la supercomputadora Tianhe-2
 de la Universidad de Sun Yat-Sen en China, listada en Top 500 como la supercomputadora m\'as r\'apida del
 mundo en Junio 2013, Noviembre 2013 y Junio 2014~\cite{Top500XeonPhiJune2013},~\cite{Top500XeonPhiNov2013},~\cite{Top500XeonPhiJune2014}.
 Los 16000 nodos de esta supercomputadora contienen, adem\'as de dos Ivy Bridge Xeon, 3 coprocesadores
@@ -18,6 +18,7 @@ En la concepci\'on del Xeon Phi se tuvieron en cuenta diversos factores, entre l
 se incluye el consumo energ\'etico. Uno de los objetivos fue aumentar la relaci\'on de
 poder de c\'omputo por Watt de los procesadores de Xeon de la \'epoca, manteniendo un entorno
 de desarrollo de prop\'osito general como el de x86.
+
 Si bien el consumo no se ve\'ia impactado por el set de instrucciones,
 si se busc\'o eliminar diversos componentes del procesador, manteniendo las caracter\'isticas
 que sirvieran al tipo de aplicaci\'on a la que se estaba
@@ -32,22 +33,14 @@ Los procesadores tienen un \textit{clock rate} de 1.0 GHz aproximadamente, compa
 a otros procesadores de Intel. Por ejemplo, los cores de un Intel Xeon CPU E5-2620 tienen un \textit{clock rate}
 de 2.10 GHz, m\'as del doble.
 
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidth]{images/xeon-phi-core.jpg}
-   \caption{Pipeline del procesador Intel Xeon Phi, tomado de~\cite{XeonPhiArchArticle} }
-   \label{fig::xeon_phi_core}
-\end{figure}
-
-Un esquema de la arquitectura de cada procesador puede verse en la figura~\ref{fig::xeon_phi_core}. Cada uno de los cores
-permite hasta 4 \textit{threads} simult\'aneos, con el prop\'osito de esconder la latencia de memoria y del tiempo de ejecuci\'on de
-las instrucciones vectoriales. Adicionalmente, el uso de dos \textit{pipelines} permite que se ejecuten hasta 2
+Cada uno de los cores permite hasta 4 \textit{threads} simult\'aneos, con el prop\'osito de esconder la latencia de memoria y del tiempo de ejecuci\'on de
+las instrucciones vectoriales. Adicionalmente, el uso de dos \textit{pipelines}, $U$ y $V$ permite que se ejecuten hasta 2
 instrucciones por ciclo de clock.  Algunas instrucciones, sin embargo, solo pueden ser despachadas en uno de ambos:
 por ejemplo las instrucciones de vectorizaci\'on solo pueden ser ejecutadas en la \textit{U-pipe}. Para esto se dispone
 de una unidad de vectorizaci\'on (VPU, \textit{Vector Processing Unit}) con 32 registros SIMD (\textit{Single Instruction
 Multiple Data}) de 512 bits por thread, con lo cual cada uno puede te\'oricamente realizar 16 operaciones de punto flotante de
 32 bits al mismo tiempo. La latencia de estas instrucciones es de 4 ciclos de clock. Sin embargo gracias a su micro
-arquitectura de \textit{full pipeline} se puede obtener un \textit{throughput} te\'orico de 1 instrucci\'on vectorial por ciclo.
+arquitectura de \textit{pipeline} se puede obtener un \textit{throughput} te\'orico de 1 instrucci\'on vectorial por ciclo.
 
 \subsection{Pipeline}
 
@@ -58,11 +51,8 @@ arquitectura de \textit{full pipeline} se puede obtener un \textit{throughput} t
    \label{fig::xeon_phi_pipeline}
 \end{figure}
 
-
 El \textit{pipeline} de instrucciones tiene siete etapas  para las instrucciones escalares, y las
 instrucciones vectoriales ocupan otras siete. Un esquema de estas puede verse en la figura~\ref{fig::xeon_phi_pipeline}.
-El pipeline puede detenerse parcialmente si alguna de las partes sufre un stall, a diferencia de lo que ocurre en
-arquitecturas como Intel Xeon.
 
 El pipeline tiene las fases usuales del ciclo \textit{fetch-decode-execute}) con algunas modificaciones.
 
@@ -100,11 +90,11 @@ no se produce un \textit{flush} del pipeline en los dem\'as threads.
    \centering
    \includegraphics[width=\plotwidth]{images/xeon-phi-ring.jpg}
    \caption{Detalle de la estructura de anillo del Xeon Phi, tomado de~\cite{XeonPhiArchArticle}}
-   \label{fig::xeon_phi_arch_global}
+   \label{fig::xeon_phi_arch_ring}
 \end{figure}
 
 La cache L2 mantiene su coherencia mediante el uso de un directorio distribuido de \textit{tags}. Un esquema del mismo puede
-verse en la figura~\ref{fig::xeon_phi_arch_global}. El mismo esta dividido en 64 secciones y une tanto los segmentos del
+verse en la figura~\ref{fig::xeon_phi_arch_ring}. El mismo esta dividido en 64 secciones y une tanto los segmentos del
 directorio de tags con los cores y los controladores de memoria principal, utilizando una topolog\'ia de anillo bidireccional,
 contando con un anillo para datos, uno para direcciones y uno para confirmaciones (\textit{acknowledgements}).
 
@@ -113,19 +103,13 @@ es de otro core, se env\'ia un request de \textit{forwarding} y los datos son en
 core tiene esa l\'inea de cache se env\'ia un pedido a uno de los varios controladores de memoria. Cada uno de estos controladores
 maneja un subconjunto del espacio de direcciones con el prop\'osito de reducir los cuellos de botella y aumentar el ancho de banda.
 
-El protocolo de coherencia de estas caches esta basado en MESI utilizando GOLS.
-
 Cada cache L2 esta divida en dos bancos, con una latencia de 2 ciclos para leer 64 bytes (una l\'inea) y 1 ciclo para escribir 64 bytes.
 
-La unidad de procesamiento vectorial lee y escribe los datos de cache con una granularidad de 512 bits, a trav\'es de un
-\textit{bus} dedicado de 512 bits. Los accesos son alineados antes de ser escritos al \textit{write-commit} buffer de la
-cach\'e.
-
-Una cosa interesante de esta arquitectura, es que la pol\'itica de cach\'e puede modificarse mediante \textit{hints} al coprocesador. Por defecto la pol\'itica del subsistema
-de cach\'e es pseudo-LRU (\textit{Least Recently Used}). Antes de escribir una l\'inea de cache el procesador debe leerla a su propia
-cache (pol\'itica conocida como RFO, \textit{Read For Ownership}). Dado que esto puede implicar que datos \'utiles de cache
-sean removidos para dejar lugar a datos que solo se van a escribir, la arquitectura da soporte a stores \textit{streameados},
-que pasan de largo a los caches. Tambi\'en se dispone de un \textit{prefetcher} por hardware.
+%Una cosa interesante de esta arquitectura, es que la pol\'itica de cach\'e puede modificarse mediante \textit{hints} al coprocesador. Por defecto la pol\'itica del subsistema
+%de cach\'e es pseudo-LRU (\textit{Least Recently Used}). Antes de escribir una l\'inea de cache el procesador debe leerla a su propia
+%cache (pol\'itica conocida como RFO, \textit{Read For Ownership}). Dado que esto puede implicar que datos \'utiles de cache
+%sean removidos para dejar lugar a datos que solo se van a escribir, la arquitectura da soporte a stores \textit{streameados},
+%que pasan de largo a los caches. Tambi\'en se dispone de un \textit{prefetcher} por hardware.
 
 \subsection{Arquitectura de instrucciones}
 
@@ -174,6 +158,8 @@ Esto nos da un l\'imite de ancho de banda te\'orico de 352 GB/s pero detalles de
 
 Las controladores reciben los pedidos mediante el anillo de direcciones y convierten estos en comandos para GDDR5, retornando finalmente los datos en
 el anillo de datos. Los dispositivos GDDR5 tienen el espacio de direcciones interlineado entre distintos bancos de memoria para distribuir mejor la carga de pedidos.
+
+La memoria esta dividida en bancos.
 
 \subsection{Conexi\'on Host - Coprocesador}
 
@@ -256,6 +242,7 @@ aplicaci\'on LIO sea ya de por si una posible candidata al uso de esta tecnolog\
 hacen interesante portar la misma al uso del Xeon Phi son la existencia de una gran cantidad de c\'odigo ya
 implementada en C++ y Fortran, la cual ya puede ser movida a Xeon Phi sin requerir m\'as que una compilaci\'on,
 seg\'un Intel.
+
 El c\'odigo existente en LIO tiene una performance fuertemente atada al costo del c\'omputo asociado,
 siendo esta tarea altamente paralelizable (como se demostr\'o en las implementaciones ya realizadas usando CUDA) y
 vectorizable. Estas son las caracter\'isticas que requiere un problema para que valga la pena considerar la
