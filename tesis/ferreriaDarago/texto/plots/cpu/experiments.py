@@ -59,16 +59,31 @@ def hemo_scale():
     }
     comparisonBarGraph(**params)
 
-def mejora_functions():
+def mejora_functions_un_core():
     pre = time2milis("3s. 859577us.")
-    post = time2milis("2s. 343960us.")
-    postext = time2milis("1s. 214527us.")
+    post = time2milis("2s. 827386us.")
+
+    params = {
+        'xlabel': u"Resultados para uso de componentes en calcular matrices",
+        'ylabel': u"Tiempo de cómputo [ms]",
+        'xvalues': [u'Pre-optimización', u'Post-optimización'],
+        'yvalues': [pre,post],
+        'filename': u'post-mejorar-functions-single-core.png',
+        'rotation': 0,
+    }
+    comparisonBarGraph(**params)
+
+
+def mejora_functions():
+    pre = time2milis("2s. 827386us.")
+    postint = time2milis("1s. 539828us.")
+    postext = time2milis("842375us.")
 
     params = {
         'xlabel': u"Resultados para paralelización de computo de funciones",
         'ylabel': u"Tiempo de cómputo [ms]",
         'xvalues': [u'Con 1 thread', u'Con 12 threads interno', u'Con 12 threads externo'],
-        'yvalues': [pre,post, postext],
+        'yvalues': [pre,postint, postext],
         'filename': u'post-paralelizar-functions.png',
         'rotation': 20,
     }
@@ -339,3 +354,4 @@ if __name__ == '__main__':
     diferencias_de_grupos_balanceadas()
     hemo_scale()
     hemo_post_paralelizar()
+    mejora_functions_un_core()

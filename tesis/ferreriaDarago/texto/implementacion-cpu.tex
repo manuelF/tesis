@@ -1094,6 +1094,20 @@ bastante malos: Si bien calcular las funciones para cada grupo es una tarea muy
 paralelizable en teor\'ia,porque son completamente independientes, a diferencia de
 los c\'alculos de la iteraci\'on, estos no han sido los resultados obtenidos.
 
+Por un lado, empezamos por evitar las proyecciones de matrices realizando todos
+los c\'alculos usando las matrices de componentes. Esto aumento la performance de
+manera significativa, como puede verse en la figura~\ref{fig:lio-post-elim-proy}.
+Esto se considice con los resultados ue obtuvimos para la iteraci\'on tambi\'en.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-mejorar-functions-single-core.png}
+   \caption{Tiempo en milisegundos del c\'omputo de todas las matrices para todos
+   los grupos en el caso de la hemoglobina, antes y despu\'es de usar las matrices por
+   componente.}
+   \label{fig:lio-post-elim-proy}
+\end{figure}
+
 La causa nuevamente es una baja relaci\'on entre c\'omputo y accesos a memoria,
 y la disparidad de costo entre grupos. La primera dificulta la divisi\'on de los
 puntos del grupo entre hilos de ejecuci\'on, mucho m\'as que en el caso de la iteraci\'on: en la iteraci\'on los
