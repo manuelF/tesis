@@ -138,10 +138,10 @@ a una iteraci\'on del c\'alculo de la matriz de Kohn-Sham.
                   \EndFor
                   \State Calcular potencial usando las contribuciones $dens$,$grad$,$hess_1$ y $hess_2$.
                   \State Sumar a la energ\'ia resultado $energy$ las contribuciones, usando el peso del punto $p$.
-                  \State Calcular ontribuci\'on a Fuerzas y Kohn Sham $FR_p$ con el potencial y el peso del punto.
+                  \State Calcular contribuci\'on a Fuerzas y Kohn-Sham $FR_p$ con el potencial y el peso del punto.
               \EndFor
               \State Calcular fuerzas usando los factores $FR$ y los n\'ucleos de los \'atomos.
-              \State Sumar la contribuci\'on de cada punto a la matriz de Kohn Sham General
+              \State Sumar la contribuci\'on de cada punto a la matriz de Kohn-Sham General
             \EndFunction
         \end{algorithmic}
 \end{algorithm}
@@ -170,14 +170,14 @@ un \textit{speedup} significativo, no es portable ni escalable a otras extension
 SIMD. Al incrementar el ancho de registro m\'as de los campos deben ser ignorados, malgastando cada
 vez m\'as espacio \'util. Asimismo, se desperdician oportunidades por parte del compilador
 para optimizar mejor haciendo uso de todos los registros y operaciones que dispone
-la arquitectura sobre la cual se esta compilando, ya que se le dice explicitamente
+la arquitectura sobre la cual se esta compilando, ya que se le dice expl\'icitamente
 que operaciones tiene que hacer y como.
 
 Profiling de la implementaci\'on inicial se encuentra en la figura~\ref{fig:initial-profiling}.
 Como puede verse, el gran dominante son los c\'alculos correspondientes a la densidad,
 que incluyen los dos primeros ciclos del pseudoc\'odigo de
 la figura~\ref{algo:lio-iteration}. Tambi\'en vemos la importancia de fuerzas y
-la actualizaci\'on de la matriz de Kohn Sham. Para este trabajo nos enfocaremos
+la actualizaci\'on de la matriz de Kohn-Sham. Para este trabajo nos enfocaremos
 en esta \'ultima, a pesar de su menor importancia relativa, puesto que se realiza
 en todas las iteraciones intermedias, y no solo en la \'ultima como si ocurre
 con el c\'alculo de las fuerzas. Sin embargo nos ocuparemos de acelerar este
@@ -253,9 +253,9 @@ anteriores.
    \label{fig:matrix-split-img}
 \end{figure}
 
-Tambi\'en notamos que los accesos de $hess_1$ y $hess_2$ se producen en las componetnes
+Tambi\'en notamos que los accesos de $hess_1$ y $hess_2$ se producen en las componentes
 pares e impares del hessiano, respectivamente. Si separamos estas en dos matrices
-separadas, entonces tambi\'en tendremoms que todas las componentes estar\'an
+separadas, entonces tambi\'en tendremos que todas las componentes estar\'an
 consecutivas en memoria y las operaciones pueden proyectarse f\'acilmente componente
 a componente.
 
@@ -269,7 +269,7 @@ despreciable, pero veremos que este se puede palear con otras t\'ecnicas.
 La figura~\ref{fig:lio-post-partir-mats} muestra los resultados de realizar esta
 optimizaci\'on en el caso de prueba de hemoglobina en la computadora de prueba.
 Como puede verse, la optimizaci\'on es muy significativa, incluso considerando
-que incrementa el tiempo de c\'alculo de funciones (que toda\'ia se realiza en
+que incrementa el tiempo de c\'alculo de funciones (que todav\'ia se realiza en
 todas las iteraciones) a\'un as\'i logra una aceleraci\'on sobre la versi\'on
 original.
 
@@ -344,7 +344,7 @@ ejecutara el cuerpo interno del ciclo para sus iteraciones. La cantidad de
 hilos de ejecuci\'on a lanzar y como se dividen las iteraciones son controladas
 mediante los par\'ametros del pragma pasado al compilador: el valor
 \texttt{schedule(static)} sirve para indicar que los valores de $i$ a iterar
-deben ser dividos en partes iguales y consecutivas. \texttt{num\_threads} indica
+deben ser divididos en partes iguales y consecutivas. \texttt{num\_threads} indica
 cuantos \textit{threads} debemos utilizar para este ciclo.
 
 No solo al encontrarse la secci\'on cr\'itica los hilos de ejecuci\'on deben
@@ -530,11 +530,11 @@ y que minimiza el valor m\'aximo de peso para una partici\'on, es decir:
 
 Un aspecto importante a se\~nalar de este problema es que pertenece a la clase
 de problemas computacionales \textit{NP-hard}. Esta engloba problemas de similar
-dificultad: un problema es \textit{NP-hard} si resolverlo es t\'an dif\'icil como
+dificultad: un problema es \textit{NP-hard} si resolverlo es tan dif\'icil como
 resolver otro problema \textit{NP-hard} en costo computacional. Estos problemas
-son dif\'iciles ya que al momento de escribir esta t\'esis no se conocen algoritmos
+son dif\'iciles ya que al momento de escribir esta tesis no se conocen algoritmos
 para ninguno de ellos que tengan costo polinomial en el tama\~no de su entrada, y
-la afirmaci\'o o negaci\'on de su existencia es una de las preguntas abiertas
+la afirmaci\'on o negaci\'on de su existencia es una de las preguntas abiertas
 m\'as conocidas de la computaci\'on~\cite{Cormen}.
 
 A diferencia de en el caso de GPU, resolvemos el problema sim\'etrico, el cual
@@ -576,10 +576,10 @@ de obtener en base a las siguientes tres observaciones:
 Las dos primeras nos dicen que $M$ est\'a en un rango acotado posible de valores.
 y lo que tenemos que hacer es buscarlo dentro de ese rango. Si bien esto ya es
 suficiente desde un punto de vista de correctitud (el algoritmo funciona), no es
-muy eficiente si el rango de \'busqueda es largo. Pero el tercer item nos permite
+muy eficiente si el rango de b\'usqueda es largo. Pero el tercer item nos permite
 utilizar b\'usqueda binaria.
 
-El algoritmo de b\'squeda binaria es uno de los m\'as conocidos dentro de las
+El algoritmo de b\'usqueda binaria es uno de los m\'as conocidos dentro de las
 ciencias de la computaci\'on: Dada una propiedad $f$ y un rango de valores del
 dominio de $f$, $[L,R]$, queremos encontrar $L'$ y $R'$ tal que $L'$ sea el
 \'ultimo valor que cumple la propiedad y $R'$ el primero que no la cumpla.
@@ -646,7 +646,7 @@ nuestra implementaci\'on.
             \State $Bins \gets \emptyset$
             \ForAll{$c \in C$}
                 \State Sea $Fits$ todos los contenedores donde $c$ entra
-                \State Si $Fits$ es vacio agregar un contenedor nuevo.
+                \State Si $Fits$ es vac\'io agregar un contenedor nuevo.
                 \State Tomar el primer contenedor, $Bin$, de $Fits$.
                 \State Agregar $c$ a $Bin$
             \EndFor
@@ -762,8 +762,8 @@ las reducciones se encuentra en la figura~\ref{fig:sum-matrix-bench-reduce}.
 \end{figure}
 
 Claramente este algoritmo debiera producir un mejor tiempo de ejecuci\'on, en
-teor\'ia, utilizando m\'ultiples procesadores. Los calculos son independientes
-entre si y no se necesita ninguna sincronizaci\'on o datos com\'unes (caracter\'istica
+teor\'ia, utilizando m\'ultiples procesadores. Los c\'alculos son independientes
+entre si y no se necesita ninguna sincronizaci\'on o datos comunes (caracter\'istica
 denominada \textit{embarrasingly parallel} en la jerga).
 
 Medimos los tiempos de reducir $128$ matrices de $1024 \times 1024$ elementos de punto
@@ -922,7 +922,7 @@ coherencia de caches intreprocesadores.
 La soluci\'on a este problema es sin embargo sencilla, trasponiendo la matriz de
 valores de funciones. La misma puede trasponerse una vez y almacenarse en memoria
 RAM al iniciar las iteraciones, teniendo por lo tanto un relativo bajo costo de
-creaci\'on. Ahora entonces el \'orden de iteraci\'on de la misma es por filas, el
+creaci\'on. Ahora entonces el orden de iteraci\'on de la misma es por filas, el
 cual es \textit{cache-friendly}.
 
 Esta modificaci\'on del algoritmo introduce un nuevo aspecto a considerar, similar
@@ -1014,9 +1014,9 @@ pesada, se prosigue por encontrar las otras dos cargas m\'as dispares y
 rebalancearlas. Para m\'as detalles del algoritmo puede verse la secci\'on
 de balanceo de cargas de la implementaci\'on en GPU.
 
-El costo computacional ya se vi\'o anteriormente que resulta bajo. En el caso
+El costo computacional ya se vio anteriormente que resulta bajo. En el caso
 de la hemoglobina se consigue menos del 5\% de diferencia en una iteraci\'on
-de rebalanceo, obteniendose los resultados de la figura~\ref{fig:lio-imbalance-fixed}.
+de rebalanceo, obteni\'endose los resultados de la figura~\ref{fig:lio-imbalance-fixed}.
 
 \subsection{Resultados preliminares}
 
@@ -1027,8 +1027,8 @@ escalabilidad conseguida en tiempo de ejecuci\'on con 12 procesadores.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-paralelizar-iteracion.png}
-   \caption{Tiempo en milisegundos para la iteración del cálculo de la energía
-   XC para la hemoglobina en la máquina de prueba, según cantidad de \textit{threads}}
+   \caption{Tiempo en milisegundos para la iteraci\'on del c\'alculo de la energ\'ia
+   XC para la hemoglobina en la m\'aquina de prueba, seg\'un cantidad de \textit{threads}}
    \label{fig:hemo-scale}
 \end{figure}
 
@@ -1042,12 +1042,12 @@ necesario para lograr que el c\'odigo sea paralelizado, incluso la performance
 en un solo procesador mejor\'o con respecto a lo original, para el caso de ejemplo,
 como puede verse en la figura~\ref{fig:post-paralelizacion-single}.
 
-No hay una optimizaci\'on única que haya llevado a este cambio, pero la
+No hay una optimizaci\'on \'unica que haya llevado a este cambio, pero la
 reestructuraci\'on mejor\'o el uso de las matrices (muchas no necesitan ser
 llenadas con ceros previo la iteraci\'on ni creadas todas las iteraciones) y
-adem\'as se removieron algunas operaciones redudantes: los factores se calculan
+adem\'as se removieron algunas operaciones redundantes: los factores se calculan
 una \'unica vez, los \'indices a calcular para cada grupo se mantienen entre
-iteraciones disminuyendo la cantidad de computos a realizar, etc.
+iteraciones disminuyendo la cantidad de c\'omputos a realizar, etc.
 
 Ninguna de estas optimizaciones en si aporta demasiado pero la combinaci\'on
 da una mejora no despreciable.
@@ -1055,8 +1055,8 @@ da una mejora no despreciable.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-paralelizar-iteracion-single.png}
-   \caption{Tiempo en milisegundos para la iteración del cálculo de la energía
-   XC para la hemoglobina en la máquina de prueba, para la versi\'on
+   \caption{Tiempo en milisegundos para la iteraci\'on del c\'alculo de la energ\'ia
+   XC para la hemoglobina en la m\'aquina de prueba, para la versi\'on
    post paralelizaci\'on en un solo procesador}
    \label{fig:post-paralelizacion-single}
 \end{figure}
@@ -1076,8 +1076,8 @@ paralelizar el primero con OpenMP de manera an\'aloga a los anteriores.
 
 Los resultados son buenos, aunque no demasiado: el ciclo escala 10 veces con 12
 \textit{threads} para el caso de la hemoglobina, como puede verse en la figura
-~\ref{fig:weights-paralelizado}. El ciclo de filtrado de puntos no es facilmente
-paralelizable puesto que se deben agregar los elementos en \'orden a un arreglo
+~\ref{fig:weights-paralelizado}. El ciclo de filtrado de puntos no es f\'acilmente
+paralelizable puesto que se deben agregar los elementos en orden a un arreglo
 de grupos.
 
 \begin{figure}[htbp]
@@ -1096,7 +1096,7 @@ los c\'alculos de la iteraci\'on, estos no han sido los resultados obtenidos.
 Por un lado, empezamos por evitar las proyecciones de matrices realizando todos
 los c\'alculos usando las matrices de componentes. Esto aumento la performance de
 manera significativa, como puede verse en la figura~\ref{fig:lio-post-elim-proy}.
-Esto se considice con los resultados ue obtuvimos para la iteraci\'on tambi\'en.
+Esto se condice con los resultados que obtuvimos para la iteraci\'on tambi\'en.
 
 \begin{figure}[htbp]
    \centering
@@ -1126,14 +1126,14 @@ nosotros en el caso de la divisi\'on de la iteraci\'on por ejemplo.
 Los resultados pueden verse en la figura~\ref{fig:functions-paralelizado}. La
 paralelizaci\'on externa es mejor que la interna, pero ambas escalan mal (menos
 de un 6x) para 12 procesadores. Aunque la importancia no es tanta para estos
-calculos porque se realizan una vez, sirven tambi\'en de punto de comparaci\'on
+c\'alculos porque se realizan una vez, sirven tambi\'en de punto de comparaci\'on
 con el trabajo realizado para paralelizar la iteraci\'on.
 
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-paralelizar-functions.png}
    \caption{Tiempo en milisegundos para la paralelizaci\'on del c\'omputo
-   de matrices para los grupos, según tipo de paralelización y cantidad de
+   de matrices para los grupos, seg\'un tipo de paralelizaci\'on y cantidad de
    \textit{threads}}
    \label{fig:functions-paralelizado}
 \end{figure}
