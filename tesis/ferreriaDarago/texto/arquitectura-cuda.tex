@@ -31,7 +31,7 @@ de manera pseudo-explicita, y con esto poder escalar ``f\'acilmente'' si solamen
 placa mas r\'apida. ~\cite{} T\'ecnicamente, esta arquitectura cuenta con entre cientos y miles de procesadores
 especializados en c\'alculo de punto flotante, procesando cada uno un \textit{thread} distinto pero
 trabajando de manera sincr\'onica agrupados en bloques. Cada procesador a su vez cuenta con entre
-64 a 256 registros~\cite{NvidiaFermi}~\cite{NvidiaKepler}, como porci\'on de un register file de 64kb.
+64 a 256 registros~\cite{NvidiaFermi}~\cite{NvidiaKepler}, como porci\'on de un register file de 64KB.
 Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de
 su dise\~no fundamental para gr\'aficos). Estos no poseen instrucciones SIMD, ya que su dise\~no primario
 esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los
@@ -103,7 +103,7 @@ eficientemente ($<25 \mu$s)~\cite{PattersonFermi}. Con esto, se pueden ejecutar
 concurrentemente dos warps distintos para esconder la latencia de las operaciones. En precisi\'on doble,
 esto no se puede, as\'i que hay solamente un warp corriendo a la vez.
 
-Un SM cuenta con una memoria com\'un de 64kb que se puede usar de forma autom\'atica tanto como memoria
+Un SM cuenta con una memoria com\'un de 64KB que se puede usar de forma autom\'atica tanto como memoria
 compartida com\'un a todos los threads como cach\'e L1 para todos los accesos a memoria.
 
 \begin{figure}[htbp]
@@ -121,7 +121,7 @@ gr\'aficos vectorialmente definidos en gr\'aficos renderizados). En aplicaciones
 no importan, puesto que se trata cada SM independientemente por software.
 
 Todos los accesos a memoria global (la memoria off-chip del dispositivo) se realizan a trav\'es de la memoria
-L1 de cada SM, y a trav\'es de la L2 del todo el procesador. Esta L2 consiste de 6 bancos de 128Kb, compartidas.
+L1 de cada SM, y a trav\'es de la L2 del todo el procesador. Esta L2 consiste de 6 bancos de 128KB, compartidas.
 Estas cach\'e son write-through y se comunican de manera directa tanto con la DRAM propia de la placa como
 con el bus PCI Express por el cual pueden comunicarse dos placas entre si, sin pasar por CPU.
 
@@ -210,7 +210,7 @@ La memoria compartida, o \textit{shared}, es una memoria que es visible para tod
 de un mismo SM. Cada thread puede escribir en cualquier parte de la memoria compartida dentro de su bloque y
 puede ser le\'ido por cualquier otro thread de este. Es una memoria muy r\'apida, on-chip, y
 que tarda aproximadamente 40 ciclos de acceso.~\cite{Demystifying} Esta memoria es compartida con la cach\'e
-L1, de capacidad de entre 16Kb y 64kb configurable por software. Esta memoria se encuentra dividida
+L1, de capacidad de entre 16KB y 64KB configurable por software. Esta memoria se encuentra dividida
 en 32 bancos de 4 bytes de tama\~no, permitiendo que cada uno de los 32 threads acceda independientemente
 a un float. Si hubiera conflicto, los accesos a ese banco se serializar\'ian, aumentando la latencia
 de la llamada.~\cite{farberCuda}
@@ -317,9 +317,9 @@ un procesador m\'as escalable y de prop\'osito general.
   Tecnolog\'ia fabricaci\'on & 65 nm           & 40 nm           & 28 nm            \\
   SMs                      & 30              & 16              & 15               \\
   SP / SM                  & 8               & 32              & 192              \\
-  Cach\'e L1               & -               & 16 - 48Kb       & 16 - 32 - 48Kb   \\
-  Cach\'e L2               & -               & 768Kb           & 1536Kb           \\
-  Memoria Shared/SM      & 16Kb            & 16 - 48Kb       & 16 - 32 - 48Kb   \\
+  Cach\'e L1               & -               & 16 - 48KB       & 16 - 32 - 48KB   \\
+  Cach\'e L2               & -               & 768KB           & 1536KB           \\
+  Memoria Shared/SM      & 16KB            & 16 - 48KB       & 16 - 32 - 48KB   \\
   Registros/Thread         & 63              & 63              & 255              \\
   Pico Precisi\'on Simple    & 240 MAD / clock & 512 FMA / clock & 2880 FMA / clock \\
   Pico GFLOPS Simple       & 933             & 1345            & 3977             \\
