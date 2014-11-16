@@ -8,8 +8,6 @@ from graphs import *
 def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
                ylim=None,scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
   pylab.title(title)
-  pylab.ylabel(ylabel)
-  pylab.xlabel(xlabel)
   fig, ax = plt.subplots()
   base = range(len(yvalues))
   ax.plot(base,yvalues,"o")
@@ -23,6 +21,8 @@ def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
     plt.ylim(ylim)
 
   pylab.legend(loc='best')
+  ax.set_ylabel(ylabel)
+  ax.set_xlabel(xlabel)
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
@@ -141,8 +141,8 @@ def globalMemory():
   measures =  tuple( map((lambda x: (1/x) * (m2090_gpu0)), vals))
 
   params =  {#'title': u"Speedup del computo de densidad electronica variando el tamaño del cacheo",
- #     'xlabel':u"Tamaño de la memoria global disponible [Mb]",
- #     'ylabel':u"Aceleración (en veces)",
+      'xlabel':u"Memoria global disponible [Mb]",
+      'ylabel':u"Aceleración de SCF (en veces)",
       'yvalues':measures,
       'ylegend':'Aceleracion SCF',
       'ticks':(u'0',u'530', u'1060',u'1590',
@@ -166,7 +166,7 @@ def globalMemoryDetailed():
 
 
   params =  {#'title': u"Aceleracion del computo de densidad electronica variando el tamaño del cacheo",
-      'xlabel':u"Tamaño de la memoria global disponible [Mb]",
+      'xlabel':u"Memoria global disponible [Mb]",
       'ylabel':u"Aceleración de SCF (en veces)",
       'yvalues':measures,
       'ticks':(u'0',u'0.053', u'0.53',u'5.3',u'53',u'530'),
@@ -184,7 +184,6 @@ def acumuladoGlobalMemory():
   ordered = np.sort(measures, order='size')
   runtimes_partials = np.cumsum(np.divide((ordered['functions']),
       np.float(np.sum(ordered['functions']))))
-
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"Tamaño de las matrices acumuladas [Gb]",
       'ylabel':u"Fracción del tiempo acumulado",
@@ -219,6 +218,7 @@ def predictorSizeInGpu():
     params['xvalues'] = ordered['cost']
     params['filename'] = fcostname
     scatterGraphFitLineal(**params)
+
 
 
 def speedupTotal():

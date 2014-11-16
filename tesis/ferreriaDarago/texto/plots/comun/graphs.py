@@ -57,8 +57,8 @@ def lineGraph(yvalues, filename,
   if ylim:
       plt.ylim(ylim)
   pylab.title(title)
-  pylab.ylabel(ylabel)
-  pylab.xlabel(xlabel)
+  ax.set_ylabel(ylabel)
+  ax.set_xlabel(xlabel)
   pylab.legend(loc='best')
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
@@ -66,17 +66,16 @@ def lineGraph(yvalues, filename,
 def stackGraph(xlabel, ylabel, yvalues, filename,
                scale=u'linear',xvalues=None,ylegend=u'',ticks='', title=u""):
   pylab.title(title)
-  pylab.ylabel(ylabel)
-  pylab.xlabel(xlabel)
   fig, ax = plt.subplots()
   stack = ax.stackplot(xvalues, yvalues, label=ylegend)
   proxy_rects = [Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0]) for pc in stack]
   label_list = [ylegend]
   # make the legend
   ax.legend(proxy_rects, label_list, loc=2)
-
   ax.set_xscale(scale)
-  #pylab.legend(loc='best')
+  plt.xlim((0,xvalues[-1]))
+  ax.set_ylabel(ylabel)
+  ax.set_xlabel(xlabel)
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
@@ -95,12 +94,18 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename):
+def piechart(labels, values, filename, title):
+    pylab.pie(values, labels=labels, autopct="%1.1f%%", startangle=90)
+    pylab.axis('equal')
+    pylab.savefig(filename, bbox_inches="tight")
+    pylab.close()
+
+def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename, rotation=0):
   pylab.xlabel(xlabel)
   pylab.ylabel(ylabel)
   ticks = range(0,len(xvalues))
   pylab.bar(ticks, yvalues, align="center")
-  pylab.xticks(ticks, xvalues)
+  pylab.xticks(ticks, xvalues, rotation=rotation)
   pylab.legend(loc="best")
   pylab.savefig(filename, bbox_inches="tight")
   pylab.close()
@@ -109,7 +114,7 @@ def initialize():
   mpl.rcParams['savefig.dpi'] = 150
 
 def histogram(xlabel, ylabel, values, nbins, title, filename):
-  pylab.hist(values, nbins, histtype="bar", normed=1, alpha=0.5)
+  pylab.hist(values, nbins, histtype="bar",  alpha=0.5)
   pylab.title(title)
   pylab.xlabel(xlabel)
   pylab.ylabel(ylabel)
