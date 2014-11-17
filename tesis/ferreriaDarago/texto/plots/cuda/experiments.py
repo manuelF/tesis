@@ -49,7 +49,7 @@ def texture():
 def speedupSimple():
   params =  {#'title': u"Speedup en multiples M2090 (simple precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
-      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':(1.0,1.83,2.6,2.86),
       'ylim':(0.0,4.0),
       'ticks':(u'1 placa', u'2 placas', u'3 placas', u'4 placas'),
@@ -59,7 +59,7 @@ def speedupSimple():
 def speedupDoble():
   params =  {#'title': u"Speedup en multiples M2090 (doble precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
-      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':(1.0,2.03,2.92,3.8),
       'ylim':(0.0,4.0),
       'ticks':(u'1 placa', u'2 placas', u'3 placas', u'4 placas'),
@@ -142,9 +142,9 @@ def globalMemory():
 
   params =  {#'title': u"Speedup del computo de densidad electronica variando el tamaño del cacheo",
       'xlabel':u"Memoria global disponible [Mb]",
-      'ylabel':u"Aceleración de SCF (en veces)",
+
       'yvalues':measures,
-      'ylegend':'Aceleracion SCF',
+      'ylegend':'Aceleracion XC',
       'ticks':(u'0',u'530', u'1060',u'1590',
 		    u'2650',u'3180', u'3710',u'4240',),
       'ylim':(1,1.25),
@@ -167,11 +167,11 @@ def globalMemoryDetailed():
 
   params =  {#'title': u"Aceleracion del computo de densidad electronica variando el tamaño del cacheo",
       'xlabel':u"Memoria global disponible [Mb]",
-      'ylabel':u"Aceleración de SCF (en veces)",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':measures,
       'ticks':(u'0',u'0.053', u'0.53',u'5.3',u'53',u'530'),
       'xvalues':np.concatenate(([0],(10**np.array(range(5)))*53/(1000.**1))),
-      'ylegend':'Aceleracion SCF',
+      'ylegend':'Aceleracion XC',
       'ylim':(1,1.25),
       'filename':"global-detailed-fullereno.png"}
   lineGraphConOtroEje(**params)
@@ -230,7 +230,7 @@ def speedupTotal():
       ref_1x2090/change_iteration_4x2090)
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"",
-      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':measures,
       'ylim':(1.0,16.0),
       'ticks':(#u'Referencia Fermi',
