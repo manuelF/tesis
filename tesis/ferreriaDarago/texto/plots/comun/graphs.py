@@ -95,10 +95,21 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
   pylab.close()
 
 def piechart(labels, values, filename, title):
-    pylab.pie(values, labels=labels, autopct="%1.1f%%", startangle=90)
-    pylab.axis('equal')
-    pylab.savefig(filename, bbox_inches="tight")
-    pylab.close()
+  def my_autopct(val):
+    total=sum(values)
+    pct = 100.0*(float(val)/float(total))
+    val = int(val)
+    return '{p:.2f}%  ({v:d}ms)'.format(p=pct,v=val)
+
+  patches, texts = plt.pie(values, labels=labels, startangle=90, labeldistance=1.05)
+  edited_labels = [labels[i] +" "+ my_autopct(values[i]) for i in range(len(values))]
+  pylab.axis('equal')
+  legend = plt.legend(patches, edited_labels, loc="lower left", shadow=True)
+  for pie_wedge in patches:
+    pie_wedge.set_edgecolor('white')
+
+  pylab.savefig(filename, bbox_inches="tight")
+  pylab.close()
 
 def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename, rotation=0):
   pylab.xlabel(xlabel)

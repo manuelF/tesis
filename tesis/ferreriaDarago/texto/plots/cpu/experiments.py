@@ -143,7 +143,7 @@ def hemo_group_sizes_histogram():
     histogram(**params)
 
     params = {
-        'xlabel': u"Indices a actualizar en Kohm-Sham, por grupo",
+        'xlabel': u"Indices a actualizar en Kohn-Sham, por grupo",
         'ylabel': u"Cantidad de grupos",
         'title': u'',
         'nbins': 30,
@@ -154,7 +154,7 @@ def hemo_group_sizes_histogram():
 
 def initial_profile():
     parts = {
-        u"Kohm Sham": time2milis("1s. 672459"),
+        u"Kohn Sham": time2milis("1s. 672459"),
         u"Densidad": time2milis("17s. 526542"),
         u"Fuerzas": time2milis("6s. 573524us"),
         u"Funciones": time2milis("1s. 369108"),
