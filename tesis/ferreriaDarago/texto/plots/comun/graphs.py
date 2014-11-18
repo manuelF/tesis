@@ -22,7 +22,7 @@ import pylab
 import numpy as np
 
 
-def barGraph(xlabel, ylabel, yvalues, ticks, ylim, filename, title=u""):
+def barGraph(xlabel, ylabel, yvalues, ticks, filename, ylim=None, title=u""):
   assert(len(yvalues) == len(ticks))
   N = len(yvalues)
   barLocations = np.arange(N)    # the x locations for the groups
@@ -32,7 +32,8 @@ def barGraph(xlabel, ylabel, yvalues, ticks, ylim, filename, title=u""):
   pylab.xlabel(xlabel)
   plt.xticks(np.arange(0.25, N), ticks)
   p1 = plt.bar(barLocations, yvalues, barWidth)
-  plt.ylim(ylim)
+  if ylim:
+    plt.ylim(ylim)
   pylab.legend()
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()

@@ -1,7 +1,19 @@
-\section{Performance de la solucion original}
-\section{Performance de los cambios realizados (por etapas)}
+\section{Aceleraciones alcanzadas en CUDA}
 
+Despues de haber trabajado en las distintas optimizaciones, comparemos las mediciones
+de tiempo definitivas alcanzadas en las mismas.
 
-\section{Performance contra CPU singlecore}
-\section{Performance contra CPU multicore - OpenMP}
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cuda/final.png}
+   \caption{Aceleraci\'on en veces del c\'alculo de XC de correr Hemoglobina comparando implementaci\'on original en CUDA contra
+   las versiones optimizadas finales.}
+   \label{plt:cuda-final}
+\end{figure}
+
+Podemos ver que las aceleracion
+
+\section{Aceleraciones alcanzadas en CPU}
+
 \section{Performance contra Xeon Phi}
+
