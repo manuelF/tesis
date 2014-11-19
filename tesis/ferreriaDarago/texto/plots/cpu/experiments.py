@@ -35,7 +35,7 @@ def mejora_weights():
 
 def hemo_post_paralelizar():
     pre = time2milis("11s. 329844us")
-    post = time2milis("9s. 268631us")
+    post = time2milis("9s. 701255us")
     params = {
         'xlabel': u"Resultados para versión final en un core",
         'ylabel': u"Tiempo de cómputo [ms]",
@@ -47,8 +47,8 @@ def hemo_post_paralelizar():
 
 
 def hemo_scale():
-    pre = time2milis("9275027.0")
-    post = time2milis("816929.0")
+    pre = time2milis("9701255.0")
+    post = time2milis("845648.0")
 
     params = {
         'xlabel': u"Resultados para paralelización de la iteración",
