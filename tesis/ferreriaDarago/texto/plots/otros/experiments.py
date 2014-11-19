@@ -23,7 +23,7 @@ def itsXCPerDia():
       'ylabel':u"Iteraciones XC por día",
       'yvalues':measures,
       'ticks':(u'WSxx\n1xGPU', u'WSxx\n2xGPU', u'WSxx\nCPU',
-        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
+        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Serverxx\nCPU'),
       'filename':"its-xc-dia.png"}
   barGraph(**params)
 
@@ -46,7 +46,7 @@ def itsPerDia():
       'ylabel':u"Iteraciones SCF por día",
       'yvalues':measures,
       'ticks':(u'WSxx\n1xGPU', u'WSxx\n2xGPU', u'WSxx\nCPU',
-        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
+        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Serverxx\nCPU'),
       'filename':"its-dia.png"}
   barGraph(**params)
 
