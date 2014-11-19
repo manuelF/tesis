@@ -13,6 +13,21 @@
 ##    'filename':"texture.png"}
 ##barGraph(**params)
 
+
+hasScipy = False
+try:
+  from scipy.interpolate import interp1d
+  hasScipy = True
+except ImportError:
+  pass
+
+try:
+  import seaborn as sns
+  sns.set_context("paper",font_scale=1.7)
+  palette = sns.color_palette()
+except ImportError:
+  pass
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -95,7 +110,7 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
   pylab.close()
 
 def piechart(labels, values, filename, title):
-    pylab.pie(values, labels=labels, autopct="%1.1f%%", startangle=90)
+    pylab.pie(values, explode=(0.1,) * len(values), labels=labels, autopct="%1.1f%%", startangle=90)
     pylab.axis('equal')
     pylab.savefig(filename, bbox_inches="tight")
     pylab.close()
@@ -110,6 +125,24 @@ def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename, rotation=0):
   pylab.savefig(filename, bbox_inches="tight")
   pylab.close()
 
+def multiComparativeBarChart(ticks, values, filename, ylabel, width=0.1):
+  fig, ax = plt.subplots()
+  indexes = np.arange(max(len(v) for u,v in values.items()))
+  rects, count = [], 0
+  pal = palette and palette or ['b'] * len(values.values()[0])
+  for key, vals in values.items():
+      bar = ax.bar(indexes + width * count, vals, width, color=pal[count])
+      rects.append(bar)
+      count += 1
+
+  ax.set_ylabel(ylabel)
+  ax.set_xticks(indexes + (len(ticks)-1) * width)
+  ax.set_xticklabels(ticks)
+  ax.legend(rects, values.keys())
+
+  plt.savefig(filename, bbox_inches="tight")
+  plt.close()
+
 def initialize():
   mpl.rcParams['savefig.dpi'] = 150
 
@@ -121,16 +154,4 @@ def histogram(xlabel, ylabel, values, nbins, title, filename):
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-hasScipy = False
-try:
-  from scipy.interpolate import interp1d
-  hasScipy = True
-except ImportError:
-  pass
-
-try:
-  import seaborn as sns
-  sns.set_context("paper",font_scale=1.7)
-except ImportError:
-  pass
 initialize()

@@ -156,7 +156,6 @@ def initial_profile():
     parts = {
         u"Kohm Sham": time2milis("1s. 672459"),
         u"Densidad": time2milis("17s. 526542"),
-        u"Fuerzas": time2milis("6s. 573524us"),
         u"Funciones": time2milis("1s. 369108"),
         u"Potencial": time2milis("130999"),
     }
@@ -319,6 +318,31 @@ def diferencias_de_grupos_balanceadas():
     }
     comparisonBarGraph(**params)
 
+def xeon_phi_single_core():
+    weightsxeonphi = time2secs("115s. 987856us")
+    weightsxeon = time2secs("7s. 906529us")
+
+    functionsxeonphi = time2secs("32s. 804570us")
+    functionsxeon = time2secs("2s. 827386us")
+
+    iteracionxeon = time2secs("9s. 268631us")
+    iteracionxeonphi = time2secs("78s. 825787us")
+
+    labels = [u"Cálculo de pesos", u"Cálculo de funciones", u"Iteración XC"]
+    comparison = {
+        u"Xeon": [weightsxeon, functionsxeon, iteracionxeon ],
+        u"Xeon Phi": [weightsxeonphi, functionsxeonphi, iteracionxeonphi],
+    }
+
+    params = {
+        'values': comparison,
+        'ticks': labels,
+        'filename': u'xeon-xeon-phi-broad-comparison.png',
+        'ylabel': u'Tiempo de ejecución [s]',
+    }
+
+    multiComparativeBarChart(**params)
+
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
@@ -355,3 +379,4 @@ if __name__ == '__main__':
     hemo_scale()
     hemo_post_paralelizar()
     mejora_functions_un_core()
+    xeon_phi_single_core()
