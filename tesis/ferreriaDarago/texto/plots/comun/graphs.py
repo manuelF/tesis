@@ -26,6 +26,7 @@ try:
   sns.set_context("paper",font_scale=1.7)
   palette = sns.color_palette()
 except ImportError:
+  palette = ["b"] * 1000
   pass
 
 import matplotlib as mpl
@@ -37,7 +38,7 @@ import pylab
 import numpy as np
 
 
-def barGraph(xlabel, ylabel, yvalues, ticks, ylim, filename, title=u""):
+def barGraph(xlabel, ylabel, yvalues, ticks, filename, ylim=None, title=u""):
   assert(len(yvalues) == len(ticks))
   N = len(yvalues)
   barLocations = np.arange(N)    # the x locations for the groups
@@ -47,7 +48,8 @@ def barGraph(xlabel, ylabel, yvalues, ticks, ylim, filename, title=u""):
   pylab.xlabel(xlabel)
   plt.xticks(np.arange(0.25, N), ticks)
   p1 = plt.bar(barLocations, yvalues, barWidth)
-  plt.ylim(ylim)
+  if ylim:
+    plt.ylim(ylim)
   pylab.legend()
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
@@ -110,10 +112,22 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
   pylab.close()
 
 def piechart(labels, values, filename, title):
-    pylab.pie(values, explode=(0.1,) * len(values), labels=labels, autopct="%1.1f%%", startangle=90)
-    pylab.axis('equal')
-    pylab.savefig(filename, bbox_inches="tight")
-    pylab.close()
+  def my_autopct(val):
+    total=sum(values)
+    pct = 100.0*(float(val)/float(total))
+    val = int(val)
+    return '{p:.2f}%  ({v:d}ms)'.format(p=pct,v=val)
+
+  patches, texts = plt.pie(values, labels=labels, startangle=90, labeldistance=1.05, colors=palette)
+  edited_labels = [labels[i] +" "+ my_autopct(values[i]) for i in range(len(values))]
+  pylab.axis('equal')
+
+  legend = plt.legend(patches, edited_labels, loc="lower left", shadow=True)
+  for pie_wedge in patches:
+    pie_wedge.set_edgecolor('white')
+
+  pylab.savefig(filename, bbox_inches="tight")
+  pylab.close()
 
 def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename, rotation=0):
   pylab.xlabel(xlabel)
@@ -129,9 +143,8 @@ def multiComparativeBarChart(ticks, values, filename, ylabel, width=0.1):
   fig, ax = plt.subplots()
   indexes = np.arange(max(len(v) for u,v in values.items()))
   rects, count = [], 0
-  pal = palette and palette or ['b'] * len(values.values()[0])
   for key, vals in values.items():
-      bar = ax.bar(indexes + width * count, vals, width, color=pal[count])
+      bar = ax.bar(indexes + width * count, vals, width, color=palette[count])
       rects.append(bar)
       count += 1
 

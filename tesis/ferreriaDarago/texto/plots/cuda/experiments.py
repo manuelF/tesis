@@ -4,6 +4,21 @@ import sys
 import numpy as np
 sys.path.insert(0, '../comun')
 from graphs import *
+import re
+
+MSEC = 1000000.0
+def time2secs(s):
+    sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    return float(sec) + float(msec) / MSEC
+
+def time2milis(s):
+    sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    sec = sec or 0
+    return float(sec) * 1000.0 + float(msec) / 1000.0
+
+def time2micros(s):
+    return int(re.search("(\d+)us.",s).group(1))
+
 
 def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
                ylim=None,scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
@@ -257,6 +272,44 @@ def coalescienciaTranspose():
       'filename':"transpose.png"}
   barGraph(**params)
 
+def initialProfile():
+    parts = {
+        u"Kohn Sham": time2milis("1s. 672459"),
+        u"Densidad": time2milis("17s. 526542"),
+        u"Fuerzas": time2milis("6s. 573524us"),
+        u"Funciones": time2milis("1s. 369108"),
+        u"Potencial": time2milis("130999"),
+    }
+    names = parts.keys();
+    values = [parts[key] for key in names]
+    total = sum(values)
+
+    params = {
+        'title': '',
+        'labels': names,
+        'values': values,
+        'filename': u'initial-iteration-parts-hemo.png',
+    }
+    piechart(**params)
+
+def finalProfile():
+#iteracion hemo k40
+    parts = {
+        u"Kohn Sham": time2milis("115556"),
+        u"Densidad": time2milis("385849"),
+        u"Funciones": time2milis("276"),
+    }
+    names = parts.keys();
+    values = [parts[key] for key in names]
+    total = sum(values)
+
+    params = {
+        'title': '',
+        'labels': names,
+        'values': values,
+        'filename': u'final-iteration-parts-hemo.png',
+    }
+    piechart(**params)
 
 
 
@@ -273,3 +326,5 @@ if __name__ == '__main__':
   acumuladoGlobalMemory()
   predictorSizeInGpu()
   coalescienciaTranspose()
+  initialProfile()
+  finalProfile()
