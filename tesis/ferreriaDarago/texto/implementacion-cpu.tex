@@ -42,7 +42,7 @@ frecuencia de los procesadores disminuye. Para evitar este efecto en nuestro
 an\'alisis se deshabilito Turbo Boost al realizar las pruebas.
 
 Asimismo, originalmente los procesadores Intel Xeon cuentan con Hyperthreading,
-dando un total de 24 procesadores l\'ogicos en vez de 12 f\'isicos.
+permitiendo 2 procesadores l\'ogicos sobre uno f\'isico, dando un total de 24 procesadores.
 Sin embargo, los dos hilos de ejecuci\'on (\textit{hyperthreads}) en un mismo
 procesador comparten unidades b\'asicas como las ALU. Al no ser totalmente
 independientes, esto tambi\'en dificulta el an\'alisis. Para no tomar esto en
@@ -55,72 +55,38 @@ Xeon Phi.
 
 La secci\'on de c\'odigo trabajada corresponde a la parte del procesamiento
 de LIO optimizada mediante CUDA. Esta parte del c\'odigo estaba ya implementada
-en C++, utilizando librer\'ias de Intel ICC para vectorizaci\'on. No se busc\'o
-optimizar otras secciones de c\'odigo ya que las mismas no contaban con una
-contrapartida en CUDA, haciendo entonces imposible comparar esta arquitectura con
-Intel Xeon y Xeon Phi. Si bien el tiempo de ejecuci\'on de esas secciones, por su
-caracter serial y poco optimizado, terminan consumiendo una fracci\'on del tiempo
-no despreciable, se consider\'o fuera del enfoque de este trabajo trabajar sobre
-ellas. La optimizaci\'on de las mismas para aprovechar de las arquitecturas
-estudiadas queda como trabajo posible a futuro.
+en C++, utilizando librer\'ias de Intel ICC para vectorizaci\'on. Al momento
+de empezar la optimizaci\'on, las subrutinas asociadas insum\'ian la mayor
+cantidad de tiempo. La optimizaci\'on de otros c\'alculos por fuera de la
+energ\'ia de intercambio y correlaci\'on quedan fuera del \textit{scope} de este
+trabajo.
 
-Como caso de estudio para las modificaciones, se utiliz\'o como ejemplo el c\'omputo
-de DFT sobre una mol\'ecula de hemoglobina. El caso es considerado de tama\~no
-mediano para las pruebas usuales que se realizan con el paquete LIO. Si bien la
-cantidad de \'atomos es peque\~na, el n\'umero de electrones y sus interacciones
-hacen que sea necesaria una base con muchas funciones gaussianas y muchos puntos de integraci\'on para
-modelarlo correctamente. En particular, uno de los \'atomos (el \'atomo de hierro)
-posee muchas capas electr\'onicas y por ende una gran cantidad de puntos y
-funciones a calcular. Los datos espec\'ificos de este, y otros sistemas
-se encuentran en el ap\'endice.
+\subsection{Caso de estudio}
 
-El par\'ametro de tama\~no de los cubos utilizado es 3, de manera de que hay muchos
-cubos presentes pero los mismos son chicos. Un an\'alisis m\'as detallado de la
-partici\'on obtenida se har\'a en secciones futuras, as\'i como experimentos con
-este valor de tama\~no de los cubos. La raz\'on para elegirlo inicialmente es que
-corresponde al mejor valor de este par\'ametro en t\'erminos del tiempo de
-ejecuci\'on de los ejemplos estudiados.
+Para las pruebas de esta secci\'on se utiliz\'o el grupo hemo, el
+cual es un caso muy utilizado dentro de la literatura. Detalles sobre este
+sistema y otros utilizados se encuentran en un ap\'endice de este trabajo.
+
+El par\'ametro de tama\~no de los cubos utilizado es 3, el valor m\'as
+apropiado al momento de iniciar el trabajo sobre la implementaci\'on para CPU.
 
 El an\'alisis realizado corresponde a la implementaci\'on con precisi\'on simple,
 aunque los mismos aplican de igual manera para precisi\'on doble (no se necesita
-m\'as que recompilar el c\'odigo para utilizar precisi\'on doble). Posteriores
-experimentos detallan como se modifica el tiempo de ejecuci\'on al usar
-precisi\'on doble.
+m\'as que recompilar el c\'odigo para utilizar precisi\'on doble). Experimentos
+presentados m\'as adelante detallan como se modifica el tiempo de ejecuci\'on al
+usar precisi\'on doble.
 
 % TODO(jpdarago): Agregar datos de hemoglobina en el apendice
 
 \subsection{Estructura original del c\'odigo}
 
-El marco general de la aplicaci\'on a nivel pseudoc\'odigo se encuentra en la
-figura~\ref{algo:lio-general-schematics}, para el caso de los c\'omputos realizados
-por el m\'odulo G2G. Corresponde al detalle del esquema
-a alto nivel mostrado en la figura~\ref{fig:lio-steps}. En el caso de la
-implementaci\'on en CPU, el ciclo de iteraci\'on (la funci\'on \texttt{solve} de
-la clase \texttt{Partition}) realiza todos los c\'alculos del
-ciclo interno. Inicialmente las funciones de cada grupo se calculan en cada
-iteraci\'on.
-
-\begin{algorithm}[hptb]
-    \caption{Pseudoc\'odigo de la estructura del c\'odigo de CPU para G2G.}
-    \label{algo:lio-general-schematics}
-    \begin{algorithmic}
-        \State $Particion \gets regenerar()$
-        \State $Pesos \gets calcular\_pesos(Partition)$
-        \State $MatKohnSham \gets matriz\_inicial(Partition)$
-        \While{$\neg convergio(MatKohnSham)$}
-            \ForAll{$Grupo \in Grupos(Particion)$}
-                \State $calcular\_funciones(Grupo)$
-                \State $MatDensidad \gets calcular\_densidad(Grupo)$
-                \State $MatKohnSham \gets matriz\_kohn\_sham(Grupo, MatDensidad, MatKohnSham)$
-            \EndFor
-        \EndWhile
-        \State $energia \gets calcular\_energia(Particion, MatKohnSham)$
-    \end{algorithmic}
-\end{algorithm}
-
-Un esquema de alto nivel del computo m\'as intensivo realizado por el paquete
-G2G se encuentra en la figura~\ref{algo:lio-iteration}. Este c\'odigo corresponde
-a una iteraci\'on del c\'alculo de la matriz de Kohn-Sham.
+Un esquema de alto nivel del computo m\'as intensivo realizado por el m\'odulo
+XC se encuentra en la figura~\ref{algo:lio-iteration}. Este c\'odigo corresponde
+a una iteraci\'on del c\'alculo de la matriz de Kohn-Sham y se compone de tres
+partes, el c\'alculo de las matrices relacionadas con las funciones, calcular las
+densidad electr\'onica, su gradiente y hessianos para cada punto, y utilizarlos
+para obtener la energ\'ia de intercambio y correlaci\'on, la contribuci\'on a
+la matriz de Kohn Sham y, al lograr la convergencia, a la matriz de fuerzas.
 
 \begin{algorithm}[H]
         \caption{Pseudoc\'odigo de la iteraci\'on original de LIO}
@@ -128,20 +94,19 @@ a una iteraci\'on del c\'alculo de la matriz de Kohn-Sham.
         \begin{algorithmic}
             \Function{solve}{$PG : PointGroup$}
               \State Leer la matriz de coeficientes inicial.
-              \State Calcular funciones, gradiente de la densidad y hessiano.
+              \State Calcular funciones, su gradiente y hessiano.
               \ForAll{$p \in puntos(PG)$}
-                  \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
                   \ForAll{$i \in functions(PG, p)$}
                        \State Calcular la contribuci\'on a la densidad, $dens$
                        \State Calcular la contribuci\'on al gradiente, $grad$
-                       \State Calcular la contribuci\'on a los hessianos, $hess_1$ y $hess_2$
+                       \State Calcular la contribuci\'on a los hessianos, $hess$
                   \EndFor
-                  \State Calcular potencial usando las contribuciones $dens$,$grad$,$hess_1$ y $hess_2$.
-                  \State Sumar a la energ\'ia resultado $energy$ las contribuciones, usando el peso del punto $p$.
-                  \State Calcular contribuci\'on a Fuerzas y Kohn-Sham $FR_p$ con el potencial y el peso del punto.
+                  \State Calcular potencial usando $dens$ y $grad$.
+                  \State Calcular contribuci\'on $FR_p$ a KS y Fuerzas usando $dens$, $grad$ y $hess$.
+                  \State Calcular energ\'ia resultado $energy$ con potencial y el peso del punto $p$.
               \EndFor
               \State Calcular fuerzas usando los factores $FR$ y los n\'ucleos de los \'atomos.
-              \State Sumar la contribuci\'on de cada punto a la matriz de Kohn-Sham General
+              \State Sumar la contribuci\'on de cada punto a la matriz de Kohn-Sham general.
             \EndFunction
         \end{algorithmic}
 \end{algorithm}
@@ -167,21 +132,20 @@ vectoriales.
 
 La representaci\'on de un vector $\mathbb{R}^3$ de esta manera, si bien da
 un \textit{speedup} significativo, no es portable ni escalable a otras extensiones
-SIMD. Al incrementar el ancho de registro m\'as de los campos deben ser ignorados, malgastando cada
+SIMD. Al incrementar el ancho de registro un n\'umero mayor de los campos deben ser ignorados, malgastando cada
 vez m\'as espacio \'util. Asimismo, se desperdician oportunidades por parte del compilador
 para optimizar mejor haciendo uso de todos los registros y operaciones que dispone
 la arquitectura sobre la cual se esta compilando, ya que se le dice expl\'icitamente
 que operaciones tiene que hacer y como.
 
-Profiling de la implementaci\'on inicial se encuentra en la figura~\ref{fig:initial-profiling}.
-Como puede verse, el gran dominante son los c\'alculos correspondientes a la densidad,
+Profiling del tipo de iteraci\'on m\'as com\'un de la implementaci\'on inicial se encuentra en la figura~\ref{fig:initial-profiling}.
+Como puede verse, el gran dominante son los c\'alculos correspondientes a la densidad electr\'onica,
 que incluyen los dos primeros ciclos del pseudoc\'odigo de
-la figura~\ref{algo:lio-iteration}. Tambi\'en vemos la importancia de fuerzas y
-la actualizaci\'on de la matriz de Kohn-Sham. Para este trabajo nos enfocaremos
-en esta \'ultima, a pesar de su menor importancia relativa, puesto que se realiza
-en todas las iteraciones intermedias, y no solo en la \'ultima como si ocurre
-con el c\'alculo de las fuerzas. Sin embargo nos ocuparemos de acelerar este
-c\'alculo tambi\'en.
+la figura~\ref{algo:lio-iteration}. Tambi\'en vemos la importancia de
+la actualizaci\'on de la matriz de Kohn-Sham y el c\'alculo de las matrices de
+funciones gradiente y hessiano, que no son despreciables pero son peque\~nas en
+comparaci\'on. Omitimos el c\'alculo de fuerzas pues este se realiza solamente
+en la \'ultima iteraci\'on.
 
 \begin{figure}[htbp]
    \centering
@@ -215,7 +179,6 @@ dos vectores.
         \begin{algorithmic}
             \Function{solve}{$PG : PointGroup$}
               \ForAll{$p \in puntos(PG)$}
-                  \State $pd, dxyz,dd1,dd2 \gets 0, (0,0,0), (0,0,0), (0,0,0)$
                   \ForAll{$i \in functions(PG, p)$}
                      \State $dens \gets \Sigma_{j = 0}^{i} MC_{i,j} \cdot F_{p,j}$
                      \State $grad \gets \Sigma_{j = 0}^{i} MC_{i,j} \cdot F_{p,j}$
@@ -253,11 +216,9 @@ anteriores.
    \label{fig:matrix-split-img}
 \end{figure}
 
-Tambi\'en notamos que los accesos de $hess_1$ y $hess_2$ se producen en las componentes
-pares e impares del hessiano, respectivamente. Si separamos estas en dos matrices
-separadas, entonces tambi\'en tendremos que todas las componentes estar\'an
-consecutivas en memoria y las operaciones pueden proyectarse f\'acilmente componente
-a componente.
+En el caso del hessiano de las funciones, el mismo tiene 6 componentes en vez
+de 3, resultando entonces en 6 matrices separadas pero que funcionan de manera
+an\'aloga a la matriz del gradiente.
 
 Debido a la complejidad de los c\'alculos, y tratando de evitar introducir
 errores sutiles, decidimos que al calcular las matrices de funciones, las
@@ -369,7 +330,7 @@ con OpenMP son puntos de sincronizaci\'on y tienen un \textit{overhead} asociado
     \label{fig:openmp-example}
 \end{figure}
 
-Queda pendiente como realizar la divisi\'on de trabajo.  En un primer momento se plantearon dos posibles rutas
+El pr\'oximo paso es determinar una divisi\'on de trabajo. En un primer momento se plantearon dos posibles rutas
 hacia paralelizar el c\'odigo: dividir los grupos entre \textit{threads} de
 procesamiento, o utilizar m\'ultiples procesadores para dividirse el trabajo
 correspondiente los puntos y funciones dentro de un mismo grupo. Esta segunda
@@ -427,8 +388,7 @@ del total) con menos de 50 funciones a calcular por punto, y 927 (80\% del total
 que poseen menos de 100 puntos.
 
 Adicionalmente, el grupo m\'as grande en cantidad de puntos tiene 5238 veces m\'as
-puntos que el m\'as chico, y el m\'as grande en cantidad de funciones tiene 24
-veces m\'as puntos.
+que el m\'as chico, y el m\'as grande tiene 24 veces m\'as funciones a calcular.
 
 Por lo tanto, identificamos las siguientes dificultades:
 
@@ -451,13 +411,14 @@ Por lo tanto, identificamos las siguientes dificultades:
 \end{itemize}
 
 La soluci\'on propuesta a este problema es un h\'ibrido entre estas dos
-estrategias: Los puntos que sean demasiado chicos en cantidad de trabajo son
+estrategias: Los grupos que sean demasiado chicos en cantidad de trabajo son
 reunidos y divididos entre los procesadores disponibles, y los que si sean lo
 suficientemente grandes son procesados secuencialmente, pero los procesadores se
-dividen el trabajo de los puntos a procesar para cada uno de los grupos.
+dividen el trabajo de los puntos a procesar para cada uno de los grupos grandes.
 
 \subsection{An\'alisis de cargas de grupos}
 \label{PredictorCPU}
+
 En el caso en que partimos los grupos en cargas, una para cada procesador, y
 resolvemos estas en paralelo, el tiempo total de ejecuci\'on corresponde al tiempo m\'aximo
 que uno de los procesadores tome en resolver su parte, ya que todo hilo de
