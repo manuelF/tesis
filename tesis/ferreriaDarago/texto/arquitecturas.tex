@@ -1,48 +1,32 @@
-\section {CPU}
+\section{CPU}
 
-\subsection{Introducci\'on}
-
-Los microprocesadores ganan en prevalencia desde principios de los 70,
-cuando Intel introduce los modelos 4004 y 8008. Actualmente las arquitecturas
-de procesadores de 64 bits basadas en la l\'inea x86-64 de Intel
-dominan no solo el mercado de computadoras personales sino que tambi\'en el de
-servidores y \textit{clusters} de c\'omputo. Dado que utilizaremos el CPU
-est\'andar como punto de comparaci\'on para las dem\'as arquitecturas, y que estas
-est\'an basadas en parte en su dise\~no, daremos una breve rese\~na de los aspectos
-m\'as importantes y desarrollos modernos con respecto a la performance dentro de
-los procesadores modernos.
-
+Los microprocesadores ganan en prevalencia desde principios de los 70, cuando Intel introduce los modelos 4004 y 8008. 
+Actualmente las arquitecturas de procesadores de 64 bits basadas en la l\'inea x86-64 de Intel dominan no solo el mercado de computadoras personales sino que tambi\'en el de servidores y \textit{clusters} de c\'omputo. 
+Dado que utilizaremos el CPU est\'andar como punto de comparaci\'on para las dem\'as arquitecturas, y que estas est\'an basadas en parte en su dise\~no, daremos una breve rese\~na de los aspectos m\'as importantes y desarrollos modernos con respecto a la performance dentro de los procesadores modernos.
 
 \subsection{Tipos de paralelismo}
 
-Existen tres categor\'ias de paralelismo que una arquitectura puede aprovechar
-para mejorar la \textit{performance} de una aplicaci\'on, ganando prevalencia
-en el \'ultimo tiempo en el dise\~no de procesadores.
-
+Existen tres categor\'ias de paralelismo que hoy en d\'ia una arquitectura puede aprovechar para mejorar la \textit{performance} de una aplicaci\'on:
 \begin{itemize}
     \item \textit{Instruction Level Parallelism}: Este tipo de optimizaciones buscan
     ejecutar la mayor cantidad de instrucciones en un mismo hilo de ejecuci\'on simult\'aneamente.
-    Optimizaciones de este estilo incluyen
-    \textit{pipelines} de procesador para ejecutar m\'ultiples instrucciones de manera solapada,
-    ejecuci\'on superescalar fuera de orden para ejecutar m\'ultiples instrucciones que
-    utilizan unidades del procesador distintas o que no dependen una de la otra, ejecuci\'on
-    especulativa (basada en predicci\'on de resultados todav\'ia no finalizados de procesar), etc.
+    Optimizaciones de este estilo incluyen:
+    \begin{itemize}
+      \item \textit{pipelines} de procesador: se separan las instrucciones en distintas etapas para ejecutar m\'ultiples instrucciones de manera solapada.
+      \item ejecuci\'on superescalar fuera de orden: para ejecutar m\'ultiples instrucciones que utilizan unidades del procesador distintas o que no dependen una de la otra.
+      \item ejecuci\'on especulativa: se basa en la predicci\'on de resultados todav\'ia no finalizados de procesar.
+    \end{itemize}
 
-    \item \textit{Data Level Parallelism}: Consideran las optimizaciones cuyo prop\'osito es
-    lograr aplicar una misma operaci\'on a cada elemento de un conjunto datos simult\'aneamente
-    en un mismo hilo de ejecuci\'on. Esta t\'ecnica se denomina SIMD
-    (\textit{Single Instruction, Multiple Data}).
+    \item \textit{Data Level Parallelism}: Consideran las optimizaciones cuyo prop\'osito es lograr aplicar una misma operaci\'on a cada elemento de un conjunto datos simult\'aneamente
+    en un mismo hilo de ejecuci\'on. Esta t\'ecnica se denomina SIMD (\textit{Single Instruction, Multiple Data}).
 
-    \item \textit{Thread Level Parallelism}: Concierne al uso de m\'ultiples hilos de ejecuci\'on
-    simult\'aneos, lo cual requiere el uso de procesadores que usualmente
+    \item \textit{Thread Level Parallelism}: Concierne al uso de m\'ultiples hilos de ejecuci\'on simult\'aneos, lo cual requiere el uso de procesadores que usualmente
     comparten la memoria principal (arquitectura SMP, \textit{Symmetric Multiprocessing}).
-    Esto conlleva esfuerzo adicional para mantener consistencia y coherencia de la misma
-    para que no se convierta en un cuello de botella.
+    Esto normalmente conlleva esfuerzo adicional para mantener consistencia y coherencia.
 \end{itemize}
 
-En base a estos tipos de paralelismo, surgieron grandes avances en la arquitectura de procesadores desde
-1950 en adelante. Estos se detallan cronol\'ogicamente en la tabla \ref{tbl:historia-cpu}, como tambi\'en
-la motivaci\'on de su existencia.
+En base a estos tipos de paralelismo, surgieron grandes avances en la arquitectura de procesadores desde 1950 en adelante. 
+Estos se detallan cronol\'ogicamente en la tabla \ref{tbl:historia-cpu}, como tambi\'en la motivaci\'on de su existencia.
 
 \newcommand{\blap}[1]{\begin{minipage}[t]{3in}#1\end{minipage}}
 
@@ -53,16 +37,16 @@ la motivaci\'on de su existencia.
 \begin{tabular}{lll}
 \hline
 A\~no & Evento & Motivo \\ \hline
-1950s & Agregar Pipelines &  \blap{Usar independientemente las distintas unidades del procesador para aumentar las instrucciones por ciclo.} \\
-1970s & Agregar Vectorizaci\'on & \blap{Poder realizar las mismas operaciones en muchos datos simult\'aneamente.} \\
-1980s & Agregar Cach\'e & \blap{La diferencia de velocidad entre la memoria y el procesador se segu\'ia acrecentando.} \\
-1987 & Agregar M\'ultiples ALUs & \blap{Poder compensar las ALU que mas latencia tienen, se multiplican las unidades para procesar mas instrucciones en paralelo.} \\
-1988 & Agregar Predicci\'on de Saltos & \blap{Disminuir y hasta evitar los costos de tener que recalcular el pipeline cuando hay saltos.} \\
-1995 & Agregar Fuera de Orden & \blap{Seguir ejecutando instrucciones mientras se esperan datos anteriores.} \\
-2002 & Agregar SMT & \blap{Poder procesar de a mas de un thread de OS en un solo core.} \\
-2005 & Agregar Multi-core & \blap{Aumentar el poder de computo sin aumentar la velocidad de clock ni consumo.} \\
+1950s & Pipelines &  \blap{Usar independientemente las distintas unidades del procesador para aumentar las instrucciones por ciclo.} \\
+1970s & Vectorizaci\'on & \blap{Poder realizar las mismas operaciones en muchos datos simult\'aneamente.} \\
+1980s & Cach\'e & \blap{La diferencia de velocidad entre la memoria y el procesador se segu\'ia acrecentando.} \\
+1987 & M\'ultiples ALUs & \blap{Poder compensar las ALU que mas latencia tienen, se multiplican las unidades para procesar mas instrucciones en paralelo.} \\
+1988 & Predicci\'on de Saltos & \blap{Disminuir y hasta evitar los costos de tener que recalcular el pipeline cuando hay saltos.} \\
+1995 & Fuera de Orden & \blap{Seguir ejecutando instrucciones mientras se esperan datos anteriores.} \\
+2002 & SMT & \blap{Poder procesar de a mas de un thread de OS en un solo core.} \\
+2005 & Multi-core & \blap{Aumentar el poder de computo sin aumentar la velocidad de clock ni consumo.} \\
 \end{tabular}
-  \caption{Cronolog\'ia de los avances de arquitectura de CPU.}
+  \caption{Cronolog\'ia de los avances de arquitectura de procesadores.}
   \label{tbl:historia-cpu}
 \end{table}
 
@@ -70,14 +54,12 @@ A continuaci\'on detallamos algunos aspectos de cada una de estas t\'ecnicas.
 
 \subsection{Pipeline y Ejecuci\'on fuera de orden}
 
-Los primeras implementaciones de paralelismo a nivel de un solo procesador fueron a nivel de instrucciones, mediante el uso
-de \textit{pipelines} de m\'ltiples etapas. Estas llegaron a ser tantas como 20 distintas, en la arquitectura
-Intel Pentium 4. Cada etapa corresponde a una actividad distinta en el proceso de ejecutar una instrucci\'on.
-Al tiempo que una instrucci\'on es decodificada, por ejemplo, otra instrucci\'on puede estar siendo le\'ida
-de memoria ya que, idealmente, las etapas previas no dependen de las posteriores. Este mecanismo funciona bien
-si una instrucci\'on no depende de los resultados de otra que viene anterior a ella. Sin embargo, esto puede
-ocurrir, produci\'endose entonces un \textit{pipe stall} que requiere ejecutar las instrucciones de manera no solapada
-(con el costo de \textit{throughput} de instrucciones que ello implica).
+Los primeras implementaciones de paralelismo a nivel de un solo procesador fueron a nivel de instrucciones mediante el uso de \textit{pipelines} de m\'ltiples etapas. 
+Por ejemplo, en la arquitectura del Intel Pentium 4 se llegaron a utilizar $20$ etapas distintas de pipelining. 
+Cada etapa corresponde a una actividad distinta en el proceso de ejecutar una instrucci\'on.
+Al tiempo que una instrucci\'on es decodificada, por ejemplo, otra instrucci\'on puede estar siendo le\'ida de memoria ya que, idealmente, las etapas previas no dependen de las posteriores. 
+Este mecanismo funciona bien si una instrucci\'on no depende de los resultados de otra que anterior a ella. 
+Sin embargo, esto puede ocurrir, produci\'endose entonces un \textit{pipe stall} que requiere ejecutar las instrucciones de manera no solapada (con el costo de \textit{throughput} de instrucciones que ello implica).
 
 Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order
 Execution}). Mediante el uso de algoritmos y circuitos complejos, un procesador puede no depender del orden dado
