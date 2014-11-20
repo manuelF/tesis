@@ -1,0 +1,117 @@
+En base al c\'odigo de implementaci\'on de CPU, probamos el mismo
+utilizando el Xeon Phi. Dado que nuestro inter\'es era estudiar la
+practicidad del mismo para el problema, y siendo que nos concentramos
+en la iteraci\'on, decidimos ver como se comportaba esta en modo
+nativo, corriendo toda la aplicaci\'on LIO en el coprocesador.
+
+El Xeon Phi utilizado para las pruebas corresponde al modelo de
+61 procesadores, con 8 GB de memoria RAM GDDR5 y versi\'on de MPSS
+(\textit{Multicore Platform Software Stack}) 3.2.3
+
+Considerando los buenos resultados obtenidos con la implementaci\'on
+en CPU, en t\'erminos de vectorizaci\'on del c\'odigo y de paralelizaci\'on,
+usamos esta misma versi\'on del c\'odigo fuente como punto de partida. De
+acuerdo a~\cite{Jeffers}, el dise\~no del Xeon Phi debiera aprovechar la
+implementaci\'on realizada, teniendo en cuenta que el c\'odigo escala bien
+en CPU.
+
+\section{Caso de estudio}
+
+Como se hizo en la secci\'on anterior, utilizaremos como ejemplo el caso de
+estudio del grupo hemo, con tama\~no de cubos igual a 3.
+
+\section{Resultados preliminares}
+
+En primera instancia obtuvimos resultados muy desalentadores en la versi\'on
+\textit{monoprocesador} del c\'odigo, como puede verse en la figura~\ref{fig:prelim-xeon-phi}.
+Para el caso particular de la iteraci\'on de intercambio y correlaci\'on XC pueden
+verse los resultados en la figura~\ref{fig:prelim-xeon-phi-xc}
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/xeon-xeon-phi-broad-comparison.png}
+   \caption{Tiempo de ejecuci\'on para las distintas partes del paquete LIO,
+   comparativamente para Xeon y Xeon Phi, en el caso del grupo hemo con un solo procesador}
+   \label{fig:prelim-xeon-phi-xc}
+\end{figure}
+
+Tanto el c\'omputo de pesos, funciones y la iteraci\'on en si para el caso de la
+hemoglobina muestran una alentizaci\'on muy fuerte, incluso considerando que
+todos los ciclos fueron vectorizados por el compilador de acuerdo a los reportes
+generados por el mismo.
+
+En el caso de la iteraci\'on vemos que esta alentizaci\'on es com\'un a los dos
+ciclos principales de la iteraci\'on usual del c\'alculo de intercambio y
+correlaci\'on: tanto para el c\'alculo de la densidad electr\'onica como la
+actualizaci\'on de la matriz de Kohn Sham.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/cpu/xeon-xeon-phi-broad-comparison-xc.png}
+   \caption{Tiempo de ejecuci\'on para las distintas partes de la iteraci\'on XC,
+   comparativamente para Xeon y Xeon Phi, en el caso del grupo hemo con un solo procesador}
+   \label{fig:prelim-xeon-phi-xc}
+\end{figure}
+
+Corroboramos entonces la pobre \textit{performance} del Xeon Phi en c\'odigo
+principalmente serial, incluso con c\'odigos sencillos y vectorizados por el
+compilador.
+
+Este factor, la baja performance con respecto al Xeon, impacta fuertemente en toda
+la aplicaci\'on, incluso en la parte paralelizada. Al poner m\'as presi\'on en
+el uso efectivo de los procesadores, incrementa muy fuertemente las perdida
+predicha por la ley de Amdahl, resultando en no solo una baja \textit{performance}
+sino en una baja escalabilidad.
+
+Un ejemplo de estos efectos puede verse en la paralelizaci\'on de los grupos chicos
+en cargas para cada procesador. Al ser el c\'odigo serial en el Xeon Phi muy poco
+performante, se vuelve necesario utilizar m\'as procesadores para un mismo grupo.
+Esto pone presi\'on en usar un \textit{threshold} m\'as chico para considerar
+m\'as grupos grandes. Pero esto impacta negativamente en la escalabilidad ya que:
+
+\begin{itemize}
+    \item Utilizar m\'as threads de los que pueden ser aprovechados por un grupo
+    disminuye la escalabilidad, porque deja procesadores ociosos.
+    \item El algoritmo de partici\'on cuenta con menos grupos para manejar, con
+    lo cual tiene menos capacidad de balanceo entre los procesadores. El
+    desbalanceo tambi\'en produce que procesadores esten ociosos innecesariamente.
+\end{itemeize}
+
+Por ejemplo, en la figura~\ref{fig:partition-balance} se puede ver el balance
+de la partici\'on resultante de utilizar 60 procesadores y un \textit{threshold}
+de 20, para tener la mayor cantidad de procesadores posible. Se detalla tanto
+el desbalance te\'orico (predicho por la partici\'on) como el balance de tiempo.
+El balance de tiempo es especialmente pronunciado.
+
+Otro aspecto de importancia es la necesidad de modificar la funci\'on de costo
+para el Xeon Phi. En esta arquitectura todo c\'omputo serial es muy fuerte, con
+lo cual ahora no se tiene un \textit{overhead} por cubo tan pesado con relaci\'on
+al c\'omputo. Por esto la funci\'on de costo anterior no resulta \'util, y es
+mejor usar como costo la cantidad de operaciones a realizar (ver figura~\ref{fig:cost-function-xeon-phi}).
+
+Es tambi\'en importante notar que la escalabilidad para los cubos
+y esferas grandes es menor que en la partici\'on (debido a componentes seriales
+en la iteraci\'on) con lo cual incrementar la cantidad de cores produce un
+incremento correspondiente a la ley de Amdahl. Como la partici\'on para grupos
+chicos se vuelve menos efectiva, esta parte pasa a ser m\'as importante, bajando
+entonces la escalabilidad del c\'odigo.
+
+El aumento de \textit{threads} y su caracter serial (de movimiento de memoria
+principalmente) hace m\'as pesadas las operaciones de juntado de resultados intermedios.
+A diferencia de CPU, donde este paso de reducci\'on de las matrices a las matrices
+globales era despreciable, en el Xeon Phi pasa a tener un valor considerable, como
+puede verse en la figura~\ref{fig:enditer-xeon-phi}. Esto disminuye a\'un m\'as
+las ventajas obtenidas por la paralelizaci\'on externa, ya que m\'as procesadores
+involucrados m\'as matrices es necesario reducir.
+
+Como conclusi\'on entonces, vemos que en el caso de Xeon Phi no tiene sentido
+realizar una paralelizaci\'on de cubos y esferas chicos y grandes como la realiza
+la implementaci\'on CPU. Para hacer corresponder esto, empleamos un \textit{threshold}
+con lo cual todo grupo es considerado grande y ejecutado con todos los
+threads disponibles.
+
+Los resultados de la escalabilidad resultante de este c\'odigo se pueden ver
+en la figura~\ref{fig:xeon-final-scalability}. Se puede ver que la misma no es
+buena, por lo ya visto anteriormente, correspondiendo de acuerdo a la ley de Amdahl
+a un X\% de la iteraci\'on efectivamente paralelizada. Esto no logra palear los
+efectos del mal comportamiento del Xeon Phi en c\'odigo serial.
