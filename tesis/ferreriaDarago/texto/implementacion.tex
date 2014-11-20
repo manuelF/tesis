@@ -32,7 +32,7 @@ se concentran cerca de los núcleos, si se usara una particion unicamente basada
 de puntos contenidos en cada grupo diferiria considerablemente. El uso de grupos esféricos rodeando
 los nucleos eliminan zonas de alta concentraci\'on de puntos y permite que los puntos remanentes
 tengan una distribuci\'on mas homogenea. Este esquema de construcci\'on se muestra en la figura~\ref{fig:grilla}
-y el detalle algoritmico de la generaci\'on se estudi\'o previamente~\cite{LIO}~\cite{TesisNitsche},
+y el detalle algoritmico de la generaci\'on se estudi\'o previamente~\cite{Nitsche2014,TesisNitsche},
 sin modificaciones para este trabajo.
 
 Un diagrama simplificando la estructura del c\'alculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
@@ -40,7 +40,7 @@ Los pasos (a) a (e) corresponden a la etapa de inicializaci\'on, y se calculan u
 al comienzo de la simulaci\'on. La iteraci\'on de SCF (\textit{Self-Consistent Field}) se
 compone de los pasos (f) a (l). Este ciclo se repite mientras la matriz densidad cambia
 menos de una cierta tolerancia previamente establecida. Se agrega una condici\'on de corte ac\'a
-en el n\'umero de iteraciones, para poder capturar los sistemas mal condicionados.~\cite{LIO}
+en el n\'umero de iteraciones, para poder capturar los sistemas mal condicionados~\cite{Nitsche2014}.
 
 Los pasos de la figura \ref{fig:lio-steps} m\'as computacionalmente costosos son (i), (j) y (k).
 En la implementaci\'on original de LIO~\cite{TesisNitsche}, se muestra como estos pasos
