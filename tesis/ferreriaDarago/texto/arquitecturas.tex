@@ -58,34 +58,24 @@ Los primeras implementaciones de paralelismo a nivel de un solo procesador fuero
 Por ejemplo, en la arquitectura del Intel Pentium 4 se llegaron a utilizar $20$ etapas distintas de pipelining. 
 Cada etapa corresponde a una actividad distinta en el proceso de ejecutar una instrucci\'on.
 Al tiempo que una instrucci\'on es decodificada, por ejemplo, otra instrucci\'on puede estar siendo le\'ida de memoria ya que, idealmente, las etapas previas no dependen de las posteriores. 
-Este mecanismo funciona bien si una instrucci\'on no depende de los resultados de otra que anterior a ella. 
-Sin embargo, esto puede ocurrir, produci\'endose entonces un \textit{pipe stall} que requiere ejecutar las instrucciones de manera no solapada (con el costo de \textit{throughput} de instrucciones que ello implica).
+Este mecanismo funciona bien si una instrucci\'on no depende de los resultados de otra anterior a ella. 
+Sin embargo, ocurre habitualmente que existe una dependencia entre instrucciones, produci\'endose entonces un \textit{pipe stall} que requiere ejecutar las instrucciones de manera no solapada (con el costo de \textit{throughput} de instrucciones que ello implica).
 
-Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order
-Execution}). Mediante el uso de algoritmos y circuitos complejos, un procesador puede no depender del orden dado
-de las instrucciones, sino solo de las dependencias entre las mismas, ejecutando etapas independientes para
-instrucciones que no requieren datos entre si. De esta manera todas las unidades del procesador pueden estar
-ocupadas el mayor tiempo posible.
+Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order Execution}). 
+Mediante el uso de algoritmos y circuitos complejos, un procesador puede detectar las dependencias entre las instrucciones y cambiar el orden de ejecuci\'on para minimizar la aparici\'on de pipe stalls y, de esta manera, lograr que la mayor parte de las unidades del procesador esten ocupadas el mayor tiempo posible.
 
-Mejoras en este nivel eran usualmente invisibles al programador, dependiendo de los compiladores optimizantes,
-pero sus ventajas fueron disminuyendo hacia principios del siglo XXI.
+Mejoras en este nivel eran usualmente invisibles al programador, dependiendo de los compiladores optimizantes, pero sus ventajas fueron disminuyendo a partir del a\~no 2000.
 
 \subsection{Extensiones vectoriales}
 
-Si bien las t\'ecnicas SIMD fueron desarrolladas por las supercomputadoras de los 70 y 80, su aparici\'on en los
-microprocesadores x86 modernos ocurre en 1996 con el nombre MMX (\textit{MultiMedia eXtensions}), con refuerzos luego en las
-extensiones SSE y AVX. AVX y AVX2 representan la \'ultima versi\'on de las instrucciones de vectorizaci\'on y est\'an presentes
-en la l\'inea Intel Xeon de procesadores de alta gama y en las m\'as recientes generaciones de procesadores de consumidores.
+Si bien las t\'ecnicas SIMD fueron desarrolladas por las supercomputadoras de los a\~nos 70 y 80, su aparici\'on en los microprocesadores x86 modernos ocurre en 1996 con el nombre MMX (\textit{MultiMedia eXtensions}), con refuerzos luego en las extensiones SSE y AVX. 
+AVX y AVX2 representan la \'ultima versi\'on de las instrucciones de vectorizaci\'on y est\'an presentes en la l\'inea Intel Xeon de procesadores de alta gama y en las m\'as recientes generaciones de procesadores disponible para los consumidores.
 
-El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones
-independientes que pueden ser realizadas en simultaneo, dividiendo la cantidad de instrucciones totales que tiene que realizar
-un procesador.
+El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones independientes que pueden ser realizadas en simult\'aneo, dividiendo la cantidad de instrucciones totales que tiene que realizar un procesador.
 
-El uso de operaciones sobre m\'ultiples valores ha tomado importancia como uno de los m\'etodos de incrementar
-la performance de ejecuci\'on. La longitud de registros SIMD de las extensiones (128 bits para SSE, 256 para AVX)
-se ha duplicado cada 4 a\~nos, con lo cual es importante para una aplicaci\'on que sus operaciones sean lo m\'as
-vectorizables posible.~\cite{HennessyPatterson} Para esto es ideal que las operaciones sean lo m\'as regulares y
-los ciclos sean claros y con las m\'inimas dependencias posibles, de modo de hacer mejor uso de estas facilidades.
+El uso de operaciones sobre m\'ultiples valores ha tomado importancia como uno de los m\'etodos de incrementar la performance de ejecuci\'on. 
+La longitud de registros SIMD de las extensiones (128 bits para SSE, 256 para AVX) se ha duplicado cada 4 a\~nos, con lo cual es importante para una aplicaci\'on que sus operaciones sean lo m\'as vectorizables posible~\cite{HennessyPatterson}. 
+Para esto es ideal que las operaciones sean lo m\'as regulares y los ciclos sean claros y con las m\'inimas dependencias posibles, de modo de hacer mejor uso de estas facilidades.
 
 \subsection{Caches}
 
