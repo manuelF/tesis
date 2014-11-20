@@ -129,11 +129,11 @@ Nos concentraremos en las partes computacionalmente m\'as intensivas de LIO, que
 
 Una parte significativa del impacto de las computadoras en los distintos aspectos de las ciencias, incluso de la vida diaria, se debe al crecimiento de su poder de c\'omputo desde la aparici\'on de los primeros microprocesadores hasta los disponibles hoy en d\'ia.
 
-Entre 1986 y 2002, la performance de los procesadores creci\'o, en promedio, un $50\%$ por a\~no~\cite{Pacheco}, en parte gracias a la denominada \textit{Ley de Moore}, que
-establec\'ia que la densidad de transistores por circuito integrado se duplicaba cada 18 meses~\cite{HennessyPatterson}.
+Entre 1986 y 2002, la performance de los procesadores creci\'o, en promedio, un $50\%$ por a\~no~\cite{Pacheco}. 
+La denominada \textit{Ley de Moore} establece que la densidad de transistores por circuito integrado se duplica cada $18$ meses~\cite{HennessyPatterson}.
 Esto puede verse en la figura~\ref{moore-law}, que compara la cantidad de transistores de distintos procesadores desde 1971 a la actualidad.
 
-Este crecimiento constante permiti\'o a los desarrolladores de procesadores incrementar la potencia de c\'alculo, duplicando la performance cada 24 meses.
+Este crecimiento permiti\'o a los desarrolladores de procesadores incrementar la potencia de c\'alculo, duplicando la performance cada 24 meses.
 Esto benefici\'o durante mucho tiempo a los desarrolladores de aplicaciones, quienes escrib\'ian programas secuenciales, que solo deb\'ian esperar a la aparici\'on de los nuevos modelos de procesadores para ver una reducci\'on sustancial en los tiempos de ejecuci\'on de sus aplicaciones (fen\'omeno denominado \textit{hardware free lunch}).
 
 \begin{figure}[htbp]
@@ -145,7 +145,8 @@ Esto benefici\'o durante mucho tiempo a los desarrolladores de aplicaciones, qui
 
 Sin embargo, a medida que los transistores disminuyen su tama\~no, aumentan su disipaci\'on t\'ermica por unidad de superficie.
 Esto limita la cantidad que se pueden ubicar en un circuito sin producir que este se comporte de manera err\'atica.
-El mismo motivo impide el crecimiento de frecuencia de reloj, uno de los principales motores de avance en eficiencia.
+El mismo motivo impide el crecimiento de frecuencia de reloj.
+
 Los problemas t\'ermicos han implicado que desde el 2002, la tasa de crecimiento de la performance de los monoprocesadores haya disminuido a un 20\% anual.
 Consecuentemente, los principales fabricantes de procesadores han modificado el enfoque de investigaci\'on y dise\~no, empezando a hacerse m\'as y m\'as com\'un el uso de m\'ultiples procesadores por chip.
 
@@ -163,17 +164,18 @@ En simulaciones para las \'areas de biolog\'ia, medicina, qu\'imica o meteorolog
 Aprovechar las nuevas arquitecturas multiprocesador requiere modificaciones en el c\'odigo que resultan no triviales, a diferencia del crecimiento en velocidad de \textit{clock} que no requer\'ia modificaciones en el dise\~no del programa.
 Los intentos de escribir programas que conviertan programas seriales (dise\~nados para un solo procesador) a paralelos, en lenguajes de prop\'osito general como C, C++ o Fortran, han sido relativamente infructuosos~\cite{Pacheco}.
 
-Existen sin embargo herramientas que realizan transformaciones de c\'odigo fuente serial a c\'odigo fuente con anotaciones de paralelizaci\'on autom\'aticas (usando librer\'ias de paralelizaci\'on asistida como OpenMP para las anotaciones).
-Ejemplos de estas herramientas incluyen Par4All~\cite{Par4AllThesis} y Cetus~\cite{CetusPaper}. Estas herramientas pretenden adem\'as generar c\'odigo para aceleradores especiales como GPGPUs.
+Existen, sin embargo, herramientas que realizan transformaciones de c\'odigo fuente serial a c\'odigo fuente con anotaciones de paralelizaci\'on autom\'aticas (usando bibliotecas de paralelizaci\'on asistida como OpenMP para las anotaciones).
+Ejemplos de estas herramientas incluyen Par4All~\cite{Par4AllThesis} y Cetus~\cite{CetusPaper}. 
+Estas herramientas pretenden, adem\'as, generar c\'odigo para aceleradores especiales como GPGPUs.
 
-El resultado es que es necesario trabajo a nivel de escritura del \textit{software} para utilizar m\'ultiples procesadores.
-La aparici\'on de nuevas herramientas ayudan al programador en esta tarea.
-Un ejemplo de esto es \nvidia CUDA~(\textit{Compute Unified Device Architecture}), que provee un lenguaje de programaci\'on unificado para el desarrollo de aplicaciones que exploten la arquitectura de unidades GPGPU~(\textit{General Purpose Graphical Processing Units}).
-Otros ejemplos los podemos ver en APIs y librer\'ias unificadas de desarrollo como OpenMP o MPI~(\textit{Message Passing Interface}), trabajando conjuntamente con compiladores
-optimizantes como Intel ICC y PGI Fortran.
+Como consecuencia, resulta necesario el trabajo a nivel de desarrollo de c\'odigo para utilizar m\'ultiples procesadores.
+La aparici\'on de nuevas herramientas ayudan al programador en la tarea del uso eficiente de los recursos computacionales existentes.
+Un ejemplo de esto es \nvidia CUDA~(\textit{Compute Unified Device Architecture}), que provee una arquitectura y lenguaje de programaci\'on para el desarrollo de aplicaciones que exploten los recursos provistos por tarjetas gr\'aficas, constituyendo la metodolog\'ia conocida como GPGPU~(\textit{General Purpose Graphical Processing Units}).
+Otros ejemplos los podemos ver en APIs y bibliotecas unificadas de desarrollo como OpenMP o MPI~(\textit{Message Passing Interface}), trabajando conjuntamente con compiladores
+con alto desarrollo en optimizaci\'on como Intel ICC y PGI Fortran.
 
-Estas herramientas, si bien resultan en una asistencia muy importante para el programador, no son \textit{silver bullets}.
-Todav\'ia la divisi\'on del trabajo es inherente al problema a resolver, en base a las dependencias de las tareas a realizar para la soluci\'on del mismo.
-Realizar esta divisi\'on es una labor que, hasta el d\'ia de hoy, se relega en el programador especializado.
+Estas herramientas, si bien resultan en una asistencia muy importante para el programador, no constituyen \textit{silver bullets}.
+Todav\'ia la divisi\'on del trabajo es inherente al problema a resolver en base a las dependencias de las tareas involucradas.
+Realizar esta divisi\'on es una labor que, hasta el d\'ia de hoy, es inherente al programador especializado.
 
-En este trabajo, buscaremos comparar distintas arquitecturas de hardware y c\'omo las caracter\'isticas espec\'ificas de la simulaci\'on qu\'imica a realizar permiten o impiden paralelizaci\'on de trabajo empleando los distintos recursos que cada arquitectura provee.
+En este trabajo, buscaremos comparar distintas arquitecturas de hardware y c\'omo las caracter\'isticas espec\'ificas de la simulaci\'on qu\'imica a realizar permiten o impiden la paralelizaci\'on de trabajo empleando los distintos recursos que cada arquitectura provee.
