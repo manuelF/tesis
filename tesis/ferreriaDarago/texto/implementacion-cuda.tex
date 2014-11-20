@@ -9,7 +9,7 @@ el tiempo de c\'omputo de SCF era menor que en Kepler, yendo en contra de lo que
 las especificaciones de estos dispositivos.
 
 A continuaci\'on detallaremos muchos de los cambios que fueron realizados para aumentar
-la performance del c\'omputo de SCF.
+la performance del c\'omputo de XC.
 
 \subsection{Subsaturacion de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que est\'en listos para correr
@@ -63,7 +63,7 @@ fundamentales a la hora de evaluar como proseguir en la b\'usqueda de optimizaci
 \subsection{Cambios en el threading}
 %Cambiamos de blocks por puntos, a blocks por funci\'on.
 
-De los 3 kernels que originalmente compon\'ian la iteraci\'on de SCF en GPU, el que se encargaba
+De los 3 kernels que originalmente compon\'ian la iteraci\'on de XC en GPU, el que se encargaba
 del c\'alculo de la densidad electr\'onica de la contribuci\'on de la energ\'ia de intercambio correlaci\'on
 insum\'ia el 94\% del tiempo total de uso de la GPU. Minimizar el tiempo de ejecuci\'on de
 esta funci\'on resultaba vital para poder disminuir el tiempo de convergencia de SCF.
@@ -205,7 +205,7 @@ el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/dbs.png}
-   \caption{Tiempo de ejecuci\'on del kernel density corriendo Hemoglobina variando
+   \caption{Tiempo de ejecuci\'on del c\'alculo de densidad corriendo Hemoglobina variando
    la arquitectura y tama\~no de \textit{BLOCK\_SIZE}.}
    \label{plt:dbs-runtime}
 \end{figure}
@@ -272,6 +272,7 @@ pero que dentro de estas puede haber pocos puntos.
 
 
 \subsection{Cambios en los accesos globales}
+\label{GuardarFunctionsGPU}
 La arquitectura de las placas de v\'ideo est\'an pensadas entorno al poder de computo.
 Las decisiones tomadas por los dise\~nadores de las GPGPU se concentran alrededor
 de paralelismo a lo ancho, poniendo un gran \'enfasis en la cantidad de n\'ucleos. Luego,
@@ -449,8 +450,6 @@ se nota principalmente en la linea GeForce, que cuentan con aproximadamente entr
 de la memoria global que tienen su equivalente en la linea Tesla. Esto es mitigado cuando se computa
 m\'ultiples placas, que tambi\'en distribuyen el almacenamiento ademas del computo.
 
-Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
-cantidad de memoria disponible para el cacheo.
 
 \begin{figure}[htbp]
    \centering
@@ -462,14 +461,15 @@ cantidad de memoria disponible para el cacheo.
      \includegraphics[width=\plotwidthtres]{plots/cuda/global-fullereno.png}
      \caption{Entre 0 y 4240 MB.}
    \end{subfigure}
-   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de SCF en funci\'on de la memoria libre de
+   \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de XC en funci\'on de la memoria de
    la placa usada para almacenar las funciones.}
    \label{plt:global-fullereno}
 \end{figure}
 
-Como se puede ver en la figura \ref{plt:global-fullereno}, el
-almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
-de toda una iteraci\'on de SCF. Es interesante notar que son los primeros grupos los que causan mayor
+Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
+cantidad de memoria disponible para el cacheo. Los resultados se pueden ver en la figura \ref{plt:global-fullereno}.
+Se puede observar que el almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
+de toda una iteraci\'on de XC. Es interesante notar que son los primeros grupos los que causan mayor
 diferencia en los tiempos de ejecuci\'on. Con 5.3 MB, se pueden guardar los 23 grupos mas peque\~nos del
 fullereno $C_{60}$; de ah\'i en m\'as, el impacto de la mejora decae. Esto sucede porque en grupos
 chicos el overhead del c\'alculo usando kernel de funciones es muy elevado en comparaci\'on a las
@@ -596,7 +596,7 @@ CUDA permite que trabajar con m\'ultiples placas de esta manera sea bastante sen
 definidas como \texttt{\_\_device\_\_}, que residen plenamente en la GPU, son autom\'aticamente instanciadas
 por cada dispositivo presente. De esta manera, es impl\'icito cual variable usa cada kernel; la que
 esta definida para su dispositivo actual. Esto puede ser un problema si queremos lograr comunicaciones entre placas,
-pero si las cuentas son independientes, es paralelismo gratuito de costo cero.
+pero si las cuentas son independientes, es paralelismo de costo cero.
 
 El principal problema que surge de uso de m\'ultiples dispositivos radica, al igual que en
 CPU, en como distribuir la carga de los threads de modo tal que haya una cantidad de trabajo
@@ -664,7 +664,7 @@ optima del problema de particiones cuando se sabe que el costo de resolver $P_i$
 $A$ es distinto a resolverlo en el dispositivo $B$. Por este motivo, no podemos particionarlo completamente
 de manera est\'aticamente
 usando este algoritmo y decidimos agregar usar una soluci\'on h\'ibrida est\'atica y din\'amica, reutilizando
-la informaci\'on de runtime para decidir como rebalancear las particiones entre iteraciones de SCF, luego
+la informaci\'on de runtime para decidir como rebalancear las particiones entre iteraciones de XC, luego
 de haber hecho una aproximaci\'on inicial usando el predictor est\'atico antes mencionado.
 
 Inicialmente definimos un orden para realizar toda la resoluci\'on del sistema y
@@ -774,7 +774,7 @@ de botella se notan a partir de la tercera placa, haciendo casi in\'util el uso 
 \end{figure}
 
 Una importante excepci\'on a lo anterior es la realizaci\'on del c\'alculo en doble precisi\'on. La iteraci\'on
-de SCF se puede realizar tanto en simple como en doble precisi\'on, para minimizar los
+de XC se puede realizar tanto en simple como en doble precisi\'on, para minimizar los
 errores de las operaciones. El costo de realizarlas en doble esta en la performance. Es notable
 el tiempo adicional que compone cada iteraci\'on, por lo cual las simulaciones que lo usen van
 a poder realizar como m\'aximo, aproximadamente un cuarto de la cantidad de iteraciones que la misma ejecutada en simple precisi\'on.

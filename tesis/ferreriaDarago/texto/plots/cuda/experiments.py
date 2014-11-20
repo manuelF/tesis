@@ -4,12 +4,25 @@ import sys
 import numpy as np
 sys.path.insert(0, '../comun')
 from graphs import *
+import re
+
+MSEC = 1000000.0
+def time2secs(s):
+    sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    return float(sec) + float(msec) / MSEC
+
+def time2milis(s):
+    sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    sec = sec or 0
+    return float(sec) * 1000.0 + float(msec) / 1000.0
+
+def time2micros(s):
+    return int(re.search("(\d+)us.",s).group(1))
+
 
 def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
                ylim=None,scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
   pylab.title(title)
-  pylab.ylabel(ylabel)
-  pylab.xlabel(xlabel)
   fig, ax = plt.subplots()
   base = range(len(yvalues))
   ax.plot(base,yvalues,"o")
@@ -23,6 +36,8 @@ def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
     plt.ylim(ylim)
 
   pylab.legend(loc='best')
+  ax.set_ylabel(ylabel)
+  ax.set_xlabel(xlabel)
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
@@ -49,7 +64,7 @@ def texture():
 def speedupSimple():
   params =  {#'title': u"Speedup en multiples M2090 (simple precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
-      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':(1.0,1.83,2.6,2.86),
       'ylim':(0.0,4.0),
       'ticks':(u'1 placa', u'2 placas', u'3 placas', u'4 placas'),
@@ -59,7 +74,7 @@ def speedupSimple():
 def speedupDoble():
   params =  {#'title': u"Speedup en multiples M2090 (doble precision)",
       'xlabel':u"Cantidad de placas en un mismo nodo",
-      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':(1.0,2.03,2.92,3.8),
       'ylim':(0.0,4.0),
       'ticks':(u'1 placa', u'2 placas', u'3 placas', u'4 placas'),
@@ -141,10 +156,10 @@ def globalMemory():
   measures =  tuple( map((lambda x: (1/x) * (m2090_gpu0)), vals))
 
   params =  {#'title': u"Speedup del computo de densidad electronica variando el tamaño del cacheo",
- #     'xlabel':u"Tamaño de la memoria global disponible [Mb]",
- #     'ylabel':u"Aceleración (en veces)",
+      'xlabel':u"Memoria global disponible [Mb]",
+
       'yvalues':measures,
-      'ylegend':'Aceleracion SCF',
+      'ylegend':'Aceleracion XC',
       'ticks':(u'0',u'530', u'1060',u'1590',
 		    u'2650',u'3180', u'3710',u'4240',),
       'ylim':(1,1.25),
@@ -166,12 +181,12 @@ def globalMemoryDetailed():
 
 
   params =  {#'title': u"Aceleracion del computo de densidad electronica variando el tamaño del cacheo",
-      'xlabel':u"Tamaño de la memoria global disponible [Mb]",
-      'ylabel':u"Aceleración de SCF (en veces)",
+      'xlabel':u"Memoria global disponible [Mb]",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':measures,
       'ticks':(u'0',u'0.053', u'0.53',u'5.3',u'53',u'530'),
       'xvalues':np.concatenate(([0],(10**np.array(range(5)))*53/(1000.**1))),
-      'ylegend':'Aceleracion SCF',
+      'ylegend':'Aceleracion XC',
       'ylim':(1,1.25),
       'filename':"global-detailed-fullereno.png"}
   lineGraphConOtroEje(**params)
@@ -184,7 +199,6 @@ def acumuladoGlobalMemory():
   ordered = np.sort(measures, order='size')
   runtimes_partials = np.cumsum(np.divide((ordered['functions']),
       np.float(np.sum(ordered['functions']))))
-
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"Tamaño de las matrices acumuladas [Gb]",
       'ylabel':u"Fracción del tiempo acumulado",
@@ -221,6 +235,7 @@ def predictorSizeInGpu():
     scatterGraphFitLineal(**params)
 
 
+
 def speedupTotal():
   ref_1x2090 = 5005751
   change_iteration_1x2090 = 909456
@@ -230,7 +245,7 @@ def speedupTotal():
       ref_1x2090/change_iteration_4x2090)
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"",
-      'ylabel':u"Aceleración de una iteración de SCF (en veces)",
+      'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':measures,
       'ylim':(1.0,16.0),
       'ticks':(#u'Referencia Fermi',
@@ -257,6 +272,44 @@ def coalescienciaTranspose():
       'filename':"transpose.png"}
   barGraph(**params)
 
+def initialProfile():
+    parts = {
+        u"Kohn Sham": time2milis("1s. 672459"),
+        u"Densidad": time2milis("17s. 526542"),
+        u"Fuerzas": time2milis("6s. 573524us"),
+        u"Funciones": time2milis("1s. 369108"),
+        u"Potencial": time2milis("130999"),
+    }
+    names = parts.keys();
+    values = [parts[key] for key in names]
+    total = sum(values)
+
+    params = {
+        'title': '',
+        'labels': names,
+        'values': values,
+        'filename': u'initial-iteration-parts-hemo.png',
+    }
+    piechart(**params)
+
+def finalProfile():
+#iteracion hemo k40
+    parts = {
+        u"Kohn Sham": time2milis("115556"),
+        u"Densidad": time2milis("385849"),
+        u"Funciones": time2milis("276"),
+    }
+    names = parts.keys();
+    values = [parts[key] for key in names]
+    total = sum(values)
+
+    params = {
+        'title': '',
+        'labels': names,
+        'values': values,
+        'filename': u'final-iteration-parts-hemo.png',
+    }
+    piechart(**params)
 
 
 
@@ -273,3 +326,5 @@ if __name__ == '__main__':
   acumuladoGlobalMemory()
   predictorSizeInGpu()
   coalescienciaTranspose()
+  initialProfile()
+  finalProfile()
