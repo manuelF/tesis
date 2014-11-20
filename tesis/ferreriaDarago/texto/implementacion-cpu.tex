@@ -126,7 +126,7 @@ momento de realizar la implementaci\'on, el tipo de datos para un vector de 3
 componentes (\texttt{cvector3}) se adapt\'o para corresponderse a un
 registro de SSE 4. Dado que el ancho de estos registros es de 128 bits, los mismos
 permiten realizar c\'alculos de a 4 elementos de punto flotante a la vez. Al ser 3, uno de los
-elementos del registro SSE no se utiliza (fijandole el valor en 0).~\cite{LIO}.
+elementos del registro SSE no se utiliza (fijandole el valor en 0).~\cite{Nitsche2014}.
 Es tarea del compilador luego traducir las operaciones usuales a instrucciones
 vectoriales.
 
@@ -430,7 +430,7 @@ computacional de un grupo, y un algoritmo que, dados los costos de los grupos y 
 utilizar, asigne cada grupo a cada thread.
 
 Para tener una idea del costo de cada grupo, usamos el estimador de operaciones
-dado por~\cite{LIO} junto con un ajuste constante para considerar \textit{overheads} fijos a
+dado por~\cite{Nitsche2014} junto con un ajuste constante para considerar \textit{overheads} fijos a
 cada grupo. Matem\'aticamente el estimador utilizado es:
 
 \begin{equation}
