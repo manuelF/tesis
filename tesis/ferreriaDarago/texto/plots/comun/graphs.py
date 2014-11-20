@@ -13,6 +13,22 @@
 ##    'filename':"texture.png"}
 ##barGraph(**params)
 
+
+hasScipy = False
+try:
+  from scipy.interpolate import interp1d
+  hasScipy = True
+except ImportError:
+  pass
+
+try:
+  import seaborn as sns
+  sns.set_context("paper",font_scale=1.7)
+  palette = sns.color_palette()
+except ImportError:
+  palette = ["b"] * 1000
+  pass
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -66,8 +82,8 @@ def lineGraph(yvalues, filename,
   if xlim:
       plt.xlim(xlim)
   pylab.title(title)
-  pylab.ylabel(ylabel)
-  pylab.xlabel(xlabel)
+  ax.set_ylabel(ylabel)
+  ax.set_xlabel(xlabel)
   pylab.legend(loc='best')
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
@@ -75,17 +91,16 @@ def lineGraph(yvalues, filename,
 def stackGraph(xlabel, ylabel, yvalues, filename,
                scale=u'linear',xvalues=None,ylegend=u'',ticks='', title=u""):
   pylab.title(title)
-  pylab.ylabel(ylabel)
-  pylab.xlabel(xlabel)
   fig, ax = plt.subplots()
   stack = ax.stackplot(xvalues, yvalues, label=ylegend)
   proxy_rects = [Rectangle((0, 0), 1, 1, fc=pc.get_facecolor()[0]) for pc in stack]
   label_list = [ylegend]
   # make the legend
   ax.legend(proxy_rects, label_list, loc=2)
-
   ax.set_xscale(scale)
-  #pylab.legend(loc='best')
+  plt.xlim((0,xvalues[-1]))
+  ax.set_ylabel(ylabel)
+  ax.set_xlabel(xlabel)
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
@@ -104,37 +119,60 @@ def scatterGraphFitLineal(xlabel, ylabel, xvalues, yvalues, filename,
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename):
+def piechart(labels, values, filename, title):
+  def my_autopct(val):
+    total=sum(values)
+    pct = 100.0*(float(val)/float(total))
+    val = int(val)
+    return '{p:.2f}%  ({v:d}ms)'.format(p=pct,v=val)
+
+  patches, texts = plt.pie(values, labels=labels, startangle=90, labeldistance=1.05, colors=palette)
+  edited_labels = [labels[i] +" "+ my_autopct(values[i]) for i in range(len(values))]
+  pylab.axis('equal')
+
+  legend = plt.legend(patches, edited_labels, loc="lower left", shadow=True)
+  for pie_wedge in patches:
+    pie_wedge.set_edgecolor('white')
+
+  pylab.savefig(filename, bbox_inches="tight")
+  pylab.close()
+
+def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename, rotation=0):
   pylab.xlabel(xlabel)
   pylab.ylabel(ylabel)
   ticks = range(0,len(xvalues))
   pylab.bar(ticks, yvalues, align="center")
-  pylab.xticks(ticks, xvalues)
+  pylab.xticks(ticks, xvalues, rotation=rotation)
   pylab.legend(loc="best")
   pylab.savefig(filename, bbox_inches="tight")
   pylab.close()
+
+def multiComparativeBarChart(ticks, values, filename, ylabel, width=0.1):
+  fig, ax = plt.subplots()
+  indexes = np.arange(max(len(v) for u,v in values.items()))
+  rects, count = [], 0
+  for key, vals in values.items():
+      bar = ax.bar(indexes + width * count, vals, width, color=palette[count])
+      rects.append(bar)
+      count += 1
+
+  ax.set_ylabel(ylabel)
+  ax.set_xticks(indexes + (len(ticks)-1) * width)
+  ax.set_xticklabels(ticks)
+  ax.legend(rects, values.keys())
+
+  plt.savefig(filename, bbox_inches="tight")
+  plt.close()
 
 def initialize():
   mpl.rcParams['savefig.dpi'] = 150
 
 def histogram(xlabel, ylabel, values, nbins, title, filename):
-  pylab.hist(values, nbins, histtype="bar", normed=1, alpha=0.5)
+  pylab.hist(values, nbins, histtype="bar",  alpha=0.5)
   pylab.title(title)
   pylab.xlabel(xlabel)
   pylab.ylabel(ylabel)
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-hasScipy = False
-try:
-  from scipy.interpolate import interp1d
-  hasScipy = True
-except ImportError:
-  pass
-
-try:
-  import seaborn as sns
-  sns.set_context("paper",font_scale=1.7)
-except ImportError:
-  pass
 initialize()
