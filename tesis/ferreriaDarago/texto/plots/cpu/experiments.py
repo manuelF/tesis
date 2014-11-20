@@ -10,6 +10,7 @@ from graphs import *
 MSEC = 1000000.0
 def time2secs(s):
     sec,msec = re.search("(?:(\d+)s. )?(\d+)", s).groups()
+    sec = sec or 0
     return float(sec) + float(msec) / MSEC
 
 def time2milis(s):
@@ -343,6 +344,29 @@ def xeon_phi_single_core():
 
     multiComparativeBarChart(**params)
 
+def xeon_phi_single_core_xc():
+    densityxeon = time2secs("95307") + time2secs("8s. 103455")
+    rmmxeon = time2secs("15462") + time2secs("1s. 566310")
+
+    densityxeonphi = time2secs("70s. 87924") + time2secs("103819")
+    rmmxeonphi = time2secs("18140") + time2secs("8s. 27276")
+
+    labels = [u"Cálculo densidad", u"Cálculo matrix KS"]
+    comparison = {
+        u"Xeon": [ densityxeon, rmmxeon ],
+        u"Xeon Phi": [ densityxeonphi, rmmxeonphi ],
+    }
+
+    params = {
+        'values': comparison,
+        'ticks': labels,
+        'filename': u'xeon-xeon-phi-broad-comparison-xc.png',
+        'ylabel': u'Tiempo de ejecución [s]',
+    }
+
+    multiComparativeBarChart(**params)
+
+
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
@@ -380,3 +404,4 @@ if __name__ == '__main__':
     hemo_post_paralelizar()
     mejora_functions_un_core()
     xeon_phi_single_core()
+    xeon_phi_single_core_xc()
