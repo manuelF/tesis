@@ -104,33 +104,26 @@ Dentro de este esquema se subdivide el sistema en dos partes:
 \item Para el resto del sistema se aplica un campo de fuerzas cl\'asico (MM).
 \end{enumerate}
 
-De esta manera se puede expresar la energ\'ia de el sistema QM/MM c\'omo:
+De esta manera se puede expresar la energ\'ia del sistema QM/MM c\'omo:
 \begin{equation}
     E = E_{QM} + E_{QM/MM} + E_{MM}
 \end{equation}
 donde la energ\'ia $E_{QM}$ se obtiene mediante el m\'etodo DFT visto m\'as arriba, y la energ\'ia $E_{MM}$ proviene de simular el campo de fuerzas cl\'asico.
 
-La contribuci\'on $E_{QM/MM}$ en este trabajo, se calcula mediante la ecuaci\'on
+La contribuci\'on $E_{QM/MM}$ se calcula, en este trabajo, mediante la ecuaci\'on:
 
 \begin{equation}
     E_{QM/MM} = \sum_{l = 1}^{N_c} q_l \int \frac{\rho(r)}{\mid r - R_l \mid} + \sum_{l = 1}^{N_c}\sum_{\alpha = 1}^{N_q} [ v_{LJ} ( \mid R_l - \tau_\alpha \mid ) + \frac{q_l z_\alpha}{\mid R_l - \tau_\alpha \mid} ]
 \end{equation}
+donde el primer t\'ermino relaciona una carga puntual del sistema cl\'asico con la densidad electr\'onica, y el segundo t\'ermino representa la interacci\'on entre los n\'ucleos cl\'asicos con los cu\'anticos mediante un potencial de Lennard-Jones y la interacci\'on Coulombica entre las cargas.
 
-Donde el primer t\'ermino relaciona una carga puntual del sistema cl\'asico con la densidad
-electr\'onica, y el segundo t\'ermino representa la interacci\'on entre los n\'ucleos cl\'asicos
-con los cu\'anticos mediante un potencial de Lennard-Jones y la interacci\'on Coulombica entre
-las cargas.
+Los m\'etodos \textit{QM/MM}, dentro del marco de m\'etodos multiescala, son ampliamente utilizados en la pr\'actica. 
+Estos modelos han valido a Karplus, Levitt y Warshel el premio Nobel de Qu\'imica en 2013, por su valor para la simulaci\'on de sistemas complejos.
 
-Los m\'etodos \textit{QM/MM}, dentro del marco de m\'etodos multiescala, son ampliamente utilizados en
-la pr\'actica. Estos modelos han valido a Karplus, Levitt y
-Warshel el premio Nobel de Qu\'imica en 2013, por su valor para la simulaci\'on de sistemas complejos.
-
-Nuestro trabajo se realiza en base a programas ya existentes. El c\'alculo de $E_{QM}$ y $E_{QM/MM}$ son realizados por el paquete de
-\textit{software} LIO~\cite{LIO}~\cite{TesisNitsche}, el cual fue optimizado en este trabajo para el uso de
-distintas arquitecturas de CPU y GPGPU. Esta librer\'ia
-se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el c\'alculo
-de $E_{MM}$. Nos concentraremos en las partes computacionalmente m\'as intensivas de LIO, que corresponden a la
-implementaci\'on de los c\'alculos de los t\'erminos de intercambio y correlaci\'on introducidos en esta secci\'on.
+Nuestro trabajo se realiza en base a programas ya existentes. 
+El c\'alculo de $E_{QM}$ y $E_{QM/MM}$ son realizados por la aplicaci\'on LIO~\cite{LIO,TesisNitsche}, el cual fue optimizado en este trabajo para el uso de distintas arquitecturas de CPU y GPGPU. 
+Este paquete se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el c\'alculo de $E_{MM}$. 
+Nos concentraremos en las partes computacionalmente m\'as intensivas de LIO, que corresponden a la implementaci\'on de los c\'alculos de los t\'erminos de intercambio y correlaci\'on ya introducidos en esta secci\'on.
 
 \section{C\'omputo de alto rendimiento}
 
