@@ -194,7 +194,8 @@ este valor resulto demasiado elevado y disminu\'ia la posibilidad de ocupar todo
 Fermi y Kepler. Con solamente 32 threads, se pod\'ia maximizar la ocupaci\'on de los SM, pero hab\'ia
 muchos m\'as bloques. Finalmente, luego de disminuir un poco el uso de memoria compartida por
 bloque, usando algunas ideas descriptas a continuaci\'on, pudimos fijar este valor en 64 threads
-por bloque. Mostramos que tener solo un warp es bueno, pero mucho mejor a\'un es tener dos warps, porque
+por bloque. Se muestra en la figura \ref{plt:dbs-runtime} que tener solo un warp es bueno, pero
+mejor a\'un es tener dos warps corriendo simultaneamente, porque
 esto permite, con costo cero, poner a correr el otro para ocultar la latencia sin agrandar
 demasiado el costo de la sincronizaci\'on.
 
