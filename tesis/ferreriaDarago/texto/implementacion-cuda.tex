@@ -45,7 +45,7 @@ los computos intermedios, \nvidia decidi\'o unificarlos, ya que es muy variable 
 cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
 registros por thread. Mientras que Fermi permit\'ia hasta 63 registros, Kepler permite hasta 255. Esto
 es positivo para poder correr bloques de pocos threads pero gran cantidad de registros. Por otro lado,
-aumenta la presion sobre el register file. Cuando se lanzan muchos threads
+aumenta la presi\'on sobre el register file. Cuando se lanzan muchos threads
 que puedan estar corriendo paralelamente entre todos los SM de la GPU, es posible que se supere
 la cantidad m\'axima de registros presentes en el register file. Esto fuerza a que el scheduler
 no pueda poner a ejecutar m\'as bloques que los que pueda soportar este recurso, dejando SP ociosos.
@@ -256,16 +256,16 @@ anteriormente pero utilizando mucho mejor los recursos del dispositivo.
 %%%%%%%%%%%%%%%
 
 \subsection{Tama\~no de los grupos}
-Un punto que afecta fuertemente el tiempo de ejecucion del calculo de Intercambio Correlacion
+Un punto que afecta fuertemente el tiempo de ejecuci\'on del calculo de Intercambio Correlaci\'on
 es el tama\~no de los grupos que particionan los puntos del mallado. Los grupos son generados
 en base a constantes ajustables particulares a cada sistema, como se menciona en la seccion \ref{implementacion}.
-Estas constantes definenen el tama\~no de cada cubo y el radio de cada esfera. El impacto de
-estos parametros consiste en la cantidad de funciones significativas y puntos que van a ser
+Estas constantes definen el tama\~no de cada cubo y el radio de cada esfera. El impacto de
+estos par\'ametros consiste en la cantidad de funciones significativas y puntos que van a ser
 capturados en cada grupo. Grupos muy chicos van a contar con pocas funciones y puntos, necesitando
 cientos o miles de grupos para poder representar un sistema de manera completa. Hacer grupos grandes,
 en cambio, permite que tengan miles de puntos y cientos de funciones, siendo aproximadamente un orden
 de magnitud m\'as grupos que en particiones chicas. Esto, sin embargo, no implica que todos
-los grupos sean grandes, simplemente que los cubos y las esferan cubriran espacios mayores
+los grupos sean grandes, simplemente que los cubos y las esferas cubrir\'an espacios mayores
 pero que dentro de estas puede haber pocos puntos.
 
 
@@ -405,8 +405,8 @@ de funciones a este m\'etodo.
 
 
 \subsection{Cambios en el almacenamiento de matrices temporales}
-Una de las principales limitaciones de las GPGPU es la cantidad fija de memoria. Esta no es
-expandible dado que esta soldada a la placa. Esto era aun m\'as notorio cuando las placas
+Una de las principales limitaciones de las GPGPU es la cantidad fija de memoria. Esta no se puede
+expandir dado que esta soldada a la placa. Esto era aun m\'as notorio cuando las placas
 contaban con menos de 1GB de memoria (A\~nos 2007-2008).
 Para problemas de c\'alculo num\'erico, esto era un limitante muy serio; los problemas que
 normalmente entraban en la memoria principal de un CPU, no entraban completos en las GPU.
@@ -496,8 +496,8 @@ convertirlo en una aceleraci\'on notoria.
 Otro de los problemas existentes del c\'odigo que quisimos atacar fue el mejor empleo de las
 memorias shared. Estas son un recurso finito y muy importante, ya que son un limitante de
 la ocupancia de los multiprocesadores. Como pueden correr una cantidad de bloques que, a lo sumo,
-no superen los 48KB de memoria shared simult\'aneamente entre todos, es imprescindible minimizar el
-alocacion de la memoria shared de modo que no estemos subutilizando los SM.
+no superen los 48KB de memoria shared simult\'aneamente entre todos, es imprescindible minimizar
+el uso de la memoria shared de modo que no estemos subutilizando los SM.
 
 Una cosa que probamos, con un grado de \'exito variable, fue disminuir el tama\~no de los vectores
 donde almacenamos las derivadas direccionales. Como nuestro problema es en tres dimensiones,
@@ -644,7 +644,7 @@ el tiempo de ejecuci\'on que va a tener un grupo.
 
 El predictor usando el tama\~no, si bien es posible observar que tiene una buena correlaci\'on con el tiempo de ejecuci\'on,
 no tiene la precisi\'on que tiene el predictor basado en la funci\'on de costo en CPU, visto en la figura~\ref{fig:comp-size-cost}.
-No se pudo encontrar par\'ametros que permitan ajustarlo para que funcione en GPU. Como \nvidia no publica toda la informac\'ion
+No se pudo encontrar par\'ametros que permitan ajustarlo para que funcione en GPU. Como \nvidia no publica toda la informaci\'on
 interna de los procesadores GPU y dada la cantidad de lugares adicionales donde se puede incurrir en latencias
 imprevistas, al funcionar as\'incronos al CPU, no es posible predecir runtime con excesiva confianza dado \'unicamente
 las cuentas a realizar. Al tener ambos predictores performance similares, se decidi\'o usar el m\'as sencillo, el
