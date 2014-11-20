@@ -79,52 +79,39 @@ Para esto es ideal que las operaciones sean lo m\'as regulares y los ciclos sean
 
 \subsection{Caches}
 
-A diferencia de los procesadores, la velocidad de acceso de las memorias principales no aument\'o de una manera
-tan significativa, como se puede ver en la figura~\ref{fig:cpu_vs_mem}. Como consecuencia, la memoria
-empez\'o a convertirse en un serio cuello de botella a la velocidad de ejecuci\'on de los programas (llamado
-en la jerga \textit{memory wall}).
+A diferencia de los procesadores, la velocidad de acceso de las memorias principales no aument\'o de una manera tan significativa, como se puede ver en la figura~\ref{fig:cpu_vs_mem}. Como consecuencia, la memoria empez\'o a convertirse en un serio cuello de botella a la velocidad de ejecuci\'on de los programas (llamado en la jerga \textit{memory wall}).
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\plotwidth]{images/cpu_vs_memory.png}
-    \caption{Comaparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, mostrando
-    el denominado \textit{memory gap}}
+    \caption{Comparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, la diferencia de entre ellos se denomina \textit{memory gap}.}
     \label{fig:cpu_vs_mem}
+    
 \end{figure}
+\todo{Poner de d\'onde se tom\'o la figura y arreglar los bordes que aparecen cosas feas}
 
-Empleando el concepto de \textit{localidad}, producto de la observaci\'on de que los datos con los que opera una
-secci\'on de un programa suelen estar cerca en memoria, los dise\~nos de procesadores empezaron a incluir distintos
-tipos de caches: unas memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos
-recientemente usados. Su eficacia impuls\'o el uso de una jerarqu\'ia de las mismas, organizadas en orden creciente
-de tama\~no y decreciente en velocidad, empezando por las caches L1 y siguiendo por las L2 y L3.
+El concepto de \textit{localidad espacial} corresponde con la la observaci\'on de que los datos con los que opera una secci\'on de un programa suelen estar \emph{cerca} en memoria.
+Los dise\~nos de procesadores empezaron a incluir distintos tipos de caches para sacar provecho de esta situaci\'on: memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos recientemente usados. 
+Su eficacia impuls\'o el establecimiento de una jerarqu\'ia en orden creciente de tama\~no y decreciente en velocidad, empezando por las caches L1 y siguiendo por las L2 y L3.
 
-El tama\~no de una cache L1 moderna est\'a en el orden de los 64 Kb, una cache L2 en el \'orden de los 2 Mb y
-una L3 en el orden de 6 Mb en adelante.
+El tama\~no de una cache L1 moderna est\'a en el orden de los 64 KB, una cache L2 en el \'orden de los 2 MB y una L3 en el orden de 6 MB en adelante.
 
-Si bien idealmente la aparici\'on de caches es invisible al programador, y usualmente lo es, accesos irregulares a la
-memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, causando que datos posteriormente
-a utilizar se hayan perdido y deban ser buscados nuevamente en la relativamente lenta memoria principal (evento que se conoce como
-\textit{cache miss}). Por esto es que la regularidad de los accesos a memoria para hacer buen uso de caches es
-fundamental cuando la performance es de importancia.
+Si bien la aparici\'on y utilizaci\'on de caches es transparente al programador en los procesadores de la l\'inea x86\_64, los accesos irregulares a la memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, esto puede causar que datos que s\'i se vayan a utilizar sean desalojados de la cache y deban ser buscados nuevamente en la memoria principal (evento que se conoce como \textit{cache miss}). 
+Por esto es que la regularidad de los accesos a memoria para hacer buen uso de caches es fundamental para obtener una buena performance.
 
 \subsection{Multiprocesadores}
 
-Los procesadores MIMD (\textit{Multiple Instruction Multiple Data}) implicaron una revoluci\'on en la computaci\'on, pero
-cada procesador continua las l\'ineas anteriores.  Los dise\~nos m\'as utilizados se basan en SMP (\textit{Symmetric
-Multiprocessing}), donde todos los procesadores son iguales y comparten una misma memoria principal. Cada procesador tiene
-sus propios registros y se comunica con los dem\'as mediante memoria compartida o interrupciones.
+Los procesadores MIMD (\textit{Multiple Instruction Multiple Data}) implicaron una revoluci\'on en la computaci\'on, pero cada procesador contin\'ua las l\'ineas anteriores.\todo{Supongo que est\'an haciendo referencia a ser compatible para atr\'as. Esto es cierto para las PC's, pero hay muchos otros procesadores que no cumplen con eso, solo piensen en los micros de celulares}
+Los dise\~nos m\'as utilizados se basan en un arquitectura tipo SMP (\textit{Symmetric Multiprocessing}), en la cual todos los procesadores son iguales y comparten una misma memoria principal. 
+Cada procesador tiene sus propios registros y se comunica con los dem\'as mediante memoria compartida o interrupciones.
 
-Por ejemplo, el procesador Intel Xeon E7-8800 posee 12 procesadores (cores) que pueden ejecutar dos hilos simult\'aneamente
-cada uno, mediante el uso de tecnolog\'ias como \textit{Hyper-threading}.
+Por ejemplo, el procesador Intel Xeon E7-8800 posee $12$ procesadores (cores) que pueden ejecutar dos hilos simult\'aneamente cada uno, mediante el uso de la tecnolog\'ia denominada \textit{Hyper-threading}.
 
-A diferencia de los otros m\'etodos, las mejoras posibles mediante el procesamiento paralelo en tareas son sustanciales,
-pero dependen grandemente del programador. Un programa serial no se beneficiar\'a de m\'ultiples \textit{cores},
-incluso siendo recompilado, a menos que este paralelismo se aproveche expl\'icitamente. Otro aspecto importante es la
-\textit{escalabilidad}, que consiste en que la divisi\'on de tareas mantenga a todos los procesadores disponibles ocupados,
-aunque la cantidad de los mismos crezca.
+A diferencia de los otros m\'etodos, las mejoras posibles mediante el procesamiento paralelo en tareas son sustanciales, pero dependen del programador en gran medida. 
+Un programa serial no se beneficiar\'a de m\'ultiples \textit{cores}, incluso siendo recompilado, a menos que este paralelismo se aproveche expl\'icitamente. 
+Otro aspecto importante es la \textit{escalabilidad}, que consiste en que la divisi\'on de tareas mantenga a todos los procesadores disponibles ocupados, aunque crezca la cantidad de cores que intervengan.
 
-Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}, que establece una relaci\'on entre
-el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje
+Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}\, que establece una relaci\'on entre el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje
 de la aplicaci\'on que es paralelizable y el porcentaje que no lo es. Matem\'aticamente,
 
 \begin{equation}
