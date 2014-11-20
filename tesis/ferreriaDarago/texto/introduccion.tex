@@ -1,49 +1,49 @@
 Con la aparici\'on de las computadoras, han ganado espacio dentro de las ciencias naturales los m\'etodos de simulaci\'on.
 El uso de estas t\'ecnicas permite validar modelos te\'oricos as\'i c\'omo tambien brindar informaci\'on detallada (microsc\'opica) del proceso simulado.
 
-En el \'ambito de la qu\'imica existen diferentes modelos que permiten simular procesos de interes.
-Dentro de estos modelos hay dos que se destacas por su uso.
-Los m\'etodos basados en la mec\'anica cu\'antica que proporcionan un a descripci\'on de la estructura electr\'onica del sistema y los m\'etodos basados en la mec\'anica molecular donde las mol\'eculas son tratadas mediante un campo de fuerza
-cl\'asico y los electrones no son tenidos en cuenta explicitamente.
+En el \'ambito de la qu\'imica existen diferentes modelos que permiten simular procesos de inter\'es.
+Dentro de estos modelos hay dos que se destacan por su uso:
+\begin{itemize}
+\item Los m\'etodos basados en la mec\'anica cu\'antica, que proporcionan una descripci\'on de la estructura electr\'onica del sistema.
+
+\item Los m\'etodos basados en la mec\'anica molecular, donde las mol\'eculas son tratadas mediante un campo de fuerza cl\'asico y los electrones no son tenidos en cuenta expl\'icitamente.
+\end{itemize}
 
 \section{Modelos Cu\'anticos (QM)}
 
 El comportamiento de las part\'iculas livianas (c\'omo el electr\'on) est\'a regido por las leyes de la mec\'anica cu\'antica.
 Este marco te\'orico desarrollado a comienzos del siglo XX propone que las part\'iculas (c\'omo electrones y protones) pueden (y deben en algunos casos)
-ser descriptas c\'omo ondas. As\'i, cualquier propiedad de un sistema esta determinado por una funci\'on llamada funci\'on de onda ($\Psi$) que satisface la ecuaci\'on de Schr\"{o}dinger dependiente del tiempo.
+ser descriptas c\'omo ondas. As\'i, cualquier propiedad de un sistema esta determinado por una funci\'on llamada \emph{funci\'on de onda} ($\Psi$) que satisface la ecuaci\'on de Schr\"{o}dinger dependiente del tiempo:
 
 \begin{equation}
     \label{schro_time_dep}
     -\hbar\frac{\partial \Psi}{\partial t} (\mathbf{r},t) = \frac{-\hbar^2}{2\mu}\nabla^2 \Psi(\mathbf{r},t) + V(\mathbf{r},t) \Psi(\mathbf{r},t)
 \end{equation}
-
 donde $\mathbf{r} = (r_1,\dots,r_n)$ es el vector de todas las posiciones de las part\'iculas del sistema,
 $m$ es la masa de una part\'icula cualquiera, $V$ es un campo externo que afecta a las part\'iculas y
-$\hbar$ es la constante de Planck divida por $2\pi$. Si el campo externo no depende del tiempo esta ecuaci\'on se puede simplificar a
+$\hbar$ es la constante de Planck divida por $2\pi$. 
+
+Si el campo externo no depende del tiempo esta ecuaci\'on se puede simplificar a:
 
 \begin{equation*}
     \hat{H} =  -\frac{\hbar^2}{m} \nabla^2 + \hat{V}
 \end{equation*}
-
-a la ecuaci\'on de Schr\"{o}dinger \textit{independiente del tiempo}
+que se conoce como la ecuaci\'on de Schr\"{o}dinger \textit{independiente del tiempo}
 
 \begin{equation}
     \label{schro_time_indep}
     \hat{H} \Psi(\mathbf{r}) = E \Psi(\mathbf{r})
 \end{equation}
-
-Donde $E$ es la energ\'ia asociada a la funci\'on de onda $\Psi$.
+donde $E$ es la energ\'ia asociada a la funci\'on de onda $\Psi$.
 
 Ahora, si bien resolver esta ecuaci\'on diferencial ser\'ia suficiente para determinar todas las propiedades del sistema, esto no puede hacerse de
 manera exacta cuando hay m\'as de un electr\'on en el mismo. Por este motivo, para problemas de mayor tama\~no se utilizan aproximaciones
-para obtener una soluci\'on de~\ref{schro_time_indep}.
+para obtener una soluci\'on de la ecuaci\'on~\ref{schro_time_indep}.
 
-Existen diversos m\'etodos para resolver (aproximadamente) esta ecuaci\'on con diferente costo computacional (es decir, cantidad de operaciones a realizar)
-y calidad de la respuesta obtenida. Dentro de estos m\'etodos hay uno que destaca por su excelente relaci\'on costo/calidad, el m\'etodo basado en la Teor\'ia de los Funcionales de la Densidad
-(DFT, Density Functional Theory) desarrollada por Hohenberg y Kohn en 1964.
+Existen diversos m\'etodos para resolver de forma aproximada esta ecuaci\'on con diferente costo computacional y calidad de la respuesta obtenida. 
+Dentro de estos m\'etodos hay uno que destaca por su excelente relaci\'on costo/calidad, el m\'etodo basado en la Teor\'ia de los Funcionales de la Densidad (DFT, Density Functional Theory) desarrollada por Hohenberg y Kohn en 1964.
 
-En este marco te\'orico la \textit{densidad electr\'onica} $\rho$, que representa la probabilidad de encontrar un electr\'on en
-el espacio dada una configuraci\'on del sistema ocupa un rol destacado.
+En este marco te\'orico, la \textit{densidad electr\'onica} $\rho$ representa la probabilidad de encontrar un electr\'on en el espacio dada una configuraci\'on del sistema y ocupa un rol destacado.
 La base de este m\'etodo consiste en dos teoremas publicados por Hohenberg y Kohn ~\cite{HohenbergKohn}.
 Estos autores demuestran que $\rho$ y $V$ (y por lo tanto $\psi$) se encuentran relacionadas biunivocamente,
 es decir que una dada densidad electr\'onica contiene la misma informaci\'on que la funci\'on de onda.
@@ -66,54 +66,49 @@ computacional de este tipo de simulaciones. Por ello, el objetivo central de est
 La forma comunmente utilizada para calcular este t\'ermino se basa en definir un funcional local $\epsilon_{xc}$ que depende de la densidad (Local Density Aproximation, LDA) o de la densidad y su gradiente
 (General Gardient Aproximation, GGA) en cada punto del espacio.
 
-De esta manera se puede calcular $ E_{XC} $ mediante la integral:
+De esta manera se puede calcular $E_{XC}$ \todo{>Si es el mismo t\'ermino mencionado en \ref{hohenberg_kohn_energy} deber\'ia escribirse igual (min\'uscula en xc)} mediante la integral:
 
 \begin{equation}
     E_{XC} = \int \rho(r) \epsilon_{xc}\left( \rho(r) \right ) dr
 \end{equation}
+\todo{>La integral no deber\'ia definirse sobre un dominio?}
 
-que es aproximada mediante una suma utilizando una grilla de puntos seg\'un:
+Esta ecuaci\'on puede ser aproximada mediante una suma utilizando una grilla de puntos seg\'un:
 
 \begin{equation}
     \label{approx_excenergy}
     E_{XC} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
 \end{equation}
 
-Otro aspecto importante de esta teor\'ia es que provee una manera de calcular la densidad $\rho$,
-mediante el denominado m\'etodo de Kohn-Sham~\cite{KohnSham}. Este m\'etodo se basa en el segundo teorema
-de Hohenberg y Khon, que establece que la densidad electr\'onica es la funci\'on que
-cumple que $\int \rho(r) dr = N$, la cantidad de \'atomos del sistema, $\rho(r) \geq 0$ y que
-minimiza la energ\'ia $E[\rho]$~\ref{hohenberg_kohn_energy}. Esto produce
-un m\'etodo auto-consistente para calcular $\rho$. Se empieza con una aproximaci\'on inicial y
-se itera el c\'alculo de la misma usando una matriz, denominada \textit{Matriz de Kohn Sham}, hasta
-alcanzar un m\'inimo para $E$.
+Otro aspecto importante de esta teor\'ia es que provee una manera de calcular la densidad $\rho$, mediante el denominado m\'etodo de Kohn-Sham~\cite{KohnSham}. 
+Este m\'etodo se basa en el segundo teorema de Hohenberg y Khon, que establece que la densidad electr\'onica es la funci\'on que cumple que $\int \rho(r) dr = N$, la cantidad de \'atomos del sistema, $\rho(r) \geq 0$ y que minimiza la energ\'ia $E[\rho]$~\ref{hohenberg_kohn_energy}. 
+Esto produce un m\'etodo auto-consistente para calcular $\rho$. Se empieza con una aproximaci\'on inicial y se itera el c\'alculo de la misma usando una matriz, denominada \textit{Matriz de Kohn Sham}, hasta alcanzar un m\'inimo para $E$.
 
-El algoritmo que se deduce de la DFT es uno de los m\'etodos m\'as populares en c\'alculos
-de estado s\'olido, especialmente desde la d\'ecada del 90 cuando se mejoraron las aproximaciones para modelado de
-interacciones. El valor de esta teor\'ia para el estudio de las propiedades de la materia le vali\'o a Kohn el Premio Nobel
-de Qu\'imica en 1998.
+El algoritmo que se deduce de la DFT es uno de los m\'etodos m\'as populares en problemas de estado s\'olido, especialmente desde la d\'ecada del 90 cuando se mejoraron las aproximaciones para modelado de interacciones. 
+El valor de esta teor\'ia para el estudio de las propiedades de la materia le vali\'o a Kohn el Premio Nobel de Qu\'imica en 1998.
 
-Si bien la relaci\'on costo calidad de este m\'etodo es muy buena, el costo computacional asociado sigue siendo elevado lo que limita su aplicaci\'on a sistemas peque\~nos (digamos cientos de \'atomos como m\'aximo).
+Si bien la relaci\'on costo calidad de este m\'etodo es muy buena, el costo computacional asociado sigue siendo elevado, lo que limita su aplicaci\'on a sistemas peque\~nos (digamos cientos de \'atomos como m\'aximo).
 
+Por ello se han desarrollado los m\'etodos conocidos como \emph{mec\'anica molecular} (MM). 
+En estos m\'etodos los \'atomos son tratados c\'omo esferas cargadas y las uniones qu\'imicas como resortes (potenciales arm\'onicos).
+De esta manera los electrones no son considerados expl\'icitamente, reduciendo dr\'asticamente el costo computacional asociado. 
+Esta t\'ecnica es muy poderosa para representar sistemas (o procesos) en los que no cambia la distribuci\'on electr\'onica.
 
-Por ello se han desarrollado los m\'etodos llamado de mec\'anica molecular (MM). En estos m\'etodos los \'atomos son tratados c\'omo esferas cargadas y las uniones qu\'imicas como resortes (potenciales arm\'onicos).
-De esta manera los electrones no son tratados expl\'icitamente lo que reduce dr\'asticamente el consto computacional asociado. Esta t\'ecnica permite es muy poderosa para representar sistemas (o procesos) en los que no cambia la distribuci\'on
-electr\'onica.
+Sin embargo, en muchos de los problemas de inter\'es en qu\'imica y bioqu\'imica (por ejemplo una reacci\'on qu\'imica en soluci\'on o en el seno de una prote\'ina), el modelado requiere simult\'aneamente de la representaci\'on de miles de \'atomos y de un tratamiento expl\'icito de los electrones.
+Para resolver esto, se han desarrollado t\'ecnicas h\'ibridas QM/MM (\textit{Quantum Mechanical / Molecular Mechanics}).
 
-Sin embargo en muchos de los problemas de inter\'es en qu\'imica y bioqu\'imica (por ejemplo una reacci\'on qu\'imica en soluci\'on o en el seno de una prote\'ina)
- el modelado requiere de la representaci\'on de miles de \'atomos y un tratamiento expl\'icito de los electrones a la vez.
+Dentro de este esquema se subdivide el sistema en dos partes:
+\begin{enumerate}[i)]
+\item Una parte en la que la estructura electr\'onica cambia. Se lo modela usando mec\'anica cu\'antica (QM).
 
-Para resolver esto, se han desarrollado t\'ecnicas h\'ibridas QM/MM (\textit{Quantum Mechanical / Molecular Mechanical}).
+\item Para el resto del sistema se aplica un campo de fuerzas cl\'asico (MM).
+\end{enumerate}
 
-Dentro de este esquema se subdivide el sistema en dos. El primero, donde la estructura electr\'onica cambia, se lo modela usando mec\'anica cu\'antica mientras que al resto se le aplica un campo de
-fuerzas cl\'asico. De esta manera se puede expresar la energ\'ia de el sistema QM/MM c\'omo.
-
+De esta manera se puede expresar la energ\'ia de el sistema QM/MM c\'omo:
 \begin{equation}
     E = E_{QM} + E_{QM/MM} + E_{MM}
 \end{equation}
-
-Donde la energ\'ia $E_{QM}$ se obtiene mediante el m\'etodo DFT visto m\'as arriba, y la energ\'ia
-$E_{MM}$ proviene de simular el campo de fuerzas cl\'asico.
+donde la energ\'ia $E_{QM}$ se obtiene mediante el m\'etodo DFT visto m\'as arriba, y la energ\'ia $E_{MM}$ proviene de simular el campo de fuerzas cl\'asico.
 
 La contribuci\'on $E_{QM/MM}$ en este trabajo, se calcula mediante la ecuaci\'on
 
