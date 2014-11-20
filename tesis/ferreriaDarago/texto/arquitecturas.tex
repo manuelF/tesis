@@ -111,7 +111,7 @@ A diferencia de los otros m\'etodos, las mejoras posibles mediante el procesamie
 Un programa serial no se beneficiar\'a de m\'ultiples \textit{cores}, incluso siendo recompilado, a menos que este paralelismo se aproveche expl\'icitamente. 
 Otro aspecto importante es la \textit{escalabilidad}, que consiste en que la divisi\'on de tareas mantenga a todos los procesadores disponibles ocupados, aunque crezca la cantidad de cores que intervengan.
 
-Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}\, que establece una relaci\'on entre el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje
+Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}~\cite{Amdahl1967}, que establece una relaci\'on entre el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje
 de la aplicaci\'on que es paralelizable y el porcentaje que no lo es. Matem\'aticamente,
 
 \begin{equation}
@@ -791,8 +791,7 @@ Cada cache L2 esta divida en dos bancos, con una latencia de 2 ciclos para leer 
 
 \subsection{Arquitectura de instrucciones}
 
-Si bien la base del conjunto de instrucciones de la arquitectura del Xeon Phi es la P54C de Pentium (IA-32), nuevas instrucciones
-se han incluido con el prop\'osito de aumentar la idoneidad del procesador para computo de alta performance.
+Si bien la base del conjunto de instrucciones de la arquitectura del Xeon Phi es la P54C de Pentium (IA-32), nuevas instrucciones se han incluido con el prop\'osito de aumentar la idoneidad del procesador para computo de alta performance.
 Estas operaciones incluyen implementaciones por \textit{hardware} de operaciones comunes en HPC: rec\'iproco de un valor,
 ra\'iz cuadrada, potencia y exponenciaci\'on, y operaciones m\'as relacionadas con la memoria como por ejemplo \textit{scatter and gatter}
 y stores \textit{streameados} de manera de aprovechar mejor el ancho de banda de memoria que permite la arquitectura.
