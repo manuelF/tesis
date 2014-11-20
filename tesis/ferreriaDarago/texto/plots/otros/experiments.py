@@ -59,16 +59,15 @@ def tamParticion():
   for f,fname in files:
     measures = np.loadtxt(f, fileformat)
     ordered = np.sort(measures, order='cost')
-    a_cpu = ordered['runtimecpu']
-    a_gpu = ordered['runtimegpu']
+    indices = np.array(range(1,len(ordered)+1))
+    a_cpu = np.cumsum(ordered['runtimecpu'])
+    a_gpu = np.cumsum(ordered['runtimegpu'])
 
     params =  {
-        'xlabel':u"Costo del grupo",
-        'ylabel':u"Runtime de un grupo [ms]",
+        'xlabel':u"Cantidad grupos resueltos",
+        'ylabel':u"Runtime acumulado de resolucion de grupos [ms]",
         'yvalues':map((lambda x: np.divide(x,1000.0)),[a_cpu, a_gpu]),
-        'xvalues':(ordered['cost']),
-        'xlim':(0,1.5e7),
-        'ylim':(0,3),
+        'xvalues':indices,
         'ylegend': ['Runtime CPU', 'Runtime GPU'],
         'filename':fname}
     lineGraph(**params)
