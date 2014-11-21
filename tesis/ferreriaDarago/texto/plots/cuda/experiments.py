@@ -115,8 +115,8 @@ def variandoDBS():
       'ylabel':u"Tiempo del kernel density [ms]",
       'yvalues':np.divide(measures,1000),
       'ylim':(0.0,max(list(measures))*0.001),
-      'ticks':(u'Fermi 32', u'Fermi 64',u'Fermi 128',
-         u'Kepler 32', u'Kepler 64',u'Kepler 128',),
+      'ticks':(u'Fermi\nDBS 32', u'Fermi\nDBS 64',u'Fermi\nDBS 128',
+         u'Kepler\nDBS 32', u'Kepler\nDBS 64',u'Kepler\nDBS 128',),
       'filename':"dbs.png"}
   barGraph(**params)
 
@@ -238,21 +238,25 @@ def predictorSizeInGpu():
 
 def speedupTotal():
   ref_1x2090 = 5005751
-  ref_1xk40 = 4123102
+  ref_1xk40 = 4055102
   change_iteration_1x2090 = 909456
-  change_iteration_1xk40 = 522332
+  change_iteration_1xk40 = 500332
   change_iteration_4x2090 = 320102
+  change_iteration_4xk40 = 500332/2.86
   measures = (#ref_1x2090/ref_1x2090,
       ref_1x2090/change_iteration_1x2090,
       ref_1xk40/change_iteration_1xk40,
-      ref_1x2090/change_iteration_4x2090)
+      ref_1x2090/change_iteration_4x2090,
+      ref_1xk40/change_iteration_4xk40
+      )
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"",
       'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':measures,
-      'ylim':(1.0,16.0),
+      'ylim':(1.0,25.0),
       'ticks':(#u'Referencia Fermi',
-        u'Optimizado\nFermi 1 placa', u'Optimizado\nKepler 1 placa',u'Optimizado\nFermi 4 placas'),
+        u'Fermi\n1 placa', u'Kepler\n1 placa',u'Fermi\n4 placas',
+        u'Kepler *\n4 placas'),
       'filename':"final.png"}
   barGraph(**params)
 
