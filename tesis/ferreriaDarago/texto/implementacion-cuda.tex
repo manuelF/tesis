@@ -159,7 +159,7 @@ cantidad de bloques adicionales con respecto al m\'etodo anterior.
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/threading.png}
    \caption{Aceleraci\'on en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia.}
-   \label{plt:threading}
+   \label{fig:threading}
 \end{figure}
 
 %%
@@ -196,7 +196,7 @@ este valor resulto demasiado elevado y disminu\'ia la posibilidad de ocupar todo
 Fermi y Kepler. Con solamente 32 threads, se pod\'ia maximizar la ocupaci\'on de los SM, pero hab\'ia
 muchos m\'as bloques. Finalmente, luego de disminuir un poco el uso de memoria compartida por
 bloque, usando algunas ideas descriptas a continuaci\'on, pudimos fijar este valor en 64 threads
-por bloque. Se muestra en la figura \ref{plt:dbs-runtime} que tener solo un warp es bueno, pero
+por bloque. Se muestra en la figura \ref{fig:dbs-runtime} que tener solo un warp es bueno, pero
 mejor a\'un es tener dos warps corriendo simultaneamente, porque
 esto permite, con costo cero, poner a correr el otro para ocultar la latencia sin agrandar
 demasiado el costo de la sincronizaci\'on.
@@ -210,7 +210,7 @@ el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
    \includegraphics[width=\plotwidth]{plots/cuda/dbs.png}
    \caption{Tiempo de ejecuci\'on del c\'alculo de densidad corriendo Hemoglobina variando
    la arquitectura y tama\~no de \textit{BLOCK\_SIZE}.}
-   \label{plt:dbs-runtime}
+   \label{fig:dbs-runtime}
 \end{figure}
 
 
@@ -312,7 +312,7 @@ con L1 y L2 muy peque\~nas, el costo de acceder desalineado sigue siendo elevado
 Esto se soluciona transponiendo las matrices de valores de funciones, gradientes y hessianos.
 La transposici\'on de matrices es un ejemplo sumamente estudiado por la literatura de CUDA
 ya que ataca un punto d\'ebil de la arquitectura, el ancho de banda de transferencia. En la figura
-\ref{plt:transpose} podemos ver que tanto en Fermi como en Kepler es muy notoria la diferencia
+\ref{fig:transpose} podemos ver que tanto en Fermi como en Kepler es muy notoria la diferencia
 de performance, simplemente repensando los accesos a memoria. Kepler, al contar con una cach\'e L2
 del doble de tama\~no que Fermi, lo mitiga un poco mas los accesos desalineados, pero todav\'ia recibe
 grandes mejoras.
@@ -329,7 +329,7 @@ grandes mejoras.
    \includegraphics[width=\plotwidth]{plots/cuda/transpose.png}
    \caption{Aceleraci\'on en veces del kernel density de correr Hemoglobina en distintas arquitecturas habiendo transpuesto las matrices
    de funci\'on (incluyendo el costo de transponerlas).}
-   \label{plt:transpose}
+   \label{fig:transpose}
 \end{figure}
 
 Otra de las t\'ecnicas con la que cuenta CUDA para mitigar la latencia de acceso a memoria
@@ -364,10 +364,10 @@ y por columnas a la matriz.
    \includegraphics[width=\plotwidth]{plots/cuda/texture.png}
    \caption{Aceleracion del c\'alculo de densidad corriendo Hemoglobina en Fermi y Kepler
    usando memoria de textura para leer la matriz densidad.}
-   \label{plt:texture}
+   \label{fig:texture}
 \end{figure}
 
-Como podemos ver en la figura~\ref{plt:texture}, esta optimizaci\'on aprovecha este
+Como podemos ver en la figura~\ref{fig:texture}, esta optimizaci\'on aprovecha este
 recurso \'unico de GPU. Sin embargo, esto agrega un factor mas que tenemos que tener en
 cuenta a la hora de profilear el c\'odigo. Para administrar los accesos a
 la memoria de textura, cada multiprocesador tiene m\'ultiples unidades de textura.
@@ -466,18 +466,18 @@ m\'ultiples placas, que tambi\'en distribuyen el almacenamiento ademas del compu
    \end{subfigure}
    \caption{Aceleraci\'on del c\'alculo de una iteraci\'on de XC en funci\'on de la memoria de
    la placa usada para almacenar las funciones.}
-   \label{plt:global-fullereno}
+   \label{fig:global-fullereno}
 \end{figure}
 
 Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
-cantidad de memoria disponible para el cacheo. Los resultados se pueden ver en la figura \ref{plt:global-fullereno}.
+cantidad de memoria disponible para el cacheo. Los resultados se pueden ver en la figura \ref{fig:global-fullereno}.
 Se puede observar que el almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
 de toda una iteraci\'on de XC. Es interesante notar que son los primeros grupos los que causan mayor
 diferencia en los tiempos de ejecuci\'on. Con 5.3 MB, se pueden guardar los 23 grupos mas peque\~nos del
 fullereno $C_{60}$; de ah\'i en m\'as, el impacto de la mejora decae. Esto sucede porque en grupos
 chicos el overhead del c\'alculo usando kernel de funciones es muy elevado en comparaci\'on a las
 cuentas (se desperdician muchos threads). Este comportamiento se puede ver
-bien en en la figura~\ref{plt:runtime-functions-fullereno}, donde se puede apreciar el importante
+bien en en la figura~\ref{fig:runtime-functions-fullereno}, donde se puede apreciar el importante
 peso de los grupos chicos en el tiempo total del c\'alculo de las funciones. Decidimos no intentar
 optimizar el c\'alculo ya que al almacenar las matrices este costo directamente se hace cero para
 casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
@@ -487,7 +487,7 @@ casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
    \includegraphics[width=\plotwidth]{plots/cuda/global-functions-acc.png}
    \caption{Fracci\'on del total del tiempo de c\'alculo de las matrices de funciones en una iteraci\'on en funci\'on
    del ordenada por el tama\~no acumulado de estas en un fullereno $C_{60}$.}
-   \label{plt:runtime-functions-fullereno}
+   \label{fig:runtime-functions-fullereno}
 \end{figure}
 
 Esta simple mejora permite explotar el hecho de que las placas hayan aumentado dram\'aticamente su
@@ -527,10 +527,10 @@ la limitaci\'on presente debido al uso simultaneo de memoria compartidas.
    \includegraphics[width=\plotwidth]{plots/cuda/shared-4vs3.png}
    \caption{Aceleraci\'on obtenida en Fermi y Kepler al reducir a 3 componentes los
    elementos en la memoria compartida.}
-   \label{plt:shared4vs3}
+   \label{fig:shared4vs3}
 \end{figure}
 
-Como se puede observar en la figura~\ref{plt:shared4vs3}, se obtienen muy pocas ganancias al usar elementos
+Como se puede observar en la figura~\ref{fig:shared4vs3}, se obtienen muy pocas ganancias al usar elementos
 de 3 componentes con respecto a usar elementos de 4. Esto muestra que el limitante de concurrencia
 de este kernel no pasa por falta de memoria compartida. Adem\'as, esto permite apreciar que los
 tiempos de acceso a los datos en las memorias shared son realmente muy bajos, pudi\'endose ver
@@ -620,7 +620,7 @@ Para la distribuci\'on est\'atica, usamos como estimador del runtime el tama\~no
 de las matrices de funciones de un grupo. Esta heur\'istica resulta un acertado predictor
 del tiempo de computo de todos los
 kernels de un grupo confirmando que el problema actualmente es memory-bound. Esto se ve en la figura
-\ref{plt:runtime-predictor}, como el tiempo de resoluci\'on de un kernel escala linealmente con
+\ref{fig:runtime-predictor}, como el tiempo de resoluci\'on de un kernel escala linealmente con
 la cantidad de memoria necesaria para operar. Comparamos tambien contra el predictor usado
 para estimar tiempo en CPU que se detallar\'a m\'as adelante en la secci\'on \ref{PredictorCPU}.
 
@@ -635,7 +635,7 @@ para estimar tiempo en CPU que se detallar\'a m\'as adelante en la secci\'on \re
      \caption{Predictor de tiempo usando funci\'on de costo.}
    \end{subfigure}
    \caption{Tiempos de ejecuci\'on de hemoglobina en Tesla K40 de acuerdo al costo del mismo seg\'un predictor.}
-   \label{plt:runtime-predictor}
+   \label{fig:runtime-predictor}
 \end{figure}
 
 Como podemos apreciar, esta directamente relacionado el tiempo de resoluci\'on con el tama\~no
@@ -675,7 +675,7 @@ se las distribuye de manera \textit{round-robin} entre todos los dispositivos, p
 partici\'on inicial y cargando a cada placa con una cantidad similar de tareas. Esto no significa
 que todas tarden lo mismo, y es posible notarlo en las mediciones. Luego, utilizando el tama\~no
 de los dispositivos como proxy del tiempo de ejecuci\'on, aplicamos una ronda del algoritmo de balanceo din\'amico
-para terminar de balancear est\'aticamente. Esto lo podemos hacer ya que, como mostramos en la figura~\ref{plt:global-fullereno},
+para terminar de balancear est\'aticamente. Esto lo podemos hacer ya que, como mostramos en la figura~\ref{fig:global-fullereno},
 existe una fuerte correlaci\'on entre el tama\~no de las matrices de funci\'on y el tiempo de ejecuci\'on, la m\'etrica que realmente
 nos interesa. El paso de balanceo din\'amico es necesario para solventar el problema de la distribuci\'on
 round-robin con grupos grandes, donde el thread que tenga que resolver el grupo con mas puntos va a tardar
@@ -769,14 +769,14 @@ y acumular en la matriz de Kohn-Sham de salida, va a existir una contenci\'on en
 cada uno una GPU para leer y escribir en la memoria principal. Esto ocasiona que el speedup entre
 m\'ultiples placas no sea lineal; al haber una cantidad limitada de trabajo que hacer en GPU y un fragmento de
 resoluci\'on que necesariamente tiene que leer y escribir en memoria es una contenci\'on necesaria. Se puede
-ver en la figura \ref{plt:4placas-simple} que no escala linealmente la aceleraci\'on del trabajo, los cuellos
+ver en la figura \ref{fig:4placas-simple} que no escala linealmente la aceleraci\'on del trabajo, los cuellos
 de botella se notan a partir de la tercera placa, haciendo casi in\'util el uso de una cuarta.
 
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/4placas-simple.png}
    \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on simple.}
-   \label{plt:4placas-simple}
+   \label{fig:4placas-simple}
 \end{figure}
 
 Una importante excepci\'on a lo anterior es la realizaci\'on del c\'alculo en doble precisi\'on. La iteraci\'on
@@ -788,7 +788,7 @@ El c\'omputo utilizando precisi\'on doble tiene, sin embargo, ventajas en la esc
 Como los kernels en doble precisi\'on son \textit{compute-bound}, las copias de memoria son poco costosas
 en relaci\'on a la resoluci\'on de los grupos (el tama\~no de las copias se duplica pero la potencia de c\'alculo se divide
 por cuatro en Fermi y Kepler). Esto hace que haya poca contenci\'on en la memoria principal,
-dado que hay menor concurrencia sobre estas. Podemos observar en la figura \ref{plt:4placas-doble} una clara mejora en los tiempos
+dado que hay menor concurrencia sobre estas. Podemos observar en la figura \ref{fig:4placas-doble} una clara mejora en los tiempos
 de c\'alculo de los sistemas en doble precisi\'on entonces usando esta t\'ecnica de paralelismo, una mejora casi
 lineal en la cantidad de dispositivos usados.
 
@@ -796,6 +796,6 @@ lineal en la cantidad de dispositivos usados.
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/4placas-doble.png}
    \caption{Speedup en veces de correr Hemoglobina en 4 placas M2090 iguales en precisi\'on doble.}
-   \label{plt:4placas-doble}
+   \label{fig:4placas-doble}
 \end{figure}
 
