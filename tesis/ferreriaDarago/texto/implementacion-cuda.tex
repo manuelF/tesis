@@ -715,19 +715,21 @@ El pseudo c\'odigo del algoritmo de balanceo se detalla a continuaci\'on.
   \caption{Balanceo de duraci\'on de threads}
   \label{ThreadBalancing}
 \begin{algorithmic}
-  \State $tiempo_{\min} \gets duracion[T_{\min}]$
-  \State $tiempo_{\max} \gets duracion[T_{\max}]$
+  \State $tiempo_{\min} \gets tiempo[Thread_{\min}]$
+  \State $tiempo_{\max} \gets tiempo[Thread_{\max}]$
 
-  \While {$tiempo_{\max} < tiempo_{\min} * k$}
+  \While {$tiempo_{\max} /  tiempo_{\min} > k$}
     \State $\Delta T \gets (tiempo_{\max} - tiempo_{\min}) /2$
     \ForAll{$G_i \in Trabajos[T_{\max}]$}
-    \If{$duracion[G_i] * correccion[T_{\max}][T_{\min}] * penalidad\_migracion - \Delta T < duracion[{G_{mejor\_candidato}}]$}
+    \State $T_{candidato} \gets  tiempo[G_i] * correccion[Thread_{\max}][Thread_{\min}] + costo\_migracion$
+    \If{$|T_{candidato} - \Delta T| < T_{mejor\_candidato}$}
         \State $G_{mejor\_candidato} \gets G_i$
+        \State $T_{mejor\_candidato} \gets T_{candidato}$
       \EndIf
     \EndFor
-   \State Liberar la memoria de las marices cacheadas de $G_{mejor\_candidato}$
+   \State Liberar la memoria de las matrices cacheadas de $G_{mejor\_candidato}$
    \State Mover $G_{mejor\_candidato}$ de $T_{\max}$ a $T_{\min}$
-   \State Actualizar la duraci\'on total de $T_{\max}$ a $T_{\min}$, aplicando la correcci\'on de tiempos
+   \State Actualizar la duraci\'on total de $T_{\max}$ y $T_{\min}$, aplicando la correcci\'on de tiempos
   \EndWhile
 \end{algorithmic}
 \end{algorithm}
@@ -735,10 +737,10 @@ El pseudo c\'odigo del algoritmo de balanceo se detalla a continuaci\'on.
 En el algoritmo \ref{ThreadBalancing} se definen dos constantes adicionales, $k$ y $penalidad\_migracion$.
 $k$ representa el coeficiente de m\'axima diferencia de tiempo entre el thread de mas larga duraci\'on y el de menor
 duraci\'on. Para nuestros usos, un valor de $k \approx 2\%$ es aceptable.
-$penalidad\_migracion$ es un coeficiente que agrega un costo al migrar el grupo a otra placa, ya que va
-a tener que recalcular las matrices que ya se guardaba en memoria. Cuando cambie de placa, va a tener
+$costo\_migracion$ es un coeficiente que agrega un costo al migrar el grupo a otra placa, ya que va
+a tener que recalcular las matrices de funciones que ya se guardaban en memoria. Cuando el trabajo cambie de placa, va a tener
 que desalojarlas ya que, si bien es posible que entre las placas se accedan mutuamente a memoria global (utilizando
-el direccionamiento unificado introducido en CUDA 5)
+el direccionamiento unificado introducido en CUDA 5\cite{cudaProgrammingGuide})
 no conviene dada toda la latencia introducida, que se adicionar\'a a lo largo de todas las iteraciones de la resoluci\'on.
 Este coeficiente es equivalente a definir una penalidad por romper la \textit{afinidad} de las caches en CPU.
 
