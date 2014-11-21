@@ -1,8 +1,42 @@
 \section{Aceleraciones alcanzadas en CUDA}
 \label{resultados-cuda}
 
-Despues de haber trabajado en las distintas optimizaciones, comparemos las mediciones
-de tiempo definitivas alcanzadas en las mismas.
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cuda/initial-iteration-parts-hemo.png}
+   \caption{Pre-optimizaciones.}
+   \label{plt:initial-cuda-parts}
+ \end{subfigure}
+ \begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cuda/final-iteration-parts-hemo.png}
+   \caption{Post-optimizaciones.}
+   \label{plt:final-cuda-parts}
+ \end{subfigure}
+ \caption{Porcentajes de tiempo de los pasos de XC corriendo Hemoglobina en una Tesla K40 antes y despues de
+ las optimizaciones realizadas.}
+ \label{plt:cuda-parts}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cuda/initial-scf-hemo.png}
+   \caption{Pre-optimizaciones.}
+   \label{plt:initial-cuda-scf}
+ \end{subfigure}
+ \begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cuda/final-scf-hemo.png}
+   \caption{Post-optimizaciones.}
+   \label{plt:final-cuda-scf}
+ \end{subfigure}
+ \caption{Porcentajes de tiempo de SCF corriendo Hemoglobina en una Tesla K40 antes y despues de
+ las optimizaciones realizadas.}
+ \label{plt:cuda-scf}
+\end{figure}
+
 
 \begin{figure}[htbp]
    \centering
