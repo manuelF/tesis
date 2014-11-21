@@ -115,8 +115,8 @@ def variandoDBS():
       'ylabel':u"Tiempo del kernel density [ms]",
       'yvalues':np.divide(measures,1000),
       'ylim':(0.0,max(list(measures))*0.001),
-      'ticks':(u'Fermi\nDBS 32', u'Fermi\nDBS 64',u'Fermi\nDBS 128',
-         u'Kepler\nDBS 32', u'Kepler\nDBS 64',u'Kepler\nDBS 128',),
+      'ticks':(u'Fermi\nBS 32', u'Fermi\nBS 64',u'Fermi\nBS 128',
+         u'Kepler\nBS 32', u'Kepler\nBS 64',u'Kepler\nBS 128',),
       'filename':"dbs.png"}
   barGraph(**params)
 
