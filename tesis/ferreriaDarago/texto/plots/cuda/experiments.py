@@ -238,10 +238,13 @@ def predictorSizeInGpu():
 
 def speedupTotal():
   ref_1x2090 = 5005751
+  ref_1xk40 = 4123102
   change_iteration_1x2090 = 909456
+  change_iteration_1xk40 = 522332
   change_iteration_4x2090 = 320102
   measures = (#ref_1x2090/ref_1x2090,
       ref_1x2090/change_iteration_1x2090,
+      ref_1xk40/change_iteration_1xk40,
       ref_1x2090/change_iteration_4x2090)
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"",
@@ -249,7 +252,7 @@ def speedupTotal():
       'yvalues':measures,
       'ylim':(1.0,16.0),
       'ticks':(#u'Referencia Fermi',
-        u'Optimizado Fermi 1 placa', u'Optimizado Fermi 4 placas'),
+        u'Optimizado\nFermi 1 placa', u'Optimizado\nKepler 1 placa',u'Optimizado\nFermi 4 placas'),
       'filename':"final.png"}
   barGraph(**params)
 
@@ -272,44 +275,77 @@ def coalescienciaTranspose():
       'filename':"transpose.png"}
   barGraph(**params)
 
-def initialProfile():
-    parts = {
-        u"Kohn Sham": time2milis("1s. 672459"),
-        u"Densidad": time2milis("17s. 526542"),
-        u"Fuerzas": time2milis("6s. 573524us"),
-        u"Funciones": time2milis("1s. 369108"),
-        u"Potencial": time2milis("130999"),
-    }
-    names = parts.keys();
-    values = [parts[key] for key in names]
-    total = sum(values)
+def initialSCF():
+  parts = {
+      u"Resto de SCF": time2milis("774120"),
+      u"XC": time2milis("4123679"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
 
-    params = {
-        'title': '',
-        'labels': names,
-        'values': values,
-        'filename': u'initial-iteration-parts-hemo.png',
-    }
-    piechart(**params)
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'initial-scf-hemo.png',
+  }
+  piechart(**params)
+
+def finalSCF():
+  parts = {
+      u"XC": time2milis("530030"),
+      u"Resto de SCF": time2milis("751120"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
+
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'final-scf-hemo.png',
+  }
+  piechart(**params)
+
+
+def initialProfile():
+  parts = {
+      u"Kohn Sham": time2milis("140182"),
+      u"Densidad": time2milis("3771116"),
+      u"Funciones": time2milis("144536"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
+
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'initial-iteration-parts-hemo.png',
+  }
+  piechart(**params)
 
 def finalProfile():
 #iteracion hemo k40
-    parts = {
-        u"Kohn Sham": time2milis("115556"),
-        u"Densidad": time2milis("385849"),
-        u"Funciones": time2milis("276"),
-    }
-    names = parts.keys();
-    values = [parts[key] for key in names]
-    total = sum(values)
+  parts = {
+      u"Kohn Sham": time2milis("115556"),
+      u"Densidad": time2milis("385849"),
+      u"Funciones": time2milis("276"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
 
-    params = {
-        'title': '',
-        'labels': names,
-        'values': values,
-        'filename': u'final-iteration-parts-hemo.png',
-    }
-    piechart(**params)
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'final-iteration-parts-hemo.png',
+  }
+  piechart(**params)
 
 
 
@@ -328,3 +364,5 @@ if __name__ == '__main__':
   coalescienciaTranspose()
   initialProfile()
   finalProfile()
+  initialSCF()
+  finalSCF()
