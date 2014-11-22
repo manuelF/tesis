@@ -234,14 +234,14 @@ la respuesta en $O(log_2(n))$ pasos. La literatura de CUDA~\cite{cudaReductions}
 minimizar a\'un mas el tiempo empleado en esta reducci\'on, pero considerando que hay, a lo sumo
 6 operaciones, no hay necesidad de mejorar esto mas.
 
-Como va a haber $altura\_{bloque}$ cantidad de escrituras para cada punto, va a entonces
+Como va a haber $altura\_bloque$ cantidad de escrituras para cada punto, va a entonces
 hacer falta guardar estas cuentas parciales en memoria global. Para eso definimos una matriz
 por cada uno de los par\'ametros que debemos acumular, con tama\~no id\'entico a la cantidad de bloques
 del kernel del computo de densidad electr\'onica, para que cada uno de estos escriba \'unicamente en una posici\'on
-un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura_{bloque})$,
+un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura_bloque)$,
 menos de 1MB en el caso m\'as grande.
 
-El siguiente paso de la reducci\'on consiste en acumular los $altura\_{bloque}$ valores descriptos
+El siguiente paso de la reducci\'on consiste en acumular los $altura\_bloque$ valores descriptos
 reci\'en en un solo por punto. Esto implica encontrar donde est\'an en las matrices temporales las
 partes de las cuentas, agregarlas y calcular el potencial correcto. Esto genera finalmente los
 coeficientes para calcular la actualizaci\'on de la matriz de Kohn-Sham y los factores para el
@@ -250,11 +250,19 @@ c\'alculo de la matriz de fuerzas.
 Esto se refleja en el c\'odigo como una llamada a un nuevo kernel adicional, posterior a la
 cuenta de la densidad y con m\'ultiples matrices temporales adicionales. Este kernel es sumamente
 eficiente porque ya todo el trabajo pesado lo hizo el anterior. Solo se tiene que realizar
-a lo sumo $altura\_{bloque}$ sumas y una llamada a la funci\'on que calcula el potencial y densidad,
+a lo sumo $altura\_bloque$ sumas y una llamada a la funci\'on que calcula el potencial y densidad,
 un kernel corto de alta intensidad aritm\'etica que realiza solamente operaciones matem\'aticas.
 Finalmente, la acumulaci\'on finaliza, generando un valor por cada punto, lo mismo que se produc\'ia
 anteriormente pero utilizando mucho mejor los recursos del dispositivo.
 
+Con respecto al costo de lanzar un kernel adicional, esto aprovecha que CUDA funciona de manera as\'incrona
+con respecto al CPU, este kernel de reducci\'on se puede lanzar inmediatamente despu\'es de lanzar el
+de c\'omputo de la densidad electr\'onica. Luego, como el c\'alculo de la densidad demora mas que
+el overhead de lanzar el kernel de la reducci\'on, este tiene efectivamente un costo despreciable
+ya que se pueden encolar en la GPU estas dos llamadas, que no dependen de nada que tenga que realizarse serialmente en CPU.
+Desafortunadamente, como no se encuentra todo el c\'odigo de la resoluci\'on de un grupo en CUDA,
+sino que tienen partes seriales en CPU intermedias, esta estrategia de aprovechar la asincronicidad
+no se puede explotar para todos los kernels.
 
 %%%%%%%%%%%%%%%
 

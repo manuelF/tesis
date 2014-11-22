@@ -14,7 +14,7 @@
    \caption{Post-optimizaciones.}
    \label{fig:final-cuda-scf}
  \end{subfigure}
- \caption{Porcentajes de tiempo de SCF corriendo Hemoglobina en una Tesla K40 antes y después de
+ \caption{Porcentajes de tiempo de SCF corriendo Hemoglobina en una Tesla K40 antes y despu\'es de
  las optimizaciones realizadas.}
  \label{fig:cuda-scf}
 \end{figure}
@@ -31,24 +31,24 @@
    \caption{Post-optimizaciones.}
    \label{fig:final-cuda-parts}
  \end{subfigure}
- \caption{Porcentajes de tiempo de los pasos de XC corriendo Hemoglobina en una Tesla K40 antes y después de
+ \caption{Porcentajes de tiempo de los pasos de XC corriendo Hemoglobina en una Tesla K40 antes y despu\'es de
  las optimizaciones realizadas.}
  \label{fig:cuda-parts}
 \end{figure}
 
 
-Las figuras \ref{fig:cuda-parts} y \ref{fig:cuda-scf} muestran la fracción de tiempo que insumía el
+Las figuras \ref{fig:cuda-parts} y \ref{fig:cuda-scf} muestran la fracci\'on de tiempo que insum\'ia el
 calculo de XC dentro de SCF, corrido con la GPU mas potente en el mercado, la Tesla K40.
-Dentro del calculo del termino de intercambio correlación, el calculo de la densidad electrónica
+Dentro del calculo del termino de intercambio correlaci\'on, el calculo de la densidad electr\'onica
 representaba, por mucho, el cuello de botella. Al reducirse tanto ese y guardar las funciones en
-memoria para no tener que recalcularlas constantemente, se obtuvo una aceleración alrededor de 8
+memoria para no tener que recalcularlas constantemente, se obtuvo una aceleraci\'on alrededor de 8
 veces en Kepler y de 5 veces en Fermi, como se ve en la figura \ref{fig:cuda-final}.
 
-La implementación de técnicas de multi-GPU también obtuvieron grandes mejoras, como se vio en la
+La implementaci\'on de t\'ecnicas de multi-GPU tambi\'en obtuvieron grandes mejoras, como se vio en la
 secci\'on \ref{cuda-multiplaca}. Incluso no teniendo una mejora lineal en el calculo de simple
-precisión, esta técnica permite explotar todos los recursos disponibles, haciendo que el termino
-XC no sea ya el mas costoso de la iteración SCF y abriendo nuevas posibilidades de mejoras en el
-resto de los cálculos.
+precisi\'on, esta t\'ecnica permite explotar todos los recursos disponibles, haciendo que el termino
+XC no sea ya el mas costoso de la iteraci\'on SCF y abriendo nuevas posibilidades de mejoras en el
+resto de los c\'alculos.
 
 \begin{figure}[htbp]
    \centering
