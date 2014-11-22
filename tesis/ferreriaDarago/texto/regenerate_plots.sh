@@ -10,3 +10,7 @@ popd
 pushd plots/otros
 python2 experiments.py
 popd
+
+pushd plots/xeonphi
+python2 experiments.py
+popd
