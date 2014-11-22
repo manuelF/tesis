@@ -22,17 +22,34 @@ estudio del grupo hemo, con tama\~no de cubos igual a 3.
 
 \section{Resultados preliminares}
 
+No podemos hacer comparaciones contra el c\'odigo original de CPU, recompilado
+para Xeon Phi, por las siguientes dos razones:
+
+\begin{itemize}
+    \item El mismo utilizaba la librer\'ia GSL (GNU Scientific Library) para
+    ciertas subrutinas num\'ericas en CPU. Esta librer\'ia fue eliminada puesto
+    que requer\'ia ser recompilada especialmente para Xeon Phi y no era necesaria.
+    \item Para la implementaci\'on de vectores $\mathbb{R}^3$, como ya explicamos,
+    se utilizaban extensiones vectoriales especiales del compilador apuntando a
+    SSE 4. Dado que este set de instrucciones es incompatible con el del Xeon Phi
+    fue necesario remover esta optimizaci\'on.
+\end{itemize}
+
+Por lo tanto, las comparaciones se realizan contra la versi\'on optimizada para
+CPU como se ha descripto en la secci\'on anterior. De acuerdo a la
+
 En primera instancia obtuvimos resultados muy desalentadores en la versi\'on
 \textit{monoprocesador} del c\'odigo, como puede verse en la figura~\ref{fig:prelim-xeon-phi}.
 Para el caso particular de la iteraci\'on de intercambio y correlaci\'on XC pueden
-verse los resultados en la figura~\ref{fig:prelim-xeon-phi-xc}
+verse los resultados en la figura~\ref{fig:prelim-xeon-phi-xc}. Para el resto de
+los pasos de la iteraci\'on SCF, los resultados est\'an en la figura~\ref{fig:prelim-xeon-phi-scf}.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\plotwidth]{plots/cpu/xeon-xeon-phi-broad-comparison.png}
+   \includegraphics[width=\plotwidth]{plots/xeonphi/xeon-xeon-phi-broad-comparison.png}
    \caption{Tiempo de ejecuci\'on para las distintas partes del paquete LIO,
    comparativamente para Xeon y Xeon Phi, en el caso del grupo hemo con un solo procesador}
-   \label{fig:prelim-xeon-phi-xc}
+   \label{fig:prelim-xeon-phi}
 \end{figure}
 
 Tanto el c\'omputo de pesos, funciones y la iteraci\'on en si para el caso de la
@@ -47,10 +64,19 @@ actualizaci\'on de la matriz de Kohn Sham.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\plotwidth]{plots/cpu/xeon-xeon-phi-broad-comparison-xc.png}
+   \includegraphics[width=\plotwidth]{plots/xeonphi/xeon-xeon-phi-broad-comparison-xc.png}
    \caption{Tiempo de ejecuci\'on para las distintas partes de la iteraci\'on XC,
    comparativamente para Xeon y Xeon Phi, en el caso del grupo hemo con un solo procesador}
    \label{fig:prelim-xeon-phi-xc}
+\end{figure}
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/xeon-xeon-phi-broad-comparison-scf.png}
+   \caption{Tiempo de ejecuci\'on para las distintas partes de la iteraci\'on SCF,
+   excluyendo la iteraci\'on de XC, comparativamente para Xeon y Xeon Phi, en el
+   caso del grupo hemo con un solo procesador}
+   \label{fig:prelim-xeon-phi-scf}
 \end{figure}
 
 Corroboramos entonces la pobre \textit{performance} del Xeon Phi en c\'odigo

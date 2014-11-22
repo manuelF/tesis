@@ -147,7 +147,7 @@ def comparisonBarGraph(xlabel, ylabel, xvalues, yvalues, filename, rotation=0):
   pylab.savefig(filename, bbox_inches="tight")
   pylab.close()
 
-def multiComparativeBarChart(ticks, values, filename, ylabel, width=0.1):
+def multiComparativeBarChart(ticks, values, filename, ylabel, width=0.1, rotation=0):
   fig, ax = plt.subplots()
   indexes = np.arange(max(len(v) for u,v in values.items()))
   rects, count = [], 0
@@ -157,8 +157,8 @@ def multiComparativeBarChart(ticks, values, filename, ylabel, width=0.1):
       count += 1
 
   ax.set_ylabel(ylabel)
-  ax.set_xticks(indexes + (len(ticks)-1) * width)
-  ax.set_xticklabels(ticks)
+  ax.set_xticks(indexes)
+  ax.set_xticklabels(ticks, rotation=rotation)
   ax.legend(rects, values.keys())
 
   plt.savefig(filename, bbox_inches="tight")
