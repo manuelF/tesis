@@ -319,54 +319,6 @@ def diferencias_de_grupos_balanceadas():
     }
     comparisonBarGraph(**params)
 
-def xeon_phi_single_core():
-    weightsxeonphi = time2secs("115s. 987856us")
-    weightsxeon = time2secs("7s. 906529us")
-
-    functionsxeonphi = time2secs("32s. 804570us")
-    functionsxeon = time2secs("2s. 827386us")
-
-    iteracionxeon = time2secs("9s. 268631us")
-    iteracionxeonphi = time2secs("78s. 825787us")
-
-    labels = [u"Cálculo de pesos", u"Cálculo de funciones", u"Iteración XC"]
-    comparison = {
-        u"Xeon": [weightsxeon, functionsxeon, iteracionxeon ],
-        u"Xeon Phi": [weightsxeonphi, functionsxeonphi, iteracionxeonphi],
-    }
-
-    params = {
-        'values': comparison,
-        'ticks': labels,
-        'filename': u'xeon-xeon-phi-broad-comparison.png',
-        'ylabel': u'Tiempo de ejecución [s]',
-    }
-
-    multiComparativeBarChart(**params)
-
-def xeon_phi_single_core_xc():
-    densityxeon = time2secs("95307") + time2secs("8s. 103455")
-    rmmxeon = time2secs("15462") + time2secs("1s. 566310")
-
-    densityxeonphi = time2secs("70s. 87924") + time2secs("103819")
-    rmmxeonphi = time2secs("18140") + time2secs("8s. 27276")
-
-    labels = [u"Cálculo densidad", u"Cálculo matrix KS"]
-    comparison = {
-        u"Xeon": [ densityxeon, rmmxeon ],
-        u"Xeon Phi": [ densityxeonphi, rmmxeonphi ],
-    }
-
-    params = {
-        'values': comparison,
-        'ticks': labels,
-        'filename': u'xeon-xeon-phi-broad-comparison-xc.png',
-        'ylabel': u'Tiempo de ejecución [s]',
-    }
-
-    multiComparativeBarChart(**params)
-
-
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
@@ -403,5 +355,3 @@ if __name__ == '__main__':
     hemo_scale()
     hemo_post_paralelizar()
     mejora_functions_un_core()
-    xeon_phi_single_core()
-    xeon_phi_single_core_xc()
