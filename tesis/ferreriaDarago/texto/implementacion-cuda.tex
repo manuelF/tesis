@@ -784,10 +784,11 @@ de performance relativa era err\'onea, igualmente se redistribuir\'an los distin
    \label{fig:cuda-lio-imbalance}
 \end{figure}
 
-El rendimiento de esta optimizacion se puede apreciar en la figura \ref{fig:cuda-lio-imbalance}. El predictor estatico
-usado genera una particion entre las cuatro placas con aproximadamente un 25\% de desbalance. En solamente
-dos iteracion del algoritmo \ref{ThreadBalancing}, se rebalancean las cargas entre placas moviendo tres trabajos, dos
+El rendimiento de esta optimizaci\'on se puede apreciar en la figura \ref{fig:cuda-lio-imbalance}. El predictor est\'atico
+usado genera una partici\'on entre las cuatro placas con aproximadamente un 25\% de desbalance. En solamente
+dos iteraci\'on del algoritmo \ref{ThreadBalancing}, se rebalancean las cargas entre placas moviendo tres trabajos, dos
 de la placa 4 a la 2 y uno de la placa 3 a la 0. Con eso, las cargas quedan balanceadas a aproximadamente el 2\% de diferencia.
+Este gr\'afico permite visualizar cual es la magnitud del error de estimaci\'on usando el predictor est\'atico definido anteriormente.
 
 \subsubsection{Performance}
 \label{cuda-multiplaca}
