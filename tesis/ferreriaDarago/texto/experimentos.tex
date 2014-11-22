@@ -7,16 +7,16 @@
 \begin{subfigure}[b]{\plotwidthtres}
    \includegraphics[width=\textwidth]{plots/cuda/initial-scf-hemo.png}
    \caption{Pre-optimizaciones.}
-   \label{plt:initial-cuda-scf}
+   \label{fig:initial-cuda-scf}
  \end{subfigure}
  \begin{subfigure}[b]{\plotwidthtres}
    \includegraphics[width=\textwidth]{plots/cuda/final-scf-hemo.png}
    \caption{Post-optimizaciones.}
-   \label{plt:final-cuda-scf}
+   \label{fig:final-cuda-scf}
  \end{subfigure}
  \caption{Porcentajes de tiempo de SCF corriendo Hemoglobina en una Tesla K40 antes y después de
  las optimizaciones realizadas.}
- \label{plt:cuda-scf}
+ \label{fig:cuda-scf}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -24,25 +24,25 @@
 \begin{subfigure}[b]{\plotwidthtres}
    \includegraphics[width=\textwidth]{plots/cuda/initial-iteration-parts-hemo.png}
    \caption{Pre-optimizaciones.}
-   \label{plt:initial-cuda-parts}
+   \label{fig:initial-cuda-parts}
  \end{subfigure}
  \begin{subfigure}[b]{\plotwidthtres}
    \includegraphics[width=\textwidth]{plots/cuda/final-iteration-parts-hemo.png}
    \caption{Post-optimizaciones.}
-   \label{plt:final-cuda-parts}
+   \label{fig:final-cuda-parts}
  \end{subfigure}
  \caption{Porcentajes de tiempo de los pasos de XC corriendo Hemoglobina en una Tesla K40 antes y después de
  las optimizaciones realizadas.}
- \label{plt:cuda-parts}
+ \label{fig:cuda-parts}
 \end{figure}
 
 
-Las figuras \ref{plt:cuda-parts} y \ref{plt:cuda-scf} muestran la fracción de tiempo que insumía el
+Las figuras \ref{fig:cuda-parts} y \ref{fig:cuda-scf} muestran la fracción de tiempo que insumía el
 calculo de XC dentro de SCF, corrido con la GPU mas potente en el mercado, la Tesla K40.
 Dentro del calculo del termino de intercambio correlación, el calculo de la densidad electrónica
 representaba, por mucho, el cuello de botella. Al reducirse tanto ese y guardar las funciones en
 memoria para no tener que recalcularlas constantemente, se obtuvo una aceleración alrededor de 8
-veces en Kepler y de 5 veces en Fermi, como se ve en la figura \ref{plt:cuda-final}.
+veces en Kepler y de 5 veces en Fermi, como se ve en la figura \ref{fig:cuda-final}.
 
 La implementación de técnicas de multi-GPU también obtuvieron grandes mejoras, como se vio en la
 secci\'on \ref{cuda-multiplaca}. Incluso no teniendo una mejora lineal en el calculo de simple
@@ -56,7 +56,7 @@ resto de los cálculos.
    \caption{Aceleraci\'on en veces del c\'alculo de XC de correr Hemoglobina comparando implementaci\'on original en CUDA contra
    las versiones optimizadas finales. El (*) marca resultados teoricos extrapolados de las
  aceleraciones alcanzadas en la seccion \ref{cuda-multiplaca}}
-   \label{plt:cuda-final}
+   \label{fig:cuda-final}
 \end{figure}
 
 

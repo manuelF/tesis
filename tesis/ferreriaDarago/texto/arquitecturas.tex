@@ -131,8 +131,8 @@ paralelizada, y $n$ la cantidad de hilos de ejecuci\'on paralelos que se dispone
 
 Un ejemplo de esta ley en acci\'on es que si $95 \%$ del problema es paralelizable entonces el l\'imite te\'orico de
 mejora es de 20 veces (el programa corriendo sobre infinitos cores se ejecutar\'ia en un veinteavo del tiempo que originalmente
-requer\'ia). La figura ~\ref{fig:amdahl_plot} muestra el comportamiento de la ley de Amdahl con distintas fracciones de c\'odigo
-paralelo.
+requer\'ia). La figura ~\ref{fig:amdahl_plot} muestra el comportamiento de la ecuacion \ref{eq:amdahl} que define la ley de Amdahl
+con distintas fracciones de c\'odigo paralelo.
 
 La ley de Amdahl describe el pico te\'orico de mejora y es una simplificaci\'on, ya que asume que todos los cores tienen
 trabajo perfectamente distribuido sin comunicaci\'on entre ellos por motivos de sincronizaci\'on.
