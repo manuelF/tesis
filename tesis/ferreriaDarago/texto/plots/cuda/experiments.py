@@ -19,6 +19,8 @@ def time2milis(s):
 def time2micros(s):
     return int(re.search("(\d+)us.",s).group(1))
 
+def comparison_in_times(l):
+    return [v / min(l) for v in l]
 
 def lineGraphConOtroEje(xlabel, ylabel, yvalues, filename,
                ylim=None,scale=u'linear',xvalues=None,ylegend=u'',ticks=None, title=u""):
@@ -114,7 +116,7 @@ def variandoDBS():
       'xlabel':u"Tamaño del bloque",
       'ylabel':u"Tiempo del kernel density [ms]",
       'yvalues':np.divide(measures,1000),
-      'ylim':(0.0,max(list(measures))*0.001),
+      'ylim':(0.0,max(list(measures))*0.0011),
       'ticks':(u'Fermi\nBS 32', u'Fermi\nBS 64',u'Fermi\nBS 128',
          u'Kepler\nBS 32', u'Kepler\nBS 64',u'Kepler\nBS 128',),
       'filename':"dbs.png"}
@@ -351,6 +353,43 @@ def finalProfile():
   }
   piechart(**params)
 
+def diferencias_initial_balance():
+    timesstr = [
+        "386650us.",
+        "388191us.",
+        "499909us.",
+        "501186us.",
+    ]
+
+    times = comparison_in_times([time2micros(t)*1.0 for t in timesstr])
+    params = {
+        'xlabel': u'Grupo de trabajo',
+        'ylabel': u'Tiempo en veces',
+        'xvalues': ["%d" % t for t in range(1,len(times)+1)],
+        'yvalues': times,
+        'filename': u'pre-group-split-differences.png',
+    }
+    comparisonBarGraph(**params)
+
+
+def diferencias_final_balance():
+    timesstr = [
+        "311016us.",
+        "312581us.",
+        "323435us.",
+        "332693us.",
+    ]
+
+    times = comparison_in_times([time2micros(t)*1.0 for t in timesstr])
+    params = {
+        'xlabel': u'Grupo de trabajo',
+        'ylabel': u'Tiempo en veces',
+        'xvalues': ["%d" % t for t in range(1,len(times)+1)],
+        'yvalues': times,
+        'filename': u'post-group-split-differences.png',
+    }
+    comparisonBarGraph(**params)
+
 
 
 if __name__ == '__main__':
@@ -370,3 +409,5 @@ if __name__ == '__main__':
   finalProfile()
   initialSCF()
   finalSCF()
+  diferencias_initial_balance()
+  diferencias_final_balance()
