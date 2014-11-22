@@ -43,7 +43,7 @@ para sincronizar los threads de todo un bloque en un punto espec\'ifico antes de
 
 La arquitectura GPGPU de \nvidia organiza los registros de todos los threads en un \'unico
 register file, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
-los computos intermedios, \nvidia decidi\'o unificarlos, ya que es muy variable la cantidad que va a usar
+los c\'omputos intermedios, \nvidia decidi\'o unificarlos, ya que es muy variable la cantidad que va a usar
 cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
 registros por thread. Mientras que Fermi permit\'ia hasta 63 registros, Kepler permite hasta 255. Esto
 es positivo para poder correr bloques de pocos threads pero gran cantidad de registros. Por otro lado,
@@ -67,7 +67,7 @@ fundamentales a la hora de evaluar como proseguir en la b\'usqueda de optimizaci
 
 De los 3 kernels que originalmente compon\'ian la iteraci\'on de XC en GPU, el que se encargaba
 del c\'alculo de la densidad electr\'onica de la contribuci\'on de la energ\'ia de intercambio correlaci\'on
-insum\'ia el 94\% del tiempo total de uso de la GPU. Minimizar el tiempo de ejecuci\'on de
+insum\'ia el 93\% del tiempo total de uso de la GPU. Minimizar el tiempo de ejecuci\'on de
 esta funci\'on resultaba vital para poder disminuir el tiempo de convergencia de SCF.
 
 Este kernel computa resoluci\'on num\'erica de la integral descripta en la secci\'on introductoria.
@@ -297,7 +297,8 @@ a las memorias globales.
 
 As\'i como en CPU es importante realizar accesos alineados a memoria, en GPU es aun m\'as cr\'itico.
 El termino coalescencia de memoria se define en GPU como la organizaci\'on de los accesos a memoria de secuencial, ordenada y predecible.
-La l\'ogica detr\'as de esto es que cuando el GPU accede a memoria de manera alineada, puede traer 16, 32 o 64 elementos de 32 bits en una sola lectura, suficiente para
+La l\'ogica detr\'as de esto es que cuando el GPU accede a memoria de manera alineada, puede traer
+16, 32 o 64 elementos de 32 bits en una sola lectura\cite{cudaProgrammingGuide}, suficiente para
 cada uno de los threads del warp. Si, en cambio, debe acceder de manera no
 alineada a memoria o con threads que no acceden de manera predecible, entonces
 se deber\'an serializar los accesos y separar en m\'ultiples transacciones a memoria global para satisfacer
@@ -752,6 +753,10 @@ el direccionamiento unificado introducido en CUDA 5\cite{cudaProgrammingGuide})
 no conviene dada toda la latencia introducida, que se adicionar\'a a lo largo de todas las iteraciones de la resoluci\'on.
 Este coeficiente es equivalente a definir una penalidad por romper la \textit{afinidad} de las caches en CPU.
 
+Otra ventaja de usar este algoritmo adicionalmente a la partici\'on est\'atica es que, si bien se considera la matriz
+de correcci\'on, la finalidad es balancear la carga minimizando los tiempos, por lo que incluso si la estimaci\'on original
+de performance relativa era err\'onea, igualmente se redistribuir\'an los distintos grupos.
+
 %Adicionalmente, el algoritmo \ref{ThreadBalancing} agrega dos contadores para este balanceo. El contador de
 %$ronda\_threads$ es el que sirve para balancear threads de a pares, necesario si hay mas de dos dispositivos.
 %El contador de $ronda\_trabajos$ es el que balancea, para el thread m\'as r\'apido y el m\'as lento, los
@@ -762,9 +767,27 @@ Este coeficiente es equivalente a definir una penalidad por romper la \textit{af
 %con menos de diferencia $k$. En ninguno de nuestros casos de prueba nos hemos topado con que suceda esto, pero
 %consideramos que es correcto dejarlo.
 
-Otra ventaja de usar este algoritmo adicionalmente a la partici\'on est\'atica es que, si bien se considera la matriz
-de correcci\'on, la finalidad es balancear la carga minimizando los tiempos, por lo que incluso si la estimaci\'on original
-de performance relativa era err\'onea, igualmente se redistribuir\'an los distintos grupos.
+\begin{figure}[htbp]
+   \centering
+   \begin{subfigure}[b]{\plotwidthtres}
+     \includegraphics[width=\textwidth]{plots/cuda/pre-group-split-differences.png}
+     \caption{Previo al balance.}
+     \label{fig:cuda-lio-imbalance-between-loads}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidthtres}
+     \includegraphics[width=\textwidth]{plots/cuda/post-group-split-differences.png}
+     \caption{Posterior al balance.}
+     \label{fig:cuda-lio-imbalance-fixed}
+   \end{subfigure}
+   \caption{Comparaci\'on de los tiempos de ejecuci\'on para las distintas
+   cargas asignadas a cada placa en el caso de Hemoglobina.}
+   \label{fig:cuda-lio-imbalance}
+\end{figure}
+
+El rendimiento de esta optimizacion se puede apreciar en la figura \ref{fig:cuda-lio-imbalance}. El predictor estatico
+usado genera una particion entre las cuatro placas con aproximadamente un 25\% de desbalance. En solamente
+dos iteracion del algoritmo \ref{ThreadBalancing}, se rebalancean las cargas entre placas moviendo tres trabajos, dos
+de la placa 4 a la 2 y uno de la placa 3 a la 0. Con eso, las cargas quedan balanceadas a aproximadamente el 2\% de diferencia.
 
 \subsubsection{Performance}
 \label{cuda-multiplaca}
