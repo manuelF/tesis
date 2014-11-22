@@ -917,8 +917,15 @@ decidir si lo agregamos a alguna carga para un procesador. Como lo que
 queremos es evitar resolver un grupo con insuficiente cantidad de puntos y/o
 funciones en relaci\'on a la cantidad de n\'ucleos del sistema, usamos un
 proceso de decisi\'on sencillo: si el grupo tiene m\'as puntos e \'indices a
-actualizar que un cierto \textit{threshold} multiplicativo por la cantidad de
+actualizar que un cierto \textit{threshold} multiplicado por la cantidad de
 \textit{threads} a utilizar, lo consideramos grande, sino lo consideramos chico.
+
+Con esto lo que queremos conseguir es que cada \textit{thread} este ocupado una
+cantidad de tiempo lo mayor posible: menos trabajo para cada procesador implica
+que los \textit{overheads} de sincronizaci\'on se hacen m\'as notorios. Para eso,
+sabiendo que la cantidad de trabajo depende de la cantidad de puntos e \'indices
+de la matriz de Kohn Sham, queremos que cada thread sea asignado una cantidad de
+inter\'es de estos.
 
 Para decidir el valor de \textit{threshold} probamos con diversos valores para
 el caso de la hemoglobina. De los valores resultantes mostramos algunos de los
@@ -932,8 +939,9 @@ peque\~nas importan en el \textit{speedup} obtenido.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cpu/different-splits.png}
-   \caption{Valor del tiempo de iteraci\'on en milisegundos, para distintos
-   valores del \textit{threshold} de divisi\'on de \textit{threads}}
+   \caption{Valor del tiempo de iteraci\'on de XC en milisegundos, para distintos
+   valores del \textit{threshold} de cantidad de puntos y matriz de Kohn Sham
+   a asignar a cada \textit{thread}}
    \label{fig:split-hemo}
 \end{figure}
 
