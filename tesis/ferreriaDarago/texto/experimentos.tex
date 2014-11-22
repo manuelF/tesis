@@ -5,48 +5,60 @@
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{\plotwidthtres}
-   \includegraphics[width=\textwidth]{plots/cuda/initial-iteration-parts-hemo.png}
-   \caption{Pre-optimizaciones.}
-   \label{plt:initial-cuda-parts}
- \end{subfigure}
- \begin{subfigure}[b]{\plotwidthtres}
-   \includegraphics[width=\textwidth]{plots/cuda/final-iteration-parts-hemo.png}
-   \caption{Post-optimizaciones.}
-   \label{plt:final-cuda-parts}
- \end{subfigure}
- \caption{Porcentajes de tiempo de los pasos de XC corriendo Hemoglobina en una Tesla K40 antes y despues de
- las optimizaciones realizadas.}
- \label{plt:cuda-parts}
-\end{figure}
-
-
-\begin{figure}[htbp]
-\centering
-\begin{subfigure}[b]{\plotwidthtres}
    \includegraphics[width=\textwidth]{plots/cuda/initial-scf-hemo.png}
    \caption{Pre-optimizaciones.}
-   \label{plt:initial-cuda-scf}
+   \label{fig:initial-cuda-scf}
  \end{subfigure}
  \begin{subfigure}[b]{\plotwidthtres}
    \includegraphics[width=\textwidth]{plots/cuda/final-scf-hemo.png}
    \caption{Post-optimizaciones.}
-   \label{plt:final-cuda-scf}
+   \label{fig:final-cuda-scf}
  \end{subfigure}
- \caption{Porcentajes de tiempo de SCF corriendo Hemoglobina en una Tesla K40 antes y despues de
+ \caption{Porcentajes de tiempo de SCF corriendo Hemoglobina en una Tesla K40 antes y después de
  las optimizaciones realizadas.}
- \label{plt:cuda-scf}
+ \label{fig:cuda-scf}
 \end{figure}
 
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cuda/initial-iteration-parts-hemo.png}
+   \caption{Pre-optimizaciones.}
+   \label{fig:initial-cuda-parts}
+ \end{subfigure}
+ \begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cuda/final-iteration-parts-hemo.png}
+   \caption{Post-optimizaciones.}
+   \label{fig:final-cuda-parts}
+ \end{subfigure}
+ \caption{Porcentajes de tiempo de los pasos de XC corriendo Hemoglobina en una Tesla K40 antes y después de
+ las optimizaciones realizadas.}
+ \label{fig:cuda-parts}
+\end{figure}
+
+
+Las figuras \ref{fig:cuda-parts} y \ref{fig:cuda-scf} muestran la fracción de tiempo que insumía el
+calculo de XC dentro de SCF, corrido con la GPU mas potente en el mercado, la Tesla K40.
+Dentro del calculo del termino de intercambio correlación, el calculo de la densidad electrónica
+representaba, por mucho, el cuello de botella. Al reducirse tanto ese y guardar las funciones en
+memoria para no tener que recalcularlas constantemente, se obtuvo una aceleración alrededor de 8
+veces en Kepler y de 5 veces en Fermi, como se ve en la figura \ref{fig:cuda-final}.
+
+La implementación de técnicas de multi-GPU también obtuvieron grandes mejoras, como se vio en la
+secci\'on \ref{cuda-multiplaca}. Incluso no teniendo una mejora lineal en el calculo de simple
+precisión, esta técnica permite explotar todos los recursos disponibles, haciendo que el termino
+XC no sea ya el mas costoso de la iteración SCF y abriendo nuevas posibilidades de mejoras en el
+resto de los cálculos.
 
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/final.png}
    \caption{Aceleraci\'on en veces del c\'alculo de XC de correr Hemoglobina comparando implementaci\'on original en CUDA contra
-   las versiones optimizadas finales.}
-   \label{plt:cuda-final}
+   las versiones optimizadas finales. El (*) marca resultados teoricos extrapolados de las
+ aceleraciones alcanzadas en la seccion \ref{cuda-multiplaca}}
+   \label{fig:cuda-final}
 \end{figure}
 
-Podemos ver que las aceleracion
 
 \section{Aceleraciones alcanzadas en CPU}
 
@@ -67,7 +79,7 @@ sean parejos, de modo de hacer la comparaci\'on realista de que conviene inverti
 \begin{tabular}{@{}lll@{}}
 \toprule
 Configuraci\'on& Estaci\'on de trabajo                                                                                                      & Servidor                                                                                              \\ \midrule
-GPU                      & \begin{tabular} [c]{@{}l@{}} Intel Core i5-4460 @ 3.2GHz\\ 8GB RAM DDR3\\ 1 o 2 x GeForce GTX 780 3GB\end{tabular} & \begin{tabular}[c]{@{}l@{}}E3 low end\\ 16GB RAM DDR3\\ 1 o 2 x NVIDIA Tesla K40 12GB\end{tabular} \\ \hline \\
+GPU                      & \begin{tabular} [c]{@{}l@{}} Intel Core i5-4460 @ 3.2GHz\\ 8GB RAM DDR3\\ 1 o 2 x GeForce GTX 780 3GB\end{tabular} & \begin{tabular}[c]{@{}l@{}}E3 low end\\ 16GB RAM DDR3\\ 1 o 2 x NVIDIA Tesla K40 12GB\end{tabular} \\ \hline
 CPU                      & \begin{tabular}[c]{@{}l@{}}Intel Core i7-3770 CPU @ 3.40GHz \\ 16GB RAM DDR3\end{tabular}                     & \begin{tabular}[c]{@{}l@{}}2 x Intel Xeon E5-2620 v2 @ 2.10GHz\\ 32GB RAM\end{tabular}                             \\ \bottomrule
 \end{tabular}
 \label{tbl:configs}

@@ -130,7 +130,8 @@ def piechart(labels, values, filename, title):
   edited_labels = [labels[i] +" "+ my_autopct(values[i]) for i in range(len(values))]
   pylab.axis('equal')
 
-  legend = plt.legend(patches, edited_labels, loc="lower left", shadow=True)
+  legend = plt.legend(patches, edited_labels,loc='upper center' , bbox_to_anchor=(0.5, -0.05),
+                fancybox=True, shadow=True)
   for pie_wedge in patches:
     pie_wedge.set_edgecolor('white')
 

@@ -1,7 +1,7 @@
 \section{CPU}
 
-Los microprocesadores ganan en prevalencia desde principios de los 70, cuando Intel introduce los modelos 4004 y 8008. 
-Actualmente las arquitecturas de procesadores de 64 bits basadas en la l\'inea x86-64 de Intel dominan no solo el mercado de computadoras personales sino que tambi\'en el de servidores y \textit{clusters} de c\'omputo. 
+Los microprocesadores ganan en prevalencia desde principios de los 70, cuando Intel introduce los modelos 4004 y 8008.
+Actualmente las arquitecturas de procesadores de 64 bits basadas en la l\'inea x86-64 de Intel dominan no solo el mercado de computadoras personales sino que tambi\'en el de servidores y \textit{clusters} de c\'omputo.
 Dado que utilizaremos el CPU est\'andar como punto de comparaci\'on para las dem\'as arquitecturas, y que estas est\'an basadas en parte en su dise\~no, daremos una breve rese\~na de los aspectos m\'as importantes y desarrollos modernos con respecto a la performance dentro de los procesadores modernos.
 
 \subsection{Tipos de paralelismo}
@@ -25,7 +25,7 @@ Existen tres categor\'ias de paralelismo que hoy en d\'ia una arquitectura puede
     Esto normalmente conlleva esfuerzo adicional para mantener consistencia y coherencia.
 \end{itemize}
 
-En base a estos tipos de paralelismo, surgieron grandes avances en la arquitectura de procesadores desde 1950 en adelante. 
+En base a estos tipos de paralelismo, surgieron grandes avances en la arquitectura de procesadores desde 1950 en adelante.
 Estos se detallan cronol\'ogicamente en la tabla \ref{tbl:historia-cpu}, como tambi\'en la motivaci\'on de su existencia.
 
 \newcommand{\blap}[1]{\begin{minipage}[t]{3in}#1\end{minipage}}
@@ -54,27 +54,27 @@ A continuaci\'on detallamos algunos aspectos de cada una de estas t\'ecnicas.
 
 \subsection{Pipeline y Ejecuci\'on fuera de orden}
 
-Los primeras implementaciones de paralelismo a nivel de un solo procesador fueron a nivel de instrucciones mediante el uso de \textit{pipelines} de m\'ltiples etapas. 
-Por ejemplo, en la arquitectura del Intel Pentium 4 se llegaron a utilizar $20$ etapas distintas de pipelining. 
+Los primeras implementaciones de paralelismo a nivel de un solo procesador fueron a nivel de instrucciones mediante el uso de \textit{pipelines} de m\'ltiples etapas.
+Por ejemplo, en la arquitectura del Intel Pentium 4 se llegaron a utilizar $20$ etapas distintas de pipelining.
 Cada etapa corresponde a una actividad distinta en el proceso de ejecutar una instrucci\'on.
-Al tiempo que una instrucci\'on es decodificada, por ejemplo, otra instrucci\'on puede estar siendo le\'ida de memoria ya que, idealmente, las etapas previas no dependen de las posteriores. 
-Este mecanismo funciona bien si una instrucci\'on no depende de los resultados de otra anterior a ella. 
+Al tiempo que una instrucci\'on es decodificada, por ejemplo, otra instrucci\'on puede estar siendo le\'ida de memoria ya que, idealmente, las etapas previas no dependen de las posteriores.
+Este mecanismo funciona bien si una instrucci\'on no depende de los resultados de otra anterior a ella.
 Sin embargo, ocurre habitualmente que existe una dependencia entre instrucciones, produci\'endose entonces un \textit{pipe stall} que requiere ejecutar las instrucciones de manera no solapada (con el costo de \textit{throughput} de instrucciones que ello implica).
 
-Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order Execution}). 
+Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order Execution}).
 Mediante el uso de algoritmos y circuitos complejos, un procesador puede detectar las dependencias entre las instrucciones y cambiar el orden de ejecuci\'on para minimizar la aparici\'on de pipe stalls y, de esta manera, lograr que la mayor parte de las unidades del procesador esten ocupadas el mayor tiempo posible.
 
 Mejoras en este nivel eran usualmente invisibles al programador, dependiendo de los compiladores optimizantes, pero sus ventajas fueron disminuyendo a partir del a\~no 2000.
 
 \subsection{Extensiones vectoriales}
 
-Si bien las t\'ecnicas SIMD fueron desarrolladas por las supercomputadoras de los a\~nos 70 y 80, su aparici\'on en los microprocesadores x86 modernos ocurre en 1996 con el nombre MMX (\textit{MultiMedia eXtensions}), con refuerzos luego en las extensiones SSE y AVX. 
+Si bien las t\'ecnicas SIMD fueron desarrolladas por las supercomputadoras de los a\~nos 70 y 80, su aparici\'on en los microprocesadores x86 modernos ocurre en 1996 con el nombre MMX (\textit{MultiMedia eXtensions}), con refuerzos luego en las extensiones SSE y AVX.
 AVX y AVX2 representan la \'ultima versi\'on de las instrucciones de vectorizaci\'on y est\'an presentes en la l\'inea Intel Xeon de procesadores de alta gama y en las m\'as recientes generaciones de procesadores disponible para los consumidores.
 
 El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones independientes que pueden ser realizadas en simult\'aneo, dividiendo la cantidad de instrucciones totales que tiene que realizar un procesador.
 
-El uso de operaciones sobre m\'ultiples valores ha tomado importancia como uno de los m\'etodos de incrementar la performance de ejecuci\'on. 
-La longitud de registros SIMD de las extensiones (128 bits para SSE, 256 para AVX) se ha duplicado cada 4 a\~nos, con lo cual es importante para una aplicaci\'on que sus operaciones sean lo m\'as vectorizables posible~\cite{HennessyPatterson}. 
+El uso de operaciones sobre m\'ultiples valores ha tomado importancia como uno de los m\'etodos de incrementar la performance de ejecuci\'on.
+La longitud de registros SIMD de las extensiones (128 bits para SSE, 256 para AVX) se ha duplicado cada 4 a\~nos, con lo cual es importante para una aplicaci\'on que sus operaciones sean lo m\'as vectorizables posible~\cite{HennessyPatterson}.
 Para esto es ideal que las operaciones sean lo m\'as regulares y los ciclos sean claros y con las m\'inimas dependencias posibles, de modo de hacer mejor uso de estas facilidades.
 
 \subsection{Caches}
@@ -86,29 +86,29 @@ A diferencia de los procesadores, la velocidad de acceso de las memorias princip
     \includegraphics[width=\plotwidth]{images/cpu_vs_memory.png}
     \caption{Comparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, la diferencia de entre ellos se denomina \textit{memory gap}.}
     \label{fig:cpu_vs_mem}
-    
+
 \end{figure}
 \todo{Poner de d\'onde se tom\'o la figura y arreglar los bordes que aparecen cosas feas}
 
 El concepto de \textit{localidad espacial} corresponde con la la observaci\'on de que los datos con los que opera una secci\'on de un programa suelen estar \emph{cerca} en memoria.
-Los dise\~nos de procesadores empezaron a incluir distintos tipos de caches para sacar provecho de esta situaci\'on: memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos recientemente usados. 
+Los dise\~nos de procesadores empezaron a incluir distintos tipos de caches para sacar provecho de esta situaci\'on: memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos recientemente usados.
 Su eficacia impuls\'o el establecimiento de una jerarqu\'ia en orden creciente de tama\~no y decreciente en velocidad, empezando por las caches L1 y siguiendo por las L2 y L3.
 
 El tama\~no de una cache L1 moderna est\'a en el orden de los 64 KB, una cache L2 en el \'orden de los 2 MB y una L3 en el orden de 6 MB en adelante.
 
-Si bien la aparici\'on y utilizaci\'on de caches es transparente al programador en los procesadores de la l\'inea x86\_64, los accesos irregulares a la memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, esto puede causar que datos que s\'i se vayan a utilizar sean desalojados de la cache y deban ser buscados nuevamente en la memoria principal (evento que se conoce como \textit{cache miss}). 
+Si bien la aparici\'on y utilizaci\'on de caches es transparente al programador en los procesadores de la l\'inea x86\_64, los accesos irregulares a la memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, esto puede causar que datos que s\'i se vayan a utilizar sean desalojados de la cache y deban ser buscados nuevamente en la memoria principal (evento que se conoce como \textit{cache miss}).
 Por esto es que la regularidad de los accesos a memoria para hacer buen uso de caches es fundamental para obtener una buena performance.
 
 \subsection{Multiprocesadores}
 
 Los procesadores MIMD (\textit{Multiple Instruction Multiple Data}) implicaron una revoluci\'on en la computaci\'on, pero cada procesador contin\'ua las l\'ineas anteriores.\todo{Supongo que est\'an haciendo referencia a ser compatible para atr\'as. Esto es cierto para las PC's, pero hay muchos otros procesadores que no cumplen con eso, solo piensen en los micros de celulares}
-Los dise\~nos m\'as utilizados se basan en un arquitectura tipo SMP (\textit{Symmetric Multiprocessing}), en la cual todos los procesadores son iguales y comparten una misma memoria principal. 
+Los dise\~nos m\'as utilizados se basan en un arquitectura tipo SMP (\textit{Symmetric Multiprocessing}), en la cual todos los procesadores son iguales y comparten una misma memoria principal.
 Cada procesador tiene sus propios registros y se comunica con los dem\'as mediante memoria compartida o interrupciones.
 
 Por ejemplo, el procesador Intel Xeon E7-8800 posee $12$ procesadores (cores) que pueden ejecutar dos hilos simult\'aneamente cada uno, mediante el uso de la tecnolog\'ia denominada \textit{Hyper-threading}.
 
-A diferencia de los otros m\'etodos, las mejoras posibles mediante el procesamiento paralelo en tareas son sustanciales, pero dependen del programador en gran medida. 
-Un programa serial no se beneficiar\'a de m\'ultiples \textit{cores}, incluso siendo recompilado, a menos que este paralelismo se aproveche expl\'icitamente. 
+A diferencia de los otros m\'etodos, las mejoras posibles mediante el procesamiento paralelo en tareas son sustanciales, pero dependen del programador en gran medida.
+Un programa serial no se beneficiar\'a de m\'ultiples \textit{cores}, incluso siendo recompilado, a menos que este paralelismo se aproveche expl\'icitamente.
 Otro aspecto importante es la \textit{escalabilidad}, que consiste en que la divisi\'on de tareas mantenga a todos los procesadores disponibles ocupados, aunque crezca la cantidad de cores que intervengan.
 
 Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}~\cite{Amdahl1967}, que establece una relaci\'on entre el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje
@@ -131,8 +131,8 @@ paralelizada, y $n$ la cantidad de hilos de ejecuci\'on paralelos que se dispone
 
 Un ejemplo de esta ley en acci\'on es que si $95 \%$ del problema es paralelizable entonces el l\'imite te\'orico de
 mejora es de 20 veces (el programa corriendo sobre infinitos cores se ejecutar\'ia en un veinteavo del tiempo que originalmente
-requer\'ia). La figura ~\ref{fig:amdahl_plot} muestra el comportamiento de la ley de Amdahl con distintas fracciones de c\'odigo
-paralelo.
+requer\'ia). La figura ~\ref{fig:amdahl_plot} muestra el comportamiento de la ecuacion \ref{eq:amdahl} que define la ley de Amdahl
+con distintas fracciones de c\'odigo paralelo.
 
 La ley de Amdahl describe el pico te\'orico de mejora y es una simplificaci\'on, ya que asume que todos los cores tienen
 trabajo perfectamente distribuido sin comunicaci\'on entre ellos por motivos de sincronizaci\'on.
@@ -338,7 +338,7 @@ doble correcta, por lo cual dentro de las operaciones nativas, cuentan con instr
 La memoria de la GPGPU es uno de los puntos cruciales de esta arquitectura. Esta se subdivide
 entre memorias on-chip y memorias on-board, de acuerdo a su ubicaci\'on y tiempos de acceso.
 
-Las memorias se subdividen en 4 categor\'ias distintas:
+Las memorias se subdividen en cuatro categor\'ias distintas:
 
 \begin{itemize}
   \item Registros
@@ -363,6 +363,11 @@ de CUDA va a mantener la consistencia entre ambas de manera as\'incrona, evitand
 copias de memoria explicitas. No es ilimitada la cantidad de memoria mapeada posible, por lo que
 es importante saber elegir que elementos van a ir en esta.
 
+La memoria local es una memoria propia de cada thread, y se encuentra almacenada dentro de la
+memoria global. Esta memoria es definida autom\'aticamente por el compilador y sirve como \'area de \textit{spilling}
+de registros cuando se acaban. Cuenta con las mismas desventajas que la memoria global, incluyendo
+su tiempo de acceso.
+
 La memoria compartida, o \textit{shared}, es una memoria que es visible para todos los threads dentro
 de un mismo SM. Cada thread puede escribir en cualquier parte de la memoria compartida dentro de su bloque y
 puede ser le\'ido por cualquier otro thread de este. Es una memoria muy r\'apida, on-chip, y
@@ -372,11 +377,6 @@ en 32 bancos de 4 bytes de tama\~no, permitiendo que cada uno de los 32 threads 
 a un float. Si hubiera conflicto, los accesos a ese banco se serializar\'ian, aumentando la latencia
 de la llamada.~\cite{farberCuda}
 
-La memoria local es una memoria propia de cada thread, y se encuentra almacenada dentro de la
-memoria global. Esta memoria es definida autom\'aticamente por el compilador y sirve como \'area de \textit{spilling}
-de registros cuando se acaban. Cuenta con las mismas desventajas que la memoria global, incluyendo
-su tiempo de acceso.
-
 Adicionalmente, la GPGPU cuenta con m\'ultiples niveles de memorias cach\'e para poder aminorar el hecho
 de que el principal cuello de botella del computo es la latencia en los accesos a memoria global.
 Estas se dividen en tres:
@@ -384,6 +384,7 @@ Estas se dividen en tres:
 \begin{itemize}
   \item Cach\'e L1
   \item Cach\'e L2
+  \item Cach\'e constante
   \item Cach\'e de textura
 \end{itemize}
 
@@ -394,6 +395,12 @@ permitiendo a los bloques tener mayores espacios de memorias compartidas o mayor
 
 La cach\'e L2 es com\'un a todos los SM de la GPGPU, donde, a partir de Fermi en \nvidia, todos
 los accesos de lectura y escritura a memoria global y textura pasan a trav\'es de esta. ~\cite{NvidiaFermi}
+
+La cach\'e constante es una cach\'e sobre la memoria global dedicada solamente a lecturas de memoria. Esta
+es muy reducida (solo cuenta con 64KB) y esta optimizada para muchos accesos a la misma direcci\'on. Cuando
+un thread lee esta memoria, se retransmite a los dem\'as threads del warp que est\'en leyendo esa misma direcci\'on, reduciendo
+el ancho de banda necesario. Si, en cambio, los threads leen distintas direcciones los accesos se serializan.
+Cuando hay un miss de esta memoria, la lectura tiene el costo de una lectura de memoria global.
 
 La cach\'e de textura es una cach\'e sobre la memoria global que presenta no solo localidad espacial,
 como la mayor\'ia de las caches de procesadores normales (es decir, dato-1, dato, dato+1, etc.), sino que se le
