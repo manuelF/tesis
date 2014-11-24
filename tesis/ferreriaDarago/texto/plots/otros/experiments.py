@@ -71,7 +71,7 @@ def tamParticion():
         'ylabel':u"Tiempo acumulado de resolución de grupos [ms]",
         'yvalues':map((lambda x: np.divide(x,1000.0)),[a_cpu, a_gpu]),
         'xvalues':indices,
-        'ylegend': ['Runtime CPU', 'Runtime GPU'],
+        'ylegend': ['Tiempo CPU 12 threads', 'Tiempo GPU'],
         'filename':fname}
     lineGraph(**params)
 
