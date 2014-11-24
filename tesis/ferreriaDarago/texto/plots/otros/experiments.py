@@ -63,12 +63,12 @@ def tamParticion():
   for f,fname in files:
     measures = np.loadtxt(f, fileformat)
     indices = np.array(range(1,len(measures)+1))
-    a_cpu = np.cumsum(measures['runtimecpu'])
-    a_gpu = np.cumsum(measures['runtimegpu'])
+    a_cpu = measures['runtimecpu']
+    a_gpu = measures['runtimegpu']
 
     params =  {
         'xlabel':u"Cantidad grupos resueltos",
-        'ylabel':u"Runtime acumulado de resolucion de grupos [ms]",
+        'ylabel':u"Tiempo acumulado de resolución de grupos [ms]",
         'yvalues':map((lambda x: np.divide(x,1000.0)),[a_cpu, a_gpu]),
         'xvalues':indices,
         'ylegend': ['Runtime CPU', 'Runtime GPU'],
