@@ -52,16 +52,19 @@ def itsPerDia():
 
 def tamParticion():
 #Runtime total por grupo vs sizeingpu vs cost en Fullereno k40 cecar
-  fileformat = {'names': ('cost','runtimecpu', 'runtimegpu'),
-        'formats' :('uint64','uint64','uint64')}
-  files = [("measures/tiempos_hemo/size3","cost-time-cpu-gpu-size3.png"),
-    ("measures/tiempos_hemo/size7","cost-time-cpu-gpu-size7.png")]
+  fileformat = {'names': ('runtimecpu', 'runtimegpu'),
+        'formats' :('float32','float32')}
+  files = [
+      ("measures/tiempos_hemo/big-times-3","cost-time-cpu-gpu-big-size-3.png"),
+      ("measures/tiempos_hemo/small-times-3","cost-time-cpu-gpu-small-size-3.png"),
+      ("measures/tiempos_hemo/big-times-7","cost-time-cpu-gpu-big-size-7.png"),
+      ("measures/tiempos_hemo/small-times-7","cost-time-cpu-gpu-small-size-7.png")
+      ]
   for f,fname in files:
     measures = np.loadtxt(f, fileformat)
-    ordered = np.sort(measures, order='cost')
-    indices = np.array(range(1,len(ordered)+1))
-    a_cpu = np.cumsum(ordered['runtimecpu'])
-    a_gpu = np.cumsum(ordered['runtimegpu'])
+    indices = np.array(range(1,len(measures)+1))
+    a_cpu = np.cumsum(measures['runtimecpu'])
+    a_gpu = np.cumsum(measures['runtimegpu'])
 
     params =  {
         'xlabel':u"Cantidad grupos resueltos",
