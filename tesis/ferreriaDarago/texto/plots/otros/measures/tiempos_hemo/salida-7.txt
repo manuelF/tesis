@@ -1,0 +1,1281 @@
+ &LIO
+ NATOM   =          48,
+ NSOL    =           0,
+ CHARGE  =           0,
+ OPEN    = F,
+ NMAX    =           5,
+ NUNP    =           0,
+ VCINP   = F,
+ FRESTARTIN      = restart.in          ,
+ GOLD    =   10.0000000000000     ,
+ TOLD    =  1.000000000000000E-006,
+ RMAX    =   16.0000000000000     ,
+ RMAXS   =   5.00000000000000     ,
+ PREDCOEF        = F,
+ IDIP    =           1,
+ WRITEXYZ        = T,
+ INTSOLDOUBLE    = T,
+ DIIS    = T,
+ NDIIS   =          30,
+ DGTRIG  =   100.000000000000     ,
+ IEXCH   =           9,
+ INTEG   = T,
+ DENS    = T,
+ IGRID   =           2,
+ IGRID2  =           2,
+ TIMEDEP =           0,
+ TDSTEP  =  2.000000000000000E-003,
+ NTDSTEP =           0,
+ PROPAGATOR      =           1,
+ NBCH    =          10,
+ FIELD   = F,
+ A0      =   1000.00000000000     ,
+ EPSILON =   1.00000000000000     ,
+ EXTER   = F,
+ FX      =  5.000000074505806E-002,
+ FY      =  5.000000074505806E-002,
+ FZ      =  5.000000074505806E-002,
+ TDRESTART       = F,
+ WRITEDENS       = T,
+ WRITEFORCES     = F
+ /
+<====== Initializing G2G ======>
+Kernels: cpu
+ JOB STARTED NOW
+mié nov 19 11:17:51 ART 2014
+basis set corresponding to Z  16 was not used
+ en drive         523        1173         118
+<======= GPU Code Initialization ========>
+atoms: 48
+max atoms: 48
+number of gaussians: 2400
+do_forces: false
+s: 130 p: 65 d: 33
+m: 523 nco: 118
+ nco: 118
+<====== read_options ========>
+--> using gpu_options.big for options
+little_cube_size 7
+max_function_exponent 8
+min_points_per_cube 1
+sphere_radius 0.6
+free_global_memory 0.8
+
+ (*) Initializing lio variables...
+TIMER [lio_init]: 43us.
+Weights: 845524us.
+Particion 0: 950131800
+Relacion max / min = 1.000000
+--> Thread OMP: 12
+--> Thread MKL: 12
+--> Thread internos: 12
+--> Thread externos: 1
+--> Correccion de cubos chicos: 250000
+--> Threshold en threads para considerar grande: 80
+Timer functions: 1s. 346242us.
+TIMER [cholesky]: 152984us.
+TIMER [int3mem]: 4s. 255626us.
+TIMER [principio int3lu]: 79193us.
+TIMER [int3lu]: 76919us.
+Group 116 cost 172438450 time 38030us.
+Group 112 cost 85753600 time 20151us.
+Group 110 cost 81009000 time 19736us.
+Group 109 cost 71060740 time 17173us.
+Group 108 cost 63631240 time 16056us.
+Group 107 cost 60867900 time 13907us.
+Group 106 cost 58028110 time 14683us.
+Group 105 cost 43417500 time 10265us.
+Group 104 cost 42603280 time 10257us.
+Group 103 cost 38852630 time 9278us.
+Group 102 cost 33263200 time 7921us.
+Group 101 cost 30023800 time 7260us.
+Group 100 cost 25561780 time 6249us.
+Group 99 cost 15672400 time 4337us.
+Group 98 cost 9859600 time 2777us.
+Group 97 cost 7520500 time 2167us.
+Group 96 cost 6948480 time 1990us.
+Group 95 cost 6818920 time 1983us.
+Group 94 cost 6453120 time 1844us.
+Group 93 cost 5707900 time 1677us.
+Group 92 cost 5443840 time 1644us.
+Group 91 cost 5068240 time 1569us.
+Group 90 cost 4312240 time 1319us.
+Group 89 cost 4120720 time 1250us.
+Group 88 cost 3690400 time 1145us.
+Group 87 cost 3126310 time 1034us.
+Group 86 cost 2908150 time 942us.
+Group 85 cost 2441020 time 807us.
+Group 84 cost 2341000 time 786us.
+Group 83 cost 2303220 time 752us.
+Group 82 cost 2263690 time 841us.
+Group 81 cost 2185200 time 840us.
+Group 80 cost 1925550 time 681us.
+Group 79 cost 1721890 time 620us.
+Group 78 cost 1687870 time 614us.
+Group 77 cost 1646200 time 621us.
+Group 76 cost 1610380 time 576us.
+Group 75 cost 1586600 time 570us.
+Group 74 cost 1535380 time 602us.
+Group 73 cost 1504600 time 559us.
+Group 72 cost 1331860 time 491us.
+Group 71 cost 1283200 time 443us.
+Group 70 cost 1217200 time 436us.
+Group 69 cost 1188700 time 456us.
+Group 68 cost 1135780 time 410us.
+Group 67 cost 1023300 time 361us.
+Group 66 cost 886650 time 310us.
+Group 65 cost 691750 time 234us.
+Group 64 cost 637150 time 210us.
+Group 63 cost 611530 time 220us.
+Group 62 cost 590470 time 214us.
+Group 61 cost 586960 time 194us.
+Group 60 cost 579940 time 196us.
+Group 59 cost 578860 time 197us.
+Group 58 cost 562620 time 174us.
+Group 57 cost 555370 time 178us.
+Group 56 cost 548620 time 169us.
+Group 55 cost 447340 time 132us.
+Group 54 cost 433600 time 173us.
+Group 53 cost 418300 time 145us.
+Group 52 cost 418300 time 140us.
+Group 51 cost 414560 time 143us.
+Group 50 cost 410650 time 139us.
+Group 49 cost 394160 time 120us.
+Group 48 cost 390080 time 120us.
+Group 47 cost 388720 time 128us.
+Group 46 cost 366960 time 99us.
+Group 45 cost 366280 time 87us.
+Group 44 cost 366280 time 89us.
+Group 43 cost 362880 time 97us.
+Group 42 cost 357440 time 88us.
+Group 41 cost 348700 time 95us.
+Group 40 cost 344500 time 99us.
+Group 39 cost 337600 time 78us.
+Group 38 cost 336100 time 89us.
+Group 37 cost 334000 time 91us.
+Group 36 cost 331600 time 78us.
+Group 35 cost 327350 time 87us.
+Group 34 cost 296800 time 50us.
+Group 33 cost 292350 time 60us.
+Group 32 cost 291250 time 72us.
+Group 31 cost 287950 time 60us.
+Group 30 cost 287620 time 45us.
+Group 29 cost 286850 time 47us.
+Group 28 cost 280800 time 43us.
+Group 27 cost 272320 time 38us.
+Group 26 cost 271600 time 35us.
+Group 25 cost 271000 time 38us.
+Group 24 cost 270720 time 41us.
+Group 23 cost 268200 time 32us.
+Group 22 cost 267360 time 31us.
+Group 21 cost 266800 time 30us.
+Group 20 cost 266240 time 28us.
+Group 19 cost 265680 time 26us.
+Group 18 cost 264490 time 27us.
+Group 17 cost 264280 time 30us.
+Group 16 cost 263020 time 28us.
+Group 15 cost 262320 time 27us.
+Group 14 cost 261760 time 21us.
+Group 13 cost 259870 time 21us.
+Group 12 cost 258400 time 16us.
+Group 11 cost 256400 time 25us.
+Group 10 cost 256400 time 17us.
+Group 9 cost 255600 time 16us.
+Group 8 cost 255200 time 20us.
+Group 7 cost 253120 time 15us.
+Group 6 cost 252700 time 10us.
+Group 5 cost 252220 time 11us.
+Group 4 cost 250560 time 19us.
+Group 3 cost 250520 time 15us.
+Group 2 cost 250500 time 17us.
+Group 1 cost 250450 time 11us.
+Group 0 cost 250440 time 11us.
+Workload 0: (113) 234685us.density = 203850us. rmm = 29824us. forces = 5us. functions = 0us.
+SMALL GROUPS = 234780us.
+Group 111 cost 84974250 time 3393us.
+Group 113 cost 124942960 time 4425us.
+Group 114 cost 131273360 time 3093us.
+Group 115 cost 157792000 time 3384us.
+Group 117 cost 211001800 time 4920us.
+Group 118 cost 220128190 time 4897us.
+Group 119 cost 250585540 time 5078us.
+Group 120 cost 270452100 time 6192us.
+Group 121 cost 335961430 time 6717us.
+Group 122 cost 418488640 time 9004us.
+Group 123 cost 625736680 time 13174us.
+Group 124 cost 967013140 time 19487us.
+Group 125 cost 1051882000 time 21371us.
+Group 126 cost 1060277950 time 25824us.
+Group 127 cost 2636611000 time 48598us.
+Group 128 cost 2861857000 time 53796us.
+Group 129 cost 2920040200 time 53817us.
+Group 130 cost 3662327900 time 67382us.
+Group 131 cost 4426553860 time 96897us.
+Group 132 cost 4445650960 time 80936us.
+Group 133 cost 5585181040 time 121721us.
+Group 134 cost 116219320 time 3461us.
+Group 135 cost 136996720 time 4174us.
+Group 136 cost 149637760 time 4059us.
+Group 137 cost 149637760 time 4093us.
+Group 138 cost 149637760 time 4062us.
+Group 139 cost 149637760 time 4051us.
+Group 140 cost 152885320 time 4482us.
+Group 141 cost 152885320 time 4208us.
+Group 142 cost 152885320 time 4200us.
+Group 143 cost 152885320 time 4726us.
+Group 144 cost 213436600 time 5377us.
+Group 145 cost 217312720 time 5454us.
+Group 146 cost 217312720 time 5480us.
+Group 147 cost 225169720 time 5687us.
+Group 148 cost 363284140 time 8485us.
+Group 149 cost 395719000 time 8897us.
+Group 150 cost 395719000 time 8887us.
+Group 151 cost 461630500 time 10389us.
+Group 152 cost 461630500 time 10337us.
+Group 153 cost 461630500 time 10310us.
+Group 154 cost 473974720 time 10643us.
+Group 155 cost 473974720 time 10596us.
+Group 156 cost 473974720 time 10718us.
+Group 157 cost 473974720 time 10640us.
+Group 158 cost 473974720 time 10690us.
+Group 159 cost 480207940 time 11023us.
+Group 160 cost 480207940 time 10784us.
+Group 161 cost 480207940 time 10762us.
+Group 162 cost 613427740 time 13071us.
+Group 163 cost 627646000 time 13307us.
+Group 164 cost 649278940 time 13775us.
+Group 165 cost 656571400 time 13928us.
+Group 166 cost 716377720 time 14973us.
+Group 167 cost 724036840 time 15106us.
+Group 168 cost 739477300 time 15313us.
+Group 169 cost 739477300 time 15244us.
+Group 170 cost 747258640 time 15411us.
+Group 171 cost 770847100 time 15916us.
+Group 172 cost 778791400 time 15936us.
+Group 173 cost 786776440 time 16115us.
+Group 174 cost 794802220 time 16318us.
+Group 175 cost 802868740 time 16412us.
+Group 176 cost 819124000 time 16642us.
+Group 177 cost 990639400 time 19710us.
+Group 178 cost 990639400 time 19724us.
+Group 179 cost 999642940 time 19936us.
+Group 180 cost 999642940 time 19915us.
+Group 181 cost 3732482140 time 70442us.
+BIG GROUPS = 1s. 241144us.
+density = 977198us. rmm = 260464us. forces = 5us. functions = 0us.
+enditer = 681us.
+iteracion total: 1s. 476698us.
+XC energy: 0
+TIMER [actualiza rmm]: 223534us.
+TIMER [dspev]: 155664us.
+TIMER [coeff]: 207889us.
+TIMER [otras cosas]: 14351us.
+ iter           1 QM Energy=  -1436.91514345791
+TIMER [Total iter]: 2s. 251617us.
+TIMER [principio int3lu]: 78886us.
+TIMER [int3lu]: 76895us.
+
+Workload 0: (113) 233737us.density = 203279us. rmm = 29726us. forces = 7us. functions = 0us.
+SMALL GROUPS = 233794us.
+BIG GROUPS = 1s. 201615us.
+density = 970461us. rmm = 227906us. forces = 7us. functions = 0us.
+enditer = 602us.
+iteracion total: 1s. 436104us.
+XC energy: 0
+TIMER [actualiza rmm]: 208752us.
+TIMER [dspev]: 153225us.
+TIMER [coeff]: 207994us.
+TIMER [otras cosas]: 14298us.
+ iter           2 QM Energy=  -1397.86276746714
+TIMER [Total iter]: 2s. 202034us.
+TIMER [principio int3lu]: 78809us.
+TIMER [int3lu]: 76957us.
+Group 116 cost 172438450 time 37910us.
+Group 112 cost 85753600 time 20132us.
+Group 110 cost 81009000 time 19204us.
+Group 109 cost 71060740 time 17145us.
+Group 108 cost 63631240 time 16056us.
+Group 107 cost 60867900 time 13879us.
+Group 106 cost 58028110 time 14677us.
+Group 105 cost 43417500 time 10259us.
+Group 104 cost 42603280 time 10260us.
+Group 103 cost 38852630 time 9257us.
+Group 102 cost 33263200 time 7898us.
+Group 101 cost 30023800 time 7263us.
+Group 100 cost 25561780 time 6246us.
+Group 99 cost 15672400 time 4345us.
+Group 98 cost 9859600 time 2778us.
+Group 97 cost 7520500 time 2157us.
+Group 96 cost 6948480 time 1982us.
+Group 95 cost 6818920 time 1988us.
+Group 94 cost 6453120 time 1842us.
+Group 93 cost 5707900 time 1675us.
+Group 92 cost 5443840 time 1641us.
+Group 91 cost 5068240 time 1570us.
+Group 90 cost 4312240 time 1315us.
+Group 89 cost 4120720 time 1249us.
+Group 88 cost 3690400 time 1149us.
+Group 87 cost 3126310 time 1031us.
+Group 86 cost 2908150 time 939us.
+Group 85 cost 2441020 time 798us.
+Group 84 cost 2341000 time 788us.
+Group 83 cost 2303220 time 775us.
+Group 82 cost 2263690 time 844us.
+Group 81 cost 2185200 time 848us.
+Group 80 cost 1925550 time 642us.
+Group 79 cost 1721890 time 619us.
+Group 78 cost 1687870 time 616us.
+Group 77 cost 1646200 time 624us.
+Group 76 cost 1610380 time 577us.
+Group 75 cost 1586600 time 573us.
+Group 74 cost 1535380 time 603us.
+Group 73 cost 1504600 time 534us.
+Group 72 cost 1331860 time 489us.
+Group 71 cost 1283200 time 435us.
+Group 70 cost 1217200 time 432us.
+Group 69 cost 1188700 time 460us.
+Group 68 cost 1135780 time 405us.
+Group 67 cost 1023300 time 353us.
+Group 66 cost 886650 time 306us.
+Group 65 cost 691750 time 250us.
+Group 64 cost 637150 time 199us.
+Group 63 cost 611530 time 223us.
+Group 62 cost 590470 time 202us.
+Group 61 cost 586960 time 200us.
+Group 60 cost 579940 time 189us.
+Group 59 cost 578860 time 189us.
+Group 58 cost 562620 time 173us.
+Group 57 cost 555370 time 184us.
+Group 56 cost 548620 time 168us.
+Group 55 cost 447340 time 137us.
+Group 54 cost 433600 time 165us.
+Group 53 cost 418300 time 148us.
+Group 52 cost 418300 time 143us.
+Group 51 cost 414560 time 146us.
+Group 50 cost 410650 time 140us.
+Group 49 cost 394160 time 122us.
+Group 48 cost 390080 time 131us.
+Group 47 cost 388720 time 124us.
+Group 46 cost 366960 time 99us.
+Group 45 cost 366280 time 87us.
+Group 44 cost 366280 time 90us.
+Group 43 cost 362880 time 101us.
+Group 42 cost 357440 time 90us.
+Group 41 cost 348700 time 99us.
+Group 40 cost 344500 time 94us.
+Group 39 cost 337600 time 85us.
+Group 38 cost 336100 time 91us.
+Group 37 cost 334000 time 87us.
+Group 36 cost 331600 time 81us.
+Group 35 cost 327350 time 82us.
+Group 34 cost 296800 time 51us.
+Group 33 cost 292350 time 55us.
+Group 32 cost 291250 time 54us.
+Group 31 cost 287950 time 52us.
+Group 30 cost 287620 time 46us.
+Group 29 cost 286850 time 47us.
+Group 28 cost 280800 time 40us.
+Group 27 cost 272320 time 43us.
+Group 26 cost 271600 time 37us.
+Group 25 cost 271000 time 39us.
+Group 24 cost 270720 time 38us.
+Group 23 cost 268200 time 32us.
+Group 22 cost 267360 time 33us.
+Group 21 cost 266800 time 36us.
+Group 20 cost 266240 time 30us.
+Group 19 cost 265680 time 33us.
+Group 18 cost 264490 time 29us.
+Group 17 cost 264280 time 26us.
+Group 16 cost 263020 time 28us.
+Group 15 cost 262320 time 23us.
+Group 14 cost 261760 time 23us.
+Group 13 cost 259870 time 19us.
+Group 12 cost 258400 time 17us.
+Group 11 cost 256400 time 18us.
+Group 10 cost 256400 time 19us.
+Group 9 cost 255600 time 16us.
+Group 8 cost 255200 time 15us.
+Group 7 cost 253120 time 15us.
+Group 6 cost 252700 time 10us.
+Group 5 cost 252220 time 12us.
+Group 4 cost 250560 time 10us.
+Group 3 cost 250520 time 10us.
+Group 2 cost 250500 time 9us.
+Group 1 cost 250450 time 9us.
+Group 0 cost 250440 time 9us.
+Workload 0: (113) 233525us.density = 203055us. rmm = 29738us. forces = 5us. functions = 0us.
+SMALL GROUPS = 233563us.
+Group 111 cost 84974250 time 3091us.
+Group 113 cost 124942960 time 3500us.
+Group 114 cost 131273360 time 2953us.
+Group 115 cost 157792000 time 3264us.
+Group 117 cost 211001800 time 4537us.
+Group 118 cost 220128190 time 4642us.
+Group 119 cost 250585540 time 4889us.
+Group 120 cost 270452100 time 5899us.
+Group 121 cost 335961430 time 6441us.
+Group 122 cost 418488640 time 8609us.
+Group 123 cost 625736680 time 12595us.
+Group 124 cost 967013140 time 18853us.
+Group 125 cost 1051882000 time 20549us.
+Group 126 cost 1060277950 time 25312us.
+Group 127 cost 2636611000 time 47399us.
+Group 128 cost 2861857000 time 52325us.
+Group 129 cost 2920040200 time 52478us.
+Group 130 cost 3662327900 time 65793us.
+Group 131 cost 4426553860 time 95455us.
+Group 132 cost 4445650960 time 79313us.
+Group 133 cost 5585181040 time 119938us.
+Group 134 cost 116219320 time 3192us.
+Group 135 cost 136996720 time 3928us.
+Group 136 cost 149637760 time 3817us.
+Group 137 cost 149637760 time 3845us.
+Group 138 cost 149637760 time 3819us.
+Group 139 cost 149637760 time 3814us.
+Group 140 cost 152885320 time 4247us.
+Group 141 cost 152885320 time 3904us.
+Group 142 cost 152885320 time 3898us.
+Group 143 cost 152885320 time 4496us.
+Group 144 cost 213436600 time 5067us.
+Group 145 cost 217312720 time 5133us.
+Group 146 cost 217312720 time 5127us.
+Group 147 cost 225169720 time 5350us.
+Group 148 cost 363284140 time 8040us.
+Group 149 cost 395719000 time 8453us.
+Group 150 cost 395719000 time 8418us.
+Group 151 cost 461630500 time 9834us.
+Group 152 cost 461630500 time 9828us.
+Group 153 cost 461630500 time 9837us.
+Group 154 cost 473974720 time 10042us.
+Group 155 cost 473974720 time 10034us.
+Group 156 cost 473974720 time 10038us.
+Group 157 cost 473974720 time 10031us.
+Group 158 cost 473974720 time 10041us.
+Group 159 cost 480207940 time 10171us.
+Group 160 cost 480207940 time 10140us.
+Group 161 cost 480207940 time 10148us.
+Group 162 cost 613427740 time 12552us.
+Group 163 cost 627646000 time 12732us.
+Group 164 cost 649278940 time 13203us.
+Group 165 cost 656571400 time 13334us.
+Group 166 cost 716377720 time 14383us.
+Group 167 cost 724036840 time 14489us.
+Group 168 cost 739477300 time 14810us.
+Group 169 cost 739477300 time 14745us.
+Group 170 cost 747258640 time 14861us.
+Group 171 cost 770847100 time 15297us.
+Group 172 cost 778791400 time 15360us.
+Group 173 cost 786776440 time 15512us.
+Group 174 cost 794802220 time 15673us.
+Group 175 cost 802868740 time 15876us.
+Group 176 cost 819124000 time 16070us.
+Group 177 cost 990639400 time 18961us.
+Group 178 cost 990639400 time 19023us.
+Group 179 cost 999642940 time 19200us.
+Group 180 cost 999642940 time 19198us.
+Group 181 cost 3732482140 time 69280us.
+BIG GROUPS = 1s. 200073us.
+density = 969106us. rmm = 227711us. forces = 6us. functions = 0us.
+enditer = 612us.
+iteracion total: 1s. 434335us.
+XC energy: 0
+TIMER [actualiza rmm]: 74730us.
+TIMER [diis]: 29480us.
+TIMER [dspev]: 147984us.
+TIMER [coeff]: 207988us.
+TIMER [otras cosas]: 14309us.
+ iter           3 QM Energy=  -1625.10221871149
+TIMER [Total iter]: 2s. 71597us.
+TIMER [principio int3lu]: 78814us.
+TIMER [int3lu]: 76840us.
+Group 116 cost 172438450 time 37921us.
+Group 112 cost 85753600 time 20118us.
+Group 110 cost 81009000 time 19217us.
+Group 109 cost 71060740 time 17112us.
+Group 108 cost 63631240 time 16066us.
+Group 107 cost 60867900 time 13880us.
+Group 106 cost 58028110 time 14667us.
+Group 105 cost 43417500 time 10244us.
+Group 104 cost 42603280 time 10249us.
+Group 103 cost 38852630 time 9251us.
+Group 102 cost 33263200 time 7900us.
+Group 101 cost 30023800 time 7252us.
+Group 100 cost 25561780 time 6241us.
+Group 99 cost 15672400 time 4344us.
+Group 98 cost 9859600 time 2777us.
+Group 97 cost 7520500 time 2156us.
+Group 96 cost 6948480 time 1981us.
+Group 95 cost 6818920 time 1977us.
+Group 94 cost 6453120 time 1840us.
+Group 93 cost 5707900 time 1685us.
+Group 92 cost 5443840 time 1638us.
+Group 91 cost 5068240 time 1565us.
+Group 90 cost 4312240 time 1322us.
+Group 89 cost 4120720 time 1252us.
+Group 88 cost 3690400 time 1147us.
+Group 87 cost 3126310 time 1037us.
+Group 86 cost 2908150 time 945us.
+Group 85 cost 2441020 time 814us.
+Group 84 cost 2341000 time 786us.
+Group 83 cost 2303220 time 747us.
+Group 82 cost 2263690 time 841us.
+Group 81 cost 2185200 time 848us.
+Group 80 cost 1925550 time 656us.
+Group 79 cost 1721890 time 604us.
+Group 78 cost 1687870 time 617us.
+Group 77 cost 1646200 time 619us.
+Group 76 cost 1610380 time 572us.
+Group 75 cost 1586600 time 579us.
+Group 74 cost 1535380 time 591us.
+Group 73 cost 1504600 time 543us.
+Group 72 cost 1331860 time 475us.
+Group 71 cost 1283200 time 450us.
+Group 70 cost 1217200 time 427us.
+Group 69 cost 1188700 time 463us.
+Group 68 cost 1135780 time 402us.
+Group 67 cost 1023300 time 354us.
+Group 66 cost 886650 time 316us.
+Group 65 cost 691750 time 232us.
+Group 64 cost 637150 time 201us.
+Group 63 cost 611530 time 220us.
+Group 62 cost 590470 time 210us.
+Group 61 cost 586960 time 193us.
+Group 60 cost 579940 time 188us.
+Group 59 cost 578860 time 189us.
+Group 58 cost 562620 time 172us.
+Group 57 cost 555370 time 187us.
+Group 56 cost 548620 time 170us.
+Group 55 cost 447340 time 132us.
+Group 54 cost 433600 time 159us.
+Group 53 cost 418300 time 142us.
+Group 52 cost 418300 time 137us.
+Group 51 cost 414560 time 147us.
+Group 50 cost 410650 time 143us.
+Group 49 cost 394160 time 118us.
+Group 48 cost 390080 time 118us.
+Group 47 cost 388720 time 117us.
+Group 46 cost 366960 time 96us.
+Group 45 cost 366280 time 85us.
+Group 44 cost 366280 time 87us.
+Group 43 cost 362880 time 95us.
+Group 42 cost 357440 time 93us.
+Group 41 cost 348700 time 94us.
+Group 40 cost 344500 time 98us.
+Group 39 cost 337600 time 77us.
+Group 38 cost 336100 time 89us.
+Group 37 cost 334000 time 86us.
+Group 36 cost 331600 time 76us.
+Group 35 cost 327350 time 87us.
+Group 34 cost 296800 time 51us.
+Group 33 cost 292350 time 60us.
+Group 32 cost 291250 time 58us.
+Group 31 cost 287950 time 56us.
+Group 30 cost 287620 time 45us.
+Group 29 cost 286850 time 53us.
+Group 28 cost 280800 time 43us.
+Group 27 cost 272320 time 37us.
+Group 26 cost 271600 time 34us.
+Group 25 cost 271000 time 38us.
+Group 24 cost 270720 time 39us.
+Group 23 cost 268200 time 32us.
+Group 22 cost 267360 time 31us.
+Group 21 cost 266800 time 29us.
+Group 20 cost 266240 time 28us.
+Group 19 cost 265680 time 26us.
+Group 18 cost 264490 time 27us.
+Group 17 cost 264280 time 25us.
+Group 16 cost 263020 time 27us.
+Group 15 cost 262320 time 22us.
+Group 14 cost 261760 time 21us.
+Group 13 cost 259870 time 18us.
+Group 12 cost 258400 time 16us.
+Group 11 cost 256400 time 20us.
+Group 10 cost 256400 time 17us.
+Group 9 cost 255600 time 16us.
+Group 8 cost 255200 time 15us.
+Group 7 cost 253120 time 14us.
+Group 6 cost 252700 time 10us.
+Group 5 cost 252220 time 11us.
+Group 4 cost 250560 time 15us.
+Group 3 cost 250520 time 13us.
+Group 2 cost 250500 time 13us.
+Group 1 cost 250450 time 11us.
+Group 0 cost 250440 time 10us.
+Workload 0: (113) 233343us.density = 202913us. rmm = 29710us. forces = 5us. functions = 0us.
+SMALL GROUPS = 233382us.
+Group 111 cost 84974250 time 3306us.
+Group 113 cost 124942960 time 2921us.
+Group 114 cost 131273360 time 2959us.
+Group 115 cost 157792000 time 3251us.
+Group 117 cost 211001800 time 4536us.
+Group 118 cost 220128190 time 4645us.
+Group 119 cost 250585540 time 4896us.
+Group 120 cost 270452100 time 5895us.
+Group 121 cost 335961430 time 6435us.
+Group 122 cost 418488640 time 8632us.
+Group 123 cost 625736680 time 12591us.
+Group 124 cost 967013140 time 18820us.
+Group 125 cost 1051882000 time 20531us.
+Group 126 cost 1060277950 time 25296us.
+Group 127 cost 2636611000 time 47415us.
+Group 128 cost 2861857000 time 52402us.
+Group 129 cost 2920040200 time 52464us.
+Group 130 cost 3662327900 time 66029us.
+Group 131 cost 4426553860 time 95345us.
+Group 132 cost 4445650960 time 79384us.
+Group 133 cost 5585181040 time 119875us.
+Group 134 cost 116219320 time 3196us.
+Group 135 cost 136996720 time 3926us.
+Group 136 cost 149637760 time 3815us.
+Group 137 cost 149637760 time 3857us.
+Group 138 cost 149637760 time 3815us.
+Group 139 cost 149637760 time 3810us.
+Group 140 cost 152885320 time 4240us.
+Group 141 cost 152885320 time 3905us.
+Group 142 cost 152885320 time 3906us.
+Group 143 cost 152885320 time 4473us.
+Group 144 cost 213436600 time 5063us.
+Group 145 cost 217312720 time 5151us.
+Group 146 cost 217312720 time 5138us.
+Group 147 cost 225169720 time 5347us.
+Group 148 cost 363284140 time 8053us.
+Group 149 cost 395719000 time 8438us.
+Group 150 cost 395719000 time 8431us.
+Group 151 cost 461630500 time 9846us.
+Group 152 cost 461630500 time 9822us.
+Group 153 cost 461630500 time 9827us.
+Group 154 cost 473974720 time 10044us.
+Group 155 cost 473974720 time 10057us.
+Group 156 cost 473974720 time 10046us.
+Group 157 cost 473974720 time 10032us.
+Group 158 cost 473974720 time 10053us.
+Group 159 cost 480207940 time 10181us.
+Group 160 cost 480207940 time 10137us.
+Group 161 cost 480207940 time 10166us.
+Group 162 cost 613427740 time 12537us.
+Group 163 cost 627646000 time 12734us.
+Group 164 cost 649278940 time 13193us.
+Group 165 cost 656571400 time 13410us.
+Group 166 cost 716377720 time 14370us.
+Group 167 cost 724036840 time 14489us.
+Group 168 cost 739477300 time 14733us.
+Group 169 cost 739477300 time 14723us.
+Group 170 cost 747258640 time 14875us.
+Group 171 cost 770847100 time 15268us.
+Group 172 cost 778791400 time 15346us.
+Group 173 cost 786776440 time 15740us.
+Group 174 cost 794802220 time 15648us.
+Group 175 cost 802868740 time 15838us.
+Group 176 cost 819124000 time 16061us.
+Group 177 cost 990639400 time 18960us.
+Group 178 cost 990639400 time 18990us.
+Group 179 cost 999642940 time 19184us.
+Group 180 cost 999642940 time 19186us.
+Group 181 cost 3732482140 time 69253us.
+BIG GROUPS = 1s. 199902us.
+density = 968707us. rmm = 227963us. forces = 6us. functions = 0us.
+enditer = 611us.
+iteracion total: 1s. 433983us.
+XC energy: 0
+TIMER [actualiza rmm]: 74658us.
+TIMER [diis]: 38126us.
+TIMER [dspev]: 147038us.
+TIMER [coeff]: 207996us.
+TIMER [otras cosas]: 14374us.
+ iter           4 QM Energy=  -2089.25312119777
+TIMER [Total iter]: 2s. 78814us.
+TIMER [principio int3lu]: 78695us.
+TIMER [int3lu]: 76817us.
+Group 116 cost 172438450 time 37916us.
+Group 112 cost 85753600 time 20110us.
+Group 110 cost 81009000 time 19210us.
+Group 109 cost 71060740 time 17130us.
+Group 108 cost 63631240 time 16072us.
+Group 107 cost 60867900 time 13884us.
+Group 106 cost 58028110 time 14665us.
+Group 105 cost 43417500 time 10248us.
+Group 104 cost 42603280 time 10248us.
+Group 103 cost 38852630 time 9264us.
+Group 102 cost 33263200 time 7894us.
+Group 101 cost 30023800 time 7265us.
+Group 100 cost 25561780 time 6241us.
+Group 99 cost 15672400 time 4343us.
+Group 98 cost 9859600 time 2775us.
+Group 97 cost 7520500 time 2171us.
+Group 96 cost 6948480 time 1979us.
+Group 95 cost 6818920 time 1976us.
+Group 94 cost 6453120 time 1833us.
+Group 93 cost 5707900 time 1677us.
+Group 92 cost 5443840 time 1636us.
+Group 91 cost 5068240 time 1569us.
+Group 90 cost 4312240 time 1313us.
+Group 89 cost 4120720 time 1253us.
+Group 88 cost 3690400 time 1144us.
+Group 87 cost 3126310 time 1035us.
+Group 86 cost 2908150 time 939us.
+Group 85 cost 2441020 time 794us.
+Group 84 cost 2341000 time 780us.
+Group 83 cost 2303220 time 754us.
+Group 82 cost 2263690 time 834us.
+Group 81 cost 2185200 time 843us.
+Group 80 cost 1925550 time 644us.
+Group 79 cost 1721890 time 609us.
+Group 78 cost 1687870 time 611us.
+Group 77 cost 1646200 time 616us.
+Group 76 cost 1610380 time 570us.
+Group 75 cost 1586600 time 570us.
+Group 74 cost 1535380 time 596us.
+Group 73 cost 1504600 time 534us.
+Group 72 cost 1331860 time 491us.
+Group 71 cost 1283200 time 436us.
+Group 70 cost 1217200 time 433us.
+Group 69 cost 1188700 time 444us.
+Group 68 cost 1135780 time 407us.
+Group 67 cost 1023300 time 351us.
+Group 66 cost 886650 time 304us.
+Group 65 cost 691750 time 250us.
+Group 64 cost 637150 time 197us.
+Group 63 cost 611530 time 223us.
+Group 62 cost 590470 time 201us.
+Group 61 cost 586960 time 192us.
+Group 60 cost 579940 time 195us.
+Group 59 cost 578860 time 185us.
+Group 58 cost 562620 time 170us.
+Group 57 cost 555370 time 175us.
+Group 56 cost 548620 time 164us.
+Group 55 cost 447340 time 135us.
+Group 54 cost 433600 time 165us.
+Group 53 cost 418300 time 139us.
+Group 52 cost 418300 time 140us.
+Group 51 cost 414560 time 141us.
+Group 50 cost 410650 time 134us.
+Group 49 cost 394160 time 119us.
+Group 48 cost 390080 time 125us.
+Group 47 cost 388720 time 120us.
+Group 46 cost 366960 time 96us.
+Group 45 cost 366280 time 87us.
+Group 44 cost 366280 time 87us.
+Group 43 cost 362880 time 96us.
+Group 42 cost 357440 time 88us.
+Group 41 cost 348700 time 93us.
+Group 40 cost 344500 time 97us.
+Group 39 cost 337600 time 76us.
+Group 38 cost 336100 time 93us.
+Group 37 cost 334000 time 86us.
+Group 36 cost 331600 time 76us.
+Group 35 cost 327350 time 85us.
+Group 34 cost 296800 time 50us.
+Group 33 cost 292350 time 56us.
+Group 32 cost 291250 time 56us.
+Group 31 cost 287950 time 54us.
+Group 30 cost 287620 time 44us.
+Group 29 cost 286850 time 44us.
+Group 28 cost 280800 time 41us.
+Group 27 cost 272320 time 39us.
+Group 26 cost 271600 time 35us.
+Group 25 cost 271000 time 38us.
+Group 24 cost 270720 time 38us.
+Group 23 cost 268200 time 31us.
+Group 22 cost 267360 time 31us.
+Group 21 cost 266800 time 30us.
+Group 20 cost 266240 time 27us.
+Group 19 cost 265680 time 25us.
+Group 18 cost 264490 time 26us.
+Group 17 cost 264280 time 30us.
+Group 16 cost 263020 time 26us.
+Group 15 cost 262320 time 22us.
+Group 14 cost 261760 time 21us.
+Group 13 cost 259870 time 19us.
+Group 12 cost 258400 time 17us.
+Group 11 cost 256400 time 19us.
+Group 10 cost 256400 time 18us.
+Group 9 cost 255600 time 17us.
+Group 8 cost 255200 time 14us.
+Group 7 cost 253120 time 13us.
+Group 6 cost 252700 time 10us.
+Group 5 cost 252220 time 12us.
+Group 4 cost 250560 time 13us.
+Group 3 cost 250520 time 12us.
+Group 2 cost 250500 time 11us.
+Group 1 cost 250450 time 10us.
+Group 0 cost 250440 time 9us.
+Workload 0: (113) 233232us.density = 202799us. rmm = 29723us. forces = 5us. functions = 0us.
+SMALL GROUPS = 233273us.
+Group 111 cost 84974250 time 3002us.
+Group 113 cost 124942960 time 3590us.
+Group 114 cost 131273360 time 2947us.
+Group 115 cost 157792000 time 3250us.
+Group 117 cost 211001800 time 4528us.
+Group 118 cost 220128190 time 4641us.
+Group 119 cost 250585540 time 4904us.
+Group 120 cost 270452100 time 5894us.
+Group 121 cost 335961430 time 6467us.
+Group 122 cost 418488640 time 8627us.
+Group 123 cost 625736680 time 12591us.
+Group 124 cost 967013140 time 18855us.
+Group 125 cost 1051882000 time 20541us.
+Group 126 cost 1060277950 time 25290us.
+Group 127 cost 2636611000 time 47448us.
+Group 128 cost 2861857000 time 52358us.
+Group 129 cost 2920040200 time 52650us.
+Group 130 cost 3662327900 time 65865us.
+Group 131 cost 4426553860 time 95308us.
+Group 132 cost 4445650960 time 79381us.
+Group 133 cost 5585181040 time 119954us.
+Group 134 cost 116219320 time 3202us.
+Group 135 cost 136996720 time 3927us.
+Group 136 cost 149637760 time 3823us.
+Group 137 cost 149637760 time 3854us.
+Group 138 cost 149637760 time 3843us.
+Group 139 cost 149637760 time 3822us.
+Group 140 cost 152885320 time 4221us.
+Group 141 cost 152885320 time 3906us.
+Group 142 cost 152885320 time 3904us.
+Group 143 cost 152885320 time 4490us.
+Group 144 cost 213436600 time 5069us.
+Group 145 cost 217312720 time 5138us.
+Group 146 cost 217312720 time 5149us.
+Group 147 cost 225169720 time 5356us.
+Group 148 cost 363284140 time 8041us.
+Group 149 cost 395719000 time 8555us.
+Group 150 cost 395719000 time 8420us.
+Group 151 cost 461630500 time 9815us.
+Group 152 cost 461630500 time 9816us.
+Group 153 cost 461630500 time 9828us.
+Group 154 cost 473974720 time 10047us.
+Group 155 cost 473974720 time 10031us.
+Group 156 cost 473974720 time 10052us.
+Group 157 cost 473974720 time 10033us.
+Group 158 cost 473974720 time 10042us.
+Group 159 cost 480207940 time 10155us.
+Group 160 cost 480207940 time 10143us.
+Group 161 cost 480207940 time 10174us.
+Group 162 cost 613427740 time 12532us.
+Group 163 cost 627646000 time 12735us.
+Group 164 cost 649278940 time 13212us.
+Group 165 cost 656571400 time 13364us.
+Group 166 cost 716377720 time 14375us.
+Group 167 cost 724036840 time 14509us.
+Group 168 cost 739477300 time 14760us.
+Group 169 cost 739477300 time 14706us.
+Group 170 cost 747258640 time 14866us.
+Group 171 cost 770847100 time 15295us.
+Group 172 cost 778791400 time 15355us.
+Group 173 cost 786776440 time 15552us.
+Group 174 cost 794802220 time 15687us.
+Group 175 cost 802868740 time 16010us.
+Group 176 cost 819124000 time 16027us.
+Group 177 cost 990639400 time 18950us.
+Group 178 cost 990639400 time 18984us.
+Group 179 cost 999642940 time 19172us.
+Group 180 cost 999642940 time 19214us.
+Group 181 cost 3732482140 time 69260us.
+BIG GROUPS = 1s. 200501us.
+density = 969479us. rmm = 227770us. forces = 5us. functions = 0us.
+enditer = 613us.
+iteracion total: 1s. 434475us.
+XC energy: 0
+TIMER [actualiza rmm]: 74831us.
+TIMER [diis]: 46869us.
+TIMER [dspev]: 148702us.
+TIMER [coeff]: 207937us.
+TIMER [otras cosas]: 14303us.
+ iter           5 QM Energy=  -1856.47819652718
+TIMER [Total iter]: 2s. 89616us.
+TIMER [principio int3lu]: 78806us.
+TIMER [int3lu]: 77158us.
+Group 116 cost 172438450 time 37911us.
+Group 112 cost 85753600 time 20127us.
+Group 110 cost 81009000 time 19235us.
+Group 109 cost 71060740 time 17173us.
+Group 108 cost 63631240 time 16077us.
+Group 107 cost 60867900 time 13891us.
+Group 106 cost 58028110 time 14673us.
+Group 105 cost 43417500 time 10254us.
+Group 104 cost 42603280 time 10256us.
+Group 103 cost 38852630 time 9261us.
+Group 102 cost 33263200 time 7900us.
+Group 101 cost 30023800 time 7264us.
+Group 100 cost 25561780 time 6242us.
+Group 99 cost 15672400 time 4347us.
+Group 98 cost 9859600 time 2774us.
+Group 97 cost 7520500 time 2158us.
+Group 96 cost 6948480 time 1982us.
+Group 95 cost 6818920 time 1983us.
+Group 94 cost 6453120 time 1839us.
+Group 93 cost 5707900 time 1677us.
+Group 92 cost 5443840 time 1644us.
+Group 91 cost 5068240 time 1560us.
+Group 90 cost 4312240 time 1315us.
+Group 89 cost 4120720 time 1250us.
+Group 88 cost 3690400 time 1142us.
+Group 87 cost 3126310 time 1030us.
+Group 86 cost 2908150 time 946us.
+Group 85 cost 2441020 time 807us.
+Group 84 cost 2341000 time 778us.
+Group 83 cost 2303220 time 769us.
+Group 82 cost 2263690 time 841us.
+Group 81 cost 2185200 time 845us.
+Group 80 cost 1925550 time 652us.
+Group 79 cost 1721890 time 604us.
+Group 78 cost 1687870 time 615us.
+Group 77 cost 1646200 time 611us.
+Group 76 cost 1610380 time 570us.
+Group 75 cost 1586600 time 578us.
+Group 74 cost 1535380 time 592us.
+Group 73 cost 1504600 time 538us.
+Group 72 cost 1331860 time 477us.
+Group 71 cost 1283200 time 444us.
+Group 70 cost 1217200 time 421us.
+Group 69 cost 1188700 time 461us.
+Group 68 cost 1135780 time 397us.
+Group 67 cost 1023300 time 351us.
+Group 66 cost 886650 time 319us.
+Group 65 cost 691750 time 233us.
+Group 64 cost 637150 time 199us.
+Group 63 cost 611530 time 217us.
+Group 62 cost 590470 time 203us.
+Group 61 cost 586960 time 195us.
+Group 60 cost 579940 time 186us.
+Group 59 cost 578860 time 186us.
+Group 58 cost 562620 time 172us.
+Group 57 cost 555370 time 176us.
+Group 56 cost 548620 time 169us.
+Group 55 cost 447340 time 130us.
+Group 54 cost 433600 time 158us.
+Group 53 cost 418300 time 144us.
+Group 52 cost 418300 time 137us.
+Group 51 cost 414560 time 141us.
+Group 50 cost 410650 time 146us.
+Group 49 cost 394160 time 119us.
+Group 48 cost 390080 time 117us.
+Group 47 cost 388720 time 121us.
+Group 46 cost 366960 time 96us.
+Group 45 cost 366280 time 84us.
+Group 44 cost 366280 time 85us.
+Group 43 cost 362880 time 95us.
+Group 42 cost 357440 time 87us.
+Group 41 cost 348700 time 98us.
+Group 40 cost 344500 time 98us.
+Group 39 cost 337600 time 78us.
+Group 38 cost 336100 time 89us.
+Group 37 cost 334000 time 92us.
+Group 36 cost 331600 time 77us.
+Group 35 cost 327350 time 85us.
+Group 34 cost 296800 time 49us.
+Group 33 cost 292350 time 57us.
+Group 32 cost 291250 time 56us.
+Group 31 cost 287950 time 54us.
+Group 30 cost 287620 time 43us.
+Group 29 cost 286850 time 46us.
+Group 28 cost 280800 time 42us.
+Group 27 cost 272320 time 37us.
+Group 26 cost 271600 time 33us.
+Group 25 cost 271000 time 40us.
+Group 24 cost 270720 time 38us.
+Group 23 cost 268200 time 35us.
+Group 22 cost 267360 time 31us.
+Group 21 cost 266800 time 33us.
+Group 20 cost 266240 time 29us.
+Group 19 cost 265680 time 30us.
+Group 18 cost 264490 time 27us.
+Group 17 cost 264280 time 25us.
+Group 16 cost 263020 time 26us.
+Group 15 cost 262320 time 23us.
+Group 14 cost 261760 time 21us.
+Group 13 cost 259870 time 18us.
+Group 12 cost 258400 time 16us.
+Group 11 cost 256400 time 19us.
+Group 10 cost 256400 time 17us.
+Group 9 cost 255600 time 15us.
+Group 8 cost 255200 time 15us.
+Group 7 cost 253120 time 14us.
+Group 6 cost 252700 time 10us.
+Group 5 cost 252220 time 10us.
+Group 4 cost 250560 time 13us.
+Group 3 cost 250520 time 13us.
+Group 2 cost 250500 time 11us.
+Group 1 cost 250450 time 10us.
+Group 0 cost 250440 time 10us.
+Workload 0: (113) 233409us.density = 202989us. rmm = 29699us. forces = 5us. functions = 0us.
+SMALL GROUPS = 233448us.
+Group 111 cost 84974250 time 3223us.
+Group 113 cost 124942960 time 3384us.
+Group 114 cost 131273360 time 2955us.
+Group 115 cost 157792000 time 3235us.
+Group 117 cost 211001800 time 4537us.
+Group 118 cost 220128190 time 4663us.
+Group 119 cost 250585540 time 4899us.
+Group 120 cost 270452100 time 5899us.
+Group 121 cost 335961430 time 6455us.
+Group 122 cost 418488640 time 8632us.
+Group 123 cost 625736680 time 12598us.
+Group 124 cost 967013140 time 18850us.
+Group 125 cost 1051882000 time 20529us.
+Group 126 cost 1060277950 time 25480us.
+Group 127 cost 2636611000 time 47569us.
+Group 128 cost 2861857000 time 52395us.
+Group 129 cost 2920040200 time 52473us.
+Group 130 cost 3662327900 time 65767us.
+Group 131 cost 4426553860 time 95312us.
+Group 132 cost 4445650960 time 79342us.
+Group 133 cost 5585181040 time 119887us.
+Group 134 cost 116219320 time 3190us.
+Group 135 cost 136996720 time 4042us.
+Group 136 cost 149637760 time 3803us.
+Group 137 cost 149637760 time 3847us.
+Group 138 cost 149637760 time 3819us.
+Group 139 cost 149637760 time 3818us.
+Group 140 cost 152885320 time 4246us.
+Group 141 cost 152885320 time 3900us.
+Group 142 cost 152885320 time 3889us.
+Group 143 cost 152885320 time 4485us.
+Group 144 cost 213436600 time 5074us.
+Group 145 cost 217312720 time 5151us.
+Group 146 cost 217312720 time 5125us.
+Group 147 cost 225169720 time 5350us.
+Group 148 cost 363284140 time 8055us.
+Group 149 cost 395719000 time 8452us.
+Group 150 cost 395719000 time 8424us.
+Group 151 cost 461630500 time 9815us.
+Group 152 cost 461630500 time 9852us.
+Group 153 cost 461630500 time 9852us.
+Group 154 cost 473974720 time 10043us.
+Group 155 cost 473974720 time 10055us.
+Group 156 cost 473974720 time 10088us.
+Group 157 cost 473974720 time 10061us.
+Group 158 cost 473974720 time 10060us.
+Group 159 cost 480207940 time 10156us.
+Group 160 cost 480207940 time 10159us.
+Group 161 cost 480207940 time 10181us.
+Group 162 cost 613427740 time 12542us.
+Group 163 cost 627646000 time 12722us.
+Group 164 cost 649278940 time 13213us.
+Group 165 cost 656571400 time 13318us.
+Group 166 cost 716377720 time 14350us.
+Group 167 cost 724036840 time 14495us.
+Group 168 cost 739477300 time 14741us.
+Group 169 cost 739477300 time 14702us.
+Group 170 cost 747258640 time 14854us.
+Group 171 cost 770847100 time 15301us.
+Group 172 cost 778791400 time 15349us.
+Group 173 cost 786776440 time 15581us.
+Group 174 cost 794802220 time 15666us.
+Group 175 cost 802868740 time 15859us.
+Group 176 cost 819124000 time 16078us.
+Group 177 cost 990639400 time 19298us.
+Group 178 cost 990639400 time 19026us.
+Group 179 cost 999642940 time 19173us.
+Group 180 cost 999642940 time 19307us.
+Group 181 cost 3732482140 time 69185us.
+BIG GROUPS = 1s. 200806us.
+density = 969559us. rmm = 228000us. forces = 5us. functions = 0us.
+enditer = 609us.
+iteracion total: 1s. 434951us.
+XC energy: 0
+TIMER [actualiza rmm]: 74817us.
+TIMER [diis]: 55816us.
+TIMER [dspev]: 149488us.
+TIMER [coeff]: 207939us.
+TIMER [otras cosas]: 14296us.
+ iter           6 QM Energy=  -2015.79544228541
+TIMER [Total iter]: 2s. 100287us.
+ NO CONVERGENCE AT            5  ITERATIONS
+Group 116 cost 172438450 time 32447us.
+Group 112 cost 85753600 time 17463us.
+Group 110 cost 81009000 time 16666us.
+Group 109 cost 71060740 time 14920us.
+Group 108 cost 63631240 time 14067us.
+Group 107 cost 60867900 time 11937us.
+Group 106 cost 58028110 time 12838us.
+Group 105 cost 43417500 time 8882us.
+Group 104 cost 42603280 time 8912us.
+Group 103 cost 38852630 time 8039us.
+Group 102 cost 33263200 time 6864us.
+Group 101 cost 30023800 time 6267us.
+Group 100 cost 25561780 time 5388us.
+Group 99 cost 15672400 time 3855us.
+Group 98 cost 9859600 time 2458us.
+Group 97 cost 7520500 time 1904us.
+Group 96 cost 6948480 time 1770us.
+Group 95 cost 6818920 time 1765us.
+Group 94 cost 6453120 time 1620us.
+Group 93 cost 5707900 time 1484us.
+Group 92 cost 5443840 time 1454us.
+Group 91 cost 5068240 time 1384us.
+Group 90 cost 4312240 time 1175us.
+Group 89 cost 4120720 time 1120us.
+Group 88 cost 3690400 time 1020us.
+Group 87 cost 3126310 time 929us.
+Group 86 cost 2908150 time 846us.
+Group 85 cost 2441020 time 715us.
+Group 84 cost 2341000 time 702us.
+Group 83 cost 2303220 time 661us.
+Group 82 cost 2263690 time 762us.
+Group 81 cost 2185200 time 772us.
+Group 80 cost 1925550 time 584us.
+Group 79 cost 1721890 time 548us.
+Group 78 cost 1687870 time 551us.
+Group 77 cost 1646200 time 564us.
+Group 76 cost 1610380 time 516us.
+Group 75 cost 1586600 time 518us.
+Group 74 cost 1535380 time 548us.
+Group 73 cost 1504600 time 486us.
+Group 72 cost 1331860 time 442us.
+Group 71 cost 1283200 time 392us.
+Group 70 cost 1217200 time 388us.
+Group 69 cost 1188700 time 406us.
+Group 68 cost 1135780 time 359us.
+Group 67 cost 1023300 time 322us.
+Group 66 cost 886650 time 278us.
+Group 65 cost 691750 time 210us.
+Group 64 cost 637150 time 180us.
+Group 63 cost 611530 time 208us.
+Group 62 cost 590470 time 185us.
+Group 61 cost 586960 time 179us.
+Group 60 cost 579940 time 170us.
+Group 59 cost 578860 time 168us.
+Group 58 cost 562620 time 153us.
+Group 57 cost 555370 time 164us.
+Group 56 cost 548620 time 150us.
+Group 55 cost 447340 time 119us.
+Group 54 cost 433600 time 150us.
+Group 53 cost 418300 time 129us.
+Group 52 cost 418300 time 130us.
+Group 51 cost 414560 time 135us.
+Group 50 cost 410650 time 135us.
+Group 49 cost 394160 time 112us.
+Group 48 cost 390080 time 111us.
+Group 47 cost 388720 time 107us.
+Group 46 cost 366960 time 89us.
+Group 45 cost 366280 time 78us.
+Group 44 cost 366280 time 80us.
+Group 43 cost 362880 time 88us.
+Group 42 cost 357440 time 81us.
+Group 41 cost 348700 time 86us.
+Group 40 cost 344500 time 97us.
+Group 39 cost 337600 time 72us.
+Group 38 cost 336100 time 85us.
+Group 37 cost 334000 time 83us.
+Group 36 cost 331600 time 71us.
+Group 35 cost 327350 time 81us.
+Group 34 cost 296800 time 47us.
+Group 33 cost 292350 time 55us.
+Group 32 cost 291250 time 54us.
+Group 31 cost 287950 time 52us.
+Group 30 cost 287620 time 42us.
+Group 29 cost 286850 time 43us.
+Group 28 cost 280800 time 39us.
+Group 27 cost 272320 time 35us.
+Group 26 cost 271600 time 32us.
+Group 25 cost 271000 time 36us.
+Group 24 cost 270720 time 37us.
+Group 23 cost 268200 time 35us.
+Group 22 cost 267360 time 29us.
+Group 21 cost 266800 time 28us.
+Group 20 cost 266240 time 25us.
+Group 19 cost 265680 time 23us.
+Group 18 cost 264490 time 25us.
+Group 17 cost 264280 time 23us.
+Group 16 cost 263020 time 24us.
+Group 15 cost 262320 time 19us.
+Group 14 cost 261760 time 19us.
+Group 13 cost 259870 time 17us.
+Group 12 cost 258400 time 15us.
+Group 11 cost 256400 time 18us.
+Group 10 cost 256400 time 17us.
+Group 9 cost 255600 time 15us.
+Group 8 cost 255200 time 14us.
+Group 7 cost 253120 time 13us.
+Group 6 cost 252700 time 10us.
+Group 5 cost 252220 time 8us.
+Group 4 cost 250560 time 12us.
+Group 3 cost 250520 time 12us.
+Group 2 cost 250500 time 11us.
+Group 1 cost 250450 time 10us.
+Group 0 cost 250440 time 9us.
+Workload 0: (113) 203331us.density = 202717us. rmm = 6us. forces = 5us. functions = 0us.
+SMALL GROUPS = 203366us.
+Group 111 cost 84974250 time 2596us.
+Group 113 cost 124942960 time 2430us.
+Group 114 cost 131273360 time 2469us.
+Group 115 cost 157792000 time 2727us.
+Group 117 cost 211001800 time 3759us.
+Group 118 cost 220128190 time 3859us.
+Group 119 cost 250585540 time 4092us.
+Group 120 cost 270452100 time 4794us.
+Group 121 cost 335961430 time 5360us.
+Group 122 cost 418488640 time 6971us.
+Group 123 cost 625736680 time 10099us.
+Group 124 cost 967013140 time 15069us.
+Group 125 cost 1051882000 time 16433us.
+Group 126 cost 1060277950 time 22057us.
+Group 127 cost 2636611000 time 37810us.
+Group 128 cost 2861857000 time 41802us.
+Group 129 cost 2920040200 time 41811us.
+Group 130 cost 3662327900 time 52648us.
+Group 131 cost 4426553860 time 79306us.
+Group 132 cost 4445650960 time 63163us.
+Group 133 cost 5585181040 time 99474us.
+Group 134 cost 116219320 time 2636us.
+Group 135 cost 136996720 time 3249us.
+Group 136 cost 149637760 time 3100us.
+Group 137 cost 149637760 time 3137us.
+Group 138 cost 149637760 time 3116us.
+Group 139 cost 149637760 time 3111us.
+Group 140 cost 152885320 time 3510us.
+Group 141 cost 152885320 time 3182us.
+Group 142 cost 152885320 time 3152us.
+Group 143 cost 152885320 time 3741us.
+Group 144 cost 213436600 time 4103us.
+Group 145 cost 217312720 time 4138us.
+Group 146 cost 217312720 time 4155us.
+Group 147 cost 225169720 time 4336us.
+Group 148 cost 363284140 time 6488us.
+Group 149 cost 395719000 time 6781us.
+Group 150 cost 395719000 time 6784us.
+Group 151 cost 461630500 time 7915us.
+Group 152 cost 461630500 time 7912us.
+Group 153 cost 461630500 time 7933us.
+Group 154 cost 473974720 time 8081us.
+Group 155 cost 473974720 time 8069us.
+Group 156 cost 473974720 time 8074us.
+Group 157 cost 473974720 time 8078us.
+Group 158 cost 473974720 time 8086us.
+Group 159 cost 480207940 time 8161us.
+Group 160 cost 480207940 time 8169us.
+Group 161 cost 480207940 time 8170us.
+Group 162 cost 613427740 time 10027us.
+Group 163 cost 627646000 time 10199us.
+Group 164 cost 649278940 time 10590us.
+Group 165 cost 656571400 time 10678us.
+Group 166 cost 716377720 time 11468us.
+Group 167 cost 724036840 time 11565us.
+Group 168 cost 739477300 time 11928us.
+Group 169 cost 739477300 time 11785us.
+Group 170 cost 747258640 time 11895us.
+Group 171 cost 770847100 time 12192us.
+Group 172 cost 778791400 time 12325us.
+Group 173 cost 786776440 time 12418us.
+Group 174 cost 794802220 time 14276us.
+Group 175 cost 802868740 time 12644us.
+Group 176 cost 819124000 time 12878us.
+Group 177 cost 990639400 time 15179us.
+Group 178 cost 990639400 time 15192us.
+Group 179 cost 999642940 time 15342us.
+Group 180 cost 999642940 time 15326us.
+Group 181 cost 3732482140 time 55718us.
+BIG GROUPS = 972229us.
+density = 969508us. rmm = 5us. forces = 6us. functions = 0us.
+enditer = 0us.
+iteracion total: 1s. 175670us.
+XC energy: -248.3950097
+
+  ENERGY CONTRIBUTIONS IN A.U.
+  ONE ELECTRON         COULOMB           NUCLEAR
+-11169.6927589      5266.8531350      3887.0441817
+TIMER [mulliken]: 6479us.
+TIMER [mulliken_write]: 322us.
+TIMER [SCF]: 23s. 784450us.
+ SCF ENRGY=  -2264.19045200740
+<====== Deinitializing G2G ======>
