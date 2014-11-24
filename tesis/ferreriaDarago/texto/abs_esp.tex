@@ -6,30 +6,30 @@
 \noindent
 
 En este trabajo se busca analizar distintas arquitecturas de procesadores especializados
-en c\'omputos masivos. Para estudiarlos, se trabaj\'o sobre una implementacion existente
-de una aplicacion de quimica cuantica que resuelve sistemas de estructura electronica.
+en c\'omputos masivos. Para estudiarlos, se trabaj\'o sobre una implementaci\'on existente
+de una aplicaci\'on de qu\'imica cu\'antica que resuelve sistemas de estructura electr\'onica.
 Originalmente, se contaba con implementaciones de los algoritmos de la Teoria de los
-Funcionales de la Densidad (DFT) hechas en CPU y GPU, pero su performance no escalaba con los
-dispositivos modernos, dados los cambios tecnologicos sucedidos desde entonces. Se busc\'o
-aumentar la performance de las partes que mas tiempo insumian en el calculo utilizando
-las caracteristicas unicas de las arquitecturas de CPU y GPU modernas. La mejora de
-rendimiento en los calculos obtenida en la generacion actual de GPU es del orden de ocho
-veces, mientras que la de CPU pudo escalar mas de veinticuatro veces.
+Funcionales de la Densidad (DFT) hechas en CPU y GPGPU, pero su performance no escalaba con los
+dispositivos modernos, dados los cambios tecnol\'ogicos sucedidos desde entonces. Se busc\'o
+aumentar la \textit{performance} de las partes que m\'as tiempo insum\'ian en el c\'alculo utilizando
+las caracteristicas \'unicas de las arquitecturas de CPU y GPGPU modernas. La mejora de
+rendimiento en los c\'alculos obtenida en la generacion actual de GPGPU es del \'orden de ocho
+veces, mientras que la de CPU pudo escalar m\'as de veinte veces.
 
 Se aplicaron en este trabajo tambien m\'etodos para particionar tareas en CPU y GPU y como
-balancear cargas en tiempo de ejecucion, utilizando multiples GPU simetricas y asimetricas,
-obteniendo resultados cercanos al optimo teorico.
+balancear cargas en tiempo de ejecuci\'on, utilizando multiples GPU sim\'etricas y asim\'etricas,
+obteniendo resultados cercanos al optimo te\'orico.
 
 Por otra parte, se pudo explorar una arquitectura nueva de c\'omputo masivo, la
 tecnolog\'ia Xeon Phi de Intel para poder estudiar su aplicabilidad en aplicaciones reales, con
 resultados prometedores a futuro.
 
-Finalmente, los resultados obtenidos reflejan la importancia de trabajar con el hardware
+Finalmente, los resultados obtenidos reflejan la importancia de trabajar con el \textit{hardware}
 apropiadamente, explotando las capacidades \'unicas de cada herramienta. Se deja asentada evidencia
-de como se puede realizar particiones hibridas GPU y CPU, con potenciales grandes mejoras
-de performance y gran escalabilidad usando los recursos disponibles. Se espera que el analisis
-realizado y las tecnicas implementadas durante este trabajo sirvan tambien para guiar mejoras
-de performance futuras de aplicaciones similares para aprovechar los crecientes recursos de c\'omputo
+de como se puede realizar particiones h\'ibridas GPU y CPU, con potenciales grandes mejoras
+de performance y gran escalabilidad usando los recursos disponibles. Se espera que el an\'alisis
+realizado y las t\'ecnicas implementadas durante este trabajo sirvan tambien para guiar mejoras
+de \textit{performance} futuras de aplicaciones similares para aprovechar los crecientes recursos de c\'omputo
 disponibles.
 
 \bigskip
