@@ -66,14 +66,14 @@ resto de los c\'alculos.
 
 \section{Tama\~no de los grupos}
 \label{tamgrupos}
-Un parametro que se experimento durante el desarrollo del trabajo fue el tamaño de las particiones.
-Los cubos y las esferas que agrupan los puntos fueron descriptos en la seccion \ref{implementacion}. El parametro
-del tama\~no de los cubos siempre se considero que debia ser ``grande'' para GPU mientras que debia ser
+Un par\'ametro que se experimento durante el desarrollo del trabajo fue el tama\~no de las particiones.
+Los cubos y las esferas que agrupan los puntos fueron descriptos en la secci\'on \ref{implementacion}. El par\'ametro
+del tama\~no de los cubos siempre se considero que deb\'ia ser ``grande'' para GPU mientras que deb\'ia ser
 ``chico'' para CPU. Para comprobar el impacto, analizamos para cada arquitectura el tiempo de ejecuci\'on
-de cada grupo en funcion del costo computacional, definido en la seccion \ref{PredictorCPU}. Este costo ademas
+de cada grupo en funci\'on del costo computacional, definido en la secci\'on \ref{PredictorCPU}. Este costo ademas
 sirve para determinar cuales grupos deben hacerse en paralelo, y en cuales usar el paralelismo interno. Estos
 los clasificamos como grupos \textit{chicos} y \textit{grandes} respectivamente. En GPU no se realiza esa
-distincion. Luego, evaluamos el tiempo de ejecucion acumulado para cada una de estas cuatro categorias.
+distinci\'on. Luego, evaluamos el tiempo de ejecuci\'on acumulado para cada una de estas cuatro categor\'ias.
 
 
 \begin{figure}[htbp]
@@ -97,7 +97,7 @@ distincion. Luego, evaluamos el tiempo de ejecucion acumulado para cada una de e
  \end{subfigure} \\
  \end{tabular}
  \caption{Tiempos acumulados de ejecutar Hemoglobina, separados por tama\~no de grupos y
- caracterizacion.}
+ caracterizaci\'on.}
  \label{fig:group-times}
 \end{figure}
 
@@ -105,8 +105,8 @@ La figura \ref{fig:group-times} aclara el por que usar grupos chicos para CPU y 
 para GPU. El overhead que se ve en GPU al hacer grupos chicos es sumamente elevado, a pesar de que
 el costo computacional sea relativamente bajo. Esto se puede ver tanto en grupos de tama\~no
 3 como tama\~no 7. Este overhead, sin embargo, se vuelve despreciable cuando se analiza el costo
-de resolver los grupos de mayor tama\~no. Consistentemente el GPU obtiene un menor tiempo de ejecucion
-con respecto al CPU usando la paralelizacion interna. Esto indica que si la particion genera demasiados
+de resolver los grupos de mayor tama\~no. Consistentemente el GPU obtiene un menor tiempo de ejecuci\'on
+con respecto al CPU usando la paralelizaci\'on interna. Esto indica que si la partici\'on genera demasiados
 grupos, GPU no va a poder superar el overhead de resolver cada uno, haciendo que el tiempo acumulado sea
 mayor que el de CPU que tiene una peor performance en particiones grandes.
 
