@@ -36,7 +36,10 @@ para Xeon Phi, por las siguientes dos razones:
 \end{itemize}
 
 Por lo tanto, las comparaciones se realizan contra la versi\'on optimizada para
-CPU como se ha descripto en la secci\'on anterior. De acuerdo a la
+CPU como se ha descripto en la secci\'on anterior. El c\'odigo fuente utilizado
+es exactamente el mismo que en la versi\'on terminada en CPU, con la diferencia
+que es compilado para la arquitectura MIC, junto con todas las librer\'ias
+utilizadas.
 
 En primera instancia obtuvimos resultados muy desalentadores en la versi\'on
 \textit{monoprocesador} del c\'odigo, como puede verse en la figura~\ref{fig:prelim-xeon-phi}.
@@ -104,19 +107,50 @@ m\'as grupos grandes. Pero esto impacta negativamente en la escalabilidad ya que
 \end{itemize}
 
 Por ejemplo, en la figura~\ref{fig:partition-balance} se puede ver el balance
-de la partici\'on resultante de utilizar 60 procesadores y un \textit{threshold}
-de 20, para tener la mayor cantidad de procesadores posible. Se detalla tanto
+de la partici\'on resultante de utilizar 60 procesadores y la funci\'on de costo
+y valores de divisi\'on calculados en la secci\'on anterior. Se detalla tanto
 el desbalance te\'orico (predicho por la partici\'on) como el balance de tiempo.
-El balance de tiempo es especialmente pronunciado.
+El balance de tiempo es especialmente pronunciado, y puede verse un incremento
+muy pronunciado del tiempo de ejecuci\'on tambi\'en para grupos chicos. Al ser
+los mismos ejecutados serialmente, este incremento es consistente con los
+resultados anteriores, pero disminuye el atractivo de la divisi\'on en cargas de
+los grupos chicos en el Xeon Phi.
 
-Otro aspecto de importancia es la necesidad de modificar la funci\'on de costo
+\begin{figure}[htbp]
+   \centering
+   \begin{subfigure}[b]{\plotwidthtres}
+     \includegraphics[width=\textwidth]{plots/xeonphi/xeon-phi-partition-balance-theoretical.png}
+     \caption{Costo total predicho para la partici\'on}
+   \end{subfigure}
+   \begin{subfigure}[b]{\plotwidthtres}
+       \includegraphics[width=\textwidth]{plots/xeonphi/xeon-phi-partition-balance-empirical.png}
+     \caption{Tiempo de ejecuci\'on efectivo}
+   \end{subfigure}
+   \caption{Comparaci\'on entre la menor y mayor de las cargas para \textit{threads},
+   seg\'un el tipo de parametro, para una iteraci\'on del grupo hemo en Xeon Phi, usando
+   la funci\'on de costo y divisi\'on en grupos obtenida, en 60 threads.}
+   \label{fig:partition-balance}
+\end{figure}
+
+De lo anterior se desprende tambi\'en la necesidad de modificar la funci\'on de costo
 para el Xeon Phi. En esta arquitectura todo c\'omputo serial es muy fuerte, con
 lo cual ahora no se tiene un \textit{overhead} por cubo tan pesado con relaci\'on
-al c\'omputo. Por esto la funci\'on de costo anterior no resulta \'util, y es
-mejor usar como costo la cantidad de operaciones a realizar (ver figura~\ref{fig:cost-function-xeon-phi}).
+al c\'omputo. Por esto la funci\'on de costo anterior no resulta \'util, como
+puede verse en la figura~\ref{fig:cost-function-xeon-phi}, y que tambi\'en explica
+porque el desbalance se acrecent\'o tanto en la figura~\ref{fig:partition-balance}.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/cost-fit-xeon-phi.png}
+   \caption{Tiempo de resoluci\'on en milisegundos en funci\'on del costo predicho
+   por el algoritmo para CPU, para cada grupo, en el caso del grupo hemo en Xeon Phi.
+   Como puede verse, no hay una correlaci\'on fuerte entre estos valores.}
+   \label{fig:cost-function-xeon-phi}
+\end{figure}
 
 Es tambi\'en importante notar que la escalabilidad para los cubos
-y esferas grandes es menor que en la partici\'on (debido a componentes seriales
+y esferas grandes es menor que para la divisi\'on entre procesadores de los cubos
+chicos (debido a componentes seriales
 en la iteraci\'on) con lo cual incrementar la cantidad de cores produce un
 incremento correspondiente a la ley de Amdahl. Como la partici\'on para grupos
 chicos se vuelve menos efectiva, esta parte pasa a ser m\'as importante, bajando
@@ -130,6 +164,14 @@ puede verse en la figura~\ref{fig:enditer-xeon-phi}. Esto disminuye a\'un m\'as
 las ventajas obtenidas por la paralelizaci\'on externa, ya que m\'as procesadores
 involucrados m\'as matrices es necesario reducir.
 
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/enditer-xeon-phi.png}
+   \caption{Tiempo de reducci\'on de las matrices de fuerzas y Khom-Sham para
+   la iteraci\'on del grupo hemo en Xeon Phi, seg\'un la cantidad de threads.}
+   \label{fig:enditer-xeon-phi}
+\end{figure}
+
 Como conclusi\'on entonces, vemos que en el caso de Xeon Phi no tiene sentido
 realizar una paralelizaci\'on de cubos y esferas chicos y grandes como la realiza
 la implementaci\'on CPU. Para hacer corresponder esto, empleamos un \textit{threshold}
@@ -138,6 +180,31 @@ threads disponibles.
 
 Los resultados de la escalabilidad resultante de este c\'odigo se pueden ver
 en la figura~\ref{fig:xeon-final-scalability}. Se puede ver que la misma no es
-buena, por lo ya visto anteriormente, correspondiendo de acuerdo a la ley de Amdahl
-a un X\% de la iteraci\'on efectivamente paralelizada. Esto no logra palear los
-efectos del mal comportamiento del Xeon Phi en c\'odigo serial.
+buena, lo cual es consistente con la discusi\'on realizada anteriormente sobre
+la necesidad de una paralelizaci\'on externa. Sin embargo, como se ve en la figura
+~\ref{fig:xeon-xeon-phi-parallelized-iteration}, el tiempo de iteraci\'on
+para el caso de 240 threads y utilizando solo paralelizaci\'on interna es
+comparable con los resultados alcanzados por el Xeon.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/escalabilidad-xeon-phi.png}
+   \caption{Speedup obtenido para la iteraci\'on del grupo hemo en Xeon Phi,
+   seg\'un la cantidad de threads. Se da el speedup te\'orico para comparaci\'on.}
+   \label{fig:xeon-final-scalability}
+\end{figure}
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/xeon-xeon-phi-scale-comparison.png}
+   \caption{Tiempo de iteraci\'on para el grupo hemo entre Xeon y Xeon Phi.}
+   \label{fig:xeon-xeon-phi-parallelized-iteration}
+\end{figure}
+
+Los resultados son entonces similares a los encontrados en otros trabajos,
+donde el Xeon Phi alcanza velocidades interesantes utilizando paralelismo
+pero donde el c\'odigo se ve fuertemente impactado por su baja performance serial.
+
+Teniendo entonces estos resultados preliminares, decidimos no utilizar el Xeon Phi
+para el resto de los resultados comparativos, ya que no logra una mejora por sobre
+una versi\'on de CPU de la familia Xeon.
