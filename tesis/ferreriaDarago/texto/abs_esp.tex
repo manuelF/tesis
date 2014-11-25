@@ -7,10 +7,11 @@
 
 En este trabajo se busca analizar distintas arquitecturas de procesadores especializados
 en c\'omputos masivos. Para estudiarlos, se trabaj\'o sobre una implementaci\'on existente
-de una aplicaci\'on de qu\'imica cu\'antica que resuelve sistemas de estructura electr\'onica.
+de una aplicaci\'on de qu\'imica cu\'antica que resuelve c\'alculos de estructura electr\'onica.
 Originalmente, se contaba con implementaciones de los algoritmos de la Teoria de los
 Funcionales de la Densidad (DFT) hechas en CPU y GPGPU, pero su performance no escalaba con los
-dispositivos modernos, dados los cambios tecnol\'ogicos sucedidos desde entonces. Se busc\'o
+dispositivos modernos, dados los cambios tecnol\'ogicos sucedidos desde su implementaci\'on original.
+En este trabajo se busc\'o
 aumentar la \textit{performance} de las partes que m\'as tiempo insum\'ian en el c\'alculo utilizando
 las caracteristicas \'unicas de las arquitecturas de CPU y GPGPU modernas. La mejora de
 rendimiento en los c\'alculos obtenida en la generacion actual de GPGPU es del \'orden de ocho
@@ -22,7 +23,7 @@ obteniendo resultados cercanos al optimo te\'orico.
 
 Por otra parte, se pudo explorar una arquitectura nueva de c\'omputo masivo, la
 tecnolog\'ia Xeon Phi de Intel para poder estudiar su aplicabilidad en aplicaciones reales, con
-resultados prometedores a futuro.
+resultados poco alentadores, consistentes con otros estudios.
 
 Finalmente, los resultados obtenidos reflejan la importancia de trabajar con el \textit{hardware}
 apropiadamente, explotando las capacidades \'unicas de cada herramienta. Se deja asentada evidencia
