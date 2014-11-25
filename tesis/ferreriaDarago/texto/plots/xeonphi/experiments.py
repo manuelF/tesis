@@ -66,7 +66,7 @@ def xeon_phi_single_core_scf():
         "values": comparison,
         "ticks": labels,
         "filename": u'xeon-xeon-phi-broad-comparison-scf.png',
-        "ylabel": u"Tiempo de ejecución [s]",
+        "ylabel": u"Tiempo de ejecución [ms]",
         "rotation": 20,
     }
 
