@@ -211,7 +211,7 @@ Como va a haber $altura\_bloque$ cantidad de escrituras para cada punto, va a en
 hacer falta guardar estas cuentas parciales en memoria global. Para eso definimos una matriz
 por cada uno de los par\'ametros que debemos acumular, con tama\~no id\'entico a la cantidad de bloques
 del kernel del computo de densidad electr\'onica, para que cada uno de estos escriba \'unicamente en una posici\'on
-un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura_bloque)$,
+un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura\_bloque)$,
 menos de 1MB en el caso m\'as grande.
 
 El siguiente paso de la reducci\'on consiste en acumular los $altura\_bloque$ valores descriptos
