@@ -1,6 +1,36 @@
+\section{Aceleraciones alcanzadas en CPU}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cpu/escalabilidad-caroteno.png}
+   \caption{Grupo Caroteno}
+   \label{fig:cpu-scalability-caroteno}
+ \end{subfigure}
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cpu/escalabilidad-fullereno.png}
+   \caption{Grupo Fullereno}
+   \label{fig:cpu-scalability-fullereno}
+ \end{subfigure}
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cpu/escalabilidad-hemoglobina.png}
+   \caption{Grupo Hemoglobina}
+   \label{fig:cpu-scalability-hemo}
+ \end{subfigure}
+ \caption{\textit{Speedup} conseguidos para la iteraci\'on XC en Xeon, seg\'un
+ la clase de problema examinado.}
+ \label{fig:cpu-scalability}
+\end{figure}
+
+Las figuras~\ref{fig:cpu-scalability-hemo},~\ref{fig:cpu-scalability-caroteno} y
+~\ref{fig:cpu-scalability-fullereno} muestran el \textit{speedup} conseguido en
+el c\'odigo de CPU en Xeon para el grupo Hemo, Caroteno y Fullereno respectivamente.
+Dada la heterogeneidad de estos grupos podemos concluir entonces que el c\'odigo
+hace un excelente uso de las prestaciones de procesadores multicore tradicionales
+de la arquitectura Xeon en una iteresante variedad de casos.
+
 \section{Aceleraciones alcanzadas en CUDA}
 \label{resultados-cuda}
-
 
 \begin{figure}[htbp]
 \centering
@@ -35,7 +65,6 @@
  las optimizaciones realizadas.}
  \label{fig:cuda-parts}
 \end{figure}
-
 
 Las figuras \ref{fig:cuda-parts} y \ref{fig:cuda-scf} muestran la fracci\'on de tiempo que insum\'ia el
 calculo de XC dentro de SCF, corrido con la GPU mas potente en el mercado, la Tesla K40.
