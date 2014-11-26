@@ -1,8 +1,8 @@
-\subsection{Cuellos de botellas originales}
+\subsection{Limitantes de performance}
 
 De las etapas descriptas en la figura \ref{fig:lio-steps}, el m\'as costoso
 en la implementaci\'on existente para GPU es el paso (j). En el c\'alculo de un sistema
-de tama\~no medio, este paso solo representaba el 95\% del tiempo total. Esto hacia
+de tama\~no medio, este paso solo representaba el 94\% del tiempo total. Esto hacia
 que esta etapa llevara tanto tiempo como todos los dem\'as c\'alculos de SCF combinados, incluso
 en las GPU m\'as veloces del mercado (Tesla K40, GeForce GTX 780). Adem\'as, en Fermi
 el tiempo de c\'omputo de SCF era menor que en Kepler, yendo en contra de lo que prometen
@@ -13,7 +13,7 @@ las especificaciones de estos dispositivos.
 A continuaci\'on detallaremos muchos de los cambios que fueron realizados para aumentar
 la performance del c\'omputo de XC.
 
-\subsection{Subsaturacion de los SM}
+\subsection{Subsaturaci\'on de los SM}
 La subsaturacion de los SM se da en los casos donde haya SM que est\'en listos para correr
 c\'odigo pero que no puedan hacerlo porque tienen contenci\'on en algunos de sus recursos.
 La m\'etrica usada para determinar esta saturaci\'on es la ocupancia de los SP.
@@ -68,7 +68,7 @@ fundamentales a la hora de evaluar como proseguir en la b\'usqueda de optimizaci
 De los 3 kernels que originalmente compon\'ian la iteraci\'on de XC en GPU, el que se encargaba
 del c\'alculo de la densidad electr\'onica de la contribuci\'on de la energ\'ia de intercambio correlaci\'on
 insum\'ia el 93\% del tiempo total de uso de la GPU. Minimizar el tiempo de ejecuci\'on de
-esta funci\'on resultaba vital para poder disminuir el tiempo de convergencia de SCF.
+esta funci\'on resultaba vital para poder disminuir el tiempo de iteraci\'on de SCF.
 
 Este kernel computa resoluci\'on num\'erica de la integral descripta en la secci\'on introductoria.
 \begin{equation}
@@ -78,30 +78,22 @@ Este kernel computa resoluci\'on num\'erica de la integral descripta en la secci
     $\Downarrow$
 \end{center}
 \begin{equation}
-  E_{XC} \approx \sum^{puntos}_k \rho^k \epsilon_{xc} (\rho^k,\nabla \rho^k) W_j
+  E_{XC} \approx \sum^{puntos}_k \rho^k \epsilon_{xc} (\rho^k,\nabla \rho^k) w_k
 \end{equation}
-donde
+donde $\rho$ se calcula para cada punto $k$
 \begin{equation}
   \rho^k = \sum_{i<m} F^k_i \sum_{j<i} F^k_j C_{i,j}
 \end{equation}
-Esta calcula el termino de la energ\'ia de intercambio correlaci\'on, usando una grilla
-de puntos con peso. Esta cuenta se realiza por cada partici\'on de los grupos en el mallado
-del problema. El t\'ermino $\rho$ se obtiene de la base gaussiana usada, y $\epsilon_{xc}$
-son los coeficientes variacionales. La operatoria entonces que se realiza
-en el procesador es
-\begin{equation}
-  E_{XC} \approx \sum^{puntos} \sum_{i<m} F_i \sum_{j<i} F_j C_{i,j}
-\end{equation}
-
-Donde $F_i$, $F_j$ son los valores del mallado de las funciones de la base en un punto dado,
-$m$ es la cantidad de funciones de la base y $C_{i,j}$ son los coeficientes de la matriz densidad.
+%TODO agregar que w_k es peso y agregarlo en implementacion
+con $F^k_i$, $F^k_j$ son los valores de las funciones significativas en el punto $k$ y
+$C_{i,j}$ son los coeficientes de la matriz densidad.
 
 El cuello de botella fundamental en la ejecuci\'on radicaba en como se distribu\'ia el trabajo de computo
 entre los kernels. La estrategia de paralelizaci\'on original determinaba la partici\'on
 del sistema a resolver instanciando un bloque por cada punto ({$blockId.x < m$}),
 una cantidad fija de threads (usando $threadId.x < BLOCK\_SIZE$)
 Los threads serv\'ian para reutilizar la memoria compartida; cada thread le\'ia un
-elemento de la matriz de coeficientes ($C_{i,j})$) y luego lo compart\'ian con los
+elemento de la matriz densidad ($C_{i,j})$) y luego lo compart\'ian con los
 dem\'as threads.
 
 
@@ -361,7 +353,7 @@ que las estructuras de datos subyacentes se van a acceder usando indices multidi
 En nuestro problema, la memoria de textura se presenta como una soluci\'on para
 los accesos bidimensionales de la matriz densidad para el grupo de puntos.
 Como esta matriz debe ser multiplicada por todos los valores de las funciones,
-derivadas primeras y segundas, se va a acceder a toda la matriz de coeficientes mas de
+derivadas primeras y segundas, se va a acceder a toda la matriz densidad mas de
 una vez por cada thread. Adem\'as, como se va a usar toda la matriz, y esta suele
 tener un tama\~no intermedio (es muy grande para memoria constante), el problema
 suele entrar casi completamente en la memoria de textura.
@@ -796,7 +788,7 @@ Este gr\'afico permite visualizar cual es la magnitud del error de estimaci\'on 
 Resolver un sistema, en principio, debiera ser inherentemente paralelo; resolver para un grupo
 no afecta resolver para otro. Sin embargo, escalar este problema entre m\'ultiples placas crea
 nuevos problemas que no exist\'ian antes, como la concurrencia de escrituras sobre el bus de memoria.
-Como cada dispositivo va a tener que copiarse un fragmento de la matriz global de coeficientes
+Como cada dispositivo va a tener que copiarse un fragmento de la matriz global de densidad
 y acumular en la matriz de Kohn-Sham de salida, va a existir una contenci\'on entre los threads que manejan
 cada uno una GPU para leer y escribir en la memoria principal. Esto ocasiona que el speedup entre
 m\'ultiples placas no sea lineal; al haber una cantidad limitada de trabajo que hacer en GPU y un fragmento de
