@@ -50,30 +50,72 @@ def itsPerDia():
       'filename':"its-dia.png"}
   barGraph(**params)
 
+#def tamParticion():
+##Runtime total por grupo vs sizeingpu vs cost en Fullereno k40 cecar
+#  fileformat = {'names': ('runtimecpu', 'runtimegpu'),
+#        'formats' :('float32','float32')}
+#  files = [
+#      ("measures/tiempos_hemo/big-times-3","cost-time-cpu-gpu-big-size-3.png"),
+#      ("measures/tiempos_hemo/small-times-3","cost-time-cpu-gpu-small-size-3.png"),
+#      ("measures/tiempos_hemo/big-times-7","cost-time-cpu-gpu-big-size-7.png"),
+#      ("measures/tiempos_hemo/small-times-7","cost-time-cpu-gpu-small-size-7.png")
+#      ]
+#  for f,fname in files:
+#    measures = np.loadtxt(f, fileformat)
+#    indices = np.array(range(1,len(measures)+1))
+#    a_cpu = measures['runtimecpu']
+#    a_gpu = measures['runtimegpu']
+#
+#    params =  {
+#        'xlabel':u"Cantidad grupos resueltos",
+#        'ylabel':u"Tiempo acumulado de resolución de grupos [ms]",
+#        'yvalues':map((lambda x: np.divide(x,1000.0)),[a_cpu, a_gpu]),
+#        'xvalues':indices,
+#        'ylegend': ['Tiempo CPU 12 threads', 'Tiempo GPU'],
+#        'filename':fname}
+#    lineGraph(**params)
+#
 def tamParticion():
 #Runtime total por grupo vs sizeingpu vs cost en Fullereno k40 cecar
-  fileformat = {'names': ('runtimecpu', 'runtimegpu'),
-        'formats' :('float32','float32')}
-  files = [
-      ("measures/tiempos_hemo/big-times-3","cost-time-cpu-gpu-big-size-3.png"),
-      ("measures/tiempos_hemo/small-times-3","cost-time-cpu-gpu-small-size-3.png"),
-      ("measures/tiempos_hemo/big-times-7","cost-time-cpu-gpu-big-size-7.png"),
-      ("measures/tiempos_hemo/small-times-7","cost-time-cpu-gpu-small-size-7.png")
-      ]
-  for f,fname in files:
-    measures = np.loadtxt(f, fileformat)
-    indices = np.array(range(1,len(measures)+1))
-    a_cpu = measures['runtimecpu']
-    a_gpu = measures['runtimegpu']
+  cpu_chicos_3=254.975
+  cpu_grandes_3=584.758
+  gpu_chicos_3=1181.110
+  gpu_grandes_3=295.015
 
-    params =  {
-        'xlabel':u"Cantidad grupos resueltos",
-        'ylabel':u"Tiempo acumulado de resolución de grupos [ms]",
-        'yvalues':map((lambda x: np.divide(x,1000.0)),[a_cpu, a_gpu]),
-        'xvalues':indices,
-        'ylegend': ['Tiempo CPU 12 threads', 'Tiempo GPU'],
-        'filename':fname}
-    lineGraph(**params)
+  cpu_chicos_7=30.028
+  cpu_grandes_7=1068.011
+  gpu_chicos_7=95.647
+  gpu_grandes_7=407.470
+
+  labels = [u"Grupos chicos", u"Grupos grandes"]
+  comparison = {
+      u"CPU 12 threads": [cpu_chicos_3, cpu_grandes_3 ],
+      u"GPU": [gpu_chicos_3, gpu_grandes_3],
+  }
+
+  params = {
+      'values': comparison,
+      'ticks': labels,
+      'filename': u'cpu-gpu-size-3.png',
+      'ylabel': u'Tiempo de ejecución [ms]',
+  }
+
+  multiComparativeBarChart(**params)
+
+  comparison = {
+      u"CPU 12 threads": [cpu_chicos_7, cpu_grandes_7 ],
+      u"GPU": [gpu_chicos_7, gpu_grandes_7],
+  }
+
+  params = {
+      'values': comparison,
+      'ticks': labels,
+      'filename': u'cpu-gpu-size-7.png',
+      'ylabel': u'Tiempo de ejecución [ms]',
+  }
+
+  multiComparativeBarChart(**params)
+
 
 
 if __name__ == '__main__':
