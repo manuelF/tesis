@@ -12,6 +12,12 @@ c\'alculo de la estructura electr\'onica.
    \label{fig:lio-steps}
 \end{figure}
 
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+
+
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=100px]{images/grilla.pdf}
@@ -27,22 +33,63 @@ c\'alculo de la estructura electr\'onica.
 % en vez de armar una lista para cada punto, si los agrupo espacialmente podes tener una lista que
 % englobe a todos los puntos va a tener menor overhead que tener una lista para cada punto
 
-Este esquema esta basado en el trabajo de Stratmann~\cite{Stratmann}, donde se propone
-agrupar puntos de la grilla en vez de resolver el computo uno por uno. El agrupamiento permite determinar
-cuales funciones tienen una contribuci\'on significativa al computo final. Dado que las
-funciones Gaussianas decaen r\'apidamente a la distancia, el tama\~no del conjunto de
-funciones significativas no depende del n\'umero de \'atomos del sistema. Es decir, el tama\~no
-tiene orden constante en t\'erminos de complejidad computacional. Como consecuencia, es posible
-subdividir el c\'alculo de la DFT computando los grupos de puntos de manera independientemente.
+En la introducci\'on del trabajo de describieron, a grandes rasgos, algunas de las ecuaciones que componen el calculo
+de la densidad electr\'onica. Estas fueron enunciadas sin detallar un m\'etodo efectivo de resoluci\'on del
+calculo de la densidad $\rho$. Para hacerlo se debe definir primero $\rho$ como
 
-Para construir estos grupos se genera un mallado en cubos y esferas que incluya todos los puntos
-de la grilla. Como los puntos no se distribuyen homog\'eneamente, sino que la mayor cantidad de ellos
-se concentran cerca de los n\'ucleos, si se usara una partici\'on \'unicamente basada en cubos, la cantidad
+\begin{equation}
+  \rho = \abs{\Psi}^2 = \sum^{e^{-}}_{k} \abs{\sum_i a^k_i F_i}^2
+\end{equation}
+
+donde $\Psi$ es la funci\'on de onda de Schr\"{o}dinger, $F_i$ son las funciones de la base usadas y los $a^k_i$ son
+los coeficientes que se usan para armar la combinaci\'on lineal de las funciones que mejor describan el comportamiento
+del sistema.  Para resolver el termino $\rho$ se usa un m\'etodo iterativo, donde se busca minimizar la energ\'ia de intercambio-correlaci\'on
+mediante el ajuste los coeficientes $a_i^k$, usando el criterio que afirma el principio variacional (ecuaci\'on \ref{princ_variacional})
+donde la densidad $\rho^*$ que brinda la menor energ\'ia es la correcta.
+
+As\'i mismo, la matriz densidad se define en funci\'on de los coeficientes $a^k_i$ de la siguiente manera:
+\begin{equation}
+  \label{eq:matriz-densidad}
+  C_{i,j} = 2 \sum^{e^{-}}_k a^k_i a^k_k
+\end{equation}
+
+Luego, la densidad $\rho$ puede ser calculada solamente en funci\'on de la base y de la matriz densidad de esta forma:
+\begin{equation}
+  \label{eq:rho-xc}
+  \rho = \sum^m_{i=1} \sum^i_{j=1} F_i F_j C_{i,j}
+\end{equation}
+con $m$ la cantidad de funciones de la base.
+
+Para resolver el termino de intercambio-correlaci\'on (ecuaci\'on \ref{eq:xc}), se puede discretizar el espacio relevante al
+modelo usando una grilla de puntos. De esta manera se puede aplicar las ecuaciones \ref{eq:matriz-densidad} y \ref{eq:rho-xc}
+para cada punto de la grilla.
+
+Esta soluci\'on, si bien es factible, cuenta con el problema de que los t\'erminos escalan cuadr\'atica mente
+en la cantidad de puntos, haciendo mallados muy finos inviables de calcular. En el trabajo de Strattman~\cite{Stratmann} se
+propone agrupar los puntos en listas espacialmente cercanas de modo de poder calcular los t\'erminos de la matriz densidad
+solamente usando aquellos con contribuciones significativas. Como las bases usadas en este calculo son funciones gaussianas,
+esto tiene mucho sentido ya que las contribuciones de las funciones decaen r\'apidamente seg\'un la distancia. Esto permite
+la reducci\'on de la complejidad temporal a la resoluci\'on de $n$ grupos $G_i$ con $k_i$ puntos de manera cuadr\'atica con respecto a $k_i$,
+mucho menor que el tiempo total para los $k$ puntos.
+
+Para la construcci\'on de estos grupos se genera un mallado en cubos y esferas que incluya todos los puntos
+de la grilla. Como los puntos no se distribuyen homog\'eneamente en el espacio sino que la mayor cantidad de ellos
+se concentran cerca de los n\'ucleos, si se usara una partici\'on \'unicamente basada en cubos de igual tama\~no, la cantidad
 de puntos contenidos en cada grupo diferir\'ia considerablemente. El uso de grupos esf\'ericos rodeando
 los nucleos eliminan zonas de alta concentraci\'on de puntos y permite que los puntos remanentes
 tengan una distribuci\'on mas homog\'enea. Este esquema de construcci\'on se muestra en la figura~\ref{fig:grilla}
-y el detalle algor\'itmico de la generaci\'on se estudi\'o previamente~\cite{Nitsche2014,TesisNitsche},
-sin modificaciones para este trabajo.
+
+
+Para hacer este agrupamiento, tambi\'en se tiene que determinar entonces cuanto aporta cada punto a la contribuci\'on definitiva
+a la densidad $\rho$. Se define entonces una lista de coeficientes $w_k$ que van a pesar las contribuciones de cada punto
+a la energ\'ia de intercambio correlaci\'on, que se define como
+\begin{equation}
+  E_{XC} \approx \sum^{puntos}_k \rho^k \epsilon_{xc} (\rho^k,\nabla \rho^k) w_k
+\end{equation}
+
+donde el funcional $\epsilon_{xc}$ usa tanto las funciones en el punto como las derivadas de las funciones para
+calcular la energ\'ia. El detalle algor\'itmico de la generaci\'on de grupos y de calculo de pesos de puntos
+se estudi\'o previamente~\cite{Nitsche2014,TesisNitsche}, sin modificaciones para este trabajo.
 
 Un diagrama simplificando la estructura del c\'alculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
 Los pasos (a) a (e) corresponden a la etapa de inicializaci\'on, y se calculan una \'unica vez
