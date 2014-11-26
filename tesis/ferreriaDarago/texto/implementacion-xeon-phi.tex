@@ -148,6 +148,12 @@ porque el desbalance se acrecent\'o tanto en la figura~\ref{fig:partition-balanc
    \label{fig:cost-function-xeon-phi}
 \end{figure}
 
+Adicionalmente, tampoco resulta \'util el balance de cargas en este caso: La baja
+performance serial provoca que cada c\'alculo sea m\'as pesado. Por lo tanto, las
+cargas m\'as pesadas (incluso para varios valores del \textit{threshold}) dominan
+un procesador entero y atrasan a todos los dem\'as, y como la carga consiste de
+un solo grupo balancearla no tiene sentido.
+
 Es tambi\'en importante notar que la escalabilidad para los cubos
 y esferas grandes es menor que para la divisi\'on entre procesadores de los cubos
 chicos (debido a componentes seriales
