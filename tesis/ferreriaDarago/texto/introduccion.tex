@@ -21,33 +21,34 @@ ser descriptas c\'omo ondas. As\'i, cualquier propiedad de un sistema esta deter
 \end{equation}
 donde $\mathbf{r} = (r_1,\dots,r_n)$ es el vector de todas las posiciones de las part\'iculas del sistema,
 $m$ es la masa de una part\'icula cualquiera, $V$ es un campo externo que afecta a las part\'iculas y
-$\hbar$ es la constante de Planck divida por $2\pi$. 
+$\hbar$ es la constante de Planck divida por $2\pi$.
 
-Si el campo externo no depende del tiempo esta ecuaci\'on se puede simplificar a:
-
-\begin{equation*}
-    \hat{H} =  -\frac{\hbar^2}{m} \nabla^2 + \hat{V}
-\end{equation*}
-que se conoce como la ecuaci\'on de Schr\"{o}dinger \textit{independiente del tiempo}
+Si el campo externo no depende del tiempo esta ecuaci\'on se puede simplificar a
+la de Schr\"{o}dinger \textit{independiente del tiempo}:
 
 \begin{equation}
     \label{schro_time_indep}
     \hat{H} \Psi(\mathbf{r}) = E \Psi(\mathbf{r})
 \end{equation}
-donde $E$ es la energ\'ia asociada a la funci\'on de onda $\Psi$.
+donde $E$ es la energ\'ia asociada a la funci\'on de onda $\Psi$ y $\hat{H}$ se define como
+
+\begin{equation*}
+    \hat{H} =  -\frac{\hbar^2}{m} \nabla^2 + \hat{V}
+\end{equation*}
+
 
 Ahora, si bien resolver esta ecuaci\'on diferencial ser\'ia suficiente para determinar todas las propiedades del sistema, esto no puede hacerse de
 manera exacta cuando hay m\'as de un electr\'on en el mismo. Por este motivo, para problemas de mayor tama\~no se utilizan aproximaciones
 para obtener una soluci\'on de la ecuaci\'on~\ref{schro_time_indep}.
 
-Existen diversos m\'etodos para resolver de forma aproximada esta ecuaci\'on con diferente costo computacional y calidad de la respuesta obtenida. 
+Existen diversos m\'etodos para resolver de forma aproximada esta ecuaci\'on con diferente costo computacional y calidad de la respuesta obtenida.
 Dentro de estos m\'etodos hay uno que destaca por su excelente relaci\'on costo/calidad, el m\'etodo basado en la Teor\'ia de los Funcionales de la Densidad (DFT, Density Functional Theory) desarrollada por Hohenberg y Kohn en 1964.
 
-En este marco te\'orico, la \textit{densidad electr\'onica} $\rho$ representa la probabilidad de encontrar un electr\'on en el espacio dada una configuraci\'on del sistema y ocupa un rol destacado.
+En este marco te\'orico, la \textit{densidad electr\'onica} $\rho$ que representa la probabilidad de encontrar un electr\'on en cada regi\'on del espacio ocupa un rol destacado.
 La base de este m\'etodo consiste en dos teoremas publicados por Hohenberg y Kohn ~\cite{HohenbergKohn}.
 Estos autores demuestran que $\rho$ y $V$ (y por lo tanto $\psi$) se encuentran relacionadas biunivocamente,
 es decir que una dada densidad electr\'onica contiene la misma informaci\'on que la funci\'on de onda.
-De esta manera cualquier observable (c\'omo la energ\'ia) puede ser representado c\'omo un funcional de la densidad (de all\'i su nombre).
+De esta manera cualquier observable (c\'omo la energ\'ia) puede ser representado c\'omo un funcional de la densidad (de all\'i el nombre de esta teor\'ia).
 
 Adem\'as propusieron la dependencia de la energ\'ia del sistema c\'omo funcional de la densidad de la siguiente forma:
 \begin{equation}
@@ -69,7 +70,7 @@ La forma comunmente utilizada para calcular este t\'ermino se basa en definir un
 De esta manera se puede calcular $E_{XC}$ \todo{>Si es el mismo t\'ermino mencionado en \ref{hohenberg_kohn_energy} deber\'ia escribirse igual (min\'uscula en xc)} mediante la integral:
 
 \begin{equation}
-    E_{XC} = \int \rho(r) \epsilon_{xc}\left( \rho(r) \right ) dr
+  E_{xc} = \int \rho(r) \epsilon_{xc}\left( \rho(r) \right ) d\vec{r}
 \end{equation}
 \todo{>La integral no deber\'ia definirse sobre un dominio?}
 
@@ -77,21 +78,26 @@ Esta ecuaci\'on puede ser aproximada mediante una suma utilizando una grilla de 
 
 \begin{equation}
     \label{approx_excenergy}
-    E_{XC} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
+    E_{xc} \approx \sum_j \rho(r_j) \epsilon_{xc} (\rho(r_j))
 \end{equation}
 
-Otro aspecto importante de esta teor\'ia es que provee una manera de calcular la densidad $\rho$, mediante el denominado m\'etodo de Kohn-Sham~\cite{KohnSham}. 
-Este m\'etodo se basa en el segundo teorema de Hohenberg y Khon, que establece que la densidad electr\'onica es la funci\'on que cumple que $\int \rho(r) dr = N$, la cantidad de \'atomos del sistema, $\rho(r) \geq 0$ y que minimiza la energ\'ia $E[\rho]$~\ref{hohenberg_kohn_energy}. 
-Esto produce un m\'etodo auto-consistente para calcular $\rho$. Se empieza con una aproximaci\'on inicial y se itera el c\'alculo de la misma usando una matriz, denominada \textit{Matriz de Kohn Sham}, hasta alcanzar un m\'inimo para $E$.
+Otro aspecto importante de esta teor\'ia es que provee una manera de calcular la densidad $\rho$, mediante el denominado m\'etodo de Kohn-Sham~\cite{KohnSham}.
+Este m\'etodo se basa en el segundo teorema de Hohenberg y Khon, que establece que cualquier densidad electr\'onica de prueba $\rho^*$ cumpla que $\int \rho^*(\vec{r}) d\vec{r} = N$, la cantidad de electrones del sistema
+se cumple que:
+\begin{equation}
+    \label{rhoasterisco}
+    E[\rho^*] \geq E[\rho]
+\end{equation}
+Esto produce un m\'etodo auto-consistente para calcular $\rho$. Se empieza con una aproximaci\'on inicial $\rho^*$ y se itera el c\'alculo de la misma mediante matriz, denominada \textit{Matriz de Kohn-Sham}, hasta alcanzar un m\'inimo para $E$.
 
-El algoritmo que se deduce de la DFT es uno de los m\'etodos m\'as populares en problemas de estado s\'olido, especialmente desde la d\'ecada del 90 cuando se mejoraron las aproximaciones para modelado de interacciones. 
+Este marco te\'orico es uno de los m\'etodos m\'as populares en problemas de estado s\'olido, especialmente desde la d\'ecada del 90 cuando se mejoraron las aproximaciones para modelado de interacciones.
 El valor de esta teor\'ia para el estudio de las propiedades de la materia le vali\'o a Kohn el Premio Nobel de Qu\'imica en 1998.
 
 Si bien la relaci\'on costo calidad de este m\'etodo es muy buena, el costo computacional asociado sigue siendo elevado, lo que limita su aplicaci\'on a sistemas peque\~nos (digamos cientos de \'atomos como m\'aximo).
 
-Por ello se han desarrollado los m\'etodos conocidos como \emph{mec\'anica molecular} (MM). 
+Por ello se han desarrollado los m\'etodos conocidos como \emph{mec\'anica molecular} (MM).
 En estos m\'etodos los \'atomos son tratados c\'omo esferas cargadas y las uniones qu\'imicas como resortes (potenciales arm\'onicos).
-De esta manera los electrones no son considerados expl\'icitamente, reduciendo dr\'asticamente el costo computacional asociado. 
+De esta manera los electrones no son considerados expl\'icitamente, reduciendo dr\'asticamente el costo computacional asociado.
 Esta t\'ecnica es muy poderosa para representar sistemas (o procesos) en los que no cambia la distribuci\'on electr\'onica.
 
 Sin embargo, en muchos de los problemas de inter\'es en qu\'imica y bioqu\'imica (por ejemplo una reacci\'on qu\'imica en soluci\'on o en el seno de una prote\'ina), el modelado requiere simult\'aneamente de la representaci\'on de miles de \'atomos y de un tratamiento expl\'icito de los electrones.
@@ -115,21 +121,21 @@ La contribuci\'on $E_{QM/MM}$ se calcula, en este trabajo, mediante la ecuaci\'o
 \begin{equation}
     E_{QM/MM} = \sum_{l = 1}^{N_c} q_l \int \frac{\rho(r)}{\mid r - R_l \mid} + \sum_{l = 1}^{N_c}\sum_{\alpha = 1}^{N_q} [ v_{LJ} ( \mid R_l - \tau_\alpha \mid ) + \frac{q_l z_\alpha}{\mid R_l - \tau_\alpha \mid} ]
 \end{equation}
-donde el primer t\'ermino relaciona una carga puntual del sistema cl\'asico con la densidad electr\'onica, y el segundo t\'ermino representa la interacci\'on entre los n\'ucleos cl\'asicos con los cu\'anticos mediante un potencial de Lennard-Jones y la interacci\'on Coulombica entre las cargas.
+donde el primer t\'ermino da cuenta de la interacci\'on entre una carga puntual del sistema cl\'asico con la densidad electr\'onica, y el segundo t\'ermino representa la interacci\'on entre los n\'ucleos cl\'asicos con los cu\'anticos mediante un potencial de Lennard-Jones y la interacci\'on Coulombica entre las cargas.
 
-Los m\'etodos \textit{QM/MM}, dentro del marco de m\'etodos multiescala, son ampliamente utilizados en la pr\'actica. 
+Los m\'etodos \textit{QM/MM}, dentro del marco de m\'etodos multiescala, son ampliamente utilizados en la pr\'actica.
 Estos modelos han valido a Karplus, Levitt y Warshel el premio Nobel de Qu\'imica en 2013, por su valor para la simulaci\'on de sistemas complejos.
 
-Nuestro trabajo se realiza en base a programas ya existentes. 
-El c\'alculo de $E_{QM}$ y $E_{QM/MM}$ son realizados por la aplicaci\'on LIO~\cite{Nitsche2014,TesisNitsche}, el cual fue optimizado en este trabajo para el uso de distintas arquitecturas de CPU y GPGPU. 
-Este paquete se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el c\'alculo de $E_{MM}$. 
+Nuestro trabajo se realiza en base a programas ya existentes.
+El c\'alculo de $E_{QM}$ y $E_{QM/MM}$ son realizados por la aplicaci\'on LIO~\cite{Nitsche2014,TesisNitsche}, el cual fue optimizado en este trabajo para el uso de distintas arquitecturas de CPU y GPGPU.
+Este paquete se complementa mediante el uso del programa de din\'amica molecular Amber~\cite{Amber}, que realiza el c\'alculo de $E_{MM}$.
 Nos concentraremos en las partes computacionalmente m\'as intensivas de LIO, que corresponden a la implementaci\'on de los c\'alculos de los t\'erminos de intercambio y correlaci\'on ya introducidos en esta secci\'on.
 
 \section{C\'omputo de alto rendimiento}
 
 Una parte significativa del impacto de las computadoras en los distintos aspectos de las ciencias, incluso de la vida diaria, se debe al crecimiento de su poder de c\'omputo desde la aparici\'on de los primeros microprocesadores hasta los disponibles hoy en d\'ia.
 
-Entre 1986 y 2002, la performance de los procesadores creci\'o, en promedio, un $50\%$ por a\~no~\cite{Pacheco2011}. 
+Entre 1986 y 2002, la performance de los procesadores creci\'o, en promedio, un $50\%$ por a\~no~\cite{Pacheco2011}.
 La denominada \textit{Ley de Moore} establece que la densidad de transistores por circuito integrado se duplica cada $18$ meses~\cite{HennessyPatterson}.
 Esto puede verse en la figura~\ref{moore-law}, que compara la cantidad de transistores de distintos procesadores desde 1971 a la actualidad.
 
@@ -160,12 +166,12 @@ Este enfoque en dise\~no de arquitecturas hacia otros tipos de paralelismo puede
 La revalorizaci\'on de las placas gr\'aficas (GPUs) para problemas de c\'omputo intensivo, y los desarrollos nuevos como la arquitectura MIC (\textit{Many Integrated Core Architecture}) de Intel son claros ejemplos de esta tendencia.
 
 El impacto de este enfoque hacia m\'ultiples hilos de ejecuci\'on en paralelo en el desarrollo de aplicaciones es significativo.
-En simulaciones para las \'areas de biolog\'ia, medicina, qu\'imica o meteorolog\'ia es de invaluable utilidad minimizar los tiempos de ejecuci\'on, para permitir mejores implementaciones de los modelos utilizados, permitiendo realizar predicciones de mayor calidad.
+En simulaciones para las \'areas de biolog\'ia, medicina, qu\'imica o meteorolog\'ia es de gran inter\'es minimizar los tiempos de ejecuci\'on, para permitir mejores implementaciones de los modelos utilizados, permitiendo realizar predicciones de mayor calidad.
 Aprovechar las nuevas arquitecturas multiprocesador requiere modificaciones en el c\'odigo que resultan no triviales, a diferencia del crecimiento en velocidad de \textit{clock} que no requer\'ia modificaciones en el dise\~no del programa.
 Los intentos de escribir programas que conviertan programas seriales (dise\~nados para un solo procesador) a paralelos, en lenguajes de prop\'osito general como C, C++ o Fortran, han sido relativamente infructuosos~\cite{Pacheco2011}.
 
 Existen, sin embargo, herramientas que realizan transformaciones de c\'odigo fuente serial a c\'odigo fuente con anotaciones de paralelizaci\'on autom\'aticas (usando bibliotecas de paralelizaci\'on asistida como OpenMP para las anotaciones).
-Ejemplos de estas herramientas incluyen Par4All~\cite{Par4AllThesis} y Cetus~\cite{CetusPaper}. 
+Ejemplos de estas herramientas incluyen Par4All~\cite{Par4AllThesis} y Cetus~\cite{CetusPaper}.
 Estas herramientas pretenden, adem\'as, generar c\'odigo para aceleradores especiales como GPGPUs.
 
 Como consecuencia, resulta necesario el trabajo a nivel de desarrollo de c\'odigo para utilizar m\'ultiples procesadores.
