@@ -70,32 +70,13 @@ del c\'alculo de la densidad electr\'onica de la contribuci\'on de la energ\'ia 
 insum\'ia el 93\% del tiempo total de uso de la GPU. Minimizar el tiempo de ejecuci\'on de
 esta funci\'on resultaba vital para poder disminuir el tiempo de iteraci\'on de SCF.
 
-Este kernel computa resoluci\'on num\'erica de la integral descripta en la secci\'on introductoria.
-\begin{equation}
-    E_{XC} = \int \rho(r) \epsilon_{xc}\left( \rho(r) \right ) dr
-\end{equation}
-\begin{center}
-    $\Downarrow$
-\end{center}
-\begin{equation}
-  E_{XC} \approx \sum^{puntos}_k \rho^k \epsilon_{xc} (\rho^k,\nabla \rho^k) w_k
-\end{equation}
-donde $\rho$ se calcula para cada punto $k$
-\begin{equation}
-  \rho^k = \sum_{i<m} F^k_i \sum_{j<i} F^k_j C_{i,j}
-\end{equation}
-%TODO agregar que w_k es peso y agregarlo en implementacion
-con $F^k_i$, $F^k_j$ son los valores de las funciones significativas en el punto $k$ y
-$C_{i,j}$ son los coeficientes de la matriz densidad.
-
 El cuello de botella fundamental en la ejecuci\'on radicaba en como se distribu\'ia el trabajo de computo
 entre los kernels. La estrategia de paralelizaci\'on original determinaba la partici\'on
-del sistema a resolver instanciando un bloque por cada punto ({$blockId.x < m$}),
-una cantidad fija de threads (usando $threadId.x < BLOCK\_SIZE$)
+del grupo a resolver instanciando un bloque por cada punto ({$blockId.x < m$})
+con una cantidad fija de threads (usando $threadId.x < BLOCK\_SIZE$)
 Los threads serv\'ian para reutilizar la memoria compartida; cada thread le\'ia un
 elemento de la matriz densidad ($C_{i,j})$) y luego lo compart\'ian con los
 dem\'as threads.
-
 
 \begin{figure}[htbp]
    \centering
@@ -106,16 +87,16 @@ dem\'as threads.
 \end{figure}
 
 El cambio m\'as importante para la performance provino de reconsiderar
-la estrategia de partici\'on. La grilla con un bloque por punto con una cantidad
-fija de threads tiene el problema de que, con bases grandes, tiene que realizar
+la estrategia de paralelizaci\'on. La grilla con un bloque por punto con una cantidad
+fija de threads tiene el problema de que, con bases con numerosas funciones, tiene que realizar
 mucho trabajo por bloque. Esto causa que los SM est\'en ocupados constantemente
-por kernels de larga duraci\'on. Lo que se busca es que los  bloques realicen
+por kernels de larga duraci\'on. Lo que se busca es que los bloques realicen
 menos trabajo por llamada, de modo que se puedan despachar a mas SM a medida
 que estos terminen. En definitiva, lo que se busca es incrementar el throughput
 de la placa. Esta estrategia se observa en la parte superior de la figura
 \ref{fig:cuda-xc-parallelism}.
 
-La nueva partici\'on que se eligi\'o dispone un bloque por funci\'on,
+La nueva partici\'on del c\'alculo que se eligi\'o dispone un bloque por funci\'on,
 de modo que cada thread $i$ realice la cuenta $F_i \sum_{j}^{i} F_j C_{i,j}$
 y se compartan entre threads los valores de $F_i$ le\'idos.
 Esta estrategia se ve en la parte inferior de la figura \ref{fig:cuda-xc-parallelism}.
