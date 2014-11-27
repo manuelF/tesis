@@ -252,20 +252,21 @@ def post_aligning_matrices():
 def escalabilidad_final():
     for exp in ["hemoglobina","caroteno", "fullereno"]:
         with open("measures/escalabilidad-%s.txt" % exp) as f:
-            pylab.xlabel("Cantidad de threads")
-            pylab.ylabel("Speedup en veces")
-            pylab.title("Prueba de escalabilidad para %s" % exp)
-
             lines = [v.split(" ") for v in f.readlines()]
             data = [(int(u), float(v)) for u,v in lines]
             threads, speedups = zip(*data)
 
-            pylab.plot(threads, speedups,"o-", label="Experimental")
-            pylab.plot(threads, threads, "o-", label="Obtenido")
-            pylab.legend(loc="best")
-
-            pylab.savefig( "escalabilidad-%s.png" % exp)
-            pylab.close()
+            params = {
+                'xlabel': "Cantidad de threads",
+                'ylabel': "Speedup en veces",
+                'xdata': threads,
+                'ydata1': speedups,
+                'ydata2': threads,
+                'label1': 'Experimental',
+                'label2': 'Ideal',
+                'filename': 'escalabilidad-%s' % exp
+            }
+            comparativeScatter(**params)
 
 def diferencias_de_grupos_por_split():
     timesstr = [

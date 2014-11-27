@@ -94,7 +94,124 @@ def xeon_phi_single_core_xc():
 
     multiComparativeBarChart(**params)
 
+def xeon_phi_partition_theoretical():
+    values = []
+    with open("particion-teorico.txt") as f:
+        for line in f.readlines():
+            values.append(int(line))
+
+    params = {
+        'yvalues': [min(values), max(values)],
+        'xvalues': [u"Mínima carga", u"Máxima carga"],
+        'xlabel': u"Comparación costos para cargas",
+        'filename': u'xeon-phi-partition-balance-theoretical.png',
+        'ylabel': u'Costo predicho para la carga',
+    }
+
+    comparisonBarGraph(**params)
+
+def xeon_phi_partition_empirical():
+    values = []
+    with open("particion-experimental.txt") as f:
+        for line in f.readlines():
+            values.append(time2secs(line))
+
+    params = {
+        'yvalues': [min(values), max(values)],
+        'xvalues': [u"Mínima carga", u"Máxima carga"],
+        'xlabel': u"Comparación tiempos para cargas",
+        'filename': u'xeon-phi-partition-balance-empirical.png',
+        'ylabel': u'Tiempo de iteracion para carga [s]'
+    }
+
+    comparisonBarGraph(**params)
+
+def xeon_phi_cost_function():
+    with open("xeon-phi-costs.txt", "r") as f:
+        costs, times = [], []
+        seen = set()
+        for line in f.readlines():
+            pieces = line.split(" ")
+            grouptype, number, cost, timestr = pieces[0],pieces[1],pieces[2]," ".join(pieces[3:])
+            group = grouptype + " " + number
+            if group not in seen:
+                costs.append(float(cost))
+                times.append(time2milis(timestr))
+                seen.add(group)
+
+        params = {
+            'xlabel': u"Costo predicho",
+            'ylabel': u"Runtime de un grupo [ms]",
+            'xvalues': np.array(costs),
+            'yvalues': np.array(times),
+            'ylegend': u"Runtime de un grupo",
+            'fitlegend': 'Fit lineal',
+            'filename': 'cost-fit-xeon-phi.png',
+        }
+
+        scatterGraphFitLineal(**params)
+
+def xeon_phi_scalability():
+    vals = []
+    with open("measures/escalabilidad-xeon-phi.txt") as f:
+        for line in f.readlines():
+            threadc, timestr = line.split("-")
+            vals.append((int(threadc), time2secs(timestr)))
+
+    vals = sorted(vals)
+    threads, vals = zip(*vals)
+
+    params = {
+        'xlabel': "Cantidad de threads",
+        'ylabel': "Speedup en veces",
+        'xdata': threads,
+        'ydata1': [max(vals) / v for v in vals],
+        'ydata2': [t for t in threads],
+        'label1': 'Experimental',
+        'label2': 'Ideal',
+        'filename': 'escalabilidad-xeon-phi.png',
+    }
+    comparativeScatter(**params)
+
+def xeon_phi_enditer():
+    vals = []
+    with open("measures/enditer-xeon-phi.txt") as f:
+        for line in f.readlines():
+            threadc, timestr = line.split("-")
+            vals.append((int(threadc), time2milis(timestr)))
+
+    threads,vals = zip(*sorted(vals))
+
+    params = {
+        'xlabel': u'Cantidad de threads',
+        'ylabel': u'Tiempo de reducción post iteración [ms]',
+        'xdata': threads,
+        'ydata': vals,
+        'filename': 'enditer-xeon-phi.png'
+    }
+
+    scatter(**params)
+
+def xeon_xeon_phi_final_comparison():
+    xeon = time2milis("842375us.")
+    xeonphi = time2milis("1s. 309920us.")
+    params = {
+        'yvalues': [xeon, xeonphi],
+        'xvalues': [u"Xeon", u"Xeon Phi"],
+        'xlabel': u"Arquitectura",
+        'filename': u'xeon-xeon-phi-scale-comparison.png',
+        'ylabel': u'Tiempo por iteracion [ms]',
+    }
+
+    comparisonBarGraph(**params)
+
 if __name__ == '__main__':
     xeon_phi_single_core()
     xeon_phi_single_core_scf()
     xeon_phi_single_core_xc()
+    xeon_phi_partition_theoretical()
+    xeon_phi_partition_empirical()
+    xeon_phi_cost_function()
+    xeon_phi_scalability()
+    xeon_phi_enditer()
+    xeon_xeon_phi_final_comparison()

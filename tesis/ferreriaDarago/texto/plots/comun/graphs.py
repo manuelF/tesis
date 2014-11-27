@@ -176,4 +176,22 @@ def histogram(xlabel, ylabel, values, nbins, title, filename):
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
+def scatter(xlabel, ylabel, filename, xdata, ydata):
+  pylab.xlabel(xlabel)
+  pylab.ylabel(ylabel)
+  pylab.plot(xdata, ydata, "o-")
+  pylab.savefig(filename, bbox_inches='tight')
+  pylab.close()
+
+def comparativeScatter(xlabel, ylabel, filename, xdata, ydata1, ydata2, label1, label2):
+  pylab.xlabel(xlabel)
+  pylab.ylabel(ylabel)
+
+  pylab.plot(xdata, ydata1, "o-", label=label1)
+  pylab.plot(xdata, ydata2, "o-", label=label2)
+  pylab.legend(loc="best")
+
+  pylab.savefig(filename, bbox_inches="tight")
+  pylab.close()
+
 initialize()
