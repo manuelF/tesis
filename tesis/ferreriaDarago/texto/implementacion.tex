@@ -33,7 +33,7 @@ c\'alculo de la estructura electr\'onica.
 % en vez de armar una lista para cada punto, si los agrupo espacialmente podes tener una lista que
 % englobe a todos los puntos va a tener menor overhead que tener una lista para cada punto
 
-En la introducci\'on del trabajo de describieron, a grandes rasgos, algunas de las ecuaciones que componen el calculo
+En la introducci\'on del trabajo de describieron, a grandes rasgos, algunas de las ecuaciones que componen el c\'alculo
 de la densidad electr\'onica. Estas fueron enunciadas sin detallar un m\'etodo efectivo de resoluci\'on del
 calculo de la densidad $\rho$. Para hacerlo se debe definir primero $\rho$ como
 
@@ -43,45 +43,48 @@ calculo de la densidad $\rho$. Para hacerlo se debe definir primero $\rho$ como
 
 donde $\Psi$ es la funci\'on de onda de Schr\"{o}dinger, $F_i$ son las funciones de la base usadas y los $a^k_i$ son
 los coeficientes que se usan para armar la combinaci\'on lineal de las funciones que mejor describan el comportamiento
-del sistema.  Para resolver el termino $\rho$ se usa un m\'etodo iterativo, donde se busca minimizar la energ\'ia de intercambio-correlaci\'on
-mediante el ajuste los coeficientes $a_i^k$, usando el criterio que afirma el principio variacional (ecuaci\'on \ref{princ_variacional})
-donde la densidad $\rho^*$ que brinda la menor energ\'ia es la correcta.
+del sistema.  Para resolver el t\'ermino $\rho$ se usa un m\'etodo iterativo, donde se busca minimizar la energ\'ia de intercambio-correlaci\'on
+mediante el ajuste los coeficientes $a_i^k$. Este m\'etodo se basa en que el principio variacional (ecuaci\'on \ref{princ_variacional}) afirma
+que la densidad $\rho^*$ que brinda la menor energ\'ia es la correcta.
 
 As\'i mismo, la matriz densidad se define en funci\'on de los coeficientes $a^k_i$ de la siguiente manera:
+
 \begin{equation}
   \label{eq:matriz-densidad}
   C_{i,j} = 2 \sum^{e^{-}}_k a^k_i a^k_j
 \end{equation}
 
 Luego, la densidad $\rho$ puede ser calculada solamente en funci\'on de la base y de la matriz densidad de esta forma:
+
 \begin{equation}
   \label{eq:rho-xc}
   \rho = \sum^m_{i=1} \sum^i_{j=1} F_i F_j C_{i,j}
 \end{equation}
 con $m$ la cantidad de funciones de la base.
 
-Para resolver el termino de intercambio-correlaci\'on (ecuaci\'on \ref{eq:xc}), se puede discretizar el espacio relevante al
+Para resolver el t\'ermino de intercambio-correlaci\'on (ecuaci\'on \ref{eq:xc}), se puede discretizar el espacio relevante al
 modelo usando una grilla de puntos. De esta manera se puede aplicar las ecuaciones \ref{eq:matriz-densidad} y \ref{eq:rho-xc}
 para cada punto de la grilla.
 
-Esta soluci\'on, si bien es factible, cuenta con el problema de que los t\'erminos escalan cuadr\'atica mente
+Esta soluci\'on, si bien es factible, cuenta con el problema de que los t\'erminos escalan cuadr\'aticamente
 en la cantidad de puntos, haciendo mallados muy finos inviables de calcular. En el trabajo de Strattman~\cite{Stratmann} se
 propone agrupar los puntos en listas espacialmente cercanas de modo de poder calcular los t\'erminos de la matriz densidad
-solamente usando aquellos con contribuciones significativas. Como las bases usadas en este calculo son funciones gaussianas,
-esto tiene mucho sentido ya que las contribuciones de las funciones decaen r\'apidamente seg\'un la distancia. Esto permite
-la reducci\'on de la complejidad temporal a la resoluci\'on de $n$ grupos $G_i$ con $k_i$ puntos de manera cuadr\'atica con respecto a $k_i$,
+solamente usando aquellos con contribuciones significativas. Como las bases usadas en este c\'alculo son funciones gaussianas,
+las contribuciones de las mismas decaen r\'apidamente seg\'un la distancia, con lo cual son significativas en un peque\~no lugar del espacio. Esto permite
+reducir el problema a la resoluci\'on de $n$ grupos $G_i$ con $k_i$ puntos, que tiene complejidad temporal cuadr\'atica con respecto a $k_i$,
 mucho menor que el tiempo total para los $k$ puntos.
 
 Para la construcci\'on de estos grupos se genera un mallado en cubos y esferas que incluya todos los puntos
 de la grilla. Como los puntos no se distribuyen homog\'eneamente en el espacio sino que la mayor cantidad de ellos
 se concentran cerca de los n\'ucleos, si se usara una partici\'on \'unicamente basada en cubos de igual tama\~no, la cantidad
 de puntos contenidos en cada grupo diferir\'ia considerablemente. El uso de grupos esf\'ericos rodeando
-los nucleos eliminan zonas de alta concentraci\'on de puntos y permite que los puntos remanentes
-tengan una distribuci\'on mas homog\'enea. Este esquema de construcci\'on se muestra en la figura~\ref{fig:grilla}
+los n\'ucleos eliminan zonas de alta concentraci\'on de puntos y permite que los puntos remanentes
+tengan una distribuci\'on m\'as homog\'enea. Este esquema de construcci\'on se muestra en la figura~\ref{fig:grilla}
 
 Para hacer este agrupamiento, tambi\'en se tiene que determinar entonces cuanto aporta cada punto a la contribuci\'on definitiva
 a la densidad $\rho$. Se define entonces una lista de coeficientes $w_k$ que van a pesar las contribuciones de cada punto
 a la energ\'ia de intercambio correlaci\'on, que se define como
+
 \begin{equation}
   E_{XC} \approx \sum^{puntos}_k \rho^k \epsilon_{XC} (\rho^k,\nabla \rho^k) w_k
 \end{equation}
@@ -92,13 +95,15 @@ se estudi\'o previamente~\cite{Nitsche2014,TesisNitsche}, sin modificaciones par
 
 Finalmente, para la obtenci\'on de la matriz de Kohn-Sham se calcula usando la energ\'ia de intercambio-correlaci\'on
 y la derivada de la matriz densidad:
+
 \begin{equation}
   \chi_{i,j} = \frac{\partial E_{XC}}{\partial C_{i,j}}
 \end{equation}
 
-El termino $\epsilon_{XC}$ contemplado en este trabajo usa el funcional GGA que usa el gradiente de la funci\'on
-en el punto, por lo que para calcular las $\chi_{i,j}$ har\'a falta usar el hessiano de las funciones, agregando
-t\'erminos al calculo de las funciones para mejorar la precisi\'on.
+El termino $\epsilon_{XC}$ contemplado en este trabajo contiene el gradiente de la funci\'on
+en el punto, por lo que para calcular las $\chi_{i,j}$ har\'a falta usar la derivada de este
+t\'ermino, es decir el hessiano de las funciones. Esto agrega t\'erminos al calculo de
+las funciones para mejorar la precisi\'on.
 
 Un diagrama simplificando la estructura del c\'alculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
 Los pasos (a) a (e) corresponden a la etapa de inicializaci\'on, y se calculan una \'unica vez
