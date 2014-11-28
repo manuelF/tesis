@@ -716,7 +716,7 @@ El pseudo c\'odigo del algoritmo de balanceo se detalla a continuaci\'on.
 \end{algorithmic}
 \end{algorithm}
 
-En el algoritmo \ref{ThreadBalancing} se definen dos constantes adicionales, $k$ y $penalidad\_migracion$.
+En el algoritmo \ref{ThreadBalancing} se definen dos constantes adicionales, $k$ y $costo\_migracion$.
 $k$ representa el coeficiente de m\'axima diferencia de tiempo entre el thread de mas larga duraci\'on y el de menor
 duraci\'on. Para nuestros usos, un valor de $k \approx 2\%$ es aceptable.
 $costo\_migracion$ es un coeficiente que agrega un costo al migrar el grupo a otra placa, ya que va
