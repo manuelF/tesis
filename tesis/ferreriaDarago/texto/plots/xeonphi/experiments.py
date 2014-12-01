@@ -205,6 +205,41 @@ def xeon_xeon_phi_final_comparison():
 
     comparisonBarGraph(**params)
 
+def process_groups_file(filename):
+    values = []
+    with open(filename, "r") as f:
+        for line in f.readlines():
+            gtype, num, _, tstr = line.split(" ")
+            values.append((gtype + " " + num, time2milis(tstr[:-1])))
+    return values
+
+def lookup(pairlist, key):
+    for u,v in pairlist:
+        if u == key:
+            return v
+    return None
+
+def xeon_xeon_phi_groups_comparison():
+    xeonphi = process_groups_file("measures/salida-tiempos-por-grupo-xeon-phi.txt")
+    xeon = process_groups_file("measures/salida-tiempos-por-grupo-xeon.txt")
+
+    groups = [u for u,v in xeon]
+    measures = [(u,lookup(xeon,u),lookup(xeonphi,u)) for u in groups]
+    measures = sorted(measures, key=lambda v: v[1])
+
+    params = {
+        'xlabel': u"Número de grupo",
+        'ylabel': u"Tiempo de iteración [ms]",
+        'xdata': xrange(0, len(measures)),
+        'ydata1': [v for u,v,w in measures],
+        'ydata2': [w for u,v,w in measures],
+        'label1': u'Xeon',
+        'label2': u'Xeon Phi',
+        'filename': 'xeon-xeon-phi-groups-comparison.png',
+    }
+    comparativeScatter(**params)
+
+
 if __name__ == '__main__':
     xeon_phi_single_core()
     xeon_phi_single_core_scf()
@@ -215,3 +250,4 @@ if __name__ == '__main__':
     xeon_phi_scalability()
     xeon_phi_enditer()
     xeon_xeon_phi_final_comparison()
+    xeon_xeon_phi_groups_comparison()
