@@ -372,8 +372,8 @@ def xeon_pre_xc_parts():
 
 def xeon_post_xc_parts():
   parts = {
-      u"Kohn Sham": time2milis("%lf" % (196822 + 406026)),
-      u"Densidad": time2milis("%lf" % (36041 + 101344)),
+      u"Kohn Sham": time2milis("%lf" % (36041 + 101344)),
+      u"Densidad": time2milis("%lf" % (196822 + 406026)),
       u"Funciones": time2milis("0"),
   }
   names = parts.keys();
