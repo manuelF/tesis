@@ -66,18 +66,18 @@ Sin embargo, ocurre habitualmente que existe una dependencia entre instrucciones
 Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order Execution}).
 Mediante el uso de algoritmos y circuitos complejos, un procesador puede detectar las dependencias entre las instrucciones y cambiar el orden de ejecuci\'on para minimizar la aparici\'on de pipe stalls y, de esta manera, lograr que la mayor parte de las unidades del procesador esten ocupadas el mayor tiempo posible.
 
-Mejoras en este nivel eran usualmente invisibles al programador, dependiendo de los compiladores optimizantes, pero sus ventajas fueron disminuyendo a partir del a\~no 2000.
+Mejoras en este nivel eran usualmente \todo{dejaron de ser invisible?} invisibles al programador, dependiendo de los compiladores optimizantes, pero sus ventajas fueron disminuyendo a partir del a\~no 2000.
 
 \subsection{Extensiones vectoriales}
 
 Si bien las t\'ecnicas SIMD fueron desarrolladas por las supercomputadoras de los a\~nos 70 y 80, su aparici\'on en los microprocesadores x86 modernos ocurre en 1996 con el nombre MMX (\textit{MultiMedia eXtensions}), con refuerzos luego en las extensiones SSE y AVX.
 AVX y AVX2 representan la \'ultima versi\'on de las instrucciones de vectorizaci\'on y est\'an presentes en la l\'inea Intel Xeon de procesadores de alta gama y en las m\'as recientes generaciones de procesadores disponible para los consumidores.
 
-El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones independientes que pueden ser realizadas en simult\'aneo, dividiendo la cantidad de instrucciones totales que tiene que realizar un procesador.
+El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones \todo{Hay una figura en la p\'agina de intel que muestra esto, recomiendo ponerlo porque sino no se entiende} independientes que pueden ser realizadas en simult\'aneo, dividiendo la cantidad de instrucciones totales que tiene que realizar un procesador.
 
 El uso de operaciones sobre m\'ultiples valores ha tomado importancia como uno de los m\'etodos de incrementar la performance de ejecuci\'on.
-La longitud de registros SIMD de las extensiones (128 bits para SSE, 256 para AVX) se ha duplicado cada 4 a\~nos, con lo cual es importante para una aplicaci\'on que sus operaciones sean lo m\'as vectorizables posible~\cite{HennessyPatterson}.
-Para esto es ideal que las operaciones sean lo m\'as regulares y los ciclos sean claros y con las m\'inimas dependencias posibles, de modo de hacer mejor uso de estas facilidades.
+La longitud de registros SIMD de las extensiones ($128$ bits para SSE, $256$ para AVX) se ha duplicado cada cuatro a\~nos, con lo cual es importante para una aplicaci\'on que sus operaciones sean lo m\'as vectorizables posible~\cite{HennessyPatterson}.
+Para esto, es ideal que las operaciones sean lo m\'as regulares y los ciclos sean claros y con las m\'inimas dependencias posibles, de modo de hacer mejor uso de estas facilidades.
 
 \subsection{Caches}
 
@@ -112,16 +112,12 @@ A diferencia de los otros m\'etodos, las mejoras posibles mediante el procesamie
 Un programa serial no se beneficiar\'a de m\'ultiples \textit{cores}, incluso siendo recompilado, a menos que este paralelismo se aproveche expl\'icitamente.
 Otro aspecto importante es la \textit{escalabilidad}, que consiste en que la divisi\'on de tareas mantenga a todos los procesadores disponibles ocupados, aunque crezca la cantidad de cores que intervengan.
 
-Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}~\cite{Amdahl1967}, que establece una relaci\'on entre el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje
-de la aplicaci\'on que es paralelizable y el porcentaje que no lo es. Matem\'aticamente,
-
+Un resultado importante a tener en cuenta es la denominada \textit{Ley de Amdahl}~\cite{Amdahl1967}, que establece una relaci\'on entre el \textit{speedup} m\'aximo alcanzable mediante un incremento en la cantidad de procesadores disponibles, el porcentaje de la aplicaci\'on que es paralelizable y el porcentaje que no lo es:
 \begin{equation}
     \label{eq:amdahl}
     S(n) = \frac{1}{(1 - B) + \frac{B}{n}}
 \end{equation}
-
-Donde $S$ es el porcentaje m\'aximo de mejora alcanzable, $B$ es la fracci\'on del algoritmo a ejecutar que se encuentra
-paralelizada, y $n$ la cantidad de hilos de ejecuci\'on paralelos que se dispone.
+donde $S$ es el speedup m\'aximo de mejora alcanzable, $B$ es la fracci\'on del algoritmo a ejecutar que se encuentra paralelizada, y $n$ la cantidad de hilos de ejecuci\'on paralelos que se dispone.
 
 \begin{figure}[htbp]
     \centering
