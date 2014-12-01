@@ -25,6 +25,15 @@
 Las figuras~\ref{fig:cpu-scalability-hemo},~\ref{fig:cpu-scalability-caroteno} y
 ~\ref{fig:cpu-scalability-fullereno} muestran el \textit{speedup} conseguido en
 el c\'odigo de CPU en Xeon para el grupo Hemo, Caroteno y Fullereno respectivamente.
+
+Los an\'alisis se realizaron utilizando el mismo Xeon que en los an\'alisis
+realizados anteriormente. Puesto que queremos considerar escalabilidad en cantidad
+de n\'ucleos sim\'etricos de procesamiento, se deshabilit\'o Turbo Boost y
+\textit{Hyperthreading} para estos experimentos.
+
+Los resultados obtenidos son muy buenos, logr\'andose una escalabilidad de 11.39,
+11.14 y 11.53 en Fullereno, Caroteno y Hemoglobina respectivamente.
+
 Dada la heterogeneidad de estos grupos podemos concluir entonces que el c\'odigo
 hace un excelente uso de las prestaciones de procesadores multicore tradicionales
 de la arquitectura Xeon en una iteresante variedad de casos.
