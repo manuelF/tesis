@@ -63,6 +63,7 @@ las herramientas de profiling usadas remarcan estos limitantes, haci\'endolas
 fundamentales a la hora de evaluar como proseguir en la b\'usqueda de optimizaciones de c\'odigo.
 
 \subsection{Cambios en el threading}
+\label{threading}
 %Cambiamos de blocks por puntos, a blocks por funci\'on.
 
 De los 3 kernels que originalmente compon\'ian la iteraci\'on de XC en GPU, el que se encargaba
@@ -480,29 +481,40 @@ convertirlo en una aceleraci\'on notoria.
 %Cambiar los vec\_type4 por 3 en los accesos a la shared es mucho mejor, no hace falta alinear ahi
 Otro de los problemas existentes del c\'odigo que quisimos atacar fue el mejor empleo de las
 memorias shared. Estas son un recurso finito y muy importante, ya que son un limitante de
-la ocupancia de los multiprocesadores. Como pueden correr una cantidad de bloques que, a lo sumo,
+la ocupancia de los multiprocesadores. Como se pueden correr una cantidad de bloques que, a lo sumo,
 no superen los 48KB de memoria shared simult\'aneamente entre todos, es imprescindible minimizar
 el uso de la memoria shared de modo que no estemos subutilizando los SM.
 
 Una cosa que probamos, con un grado de \'exito variable, fue disminuir el tama\~no de los vectores
-donde almacenamos las derivadas direccionales. Como nuestro problema es en tres dimensiones,
-y los vectores estaban configurados para tener 4 valores por cada derivada, probamos llevarlos a
-3, para que se ajusten a su consumo real de memoria. Este acercamiento no consider\'o el porque
-se hizo as\'i de esta manera originalmente. Tener 4 valores consecutivos en memoria fuerza
-al compilador a alinearlos a 16/32 bytes (simple y doble precisi\'on).
-Esto presenta grandes ventajas a la hora de hacer transferencias de memoria global en los accesos,
-por lo cual decidimos dejarlo como estaban.
+donde almacenamos las derivadas direccionales. La manera de guardar las derivadas direccionales primeras
+de las funciones que estaba implementada es usando tipos que agrupen en un solo elemento las tres derivadas
+de cada punto, usando un cero al final para alinear en memoria, estrategia sugerida por la arquitectura CUDA para
+maximizar la alineaci\'on y disminuir la cantidad de transacciones necesarias.
+Es decir,$\nabla F_i = ( \frac{\partial F_i}{\partial x},\frac{\partial F_i}{\partial x}, \frac{\partial F_i}{\partial x}, 0 )$.
+El m\'etodo GGA utiliza adem\'as las derivadas segundas de las funciones. Estas al ser funciones
+Gaussianas de la base, son $C^\infty$, por lo que la matriz Hessiana es sim\'etrica. Entonces, va
+a hacer falta \'unicamente guardar seis de las nueve derivadas segundas, las cuales se empaquetan de una manera
+similar a la de las derivadas primeras, almacen\'andose en dos elementos con tres de estas derivadas
+y un cero al final.
+
+Un cambio que se intent\'o entonces fue llevarlos las derivadas de las funciones a que tengan tres elementos nada mas, para que ajustar
+su uso real de memoria.  En las memorias globales, traer de a cuatro  valores consecutivos fuerza
+al compilador a alinearlos a 16/32 bytes (simple y doble precisi\'on respectivamente). Esto presenta
+grandes ventajas a la hora de hacer transferencias de memoria global en los accesos, por lo cual
+decidimos dejarlo como estaban.
 
 Sin embargo, este mismo criterio no aplica a las memorias shared de la GPGPU. Como los accesos
 a estas memorias se realizan de a 4 bytes y no de a 16/32, entonces no tiene ninguna ventaja
 en particular realizar el alineamiento; ya est\'an alineadas porque los elementos de cada punto
 son flotantes de precisi\'on simple o doble (4 y 8 bytes respectivamente). Adicionalmente, como el
 cuarto valor no tiene forma de marcarse como algo que no sea padding de alineaci\'on, todav\'ia se
-opera normalmente con el, por lo que eliminarlo ahorra una operaci\'on de c\'alculo. Mas a\'un,
-se presentan una disminuci\'on del 25\% de los recursos de la memoria compartida por thread,
-sin ninguna desventaja a la hora de acceder a estos. Principalmente esta mejora, en teor\'ia, permite
+opera normalmente con el usando operaciones vectoriales definidas para estos tipos, por lo que
+eliminarlo ahorra una operaci\'on de c\'alculo. Mas a\'un, se presentan una disminuci\'on del 18\%
+de la memoria compartida por thread (usando el esquema de compartir valores de funciones por punto
+como fue descripto en la secci\'on \ref{threading}), sin ninguna desventaja por alineaci\'on a la hora de acceder a estos.
+Principalmente esta mejora, en teor\'ia, permite
 aumentar la cantidad de bloques corriendo concurrentemente en los SM, para poder eliminar
-la limitaci\'on presente debido al uso simultaneo de memoria compartidas.
+la limitaci\'on presente debido al uso concurrente de memoria compartida.
 
 \begin{figure}[htbp]
    \centering
@@ -514,9 +526,12 @@ la limitaci\'on presente debido al uso simultaneo de memoria compartidas.
 
 Como se puede observar en la figura~\ref{fig:shared4vs3}, se obtienen muy pocas ganancias al usar elementos
 de 3 componentes con respecto a usar elementos de 4. Esto muestra que el limitante de concurrencia
-de este kernel no pasa por falta de memoria compartida. Adem\'as, esto permite apreciar que los
-tiempos de acceso a los datos en las memorias shared son realmente muy bajos, pudi\'endose ver
-como con incluso un 25\% mas de operaciones de lecto-escritura, el tiempo de ejecuci\'on casi no varia.
+de este kernel no pasa por falta de memoria compartida. Adem\'as, se puede apreciar que los
+tiempos de acceso a los datos en estas memorias son realmente muy bajos, pudi\'endose ver
+como con incluso un 18\% mas de operaciones de lecto-escritura, el tiempo de ejecuci\'on casi no varia. Por
+otra parte, esto muestra tambi\'en que no hay diferencia en los tiempos de acceso a memoria compartida; buscar
+tres o cuatro elementos es equivalente. Esto da la pauta de que se debe tener alineada en la global, pero
+en la compartida se debe tener la menor cantidad de overhead posible, dadas las diferencias en los buses de acceso.
 
 
 %\subsection{Cambios en los condicionales}
