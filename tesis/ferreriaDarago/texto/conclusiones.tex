@@ -1,5 +1,18 @@
-%\section{Importancia del problema}
-%\section{Impacto de trabajar correctamente con la arquitectura}
+%En este trabajo se estudiaron multiples optimizaciones apuntadas a maximizar el uso de los
+%recursos de computo. Se pudieron observar grandes mejoras al tiempo de computo repensando los algoritmos
+%de calculo de DFT para minimizar la capacidad ociosa que habia en las arquitecturas paralelas estudiadas.
+En CPU se pudieron obtener mejoras de hasta 24 veces la performance original en el c\'alculo de intercambio-correlacion,
+consiguiendo una escalabilidad lineal. Esto consigue entonces velocidades cercanas a las GPU de alta gama
+de la generacion anterior y estar a menos de 1.5x. de la velocidad de la mas rapida de la generacion actual.
+Esto se consigui\'o gracias a reestructuraciones algoritmicas, al uso de librerias estandar de paralelizaci\'on,
+a reorganizacion de los datos en la memoria para facilitar la vectorizaci\'on y a un analisis de particion de trabajos.
+Es ademas importante se\~nalar que la implementaci\'on realizada solo requiere herramientas incorporadas al compilador,
+sin uso de bibliotecas externas, favoreciendo el uso del codigo en multiples plataformas y abriendo la posibilidad
+de incorporar el uso de librerias como ATLAS y MAGMA.
+
+En GPU se consiguieron
+
+
 \section{Posible trabajo a futuro}
 El trabajo pendiente inmediato que se ve ac\'a, que brindar\'ia inicialmente la mayor aceleraci\'on
 es la realizaci\'on de una versi\'on h\'ibrida de LIO. Como pudimos observar, la resoluci\'on de grupos es

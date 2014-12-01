@@ -237,8 +237,7 @@ la organizaci\'on definida en la arquitectura Fermi y luego analizaremos las dif
 La arquitectura GPGPU se centran en el uso de una cantidad escable de procesadores
 multithreaded denominados \textit{Streaming Multiprocessors (SMs)}. Un multiprocesador esta dise\~nado
 para ejecutar cientos de threads concurrentemente, usando sus unidades aritm\'eticas llamadas \textit{Streaming
-Processors (SPs)}. Para manejar esa cantidad de threads, se concibio una nueva entrada a la taxonom\'ia de Flynn,
-SIMT (Single instruction, Multiple thread). Las instrucciones se encadenan para aprovechar el paralelismo
+Processors (SPs)}. Las instrucciones se encadenan para aprovechar el paralelismo
 a nivel instrucci\'on (ILP) dentro de un mismo threads, y funcionando en conjunto con el paralelismo
 a nivel de thread, usado de manera extensa a trav\'es del multithreading por hardware. Todas las instrucciones
 son ejecutadas en orden y no hay predicci\'on de saltos ni ejecuci\'on especulativa, todo se ejecuta solamente

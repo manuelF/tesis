@@ -38,72 +38,66 @@ de la densidad electr\'onica. Estas fueron enunciadas sin detallar un m\'etodo e
 calculo de la densidad $\rho$. Para hacerlo se debe definir primero $\rho$ como
 
 \begin{equation}
-  \rho = \abs{\Psi}^2 = \sum^{e^{-}}_{k} \abs{\sum_i a^k_i F_i}^2
+  \rho = \abs{\Psi}^2 =\sum^{e^{-}}_k\abs{\Phi_k}^2 =\sum^{e^{-}}_{k} \abs{\sum_i a^k_i F_i}^2
 \end{equation}
 
-donde $\Psi$ es la funci\'on de onda de Schr\"{o}dinger, $F_i$ son las funciones de la base usadas y los $a^k_i$ son
-los coeficientes que se usan para armar la combinaci\'on lineal de las funciones que mejor describan el comportamiento
-del sistema.  Para resolver el t\'ermino $\rho$ se usa un m\'etodo iterativo, donde se busca minimizar la energ\'ia de intercambio-correlaci\'on
-mediante el ajuste los coeficientes $a_i^k$. Este m\'etodo se basa en que el principio variacional (ecuaci\'on \ref{princ_variacional}) afirma
-que la densidad $\rho^*$ que brinda la menor energ\'ia es la correcta.
+donde $\Psi$ es la funci\'on de onda, $\Phi_k$ son las funciones de onda de un electr\'on (orbitales) y los $a^k_i$ son
+los coeficientes con los se expande los orbitales sobre la base de funciones ($F_i$).
+El objetivo principal es obtener los coeficientes $a^k_i$ correspondientes a la mejor densidad posible. El principio
+variacional (ecuaci\'on \ref{princ_variacional}) brinda un criterio de selecci\'on basado en la minimizaci\'on
+de la energ\'ia respecto a estos coeficientes.
 
-As\'i mismo, la matriz densidad se define en funci\'on de los coeficientes $a^k_i$ de la siguiente manera:
+Alternativamente, la densidad $\rho$ puede definirse a traves de una matriz \textit{(matriz densidad)} seg\'un:
+%la matriz densidad se define en funci\'on de los coeficientes $a^k_i$ de la siguiente manera:
 
 \begin{equation}
   \label{eq:matriz-densidad}
-  C_{i,j} = 2 \sum^{e^{-}}_k a^k_i a^k_j
+  C_{i,j} = \sum^{e^{-}}_k a^k_i a^k_j
 \end{equation}
 
-Luego, la densidad $\rho$ puede ser calculada solamente en funci\'on de la base y de la matriz densidad de esta forma:
-
+Luego, la densidad $\rho$ puede calcularse como:
 \begin{equation}
   \label{eq:rho-xc}
   \rho = \sum^m_{i=1} \sum^i_{j=1} F_i F_j C_{i,j}
 \end{equation}
 con $m$ la cantidad de funciones de la base.
 
-Para resolver el t\'ermino de intercambio-correlaci\'on (ecuaci\'on \ref{eq:xc}), se puede discretizar el espacio relevante al
-modelo usando una grilla de puntos. De esta manera se puede aplicar las ecuaciones \ref{eq:matriz-densidad} y \ref{eq:rho-xc}
+Para resolver el t\'ermino de intercambio-correlaci\'on (ecuaci\'on \ref{eq:xc}), se discretiza el espacio
+usando una grilla de puntos. De esta manera se aplican las ecuaciones \ref{eq:matriz-densidad} y \ref{eq:rho-xc}
 para cada punto de la grilla.
 
-Esta soluci\'on, si bien es factible, cuenta con el problema de que los t\'erminos escalan cuadr\'aticamente
-en la cantidad de puntos, haciendo mallados muy finos inviables de calcular. En el trabajo de Strattman~\cite{Stratmann} se
-propone agrupar los puntos en listas espacialmente cercanas de modo de poder calcular los t\'erminos de la matriz densidad
-solamente usando aquellos con contribuciones significativas. Como las bases usadas en este c\'alculo son funciones gaussianas,
-las contribuciones de las mismas decaen r\'apidamente seg\'un la distancia, con lo cual son significativas en un peque\~no lugar del espacio. Esto permite
-reducir el problema a la resoluci\'on de $n$ grupos $G_i$ con $k_i$ puntos, que tiene complejidad temporal cuadr\'atica con respecto a $k_i$,
-mucho menor que el tiempo total para los $k$ puntos.
+En este trabajo utilizamos las grillas propuestas por Becke~\cite{Becke}, compuestas por capas centradas en
+los n\'ucleos. Estas capas no son equidistantes sino que son mas densas cerca de los n\'ucleos, donde la densidad
+cambia m\'as r\'apidamente. Los puntos cercanos en el espacio se agrupan de modo de calcular los t\'erminos de la
+matriz densidad solamente usando las funciones con contribuciones significativas, de acuerdo a lo propuesto por
+Stratmann~\cite{Stratmann}. Podemos aprovechar con esto el hecho de que las funciones gaussianas (que forman la
+base utilizada) decaen r\'apidamente en el espacio.
 
-Para la construcci\'on de estos grupos se genera un mallado en cubos y esferas que incluya todos los puntos
-de la grilla. Como los puntos no se distribuyen homog\'eneamente en el espacio sino que la mayor cantidad de ellos
+Como los puntos no se distribuyen homog\'eneamente en el espacio sino que la mayor cantidad de ellos
 se concentran cerca de los n\'ucleos, si se usara una partici\'on \'unicamente basada en cubos de igual tama\~no, la cantidad
-de puntos contenidos en cada grupo diferir\'ia considerablemente. El uso de grupos esf\'ericos rodeando
-los n\'ucleos eliminan zonas de alta concentraci\'on de puntos y permite que los puntos remanentes
-tengan una distribuci\'on m\'as homog\'enea. Este esquema de construcci\'on se muestra en la figura~\ref{fig:grilla}
+de puntos contenidos en cada grupo diferir\'ia considerablemente. Por ello, para la construcci\'on de estos grupos se genera un mallado en cubos
+y esferas que contenga toda la grilla.  Los grupos esf\'ericos se construyen rodeando
+los n\'ucleos incluyendo zonas de alta concentraci\'on de puntos, de manera que los remanentes
+tengan una distribuci\'on m\'as homog\'enea. Este esquema de construcci\'on se muestra en la figura~\ref{fig:grilla}.
 
-Para hacer este agrupamiento, tambi\'en se tiene que determinar entonces cuanto aporta cada punto a la contribuci\'on definitiva
-a la densidad $\rho$. Se define entonces una lista de coeficientes $w_k$ que van a pesar las contribuciones de cada punto
-a la energ\'ia de intercambio correlaci\'on, que se define como
+Para resolver la ecuaci\'on~\ref{eq:xc} es necesario determinar el valor del peso de cada punto de la grila ($\omega_i$). El
+m\'etodo utilizado es el propuesto por Becke~\cite{Becke}.
 
-\begin{equation}
-  E_{XC} \approx \sum^{puntos}_k \rho^k \epsilon_{XC} (\rho^k,\nabla \rho^k) w_k
-\end{equation}
-
-donde el funcional $\epsilon_{xc}$ usa tanto las funciones en el punto como las derivadas de las funciones para
-calcular la energ\'ia. El detalle algor\'itmico de la generaci\'on de grupos y de calculo de pesos de puntos
+El detalle algor\'itmico de la generaci\'on de grupos y de calculo de pesos de puntos
 se estudi\'o previamente~\cite{Nitsche2014,TesisNitsche}, sin modificaciones para este trabajo.
 
-Finalmente, para la obtenci\'on de la matriz de Kohn-Sham se calcula usando la energ\'ia de intercambio-correlaci\'on
-y la derivada de la matriz densidad:
+La obtenci\'on de los coeficientes $a^k_i$ que minimizan la energ\'ia se hace a trav\'es de la
+matriz de Kohn y Sham. Esta matriz se puede calcular derivando la energ\'ia del sistema en
+funci\'on de los coeficientes de la matriz densidad. Para este trabajo nos interesa la
+contribuci\'on a esta matriz del t\'ermino de intercambio y correlaci\'on, $\chi$:
 
 \begin{equation}
   \chi_{i,j} = \frac{\partial E_{XC}}{\partial C_{i,j}}
 \end{equation}
 
-El termino $\epsilon_{XC}$ contemplado en este trabajo contiene el gradiente de la funci\'on
-en el punto, por lo que para calcular las $\chi_{i,j}$ har\'a falta usar la derivada de este
-t\'ermino, es decir el hessiano de las funciones. Esto agrega t\'erminos al calculo de
-las funciones para mejorar la precisi\'on.
+Dado que el t\'ermino $\epsilon_{XC}$ depende de (es funcional de) la densidad y su gradiente,
+para calcular la derivada de este t\'ermino es necesario calcular las derivadas segundas de la
+densidad, es decir su Hessiano.
 
 Un diagrama simplificando la estructura del c\'alculo de DFT se puede ver en la figura \ref{fig:lio-steps}.
 Los pasos (a) a (e) corresponden a la etapa de inicializaci\'on, y se calculan una \'unica vez
@@ -117,7 +111,7 @@ obtienen grandes mejoras en GPU sobre su implementaci\'on de referencia en CPU. 
 estos pasos todav\'ia insumen una gran cantidad de tiempo, incluso en las versiones aceleradas.
 
 A continuaci\'on se presentan distintos cambios hechos a las rutinas para minimizar los tiempos,
-sin cambiar la estructura general del c\'alculo, ya probado en la literatura.
+sin cambiar la estructura general del c\'alculo.
 
 \section{Implementaci\'on en CUDA}
 
