@@ -63,6 +63,9 @@ las arquitecturas disponibles en el mercado.
 
 \subsection{Explotar m\'as paralelismo}
 \begin{enumerate}
+  \item Mejorar la estrategia de paralelizaci\'on para que emplee una cantidad de
+  hilos de ejecuci\'on de acuerdo al problema (e.g. cubos medianos reciben m\'as
+  de un thread, pueden correrse menos al mismo tiempo pero m\'as r\'apido).
   \item Portear LIO a OpenCL para poder unificar el c\'odigo.
   \item Investigar el uso de librer\'ias BLAS (Magma, MKL, CUBLAS, ATLAS, etc.) para offloadear fragmentos del
     c\'alculo de SCF.
