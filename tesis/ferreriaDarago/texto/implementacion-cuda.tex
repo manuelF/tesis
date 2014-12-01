@@ -490,7 +490,7 @@ donde almacenamos las derivadas direccionales. La manera de guardar las derivada
 de las funciones que estaba implementada es usando tipos que agrupen en un solo elemento las tres derivadas
 de cada punto, usando un cero al final para alinear en memoria, estrategia sugerida por la arquitectura CUDA para
 maximizar la alineaci\'on y disminuir la cantidad de transacciones necesarias.
-Es decir,$\nabla F_i = ( \frac{\partial F_i}{\partial x},\frac{\partial F_i}{\partial x}, \frac{\partial F_i}{\partial x}, 0 )$.
+Es decir,$\nabla F_i = ( \frac{\partial F_i}{\partial x},\frac{\partial F_i}{\partial y}, \frac{\partial F_i}{\partial z}, 0 )$.
 El m\'etodo GGA utiliza adem\'as las derivadas segundas de las funciones. Estas al ser funciones
 Gaussianas de la base, son $C^\infty$, por lo que la matriz Hessiana es sim\'etrica. Entonces, va
 a hacer falta \'unicamente guardar seis de las nueve derivadas segundas, las cuales se empaquetan de una manera
