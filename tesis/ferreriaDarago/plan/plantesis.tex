@@ -1,0 +1,124 @@
+% Plan de tesis de licenciatura Diciembre 2014.
+% Juan Pablo Darago y Manuel Ferreria
+
+\documentclass[a4paper, 12pt]{article}
+\usepackage[spanish]{babel}
+%\usepackage{makeidx}
+\usepackage[pdftex]{graphicx}
+
+\addtolength{\topmargin}{-2cm}
+\addtolength{\textheight}{4cm}
+\makeindex
+
+\begin{document}
+\DeclareGraphicsExtensions{.jpg,.pdf,.mps,.png}
+
+\title {
+\begin{figure}[h]
+\begin{center}
+\includegraphics[keepaspectratio, width=3cm]{escudo}
+\end{center}
+\end{figure}
+Universidad de Buenos Aires\\
+Facultad de Ciencias Exactas y Naturales\\
+Departamento de Computaci\'on\\
+\vspace{10mm}
+\Huge\textbf{Optimizaci\'on de c\'omputo QM/MM empleando arquitecturas masivamente paralelas}
+\vspace{10mm}
+}
+
+\author{por \\
+    Juan Pablo Darago y Manuel Ferrer\'ia\\\
+        \\
+        Director de Tesis\\
+        Dr. Mariano Camilo Gonz\'alez Lebrero\\
+        Co-Director de Tesis\\
+        Dr. Esteban Mocskos\\
+        \\
+        Propuesta de tesis para optar al grado de \\
+        Licenciado en Ciencias de la Computaci\'on\\
+        \\
+        }
+\date{Diciembre de 2014}
+
+\maketitle
+
+\pagebreak
+
+\section*{Propuesta}
+
+Estudiar y comparar las prestaciones para c\'omputo de alto rendimiento de arquitecturas de procesadores modernos como lo son CPU \textit{multicore}
+de la familia Intel IA-64, GPGPU \textit{(General Purpose Graphics Processing Unit)} de NVIDIA y aceleradores Xeon-Phi de Intel. El caso de
+estudio para realizar este an\'alisis es una aplicaci\'on del computo de estructuras electr\'onicas usando Teor\'ia del Funcional de la Densidad (DFT) llamado LIO.
+
+Las caracter\'isticas del problema y las arquitecturas a estudiar motivan el desarrollo de algoritmos especiales para maximizar el uso de los
+recursos disponibles. La implementaci\'on y an\'alisis resultantes de este estudio servir\'an como guia para aplicar optimizaciones a otros
+desarrollos en computo de alto rendimiento, y para hacer una decisi\'on informada sobre que arquitectura resulta \'util para que tipos de problema
+(al hacerse una comparaci\'on mas profunda que la que seria posible utilizando \textit{microbenchmarks}).
+
+\section*{Objetivos}
+
+\begin{itemize}
+\item Mejorar la velocidad de ejecuci\'on de las iteraciones de LIO en un 3x en GPGPUs.
+
+\item Mejorar la velocidad de ejecuci\'on de las iteraciones de LIO en un 5x en CPUs.
+
+\item Implementar LIO para arquitectura Xeon Phi.
+
+\item Destilar gu\'ias de optimizaci\'on para las distintas arquitecturas a partir de las mejoras realizadas.
+
+\item Dar una comparaci\'on entre GPGPUs, CPU \textit{multicore} y Xeon Phi seg\'un instancia de problema.
+\end{itemize}
+
+\section*{Plan inicial}
+
+\begin{enumerate}
+
+\item Estudiar cuellos de botella de la aplicaci\'on LIO y oportunidades de paralelizaci\'on para uso de m\'ultiples procesadores SMP.
+
+\item Adaptar el c\'odigo existente para nuevas arquitecturas GPGPU (Fermi, Kepler) de NVIDIA.
+
+\item Adaptar el c\'odigo existente para utilizar librer\'ias est\'andar de paralelizaci\'on (OpenMP) y modelos SIMD modernos (AVX, AVX2).
+
+\item Implementar una versi\'on de la aplicaci\'on para Xeon-Phi para hacer un an\'alisis de preliminar de la arquitectura.
+
+\item Comparar calidad num\'erica de las aplicaciones resultantes.
+
+\item Utilizar el programa modificado a tama\~nos de problemas m\'as realistas y previamente inabordables.
+
+\end{enumerate}
+
+\section*{Bibliograf\'ia}
+
+\begin{thebibliography}{9}
+
+\bibitem{LIO}Matias A. Nitsche, Manuel Ferreria, Esteban E. Mocskos, and Mariano C.
+Gonz\'alez Lebrero. GPU Accelerated Implementation of Density Functional Theory
+for Hybrid QM/MM Simulations. Journal of Chemical Theory and Computation,
+10(3):959–967, 2014.
+
+\bibitem{lebrero2002} M. C. Gonz\'alez Lebrero, D. E. Bikiel, M. D. Elola, D. A. Estrin y A. E. Roitberg,
+Solvent-induced symmetry breaking of nitrate ion in aqueous clusters: A quantum-classical simulation study.
+
+\bibitem{Jeffers} James Jeffers and James Reinders. Intel Xeon Phi Coprocessor High Performance
+Programming. Newnes, 2013.
+
+\bibitem{KS}W. Kohn and L. J. Sham. Self-consistent equations including exchange and correlation
+effects. Phys. Rev., 140:A1133–A1138, Nov 1965.
+
+\bibitem{Pacheco}Peter S. Pacheco. An Introduction to Parallel Programming. Morgan Kaufmann
+Publishers Inc., 30 Corporate Drive, Suite 400, Burlington, MA 01803, USA, 2011.
+
+\bibitem{CUDAHandbook} Nicholas Wilt. The CUDA Handbook: A comprehensive guide to GPU Programming.
+Pearson Education, 2013.
+
+\bibitem{Farber} Rob Farber. CUDA application design and development. Elsevier, 2011.
+
+\bibitem{Amdahl} G.M. Amdahl, Validity of the single-processor approach to achieving large scale computing capabilities(1967)
+
+\bibitem {Gustafson88}John L. Gustafson, Reevaluating Amdahl's Law.(1988)
+
+\end{thebibliography}
+
+
+\end{document}
