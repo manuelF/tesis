@@ -85,12 +85,11 @@ A diferencia de los procesadores, la velocidad de acceso de las memorias princip
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\plotwidth]{images/cpu_vs_memory.png}
-    \caption{Comparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, la diferencia de entre ellos se denomina \textit{memory gap}.}
+    \includegraphics[width=\plotwidth]{images/cpu_vs_memory.jpg}
+    \caption{Comparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, la diferencia de entre ellos se denomina \textit{memory gap}. Tomado de~\cite{HennessyPatterson}.}
     \label{fig:cpu_vs_mem}
 
 \end{figure}
-\todo{Poner de d\'onde se tom\'o la figura y arreglar los bordes que aparecen cosas feas}
 
 El concepto de \textit{localidad espacial} corresponde con la la observaci\'on de que los datos con los que opera una secci\'on de un programa suelen estar \emph{cerca} en memoria.
 Los dise\~nos de procesadores empezaron a incluir distintos tipos de caches para sacar provecho de esta situaci\'on: memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos recientemente usados.
@@ -103,7 +102,7 @@ Por esto es que la regularidad de los accesos a memoria para hacer buen uso de c
 
 \subsection{Multiprocesadores}
 
-Los procesadores MIMD (\textit{Multiple Instruction Multiple Data}) implicaron una revoluci\'on en la computaci\'on, pero cada procesador contin\'ua las l\'ineas anteriores.\todo{Supongo que est\'an haciendo referencia a ser compatible para atr\'as. Esto es cierto para las PC's, pero hay muchos otros procesadores que no cumplen con eso, solo piensen en los micros de celulares}
+Dentro del \'area de computo de escritorio, servidores y estaciones de trabajo basadas en la l\'inea x86, los procesadores MIMD (\textit{Multiple Instruction Multiple Data}) implicaron una revoluci\'on en el abordaje del problema de alta \textit{performance}, pero cada procesador contin\'ua las l\'ineas anteriores.
 Los dise\~nos m\'as utilizados se basan en un arquitectura tipo SMP (\textit{Symmetric Multiprocessing}), en la cual todos los procesadores son iguales y comparten una misma memoria principal.
 Cada procesador tiene sus propios registros y se comunica con los dem\'as mediante memoria compartida o interrupciones.
 
