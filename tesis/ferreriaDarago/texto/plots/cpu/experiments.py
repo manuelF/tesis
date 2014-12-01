@@ -320,6 +320,74 @@ def diferencias_de_grupos_balanceadas():
     }
     comparisonBarGraph(**params)
 
+def xeon_pre_scf_vs_xc():
+    parts = {
+        u"XC": time2milis("16s. 825678"),
+        u"Resto de SCF": time2milis("794659"),
+    }
+    names = parts.keys()
+    values = [parts[key] for key in names]
+
+    params = {
+        'title': '',
+        'labels': names,
+        'values': values,
+        'filename': u'initial-scf-hemo.png'
+    }
+    piechart(**params)
+
+def xeon_post_scf_vs_xc():
+    parts = {
+        u"XC": time2milis("747550"),
+        u"Resto de SCF": time2milis("575638"),
+    }
+    names = parts.keys()
+    values = [parts[key] for key in names]
+
+    params = {
+        'title': '',
+        'labels': names,
+        'values': values,
+        'filename': u'final-scf-hemo.png'
+    }
+    piechart(**params)
+
+def xeon_pre_xc_parts():
+  parts = {
+      u"Kohn Sham": time2milis("1s. 344646"),
+      u"Densidad": time2milis("14s. 167798"),
+      u"Funciones": time2milis("1s. 115196"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
+
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'initial-iteration-parts-hemo.png',
+  }
+  piechart(**params)
+
+def xeon_post_xc_parts():
+  parts = {
+      u"Kohn Sham": time2milis("%lf" % (196822 + 406026)),
+      u"Densidad": time2milis("%lf" % (36041 + 101344)),
+      u"Funciones": time2milis("0"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
+
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'final-iteration-parts-hemo.png',
+  }
+  piechart(**params)
+
 def amdahl(B, n):
     return 1.0 / ((1-B) + (1.0 / n) * B)
 
@@ -356,3 +424,7 @@ if __name__ == '__main__':
     hemo_scale()
     hemo_post_paralelizar()
     mejora_functions_un_core()
+    xeon_pre_scf_vs_xc()
+    xeon_post_scf_vs_xc()
+    xeon_pre_xc_parts()
+    xeon_post_xc_parts()

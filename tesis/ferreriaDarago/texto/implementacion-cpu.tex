@@ -210,7 +210,9 @@ anteriores.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{images/matrix-split-img.png}
-   \caption{Esquema de la proyecci\'on por componente realizada.}
+   \caption{Esquema de la proyecci\'on por componente realizada. En la parte
+   superior se muestra la matriz original (en \textit{row major order}. En la
+   inferior se muestran las tres matrices proyectadas.}
    \label{fig:matrix-split-img}
 \end{figure}
 
@@ -999,8 +1001,8 @@ escalabilidad conseguida en tiempo de ejecuci\'on con 12 procesadores.
    \label{fig:hemo-scale}
 \end{figure}
 
-El resultado corresponde a un \textit{speedup} de 11,35 veces. De acuerdo
-a la ley de Amdahl esto implica que 99.4\% de la iteraci\'on fue efectivamente
+El resultado corresponde a un \textit{speedup} de 11,53 veces. De acuerdo
+a la ley de Amdahl esto implica que 99.6\% de la iteraci\'on fue efectivamente
 paralelizada, lo cual implica que la escalabilidad lograda en la m\'aquina de
 prueba para este caso es muy cercana a la m\'axima.
 
