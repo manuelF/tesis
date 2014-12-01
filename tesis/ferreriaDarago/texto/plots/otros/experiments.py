@@ -12,7 +12,7 @@ def itsXCPerDiaDouble():
   msec_dia = 24*60*60*1000
   ws_gpu1 = msec_dia / (2031.302)
   ws_gpu2 = msec_dia / (1022.369)
-  ws_cpu = msec_dia / (1306.605)
+  ws_cpu = msec_dia / (2334.252)
   server_gpu1 = msec_dia/(808.937)
   server_gpu2 = msec_dia/(808.937 / escala_xc_gpu)
   server_cpu = msec_dia/(1340.147)
@@ -22,8 +22,9 @@ def itsXCPerDiaDouble():
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones XC por día",
       'yvalues':measures,
-      'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WSxx\nCPU',
+      'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WS\nCPU',
         u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
+      'ylim':(0,350000),
       'filename':"its-xc-dia-double.png"}
   barGraph(**params)
 
@@ -35,7 +36,7 @@ def itsPerDiaDouble():
   msec_dia = 24*60*60*1000
   ws_gpu1 = msec_dia / (2762.302)
   ws_gpu2 = msec_dia / (1497.302)
-  ws_cpu = msec_dia / (1702.045)
+  ws_cpu = msec_dia / (2695.594)
   server_gpu1 = msec_dia/(1903.302)
   server_gpu2 = msec_dia/(1903.302 / escala_scf_gpu)
   server_cpu = msec_dia/(1950.775)
@@ -45,7 +46,8 @@ def itsPerDiaDouble():
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones SCF por día",
       'yvalues':measures,
-      'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WSxx\nCPU',
+      'ylim':(0,120000),
+      'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WS\nCPU',
         u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
       'filename':"its-dia-double.png"}
   barGraph(**params)
@@ -66,6 +68,7 @@ def itsXCPerDia():
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones XC por día",
       'yvalues':measures,
+      'ylim':(0,350000),
       'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WS\nCPU',
         u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
       'filename':"its-xc-dia.png"}
@@ -89,6 +92,7 @@ def itsPerDia():
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones SCF por día",
       'yvalues':measures,
+      'ylim':(0,120000),
       'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WS\nCPU',
         u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
       'filename':"its-dia.png"}
