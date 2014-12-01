@@ -12,18 +12,18 @@ def itsXCPerDia():
   msec_dia = 24*60*60*1000
   ws_gpu1 = msec_dia / (1331.302)
   ws_gpu2 = msec_dia / (1331.302 / escala_xc_gpu)
-  ws_cpu = msec_dia / (5331.302)
+  ws_cpu = msec_dia / (1306.605)
   server_gpu1 = msec_dia/(522.937)
   server_gpu2 = msec_dia/(522.937 / escala_xc_gpu)
-  server_cpu = msec_dia/(846.177)
+  server_cpu = msec_dia/(746.147)
   measures = [ws_gpu1, ws_gpu2, ws_cpu, server_gpu1, server_gpu2, server_cpu]
 
   params =  {#'title': u"Speedup del computo de density variando el tamaño de la estructuras",
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones XC por día",
       'yvalues':measures,
-      'ticks':(u'WSxx\n1xGPU', u'WSxx\n2xGPU', u'WSxx\nCPU',
-        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Serverxx\nCPU'),
+      'ticks':(u'WSxx\n1xGPU', u'WSxx\n2xGPU', u'WS\nCPU',
+        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
       'filename':"its-xc-dia.png"}
   barGraph(**params)
 
@@ -35,18 +35,18 @@ def itsPerDia():
   msec_dia = 24*60*60*1000
   ws_gpu1 = msec_dia / (1331.302)
   ws_gpu2 = msec_dia / (1331.302 / escala_scf_gpu)
-  ws_cpu = msec_dia / (5331.302)
+  ws_cpu = msec_dia / (1702.045)
   server_gpu1 = msec_dia/(1331.302)
   server_gpu2 = msec_dia/(1331.302 / escala_scf_gpu)
-  server_cpu = msec_dia/(1541.868)
+  server_cpu = msec_dia/(1313.775)
   measures = [ws_gpu1, ws_gpu2, ws_cpu, server_gpu1, server_gpu2, server_cpu]
 
   params =  {#'title': u"Speedup del computo de density variando el tamaño de la estructuras",
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones SCF por día",
       'yvalues':measures,
-      'ticks':(u'WSxx\n1xGPU', u'WSxx\n2xGPU', u'WSxx\nCPU',
-        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Serverxx\nCPU'),
+      'ticks':(u'WSxx\n1xGPU', u'WSxx\n2xGPU', u'WS\nCPU',
+        u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
       'filename':"its-dia.png"}
   barGraph(**params)
 
@@ -115,8 +115,6 @@ def tamParticion():
   }
 
   multiComparativeBarChart(**params)
-
-
 
 if __name__ == '__main__':
   itsPerDia()
