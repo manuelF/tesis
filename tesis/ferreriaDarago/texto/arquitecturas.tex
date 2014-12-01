@@ -1,7 +1,7 @@
 \section{CPU}
 
 Los microprocesadores ganan en prevalencia desde principios de los 70, cuando Intel introduce los modelos 4004 y 8008.
-Actualmente las arquitecturas de procesadores de 64 bits basadas en la l\'inea x86-64 de Intel dominan no solo el mercado de computadoras personales sino que tambi\'en el de servidores y \textit{clusters} de c\'omputo.
+Actualmente, las arquitecturas de procesadores de 64 bits basadas en la l\'inea x86-64 de Intel dominan no solo el mercado de computadoras personales sino que tambi\'en el de servidores y \textit{clusters} de c\'omputo.
 Dado que utilizaremos el CPU est\'andar como punto de comparaci\'on para las dem\'as arquitecturas, y que estas est\'an basadas en parte en su dise\~no, daremos una breve rese\~na de los aspectos m\'as importantes y desarrollos modernos con respecto a la performance dentro de los procesadores modernos.
 
 \subsection{Tipos de paralelismo}
@@ -13,7 +13,9 @@ Existen tres categor\'ias de paralelismo que hoy en d\'ia una arquitectura puede
     Optimizaciones de este estilo incluyen:
     \begin{itemize}
       \item \textit{pipelines} de procesador: se separan las instrucciones en distintas etapas para ejecutar m\'ultiples instrucciones de manera solapada.
+      
       \item ejecuci\'on superescalar fuera de orden: para ejecutar m\'ultiples instrucciones que utilizan unidades del procesador distintas o que no dependen una de la otra.
+      
       \item ejecuci\'on especulativa: se basa en la predicci\'on de resultados todav\'ia no finalizados de procesar.
     \end{itemize}
 
@@ -22,7 +24,7 @@ Existen tres categor\'ias de paralelismo que hoy en d\'ia una arquitectura puede
 
     \item \textit{Thread Level Parallelism}: Concierne al uso de m\'ultiples hilos de ejecuci\'on simult\'aneos, lo cual requiere el uso de procesadores que usualmente
     comparten la memoria principal (arquitectura SMP, \textit{Symmetric Multiprocessing}).
-    Esto normalmente conlleva esfuerzo adicional para mantener consistencia y coherencia.
+    Esto normalmente conlleva esfuerzo adicional por parte del programador para mantener consistencia y coherencia.
 \end{itemize}
 
 En base a estos tipos de paralelismo, surgieron grandes avances en la arquitectura de procesadores desde 1950 en adelante.
@@ -43,8 +45,8 @@ A\~no & Evento & Motivo \\ \hline
 1987 & M\'ultiples ALUs & \blap{Poder compensar las ALU que mas latencia tienen, se multiplican las unidades para procesar mas instrucciones en paralelo.} \\
 1988 & Predicci\'on de Saltos & \blap{Disminuir y hasta evitar los costos de tener que recalcular el pipeline cuando hay saltos.} \\
 1995 & Fuera de Orden & \blap{Seguir ejecutando instrucciones mientras se esperan datos anteriores.} \\
-2002 & SMT & \blap{Poder procesar de a mas de un thread de OS en un solo core.} \\
-2005 & Multi-core & \blap{Aumentar el poder de computo sin aumentar la velocidad de clock ni consumo.} \\
+2002 & SMT & \blap{Poder procesar de a m\'as de un thread de OS en un solo core.} \\
+2005 & Multi-core & \blap{Aumentar el poder de c\'omputo sin aumentar la velocidad de clock ni consumo.} \\
 \end{tabular}
   \caption{Cronolog\'ia de los avances de arquitectura de procesadores.}
   \label{tbl:historia-cpu}
