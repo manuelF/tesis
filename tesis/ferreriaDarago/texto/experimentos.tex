@@ -38,6 +38,53 @@ Dada la heterogeneidad de estos grupos podemos concluir entonces que el c\'odigo
 hace un excelente uso de las prestaciones de procesadores multicore tradicionales
 de la arquitectura Xeon en una iteresante variedad de casos.
 
+\section{Aceleraciones alcanzadas en CPU}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cpu/initial-scf-hemo.png}
+   \caption{Pre-optimizaciones.}
+   \label{fig:initial-cpu-scf}
+ \end{subfigure}
+ \begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cpu/final-scf-hemo.png}
+   \caption{Post-optimizaciones.}
+   \label{fig:final-cpu-scf}
+ \end{subfigure}
+ \caption{Porcentajes de tiempo de SCF corriendo Hemoglobina en Xeon E5-2620 antes y despu\'es de
+ las optimizaciones realizadas.}
+ \label{fig:cpu-scf}
+\end{figure}
+
+Los tiempos finales de ejecuci\'on para CPU en el caso del servidor Xeon utilizado se encuentran
+en la figura~\ref{fig:cpu-scf} para hemoglobina. El \textit{speedup} final alcanzado por XC es del
+\'orden de 22 veces. Tambi\'en podemos ver una ligera mejora en el tiempo de SCF,
+producto de la vectorizaci\'on utilizada por MKL (\textit{Math Kernel Library}) de
+Fortran.
+
+La divisi\'on en partes de la iteraci\'on XC se encuentra en la figura~\ref{fig:cpu-parts}. La
+proporci\'on de tiempo se mantiene, con lo cual esfuerzos adicionales de optimizar deber\'ian
+guiarse en primera instancia en el resto de la iteraci\'on de SCF y luego en el c\'alculo de
+la densidad electr\'onica en XC.
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cpu/initial-iteration-parts-hemo.png}
+   \caption{Pre-optimizaciones.}
+   \label{fig:initial-cuda-parts}
+ \end{subfigure}
+ \begin{subfigure}[b]{\plotwidthtres}
+   \includegraphics[width=\textwidth]{plots/cpu/final-iteration-parts-hemo.png}
+   \caption{Post-optimizaciones.}
+   \label{fig:final-cuda-parts}
+ \end{subfigure}
+ \caption{Porcentajes de tiempo de los pasos de XC corriendo Hemoglobina en una Xeon ES-2620 antes y despu\'es de
+ las optimizaciones realizadas.}
+ \label{fig:cpu-parts}
+\end{figure}
+
 \section{Aceleraciones alcanzadas en CUDA}
 \label{resultados-cuda}
 
