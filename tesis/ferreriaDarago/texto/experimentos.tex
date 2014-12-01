@@ -179,18 +179,32 @@ Esta m\'etrica es similar a las que se usan en el \'area de MM. Programas como A
 distintas configuraciones de hardware sobre la cual correr mejor.
 
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\plotwidth]{plots/otros/its-xc-dia.png}
-    \caption{Cantidad de iteraciones de XC por d\'ia realizables usando distintas configuraciones corriendo Hemoglobina usando los
-              par\'ametros \'optimos correspondientes despues de todas las optimizaciones. El (*) marca resultados teoricos extrapolando
-              las aceleraciones alcanzadas en la secci\'on \ref{cuda-multiplaca}.}
-    \label{fig:its-xc-dia}
+\centering
+  \begin{subfigure}[b]{\plotwidthtres}
+    \includegraphics[width=\plotwidthtres]{plots/otros/its-xc-dia.png}
+    \caption{Precisi\'on simple.}
+  \end{subfigure}
+  \begin{subfigure}[b]{\plotwidthtres}
+    \includegraphics[width=\plotwidthtres]{plots/otros/its-xc-dia-double.png}
+    \caption{Precisi\'on doble.}
+  \end{subfigure}
+  \caption{Cantidad de iteraciones de XC por d\'ia realizables usando distintas configuraciones corriendo Hemoglobina usando los
+            par\'ametros \'optimos correspondientes despues de todas las optimizaciones. El (*) marca resultados teoricos extrapolando
+            las aceleraciones alcanzadas en la secci\'on \ref{cuda-multiplaca}.}
+  \label{fig:its-xc-dia}
 \end{figure}
 
 
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\plotwidth]{plots/otros/its-dia.png}
+\centering
+  \begin{subfigure}[b]{\plotwidthtres}
+    \includegraphics[width=\plotwidthtres]{plots/otros/its-dia.png}
+    \caption{Precisi\'on simple.}
+  \end{subfigure}
+  \begin{subfigure}[b]{\plotwidthtres}
+    \includegraphics[width=\plotwidthtres]{plots/otros/its-dia-double.png}
+    \caption{Precisi\'on doble.}
+  \end{subfigure}
     \caption{Cantidad de iteraciones de SCF por d\'ia realizables usando distintas configuraciones corriendo Hemoglobina usando los
               par\'ametros \'optimos correspondientes despues de todas las optimizaciones. El (*) marca resultados teoricos extrapolando
               las aceleraciones alcanzadas en la secci\'on \ref{cuda-multiplaca}.}
