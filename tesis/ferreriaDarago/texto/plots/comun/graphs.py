@@ -24,6 +24,7 @@ except ImportError:
 try:
   import seaborn as sns
   sns.set_context("paper",font_scale=1.7)
+  sns.set_style("ticks", {"font.family": "serif"})
   palette = sns.color_palette()
 except ImportError:
   palette = ["b"] * 1000
