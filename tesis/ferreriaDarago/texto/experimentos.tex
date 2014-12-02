@@ -145,7 +145,54 @@ resto de los c\'alculos.
 \end{figure}
 
 
-\section{Performance contra Xeon Phi}
+\section{Resultados alcanzados en Xeon Phi}
+
+Los resultados de la escalabilidad del c\'odigo conseguido en Xeon Phi se pueden ver
+en la figura~\ref{fig:xeon-final-scalability} para el caso de estudio de la Hemoglobina.
+Se puede ver que la misma no es tan buena como en CPU, entre otras razones por utilizar
+solamente la paralelizaci\'on interna (que no es t\'an buena para cubos chicos). El total de paralelizaci\'on seg\'un
+Amdahl esta por encima del 98.5\%, lo cual es menor de lo alcanzado anteriormente
+pero no es un valor menor. Adicionalmente, como se ve en la figura
+~\ref{fig:xeon-xeon-phi-parallelized-iteration}, el tiempo de iteraci\'on
+para el caso de 240 threads y utilizando solo paralelizaci\'on interna es
+comparable con los resultados alcanzados por el Xeon.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/escalabilidad-xeon-phi.png}
+   \caption{Speedup obtenido para la iteraci\'on del grupo hemo en Xeon Phi,
+   seg\'un la cantidad de threads. Se da el speedup te\'orico considerando Amdahl
+   con 98.5\% paralelizado para comparaci\'on.}
+   \label{fig:xeon-final-scalability}
+\end{figure}
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/xeon-xeon-phi-scale-comparison.png}
+   \caption{Tiempo de iteraci\'on para el grupo hemo entre Xeon y Xeon Phi.}
+   \label{fig:xeon-xeon-phi-parallelized-iteration}
+\end{figure}
+
+Los resultados son entonces similares a los encontrados en otros trabajos,
+donde el Xeon Phi alcanza velocidades interesantes utilizando paralelismo
+pero donde el c\'odigo se ve fuertemente impactado por su baja performance serial.
+
+Teniendo entonces estos resultados preliminares, decidimos no utilizar el Xeon Phi
+para el resto de los resultados comparativos, ya que no logra una mejora por sobre
+una versi\'on de CPU de la familia Xeon.
+
+Por \'ultimo, en la figura~\label{fig:group-times-scf-xeon-phi} se muestran los resultados
+de las distintas partes de la iteraci\'on SCF en Xeon Phi. Como se puede ver, la baja performance
+serial hace que las dem\'as secciones dominen muy fuertemente, lo cual enfatiza m\'as la necesidad
+de adaptar c\'odigo serial para utilizar las nuevas prestaciones vectoriales y paralelas de nuevas
+arquitecturas.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/final-scf-hemo-xeon-phi.png}
+   \caption{Tiempo para la iteraci\'on SCF separado entre la iteraci\'on de XC y el resto.}
+   \label{fig:group-times-scf-xeon-phi}
+\end{figure}
 
 \section{Tama\~no de los grupos}
 \label{tamgrupos}
@@ -157,7 +204,6 @@ de cada grupo en funci\'on del costo computacional, definido en la secci\'on \re
 sirve para determinar cuales grupos deben hacerse en paralelo, y en cuales usar el paralelismo interno. Estos
 los clasificamos como grupos \textit{chicos} y \textit{grandes} respectivamente. En GPU no se realiza esa
 distinci\'on. Luego, evaluamos el tiempo de ejecuci\'on acumulado para cada una de estas cuatro categor\'ias.
-
 
 \begin{figure}[htbp]
 \centering

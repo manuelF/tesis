@@ -195,6 +195,23 @@ def xeon_phi_enditer():
 
     scatter(**params)
 
+def xeon_phi_scf_parts():
+  parts = {
+      u"XC": time2milis("1s. 309920s"),
+      u"Resto de SCF": time2milis("4s. 359231us"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
+
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'final-scf-hemo-xeon-phi.png',
+  }
+  piechart(**params)
+
 def xeon_xeon_phi_final_comparison():
     xeon = time2milis("842375us.")
     xeonphi = time2milis("1s. 309920us.")
@@ -252,3 +269,4 @@ if __name__ == '__main__':
     xeon_phi_enditer()
     xeon_xeon_phi_final_comparison()
     xeon_xeon_phi_groups_comparison()
+    xeon_phi_scf_parts()

@@ -184,36 +184,5 @@ la implementaci\'on CPU. Para hacer corresponder esto, empleamos un \textit{thre
 con lo cual todo grupo es considerado grande y ejecutado con todos los
 threads disponibles.
 
-Los resultados de la escalabilidad resultante de este c\'odigo se pueden ver
-en la figura~\ref{fig:xeon-final-scalability}. Se puede ver que la misma no es
-buena, lo cual es consistente con la discusi\'on realizada anteriormente sobre
-la necesidad de una paralelizaci\'on externa. El total de paralelizaci\'on seg\'un
-Amdahl esta por encima del 98.5\%, lo cual es menor de lo alcanzado anteriormente
-pero no es un valor menor. Adicionalmente, como se ve en la figura
-~\ref{fig:xeon-xeon-phi-parallelized-iteration}, el tiempo de iteraci\'on
-para el caso de 240 threads y utilizando solo paralelizaci\'on interna es
-comparable con los resultados alcanzados por el Xeon.
-
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidth]{plots/xeonphi/escalabilidad-xeon-phi.png}
-   \caption{Speedup obtenido para la iteraci\'on del grupo hemo en Xeon Phi,
-   seg\'un la cantidad de threads. Se da el speedup te\'orico considerando Amdahl
-   con 98.5\% paralelizado para comparaci\'on.}
-   \label{fig:xeon-final-scalability}
-\end{figure}
-
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidth]{plots/xeonphi/xeon-xeon-phi-scale-comparison.png}
-   \caption{Tiempo de iteraci\'on para el grupo hemo entre Xeon y Xeon Phi.}
-   \label{fig:xeon-xeon-phi-parallelized-iteration}
-\end{figure}
-
-Los resultados son entonces similares a los encontrados en otros trabajos,
-donde el Xeon Phi alcanza velocidades interesantes utilizando paralelismo
-pero donde el c\'odigo se ve fuertemente impactado por su baja performance serial.
-
-Teniendo entonces estos resultados preliminares, decidimos no utilizar el Xeon Phi
-para el resto de los resultados comparativos, ya que no logra una mejora por sobre
-una versi\'on de CPU de la familia Xeon.
+Finalmente entonces, utilizamos solamente paralelizaci\'on dentro de cada grupo
+para el Xeon Phi con estas razones, en base a los \textit{trade-offs} presentados.
