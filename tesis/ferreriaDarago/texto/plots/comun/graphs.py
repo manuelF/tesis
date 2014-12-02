@@ -184,12 +184,12 @@ def scatter(xlabel, ylabel, filename, xdata, ydata):
   pylab.savefig(filename, bbox_inches='tight')
   pylab.close()
 
-def comparativeScatter(xlabel, ylabel, filename, xdata, ydata1, ydata2, label1, label2):
+def comparativeScatter(xlabel, ylabel, filename, xdata, ydata, label):
   pylab.xlabel(xlabel)
   pylab.ylabel(ylabel)
 
-  pylab.plot(xdata, ydata1, "o-", label=label1)
-  pylab.plot(xdata, ydata2, "o-", label=label2)
+  for yd, l in zip(ydata, label):
+      pylab.plot(xdata, yd, "o-", label=l)
   pylab.legend(loc="best")
 
   pylab.savefig(filename, bbox_inches="tight")

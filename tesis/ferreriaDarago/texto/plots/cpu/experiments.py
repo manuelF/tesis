@@ -260,10 +260,8 @@ def escalabilidad_final():
                 'xlabel': "Cantidad de threads",
                 'ylabel': "Speedup en veces",
                 'xdata': threads,
-                'ydata1': speedups,
-                'ydata2': threads,
-                'label1': 'Experimental',
-                'label2': 'Ideal',
+                'ydata': [ speedups, threads ],
+                'label': [ 'Experimental', 'Ideal' ],
                 'filename': 'escalabilidad-%s' % exp
             }
             comparativeScatter(**params)
