@@ -22,8 +22,8 @@
  \label{fig:cpu-scalability}
 \end{figure}
 
-Las figuras~\ref{fig:cpu-scalability-hemo},~\ref{fig:cpu-scalability-caroteno} y
-~\ref{fig:cpu-scalability-fullereno} muestran el \textit{speedup} conseguido en
+Las figuras~\ref{fig:cpu-scalability-caroteno}, ~\ref{fig:cpu-scalability-fullereno} y
+~\ref{fig:cpu-scalability-hemo} muestran el \textit{speedup} conseguido en
 el c\'odigo de CPU en Xeon para el grupo Hemo, Caroteno y Fullereno respectivamente.
 
 Los an\'alisis se realizaron utilizando el mismo Xeon que en los an\'alisis
@@ -139,11 +139,9 @@ resto de los c\'alculos.
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/final.png}
    \caption{Aceleraci\'on en veces del c\'alculo de XC de correr Hemoglobina comparando implementaci\'on original en CUDA contra
-   las versiones optimizadas finales. El (*) marca resultados teoricos extrapolados de las
- aceleraciones alcanzadas en la seccion \ref{cuda-multiplaca}}
+   las versiones optimizadas finales.}
    \label{fig:cuda-final}
 \end{figure}
-
 
 \section{Performance contra Xeon Phi}
 
@@ -212,17 +210,17 @@ CPU                      & \begin{tabular}[c]{@{}l@{}}Intel Core i7-3770 CPU @ 3
 %iteration = 522937
 %TODO especificar bien en algo medible.
 
-Lo que primero se debe notar en GPU es que se usan placas que tienen potencia de c\'alculo casi equivalente
+Lo que primero se debe notar en GPU es que se usan placas que tienen potencia de c\'alculo similar
 para las cuentas en simple precisi\'on. Sin embargo, elegimos una Tesla para configuraci\'on de servidor
 porque son las placas mejor preparadas para HPC. Estas cuentan con cuatro veces mas memoria en la placa
 que tiene ECC y con mayor MTFB (\textit{Mean Time Between Failures}), factor vital en servidores
 que deben correr confiablemente.
 
-La m\'etrica que usaremos para comparar los distintos sistemas es cuantas iteraciones del c\'alculo de
-SCF se pueden ejecutar por d\'ia. Esto lo hacemos para medir estrictamente la performance
+Las m\'etricas que usaremos para comparar los distintos sistemas es cuantas iteraciones del c\'alculo de
+XC y de SCF se pueden ejecutar por d\'ia. Esto lo hacemos para medir estrictamente la performance
 de QM, importante en simulaciones de \textit{Time-Dependant Density Functional Theory} por ejemplo, y no
 hablar de las implementaciones de los sistemas de QM/MM que utilizan LIO.
-Esta m\'etrica es similar a las que se usan en el \'area de MM. Programas como Amber\cite{Amber} la usan para comparar
+Estas m\'etricas son similares a las que se usan en el \'area de MM. Programas como Amber\cite{Amber} las usan para comparar
 distintas configuraciones de hardware sobre la cual correr mejor.
 
 \begin{figure}[htbp]
@@ -261,9 +259,10 @@ distintas configuraciones de hardware sobre la cual correr mejor.
 Un factor a tomar en cuenta para analizar la performance de diversas configuraciones, como en la figura \ref{fig:its-dia},
 es que el c\'alculo de SCF incluye contribuciones que no son solamente las relativas a intercambio correlaci\'on
 (las estudiadas en esta tesis), por los cuales los tiempos de ejecuci\'on totales van
-a presentar menores aceleraciones que las presentadas anteriormente. La cantidad de iteraciones de XC se ven
-exclusivamente en la figura \ref{fig:its-xc-dia}. Mostramos de manera independiente el calculo de XC porque
-creemos que es posible conseguir mejoras similares en el resto de las contribuciones de SCF.
+a presentar menores aceleraciones que las presentadas anteriormente. La cantidad de iteraciones de XC por d\'ia se ven
+en la figura \ref{fig:its-xc-dia}. Mostramos de manera independiente el c\'alculo de XC porque
+creemos que es posible conseguir mejoras similares en el resto de las contribuciones de SCF, con optimizaciones
+similares a las hechas en este trabajo.
 
 La principal ventaja que se obtiene de correr en las estaciones de trabajo con GPU es la potencia
 de c\'alculo concentrado en los dispositivos GPU. La mayor aceleraci\'on del calculo de XC se obtiene
@@ -276,21 +275,24 @@ es comparativamente grande. Como estas otras contribuciones de SCF no est\'an
 aceleradas con GPU, ese recurso se subutiliza fuera de XC.
 
 Cuando se comparan las configuraciones de servidores, el panorama cambia sustancialmente.
-Las aceleraciones obtenidas en la versi\'on GPU provienen principalmente de un solo factor,
+Las aceleraciones obtenidas en la versi\'on GPU en simple precisi\'on provienen principalmente de un solo factor,
 la mayor cantidad de memoria en la GPU. Esta memoria permite entonces mantener las matrices
 de funciones en memoria sin tener que recalcularlas. Esta optimizaci\'on se detall\'o en la secci\'on
 \ref{GuardarFunctionsGPU}. Como la GeForce GTX 780 cuenta con una velocidad de clock mayor a
-la K40 (probablemente porque en la linea de placas para v\'ideo juegos sea m\'as importante
+la K40 (ya que en la linea de placas para v\'ideo juegos es m\'as importante
 la performance que la estabilidad) las operaciones se realizan incluso mas r\'apido en la
-versi\'on de consumidor. Sin embargo, la Tesla K40 tiene un costo alrededor de ocho veces mayor que la
-GeForce GTX 780.
+versi\'on de consumidor. Se puede apreciar que la K40 en cambio, tiene una mucho mayor potencia
+para c\'alculo de doble precisi\'on que se refleja en la comparacion con la GTX 780, que es artificialmente
+restringida para no competir en el mismo segmento de mercado.
 
 La configuraci\'on de CPU en cambio, la performance escala linealmente en la cantidad de cores.
 Dadas las optimizaciones realizadas en CPU priorizando la escalabilidad, es de notar la gran
 diferencia de performance con respecto a la configuraci\'on de estaci\'on de trabajo. Priorizar CPU
 favorece tambi\'en a todo el resto del c\'alculo de SCF. Las as contribuciones que no son
 de intercambio-correlaci\'on se resuelven, o bien a trav\'es de librer\'ias BLAS en CPU, o bien
-aprovechando las t\'ecnicas de paralelizaci\'on autom\'atica que brindan los compiladores usados.
+aprovechando las t\'ecnicas de paralelizaci\'on autom\'atica que brindan los compiladores usados. De
+esta manera, se puede apreciar que la versi\'on de servidor en GPU termina teniendo una performance
+similar a la version en CPU.
 
 Comparando ambas configuraciones de servidores, hoy en d\'ia es mucho mas f\'acil encontrar
 nodos de computo de HPC usando m\'ultiples procesadores que nodos con varias GPU por varios motivos.
