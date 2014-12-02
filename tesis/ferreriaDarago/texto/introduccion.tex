@@ -56,11 +56,11 @@ Adem\'as propusieron la dependencia de la energ\'ia del sistema c\'omo funcional
     E[\rho] = T_s[\rho] + V_{ne}[\rho] + \frac{1}{2} \int \int \frac{\rho(\vec{r}_1) \rho(\vec{r}_2)}{r_{12}} d\vec{r}_1 d\vec{r_2} + E_{XC}[\rho]
 \end{equation}
 
-Donde $T_s[\rho]$ es la energ\'ia cin\'etica asociada con la densidad, $V_{ne}[\rho]$ es la energ\'ia potencial producto de la interacci\'on entre los electrones (la densidad) y los n\'ucleos, el tercer t\'ermino es el resultado de la repulsi\'on de Coulomb entre electrones y $E_{XC}[\rho]$ es la energ\'ia de intercambio y correlaci\'on. 
+Donde $T_s[\rho]$ es la energ\'ia cin\'etica asociada con la densidad, $V_{ne}[\rho]$ es la energ\'ia potencial producto de la interacci\'on entre los electrones (la densidad) y los n\'ucleos, el tercer t\'ermino es el resultado de la repulsi\'on de Coulomb entre electrones y $E_{XC}[\rho]$ es la energ\'ia de intercambio y correlaci\'on.
 Este \'ultimo t\'ermino da cuenta de la energ\'ia asociada a escribir la funci\'on de onda de manera que cumpla con el principio de antisimetr\'ia de Pauli y de la correlaci\'on en la posici\'on instant\'anea de los electrones.
 
-Esta formulaci\'on es exacta si se conociera el t\'ermino $E_{XC}[\rho]$ dado que los dem\'as tienen soluci\'on anal\'itica. 
-En las aproximaciones hechas para calcular el mismo reside tanto la calidad c\'omo el costo computacional de este tipo de simulaciones. 
+Esta formulaci\'on es exacta si se conociera el t\'ermino $E_{XC}[\rho]$ dado que los dem\'as tienen soluci\'on anal\'itica.
+En las aproximaciones hechas para calcular el mismo reside tanto la calidad c\'omo el costo computacional de este tipo de simulaciones.
 Por ello, el objetivo central de este trabajo consiste en mejorar el tiempo insumido en el computo de este t\'ermino.
 
 La forma comunmente utilizada para calcular este t\'ermino se basa en definir un funcional local $\epsilon_{xc}$ que depende de la densidad (Local Density Aproximation, LDA) o de la densidad y su gradiente (General Gardient Aproximation, GGA) en cada punto del espacio.
@@ -70,7 +70,8 @@ De esta manera se puede calcular $E_{XC}$ mediante la integral:
 \begin{equation}
   E_{XC} = \int \rho(r) \epsilon_{XC}\left( \rho(r) \right ) d\vec{r}
 \end{equation}
-\todo{>La integral no deber\'ia definirse sobre un dominio?}
+%\todo{>La integral no deber\'ia definirse sobre un dominio?}
+% Respuesta: Según Nano esto no es necesario.
 
 Esta ecuaci\'on puede ser aproximada mediante una suma utilizando una grilla de puntos seg\'un:
 
@@ -86,7 +87,7 @@ se cumple que:
     \label{princ_variacional}
     E[\rho^*] \geq E[\rho]
 \end{equation}
-Esto produce un m\'etodo auto-consistente para calcular $\rho$. 
+Esto produce un m\'etodo auto-consistente para calcular $\rho$.
 Se empieza con una aproximaci\'on inicial $\rho^*$ y se itera el c\'alculo de la misma mediante matriz, denominada \textit{Matriz de Kohn-Sham}, hasta alcanzar un m\'inimo para $E$.
 
 Este marco te\'orico es uno de los m\'etodos m\'as populares en problemas de estado s\'olido, especialmente desde la d\'ecada del 90 cuando se mejoraron las aproximaciones para modelado de interacciones.

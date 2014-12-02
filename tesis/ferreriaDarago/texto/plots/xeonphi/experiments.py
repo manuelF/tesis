@@ -151,6 +151,9 @@ def xeon_phi_cost_function():
 
         scatterGraphFitLineal(**params)
 
+def amdahl(P, n):
+    return 1. / (1. - P + P / n)
+
 def xeon_phi_scalability():
     vals = []
     with open("measures/escalabilidad-xeon-phi.txt") as f:
@@ -165,10 +168,10 @@ def xeon_phi_scalability():
         'xlabel': "Cantidad de threads",
         'ylabel': "Speedup en veces",
         'xdata': threads,
-        'ydata1': [max(vals) / v for v in vals],
-        'ydata2': [t for t in threads],
-        'label1': 'Experimental',
-        'label2': 'Ideal',
+        'ydata': [[max(vals) / v for v in vals],
+                  [amdahl(0.98, t) for t in threads],
+                  [amdahl(0.99, t) for t in threads]],
+        'label': ['Experimental', 'Amdahl 98%', 'Amdahl 99%'],
         'filename': 'escalabilidad-xeon-phi.png',
     }
     comparativeScatter(**params)
@@ -191,6 +194,23 @@ def xeon_phi_enditer():
     }
 
     scatter(**params)
+
+def xeon_phi_scf_parts():
+  parts = {
+      u"XC": time2milis("1s. 309920s"),
+      u"Resto de SCF": time2milis("4s. 359231us"),
+  }
+  names = parts.keys();
+  values = [parts[key] for key in names]
+  total = sum(values)
+
+  params = {
+      'title': '',
+      'labels': names,
+      'values': values,
+      'filename': u'final-scf-hemo-xeon-phi.png',
+  }
+  piechart(**params)
 
 def xeon_xeon_phi_final_comparison():
     xeon = time2milis("842375us.")
@@ -231,10 +251,8 @@ def xeon_xeon_phi_groups_comparison():
         'xlabel': u"Número de grupo",
         'ylabel': u"Tiempo de iteración [ms]",
         'xdata': xrange(0, len(measures)),
-        'ydata1': [v for u,v,w in measures],
-        'ydata2': [w for u,v,w in measures],
-        'label1': u'Xeon',
-        'label2': u'Xeon Phi',
+        'ydata': [[v for u,v,w in measures], [w for u,v,w in measures]],
+        'label': [u'Xeon',  u'Xeon Phi'],
         'filename': 'xeon-xeon-phi-groups-comparison.png',
     }
     comparativeScatter(**params)
@@ -251,3 +269,4 @@ if __name__ == '__main__':
     xeon_phi_enditer()
     xeon_xeon_phi_final_comparison()
     xeon_xeon_phi_groups_comparison()
+    xeon_phi_scf_parts()
