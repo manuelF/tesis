@@ -67,7 +67,8 @@ Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fue
 Mediante el uso de algoritmos y circuitos complejos, un procesador puede detectar las dependencias entre las instrucciones y cambiar el orden de ejecuci\'on para minimizar la aparici\'on de pipe stalls y, de esta manera, lograr que la mayor parte de las unidades del procesador esten ocupadas el mayor tiempo posible.
 
 %\todo{dejaron de ser invisible?}
-Mejoras en este nivel eran usualmente invisibles al programador de un lenguaje de alto nivel como C++, dejando la tarea de aprovechar estos \textit{features} a los compiladores optimizantes. Sin embargo, las ventajas de estas t\'ecnicas fueron disminuyendo a partir del a\~no 2000.
+Mejoras en este nivel eran usualmente invisibles al programador de un lenguaje de alto nivel como C++, dejando la tarea de aprovechar estos \textit{features} a los compiladores optimizantes. 
+Sin embargo, las ventajas de estas t\'ecnicas fueron disminuyendo a partir del a\~no 2000.
 
 \subsection{Extensiones vectoriales}
 
@@ -163,28 +164,20 @@ En la d\'ecada del 90, m\'ultiples avances surgieron en la aceleraci\'on 2D para
 A principios de la d\'ecada del 2000, se agregaron los \textit{shaders} a las placas, peque\~nos programas independientes que corr\'ian nativo en el GPU, y se pod\'ian encadenar entre s\'i, uno por pixel en la pantalla~\cite{CG}. 
 Este paralelismo es el desarrollo fundamental que llev\'o a las GPU a poder procesar operaciones gr\'aficas \'ordenes de magnitud m\'as r\'apido que el CPU.
 
-En el 2006, \nvidia{} introduce la arquitectura G80, que es el primer GPU que deja de resolver \'unicamente problemas de gr\'aficos
-para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los
-tipos de operaciones que realiza (geometria, vertex y pixel shaders).~\cite{cudaHandbook} Como subproducto de esto,
-el GPU deja de tener pipelines especializados y pasa a tener procesadores sim\'etricos m\'as sencillos y m\'as
-f\'aciles de construir. Esta arquitectura es la que se ha mantenido y mejorado en el tiempo, permitiendo
-a las GPU escalar masivamente en procesadores simples, de un bajo clock de una disipaci\'on t\'ermica
+En el 2006, \nvidia{} introduce la arquitectura G80, que es el primer GPU que deja de resolver \'unicamente problemas de gr\'aficos para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los tipos de operaciones que realiza (geometr\'ia, vertex y pixel shaders)~\cite{cudaHandbook}. 
+Como subproducto de esto, la GPU deja de tener pipelines especializados y pasa a tener procesadores sim\'etricos m\'as sencillos y m\'as f\'aciles de construir. 
+Esta arquitectura es la que se ha mantenido y mejorado en el tiempo, permitiendo a las GPU escalar masivamente en procesadores simples, de un bajo clock de una disipaci\'on t\'ermica
 manejable.
 
-Los puntos fuertes de las GPGPU modernas consisten en poder atacar los problemas de paralelismo
-de manera pseudo-explicita, y con esto poder escalar ``f\'acilmente'' si solamente se corre en una
-placa mas r\'apida. ~\cite{} T\'ecnicamente, esta arquitectura cuenta con entre cientos y miles de procesadores
-especializados en c\'alculo de punto flotante, procesando cada uno un \textit{thread} distinto pero
-trabajando de manera sincr\'onica agrupados en bloques. Cada procesador a su vez cuenta con entre
-64 a 256 registros~\cite{NvidiaFermi}~\cite{NvidiaKepler}, como porci\'on de un register file de 64KB.
-Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de
-su dise\~no fundamental para gr\'aficos). Estos no poseen instrucciones SIMD, ya que su dise\~no primario
-esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los
-bloques sincr\'onicos de procesadores. De este modo, las placas modernas como la K40 alcanzan
-poder de computo de 4.3 TFLOPs en c\'alculos de precisi\'on simple, 1.7 TFLOPs en precisi\'on doble y 288GB/seg de
-transferencia, usando 2880 CUDA Cores.~\cite{NvidiaKeplerDatasheet} Para poner en escala la concentraci\'on
-de poder de calculo, estas prestaciones har\'ian de una computadora usando solo dos de estas placas
-la supercomputadora m\'as potente del mundo en Noviembre 2001.~\cite{Top500November2001}
+Los puntos fuertes de las GPGPU\todo{GPGPU se refiere m\'as bien al uso de las placas, no tiene mucho sentido \emph{modernas}} modernas consisten en poder atacar los problemas de paralelismo de manera pseudo-explicita, y con esto poder escalar ``f\'acilmente'' si solamente se corre en una placa m\'as r\'apida~\cite{}.\todo{CITA!!}
+T\'ecnicamente, esta arquitectura cuenta con entre cientos y miles de procesadores especializados en c\'alculo de punto flotante, procesando cada uno un \textit{thread} distinto pero
+trabajando de manera sincr\'onica agrupados en bloques. 
+Cada procesador a su vez cuenta con entre $64$ a $256$ registros~\cite{NvidiaFermi,NvidiaKepler}, como porci\'on de un register file de $64$KB.
+Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de su dise\~no fundamental para gr\'aficos). 
+Estos no poseen instrucciones SIMD, ya que su dise\~no primario esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los bloques sincr\'onicos de procesadores. 
+De este modo, las placas modernas como la K40 alcanzan poder de c\'omputo de 4.3 TFLOPs en c\'alculos de precisi\'on simple, 1.7 TFLOPs en precisi\'on doble y 288GB/seg de
+transferencia, usando $2880$ CUDA Cores~\cite{NvidiaKeplerDatasheet}. 
+Para poner en escala la concentraci\'on de poder de calculo, estas prestaciones har\'ian de una computadora usando solo dos de estas placas la supercomputadora m\'as potente del mundo en Noviembre 2001~\cite{Top500November2001}.
 
 \begin{figure}[htbp]
     \centering
