@@ -41,9 +41,9 @@ miles de threads por bloque, entonces es posible que las operaciones que sirvan
 para sincronizar los threads de todo un bloque en un punto espec\'ifico antes de proseguir
 (un barrier) sean excesivamente costosas.
 
-La arquitectura GPGPU de \nvidia organiza los registros de todos los threads en un \'unico
+La arquitectura GPGPU de \nvidia{} organiza los registros de todos los threads en un \'unico
 register file por SM, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
-los c\'omputos intermedios, \nvidia decidi\'o unificarlos, ya que es muy variable la cantidad que va a usar
+los c\'omputos intermedios, \nvidia{} decidi\'o unificarlos, ya que es muy variable la cantidad que va a usar
 cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
 registros por thread. Mientras que Fermi permit\'ia hasta 63 registros, Kepler permite hasta 255. Esto
 es positivo para poder correr bloques de pocos threads pero gran cantidad de registros. Por otro lado,
@@ -646,7 +646,7 @@ el tiempo de ejecuci\'on que va a tener un grupo.
 
 El predictor usando el tama\~no, si bien es posible observar que tiene una buena correlaci\'on con el tiempo de ejecuci\'on,
 no tiene la precisi\'on que tiene el predictor basado en la funci\'on de costo en CPU, visto en la figura~\ref{fig:comp-size-cost}.
-No se pudo encontrar par\'ametros que permitan ajustarlo para que funcione en GPU. Como \nvidia no publica toda la informaci\'on
+No se pudo encontrar par\'ametros que permitan ajustarlo para que funcione en GPU. Como \nvidia{} no publica toda la informaci\'on
 interna de los procesadores GPU y dada la cantidad de lugares adicionales donde se puede incurrir en latencias
 imprevistas, al funcionar as\'incronos al CPU, no es posible predecir runtime con excesiva confianza dado \'unicamente
 las cuentas a realizar. Al tener ambos predictores performance similares, se decidi\'o usar el m\'as sencillo, el
