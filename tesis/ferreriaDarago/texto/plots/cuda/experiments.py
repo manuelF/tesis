@@ -240,25 +240,29 @@ def predictorSizeInGpu():
 
 def speedupTotal():
   ref_1x2090 = 5005751
-  ref_1xk40 = 4055102
+  ref_1x780 = 4055102
   change_iteration_1x2090 = 909456
-  change_iteration_1xk40 = 500332
+  change_iteration_2x2090 = 491781
+  change_iteration_3x2090 = 353657
   change_iteration_4x2090 = 320102
-  change_iteration_4xk40 = 500332/2.86
+  change_iteration_1x780 = 446537
+  change_iteration_2x780 = 246460
   measures = (#ref_1x2090/ref_1x2090,
       ref_1x2090/change_iteration_1x2090,
-      ref_1xk40/change_iteration_1xk40,
+      ref_1x2090/change_iteration_2x2090,
+      ref_1x2090/change_iteration_3x2090,
       ref_1x2090/change_iteration_4x2090,
-      ref_1xk40/change_iteration_4xk40
+      ref_1x780/change_iteration_1x780,
+      ref_1x780/change_iteration_2x780
       )
   params =  {#'title': u"Aceleración del calculo de SCF aplicando todas las optimizaciones",
       'xlabel':u"",
       'ylabel':u"Aceleración de calculo de XC (en veces)",
       'yvalues':measures,
-      'ylim':(1.0,25.0),
+      'ylim':(1.0,20.0),
       'ticks':(#u'Referencia Fermi',
-        u'Fermi\n1 placa', u'Kepler\n1 placa',u'Fermi\n4 placas',
-        u'Kepler *\n4 placas'),
+        u'Fermi\n1 placa', u'Fermi\n2 placas', u'Fermi\n3 placas', u'Fermi\n4 placas',
+        u'Kepler\n1 placa', u'Kepler \n2 placas'),
       'filename':"final.png"}
   barGraph(**params)
 
