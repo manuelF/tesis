@@ -56,7 +56,7 @@ los pasos de la iteraci\'on SCF, los resultados est\'an en la figura~\ref{fig:pr
 \end{figure}
 
 Tanto el c\'omputo de pesos, funciones y la iteraci\'on en si para el caso de la
-hemoglobina muestran una alentizaci\'on muy fuerte, incluso considerando que
+hemoglobina muestran una ralentizaci\'on muy fuerte, incluso considerando que
 todos los ciclos fueron vectorizados por el compilador de acuerdo a los reportes
 generados por el mismo.
 
@@ -86,16 +86,16 @@ Corroboramos entonces la pobre \textit{performance} del Xeon Phi en c\'odigo
 principalmente serial, incluso con c\'odigos sencillos y vectorizados por el
 compilador.
 
-Este factor, la baja performance con respecto al Xeon, impacta fuertemente en toda
+La baja performance con respecto al Xeon impacta fuertemente en toda
 la aplicaci\'on, incluso en la parte paralelizada. Al poner m\'as presi\'on en
-el uso efectivo de los procesadores, incrementa muy fuertemente las perdida
-predicha por la ley de Amdahl, resultando en no solo una baja \textit{performance}
+el uso efectivo de los procesadores, se incrementan notoriamente las perdidas
+predichas por la ley de Amdahl, resultando en no solo una baja \textit{performance}
 sino en una baja escalabilidad.
 
 Un ejemplo de estos efectos puede verse en la paralelizaci\'on de los grupos chicos
 en cargas para cada procesador. Al ser el c\'odigo serial en el Xeon Phi muy poco
-performante, se vuelve necesario utilizar m\'as procesadores para un mismo grupo.
-Esto pone presi\'on en usar un \textit{threshold} m\'as chico para considerar
+eficiente, se vuelve necesario utilizar m\'as procesadores para un mismo grupo.
+Esto conduce a usar un \textit{threshold} m\'as chico para considerar
 m\'as grupos grandes. Pero esto impacta negativamente en la escalabilidad ya que:
 
 \begin{itemize}
@@ -110,8 +110,8 @@ Por ejemplo, en la figura~\ref{fig:partition-balance} se puede ver el balance
 de la partici\'on resultante de utilizar 60 procesadores y la funci\'on de costo
 y valores de divisi\'on calculados en la secci\'on anterior. Se detalla tanto
 el desbalance te\'orico (predicho por la partici\'on) como el balance de tiempo.
-El balance de tiempo es especialmente pronunciado, y puede verse un incremento
-muy pronunciado del tiempo de ejecuci\'on tambi\'en para grupos chicos. Al ser
+Este ultimo es especialmente pronunciado, y puede verse un incremento
+muy notable del tiempo de ejecuci\'on tambi\'en para grupos chicos. Al ser
 los mismos ejecutados serialmente, este incremento es consistente con los
 resultados anteriores, pero disminuye el atractivo de la divisi\'on en cargas de
 los grupos chicos en el Xeon Phi.
@@ -127,13 +127,14 @@ los grupos chicos en el Xeon Phi.
      \caption{Tiempo de ejecuci\'on efectivo}
    \end{subfigure}
    \caption{Comparaci\'on entre la menor y mayor de las cargas para \textit{threads},
-   seg\'un el tipo de parametro, para una iteraci\'on del grupo hemo en Xeon Phi, usando
+   seg\'un el tipo de parámetro, para una iteraci\'on del grupo hemo en Xeon Phi, usando
    la funci\'on de costo y divisi\'on en grupos obtenida, en 60 threads.}
    \label{fig:partition-balance}
 \end{figure}
 
 De lo anterior se desprende tambi\'en la necesidad de modificar la funci\'on de costo
-para el Xeon Phi. En esta arquitectura todo c\'omputo serial es muy fuerte, con
+para el Xeon Phi. En esta arquitectura todo c\'omputo serial tiene serias limitaciones
+con respecto a un CPU convencional, con
 lo cual ahora no se tiene un \textit{overhead} por cubo tan pesado con relaci\'on
 al c\'omputo. Por esto la funci\'on de costo anterior no resulta \'util, como
 puede verse en la figura~\ref{fig:cost-function-xeon-phi}, y que tambi\'en explica
