@@ -987,48 +987,48 @@ El costo computacional ya se vio anteriormente que resulta bajo. En el caso
 de la hemoglobina se consigue menos del 5\% de diferencia en una iteraci\'on
 de rebalanceo, obteni\'endose los resultados de la figura~\ref{fig:lio-imbalance-fixed}.
 
-\subsection{Resultados preliminares}
-
-Considerando la paralelizaci\'on del c\'odigo utilizamos el ejemplo de la
-hemoglobina como base. En la figura~\ref{fig:hemo-scale} se puede ver la
-escalabilidad conseguida en tiempo de ejecuci\'on con 12 procesadores.
-
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-paralelizar-iteracion.png}
-   \caption{Tiempo en milisegundos para la iteraci\'on del c\'alculo de la energ\'ia
-   XC para la hemoglobina en la m\'aquina de prueba, seg\'un cantidad de \textit{threads}}
-   \label{fig:hemo-scale}
-\end{figure}
-
-El resultado corresponde a un \textit{speedup} de 11,53 veces. De acuerdo
-a la ley de Amdahl esto implica que 99.6\% de la iteraci\'on fue efectivamente
-paralelizada, lo cual implica que la escalabilidad lograda en la m\'aquina de
-prueba para este caso es muy cercana a la m\'axima.
-
-Otro aspecto de inter\'es es que, posteriormente de hacer todos los cambios
-necesario para lograr que el c\'odigo sea paralelizado, incluso la performance
-en un solo procesador mejor\'o con respecto a lo original, para el caso de ejemplo,
-como puede verse en la figura~\ref{fig:post-paralelizacion-single}.
-
-No hay una optimizaci\'on \'unica que haya llevado a este cambio, pero la
-reestructuraci\'on mejor\'o el uso de las matrices (muchas no necesitan ser
-llenadas con ceros previo la iteraci\'on ni creadas todas las iteraciones) y
-adem\'as se removieron algunas operaciones redundantes: los factores se calculan
-una \'unica vez, los \'indices a calcular para cada grupo se mantienen entre
-iteraciones disminuyendo la cantidad de c\'omputos a realizar, etc.
-
-Ninguna de estas optimizaciones en si aporta demasiado pero la combinaci\'on
-da una mejora no despreciable.
-
-\begin{figure}[htbp]
-   \centering
-   \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-paralelizar-iteracion-single.png}
-   \caption{Tiempo en milisegundos para la iteraci\'on del c\'alculo de la energ\'ia
-   XC para la hemoglobina en la m\'aquina de prueba, para la versi\'on
-   post paralelizaci\'on en un solo procesador}
-   \label{fig:post-paralelizacion-single}
-\end{figure}
+%\subsection{Resultados preliminares}
+%
+%Considerando la paralelizaci\'on del c\'odigo utilizamos el ejemplo de la
+%hemoglobina como base. En la figura~\ref{fig:hemo-scale} se puede ver la
+%escalabilidad conseguida en tiempo de ejecuci\'on con 12 procesadores.
+%
+%\begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-paralelizar-iteracion.png}
+%   \caption{Tiempo en milisegundos para la iteraci\'on del c\'alculo de la energ\'ia
+%   XC para la hemoglobina en la m\'aquina de prueba, seg\'un cantidad de \textit{threads}}
+%   \label{fig:hemo-scale}
+%\end{figure}
+%
+%El resultado corresponde a un \textit{speedup} de 11,53 veces. De acuerdo
+%a la ley de Amdahl esto implica que 99.6\% de la iteraci\'on fue efectivamente
+%paralelizada, lo cual implica que la escalabilidad lograda en la m\'aquina de
+%prueba para este caso es muy cercana a la m\'axima.
+%
+%Otro aspecto de inter\'es es que, posteriormente de hacer todos los cambios
+%necesario para lograr que el c\'odigo sea paralelizado, incluso la performance
+%en un solo procesador mejor\'o con respecto a lo original, para el caso de ejemplo,
+%como puede verse en la figura~\ref{fig:post-paralelizacion-single}.
+%
+%No hay una optimizaci\'on \'unica que haya llevado a este cambio, pero la
+%reestructuraci\'on mejor\'o el uso de las matrices (muchas no necesitan ser
+%llenadas con ceros previo la iteraci\'on ni creadas todas las iteraciones) y
+%adem\'as se removieron algunas operaciones redundantes: los factores se calculan
+%una \'unica vez, los \'indices a calcular para cada grupo se mantienen entre
+%iteraciones disminuyendo la cantidad de c\'omputos a realizar, etc.
+%
+%Ninguna de estas optimizaciones en si aporta demasiado pero la combinaci\'on
+%da una mejora no despreciable.
+%
+%\begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=\plotwidthsmaller]{plots/cpu/post-paralelizar-iteracion-single.png}
+%   \caption{Tiempo en milisegundos para la iteraci\'on del c\'alculo de la energ\'ia
+%   XC para la hemoglobina en la m\'aquina de prueba, para la versi\'on
+%   post paralelizaci\'on en un solo procesador}
+%   \label{fig:post-paralelizacion-single}
+%\end{figure}
 
 \subsection{Paralelizaci\'on a funciones y pesos}
 

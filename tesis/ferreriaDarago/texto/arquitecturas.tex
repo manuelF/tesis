@@ -169,10 +169,12 @@ Como subproducto de esto, la GPU deja de tener pipelines especializados y pasa a
 Esta arquitectura es la que se ha mantenido y mejorado en el tiempo, permitiendo a las GPU escalar masivamente en procesadores simples, de un bajo clock de una disipaci\'on t\'ermica
 manejable.
 
-Los puntos fuertes de las GPGPU\todo{GPGPU se refiere m\'as bien al uso de las placas, no tiene mucho sentido \emph{modernas}} modernas consisten en poder atacar los problemas de paralelismo de manera pseudo-explicita, y con esto poder escalar ``f\'acilmente'' si solamente se corre en una placa m\'as r\'apida~\cite{}.\todo{CITA!!}
+Los puntos fuertes de las GPU %\todo{GPGPU se refiere m\'as bien al uso de las placas, no tiene mucho sentido \emph{modernas}}
+modernas consisten en poder atacar los problemas de paralelismo de manera pseudo-explicita, y con esto poder escalar ``f\'acilmente'' si solamente se corre en una placa con m\'as procesadores~\cite{cudaProgrammingGuide}.
+%\todo{CITA!!}
 T\'ecnicamente, esta arquitectura cuenta con entre cientos y miles de procesadores especializados en c\'alculo de punto flotante, procesando cada uno un \textit{thread} distinto pero
 trabajando de manera sincr\'onica agrupados en bloques.
-Cada procesador a su vez cuenta con entre $64$ a $256$ registros~\cite{NvidiaFermi,NvidiaKepler}, como porci\'on de un register file de $64$KB.
+Cada procesador a su vez cuenta con entre $63$ a $255$ registros~\cite{NvidiaFermi,NvidiaKepler}, como porci\'on de un register file de $64$KB.
 Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de su dise\~no fundamental para gr\'aficos).
 Estos no poseen instrucciones SIMD, ya que su dise\~no primario esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los bloques sincr\'onicos de procesadores.
 De este modo, las placas modernas como la K40 alcanzan poder de c\'omputo de 4.3 TFLOPs en c\'alculos de precisi\'on simple, 1.7 TFLOPs en precisi\'on doble y 288GB/seg de
