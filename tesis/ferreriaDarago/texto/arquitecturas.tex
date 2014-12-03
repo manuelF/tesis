@@ -101,21 +101,21 @@ A diferencia de los procesadores, la velocidad de acceso de las memorias princip
 \end{figure}
 
 El concepto de \textit{localidad espacial} corresponde con la la observaci\'on de que los datos con los que opera una secci\'on de un programa suelen estar \emph{cerca} en memoria.
-Los dise\~nos de procesadores empezaron a incluir distintos tipos de caches para sacar provecho de esta situaci\'on: memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos recientemente usados.
+Los dise\~nos de procesadores empezaron a incluir distintos tipos de caches para sacar provecho de esta situaci\'on: memorias r\'apidas, pr\'oximas al CPU y de menor tama\~no para contener el subconjunto de los datos \emph{cercano} al recientemente usado.
 Su eficacia impuls\'o el establecimiento de una jerarqu\'ia en orden creciente de tama\~no y decreciente en velocidad, empezando por las caches L1 y siguiendo por las L2 y L3.
 
 El tama\~no de una cache L1 moderna est\'a en el orden de los 64 KB, una cache L2 en el \'orden de los 2 MB y una L3 en el orden de 6 MB en adelante.
 
-Si bien la aparici\'on y utilizaci\'on de caches es transparente al programador en los procesadores de la l\'inea x86\_64, los accesos irregulares a la memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, esto puede causar que datos que s\'i se vayan a utilizar sean desalojados de la cache y deban ser buscados nuevamente en la memoria principal (evento que se conoce como \textit{cache miss}).
+Si bien la aparici\'on y utilizaci\'on de caches es transparente al programador en los procesadores de la l\'inea \texttt{x86\_64}, los accesos irregulares a la memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, esto puede causar que datos que s\'i se vayan a utilizar sean desalojados y deban ser buscados nuevamente en la memoria principal (evento que se conoce como \textit{cache miss})\todo{Ojo esta definici\'on de cache miss es media tricky en este contexto, parecer\'ia ser que se refiere a la b\'usqueda de nuevo en la memoria y no a que el dato no est\'e en cache}.
 Por esto es que la regularidad de los accesos a memoria para hacer buen uso de caches es fundamental para obtener una buena performance.
 
 \subsection{Multiprocesadores}
 
-Dentro del \'area de computo de escritorio, servidores y estaciones de trabajo basadas en la l\'inea x86, los procesadores MIMD (\textit{Multiple Instruction Multiple Data}) implicaron una revoluci\'on en el abordaje del problema de alta \textit{performance}, pero cada procesador contin\'ua las l\'ineas anteriores.
+Dentro del \'area de c\'omputo de escritorio, servidores y estaciones de trabajo basadas en la l\'inea \texttt{x86}, los procesadores MIMD (\textit{Multiple Instruction Multiple Data}) implicaron una revoluci\'on en el abordaje del problema de alta \textit{performance}, pero cada procesador contin\'ua las l\'ineas anteriores.
 Los dise\~nos m\'as utilizados se basan en un arquitectura tipo SMP (\textit{Symmetric Multiprocessing}), en la cual todos los procesadores son iguales y comparten una misma memoria principal.
 Cada procesador tiene sus propios registros y se comunica con los dem\'as mediante memoria compartida o interrupciones.
 
-Por ejemplo, el procesador Intel Xeon E7-8800 posee $12$ procesadores (cores) que pueden ejecutar dos hilos simult\'aneamente cada uno, mediante el uso de la tecnolog\'ia denominada \textit{Hyper-threading}.
+Por ejemplo, el procesador \texttt{Intel Xeon E7-8800} posee $12$ procesadores (cores) que pueden ejecutar dos hilos simult\'aneamente cada uno, mediante el uso de la tecnolog\'ia denominada \textit{Hyper-threading}.
 
 A diferencia de los otros m\'etodos, las mejoras posibles mediante el procesamiento paralelo en tareas son sustanciales, pero dependen del programador en gran medida.
 Un programa serial no se beneficiar\'a de m\'ultiples \textit{cores}, incluso siendo recompilado, a menos que este paralelismo se aproveche expl\'icitamente.
@@ -135,53 +135,35 @@ donde $S$ es el speedup m\'aximo de mejora alcanzable, $B$ es la fracci\'on del 
     \label{fig:amdahl_plot}
 \end{figure}
 
-Un ejemplo de esta ley en acci\'on es que si $95 \%$ del problema es paralelizable entonces el l\'imite te\'orico de
-mejora es de 20 veces (el programa corriendo sobre infinitos cores se ejecutar\'ia en un veinteavo del tiempo que originalmente
-requer\'ia). La figura ~\ref{fig:amdahl_plot} muestra el comportamiento de la ecuacion \ref{eq:amdahl} que define la ley de Amdahl
-con distintas fracciones de c\'odigo paralelo.
+Un ejemplo de esta ley en acci\'on es que si $95 \%$ del problema es paralelizable entonces el l\'imite te\'orico de mejora es de $20$ veces (el programa corriendo sobre infinitos cores se ejecutar\'ia en un veinteavo del tiempo que originalmente requer\'ia). 
+La figura ~\ref{fig:amdahl_plot} muestra el comportamiento de la ecuacion \ref{eq:amdahl} que define la ley de Amdahl con distintas fracciones de c\'odigo paralelo.
 
-La ley de Amdahl describe el pico te\'orico de mejora y es una simplificaci\'on, ya que asume que todos los cores tienen
-trabajo perfectamente distribuido sin comunicaci\'on entre ellos por motivos de sincronizaci\'on.
+La ley de Amdahl describe el pico te\'orico de mejora y es una simplificaci\'on, ya que supone que todos los cores tienen trabajo perfectamente distribuido, que no deben comunicarse entre ellos por motivos de sincronizaci\'on y que no existen otras sobrecargas debido a la paralelizaci\'on.
 
-Por otro lado, la presencia de un componente com\'un (la memoria) puede introducir cuellos de botella en el acceso a los
-datos, ya que si el \textit{bus} de memoria es saturado con pedidos los procesadores deben detener su ejecuci\'on hasta que
-los datos est\'en listos, elimin\'andose entonces el procesamiento paralelo.
+Por otro lado, la presencia de un componente com\'un (la memoria) puede introducir cuellos de botella en el acceso a los datos, ya que si el \textit{bus} de memoria es saturado con pedidos, los procesadores deben detener su ejecuci\'on hasta que los datos est\'en listos, elimin\'andose entonces el procesamiento paralelo.
 
-Otro elemento de conflicto son los caches. Como los procesadores deben tener una visi\'on unificada y consistente de la
-memoria, a veces es necesario que estos sincronicen los valores de sus caches, especialmente ante una escritura de memoria.
-Esto se conoce como \textit{coherencia de caches} e involucra una sincronizaci\'on de alto \textit{overhead}, ya
-que implica coordinaci\'on entre dos o m\'as procesadores a trav\'es de un bus de memoria.
+Otro elemento de conflicto son los caches. 
+Como los procesadores deben tener una visi\'on unificada y consistente de la memoria, a veces es necesario que estos sincronicen los valores de sus caches, especialmente ante una escritura de memoria.
+Esto se conoce como \textit{coherencia de caches} e involucra una sincronizaci\'on de alto \textit{overhead}, ya que implica coordinaci\'on entre dos o m\'as procesadores a trav\'es de un bus de memoria.
 
-Es en este punto que el impacto del paralelismo en el comportamiento del programa puede ser tan fuerte como sutil. Un fen\'omeno que
-ilustra esto es el de \textit{false sharing}. Este fen\'omeno sucede cuando una variable no compartida entre threads
-reside en la misma l\'inea de cache con una que si, requiriendo entonces que sea pasada de lado a lado entre cores aunque
-nunca fuese esto necesario, decrementando la escalabilidad del algoritmo a muchos procesadores y siendo
-dif\'icil de descubrir al depender intr\'insecamente del sistema en el que se corre.
+Es en este punto que el impacto del paralelismo en el comportamiento del programa puede ser tan fuerte como sutil. 
+Un fen\'omeno que ilustra esto es el de \textit{false sharing}, que sucede cuando una variable no compartida entre threads reside en la misma l\'inea de cache con una que s\'i. En ese caso, la variable es pasada de lado a lado entre cores aunque nunca fuese necesario, decrementando la escalabilidad del algoritmo y siendo dif\'icil de detectar al depender intr\'insecamente del sistema en el que se corre.
 
-Los desaf\'ios generados por la adici\'on de cores influencia fuertemente los dise\~nos de una arquitectura, no solo en
-procesadores est\'andar sino tambi\'en en aceleradores como las GPGPUs y coprocesadores num\'ericos.
+Los desaf\'ios generados por la adici\'on de cores influencian fuertemente los dise\~nos de una arquitectura, no solo en procesadores est\'andar sino tambi\'en en aceleradores como las GPGPUs y coprocesadores num\'ericos.
 
 \section{CUDA}
 
 \subsection{Introducci\'on}
 
-Una de las arquitectura analizadas en este trabajo es la arquitectura GPGPU desarrollada por \nvidia, conocida
-como CUDA por las siglas en ingles de \textit{Compute Unified Device Architecture}.
-CUDA surge naturalmente de la aplicaci\'on del hardware desarrollado para problemas gr\'aficos, pero aplicados al computo cient\'ifico.
+Una de las arquitectura analizadas en este trabajo es la arquitectura GPGPU desarrollada por \nvidia{}, conocida como CUDA por las siglas en ingles de \textit{Compute Unified Device Architecture}.
+CUDA surge naturalmente de la aplicaci\'on del hardware desarrollado para problemas gr\'aficos, pero aplicados al c\'omputo cient\'ifico.
 
-Las placas de v\'ideo aparecen en 1978 con la introducci\'on de Intel del iSBX 275, permitiendo dibujar lineas,
-arcos y bitmaps y comunicada por DMA al procesador principal. En 1985, la Commodore Amiga inclu\'ia un coprocesador
-gr\'afico que podr\'ia ejecutar instrucciones independientemente del CPU, un paso importante en la separaci\'on
-y especializaci\'on de las tareas. En la d\'ecada del 90, m\'ultiples
-avances surgieron en la aceleraci\'on 2D para dibujar las interfaces gr\'aficas de los sistemas operativos,
-y para mediados de la d\'ecada, muchos fabricantes estaban incursionando en las aceleradoras 3D como
-add-ons a las placas gr\'aficas tradicionales 2D. A principios de la d\'ecada del 2000, se agregaron los
-\textit{shaders} a las placas, peque\~nos programas independientes que corr\'ian nativo en el GPU,
-y se pod\'ian encadenar entre si, uno por pixel en la pantalla.~\cite{CG} Este paralelismo es el desarrollo fundamental
-que llevaba a las GPU a poder procesar operaciones gr\'aficas ordenes de magnitud m\'as r\'apidas que el CPU.
+Las placas de v\'ideo aparecen en 1978 con la introducci\'on de \texttt{Intel del iSBX 275}, permitiendo dibujar l\'ineas, arcos y bitmaps y comunicada por DMA al procesador principal. En 1985, la Commodore Amiga inclu\'ia un coprocesador gr\'afico que pod\'ia ejecutar instrucciones independientemente del CPU, un paso importante en la separaci\'on y especializaci\'on de las tareas. 
+En la d\'ecada del 90, m\'ultiples avances surgieron en la aceleraci\'on 2D para dibujar las interfaces gr\'aficas de los sistemas operativos y, para mediados de la d\'ecada, muchos fabricantes estaban incursionando en las aceleradoras 3D como add-ons a las placas gr\'aficas tradicionales 2D. 
+A principios de la d\'ecada del 2000, se agregaron los \textit{shaders} a las placas, peque\~nos programas independientes que corr\'ian nativo en el GPU, y se pod\'ian encadenar entre s\'i, uno por pixel en la pantalla~\cite{CG}. 
+Este paralelismo es el desarrollo fundamental que llev\'o a las GPU a poder procesar operaciones gr\'aficas \'ordenes de magnitud m\'as r\'apido que el CPU.
 
-En el 2006, \nvidia  introduce la arquitectura G80,
-que es el primer GPU que deja de resolver \'unicamente problemas de gr\'aficos
+En el 2006, \nvidia{} introduce la arquitectura G80, que es el primer GPU que deja de resolver \'unicamente problemas de gr\'aficos
 para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los
 tipos de operaciones que realiza (geometria, vertex y pixel shaders).~\cite{cudaHandbook} Como subproducto de esto,
 el GPU deja de tener pipelines especializados y pasa a tener procesadores sim\'etricos m\'as sencillos y m\'as
@@ -234,7 +216,7 @@ imprescindibles en el futuro.
 
 \subsection{Organizaci\'on de procesadores}
 
-Los procesadores GPGPU dise\~nados por \nvidia han sido reorganizados a lo largo de su
+Los procesadores GPGPU dise\~nados por \nvidia{} han sido reorganizados a lo largo de su
 existencia m\'ultiples veces pero mayormente tienen una distribuci\'on similar. Vamos a describir a continuaci\'on
 la organizaci\'on definida en la arquitectura Fermi y luego analizaremos las diferencias con Kepler.
 
@@ -471,10 +453,8 @@ performance, empleando as\'i todos los recursos con los que cuentan estas arquit
 
 \subsection{Diferencias entre Tesla, Fermi, Kepler}
 
-Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda
-arquitectura GPGPU dise\~nada por \nvidia . Fermi es la evoluci\'on de Tesla,
-construida para desacoplar a\'un mas los conceptos de gr\'aficos de modo de hacerla
-un procesador m\'as escalable y de prop\'osito general.
+Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda arquitectura GPGPU dise\~nada por \nvidia{}. 
+Fermi es la evoluci\'on de Tesla, construida para desacoplar a\'un mas los conceptos de gr\'aficos de modo de hacerla un procesador m\'as escalable y de prop\'osito general.
 
 
 \begin{table}[h]
@@ -511,7 +491,7 @@ en dos pasos (pero m\'as r\'apidos que hacerlos independientemente por tener har
 debe redondear entre los pasos, perdiendo precisi\'on y haciendo que respete plenamente el IEEE754-2008. El FMA,
 en cambio, lo hace en una sola operaci\'on, y sin redondeos intermedios.
 
-La m\'etrica usada por \nvidia para publicitar la performance de estos dispositivos y poder
+La m\'etrica usada por \nvidia{} para publicitar la performance de estos dispositivos y poder
 compararlos entre si, y contra CPU, son los GFLOPS. Esta unidad mide cuantas operaciones de punto
 flotante de precisi\'on simple se pueden realizar por segundo. Esta unidad es utilizada tambi\'en
 por los clusters en el ranking TOP500, donde se ordenan de acuerdo al pico de performance medido. No solo
@@ -521,7 +501,7 @@ tambi\'en se ve en que Kepler tiene menos SM que Fermi o Tesla, pero son mucho m
 eficientes. La tecnolog\'ia de fabricaci\'on ha ayudado a la disminuci\'on del consumo, un
 problema que acechaba a los dise\~nos Fermi, ya que sus consumos superiores a 200W por
 dispositivo los hac\'ian muy dif\'iciles de refrigerar incluso en clusters de HPC. Se puede
-notar la estrategia de mercado de \nvidia de introducirse en las supercomputadoras de todo
+notar la estrategia de mercado de \nvidia{} de introducirse en las supercomputadoras de todo
 el mundo, donde el consumo y la refrigeraci\'on son factores limitantes (mucho m\'as aun que,
 por ejemplo, computadoras de escritorio).
 
@@ -537,7 +517,7 @@ lo debe poder determinar el driver de la placa en tiempo de ejecuci\'on.  Un \'u
 requerimiento clave de esta ISA es que debe poder soportar poder realizar ajustes manuales,
 para poder construir partes claves de ciertas librer\'ias frecuentemente usadas (como las BLAS)~\cite{NvidiaFermi}.
 
-El lenguaje que desarrollo \nvidia para poder programar estos dispositivos a un nivel m\'as alto
+El lenguaje que desarrollo \nvidia{} para poder programar estos dispositivos a un nivel m\'as alto
 que el assembler especifico del procesador es CUDA. Este lenguaje es una extensi\'on de C++, con ciertas
 features agregadas para poder expresar la subdivisi\'on de los kernels en threads y bloques, junto
 con poder especificar que variables y funciones van a ejecutarse en el GPGPU y en el CPU. Una caracter\'istica
@@ -551,21 +531,16 @@ encarga de generar el c\'odigo PTX para las funciones marcadas como que se van a
 en los GPGPU. Este c\'odigo objeto despu\'es se linkea normalmente con el resto del c\'odigo que corre en CPU
 y se genera un binario ejecutable.
 
-\nvidia, ademas, provee herramientas de profiling para explorar como se est\'an utilizando los
-recursos durante la ejecuci\'on. Estas son esenciales para optimizar, puesto que los limitantes
-de GPU son sumamente distintos a los de CPU, presentando dificultades incluso para programadores
-experimentados. Las herramientas de profiling no solo muestran runtime, sino que sirven para
-ver donde hay accesos a memoria excesivos, puntos de sincronizaci\'on costosos, limitantes
-en los registros y como se superponen las llamadas asincr\'onicas.
+\nvidia, adem\'as, provee herramientas de profiling para explorar como se est\'an utilizando los recursos durante la ejecuci\'on. 
+Estas son esenciales para optimizar, puesto que los limitantes de GPU son sumamente distintos a los de CPU, presentando dificultades incluso para programadores experimentados. 
+Las herramientas de profiling no solo muestran runtime, sino que sirven para ver donde hay accesos a memoria excesivos, puntos de sincronizaci\'on costosos, limitantes en los registros y como se superponen las llamadas asincr\'onicas.
 
-El uso de todas estas herramientas fue vital para poder entender como funciona la arquitectura por dentro,
-como medir performance y utilizaci\'on y como nuestros cambios impactan en las distintas generaciones
-de dispositivos.
+El uso de todas estas herramientas fue vital para poder entender como funciona la arquitectura por dentro, como medir performance y utilizaci\'on y como nuestros cambios impactan en las distintas generaciones de dispositivos.
 
 \subsection{Requerimientos de un problema para GPGPU}
-Dada la organizaci\'on de un procesador GPGPU, es posible ver como esta apuntado a ejecutar
-algoritmos de dominios muy espec\'ificos. Un problema debe exhibir al menos las siguientes
-caracter\'isticas para que valga la pena pensar en correrlo para GPGPU.
+
+Dada la organizaci\'on de un procesador GPGPU, es posible ver como esta apuntado a ejecutar algoritmos de dominios muy espec\'ificos. 
+Un problema debe exhibir al menos las siguientes caracter\'isticas para que valga la pena pensar en correrlo para GPGPU.
 \begin{enumerate}
   \item \label{req:paralelo} El problema debe tener una gran parte paralelizable.
   \item \label{req:float} El problema debe consistir mayormente de operaciones num\'ericas de punto flotante.
@@ -695,7 +670,7 @@ de prop\'osito general con menos poder de c\'omputo.
 
 La arquitectura Xeon Phi es la culminaci\'on de un trabajo iniciado por Intel en 2004, previendo
 la necesidad de paralelismo masivo para aplicaciones futuras. Saliendo al mercado al final de 2012,
-con el prop\'osito de competir en computo intensivo con \nvidia CUDA, ha ganado gran tracci\'on dentro
+con el prop\'osito de competir en computo intensivo con \nvidia{} CUDA, ha ganado gran tracci\'on dentro
 de HPC a pesar de ser muy reciente. Por ejemplo, ha sido fuertemente utilizada en la supercomputadora Tianhe-2
 de la Universidad de Sun Yat-Sen en China, listada en Top 500 como la supercomputadora m\'as r\'apida del
 mundo en Junio 2013, Noviembre 2013 y Junio 2014~\cite{Top500XeonPhiJune2013},~\cite{Top500XeonPhiNov2013},~\cite{Top500XeonPhiJune2014}.
@@ -909,7 +884,7 @@ coprocesador se encuentra \textit{idle}, sin trabajo que realizar.
 El desarrollo de aplicaciones para el Xeon Phi es muy similar al desarrollo de aplicaciones para las arquitecturas
 de la linea Xeon de Intel. Esto es gracias a la existencia de compiladores de C, C++ y Fortran (los lenguajes m\'as usados en
 el \'ambito de HPC) que pueden producir c\'odigo para el Xeon Phi, y la presencia de un sistema operativo y \textit{stack}
-de aplicaciones que facilitan la tarea de ejecuci\'on y mantenimiento del c\'odigo. A diferencia de \nvidia CUDA, no es necesario
+de aplicaciones que facilitan la tarea de ejecuci\'on y mantenimiento del c\'odigo. A diferencia de \nvidia{} CUDA, no es necesario
 el uso de un lenguaje de programaci\'on separado.
 
 Los distintos modos de uso para el Xeon Phi reciben soporte de diversas librer\'ias. El uso mediante \textit{offloading}, por ejemplo,
