@@ -34,9 +34,9 @@ de n\'ucleos sim\'etricos de procesamiento, se deshabilit\'o Turbo Boost y
 Los resultados obtenidos son muy buenos, logr\'andose una escalabilidad de 11.39,
 11.14 y 11.53 en Fullereno, Caroteno y Hemoglobina respectivamente.
 
-Dada la heterogeneidad de estos grupos podemos concluir entonces que el c\'odigo
+Dada la heterogeneidad de los tama\~nos de estos grupos podemos concluir entonces que el c\'odigo
 hace un excelente uso de las prestaciones de procesadores multicore tradicionales
-de la arquitectura Xeon en una iteresante variedad de casos.
+de la arquitectura Xeon en una interesante variedad de casos.
 
 \begin{figure}[htbp]
 \centering
@@ -83,7 +83,7 @@ la densidad electr\'onica en XC.
  \label{fig:cpu-parts}
 \end{figure}
 
-\section{Aceleraciones alcanzadas en CUDA}
+\section{Aceleraciones alcanzadas en GPU}
 \label{resultados-cuda}
 
 \begin{figure}[htbp]
@@ -120,8 +120,8 @@ la densidad electr\'onica en XC.
  \label{fig:cuda-parts}
 \end{figure}
 
-Las figuras \ref{fig:cuda-parts} y \ref{fig:cuda-scf} muestran la fracci\'on de tiempo que insum\'ia el
-calculo de XC dentro de SCF, corrido con la GPU mas potente en el mercado, la Tesla K40.
+Las figuras \ref{fig:cuda-scf} y \ref{fig:cuda-parts} muestran la fracci\'on de tiempo que insum\'ia el
+calculo de XC dentro de SCF, corrido con la GPU m\'as poderosa del mercado, la \nvidia{} Tesla K40.
 Dentro del calculo del termino de intercambio correlaci\'on, el calculo de la densidad electr\'onica
 representaba, por mucho, el cuello de botella. Al reducirse tanto ese y guardar las funciones en
 memoria para no tener que recalcularlas constantemente, se obtuvo una aceleraci\'on alrededor de 8
@@ -137,8 +137,7 @@ resto de los c\'alculos.
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/final.png}
    \caption{Aceleraci\'on en veces del c\'alculo de XC de correr Hemoglobina comparando implementaci\'on original en CUDA contra
-   las versiones optimizadas finales. El (*) marca resultados teoricos extrapolados de las
- aceleraciones alcanzadas en la seccion \ref{cuda-multiplaca}}
+   las versiones optimizadas finales.}
    \label{fig:cuda-final}
 \end{figure}
 

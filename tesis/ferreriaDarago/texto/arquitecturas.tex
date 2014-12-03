@@ -67,7 +67,7 @@ Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fue
 Mediante el uso de algoritmos y circuitos complejos, un procesador puede detectar las dependencias entre las instrucciones y cambiar el orden de ejecuci\'on para minimizar la aparici\'on de pipe stalls y, de esta manera, lograr que la mayor parte de las unidades del procesador esten ocupadas el mayor tiempo posible.
 
 %\todo{dejaron de ser invisible?}
-Mejoras en este nivel eran usualmente invisibles al programador de un lenguaje de alto nivel como C++, dejando la tarea de aprovechar estos \textit{features} a los compiladores optimizantes. 
+Mejoras en este nivel eran usualmente invisibles al programador de un lenguaje de alto nivel como C++, dejando la tarea de aprovechar estos \textit{features} a los compiladores optimizantes.
 Sin embargo, las ventajas de estas t\'ecnicas fueron disminuyendo a partir del a\~no 2000.
 
 \subsection{Extensiones vectoriales}
@@ -136,18 +136,18 @@ donde $S$ es el speedup m\'aximo de mejora alcanzable, $B$ es la fracci\'on del 
     \label{fig:amdahl_plot}
 \end{figure}
 
-Un ejemplo de esta ley en acci\'on es que si $95 \%$ del problema es paralelizable entonces el l\'imite te\'orico de mejora es de $20$ veces (el programa corriendo sobre infinitos cores se ejecutar\'ia en un veinteavo del tiempo que originalmente requer\'ia). 
+Un ejemplo de esta ley en acci\'on es que si $95 \%$ del problema es paralelizable entonces el l\'imite te\'orico de mejora es de $20$ veces (el programa corriendo sobre infinitos cores se ejecutar\'ia en un veinteavo del tiempo que originalmente requer\'ia).
 La figura ~\ref{fig:amdahl_plot} muestra el comportamiento de la ecuacion \ref{eq:amdahl} que define la ley de Amdahl con distintas fracciones de c\'odigo paralelo.
 
 La ley de Amdahl describe el pico te\'orico de mejora y es una simplificaci\'on, ya que supone que todos los cores tienen trabajo perfectamente distribuido, que no deben comunicarse entre ellos por motivos de sincronizaci\'on y que no existen otras sobrecargas debido a la paralelizaci\'on.
 
 Por otro lado, la presencia de un componente com\'un (la memoria) puede introducir cuellos de botella en el acceso a los datos, ya que si el \textit{bus} de memoria es saturado con pedidos, los procesadores deben detener su ejecuci\'on hasta que los datos est\'en listos, elimin\'andose entonces el procesamiento paralelo.
 
-Otro elemento de conflicto son los caches. 
+Otro elemento de conflicto son los caches.
 Como los procesadores deben tener una visi\'on unificada y consistente de la memoria, a veces es necesario que estos sincronicen los valores de sus caches, especialmente ante una escritura de memoria.
 Esto se conoce como \textit{coherencia de caches} e involucra una sincronizaci\'on de alto \textit{overhead}, ya que implica coordinaci\'on entre dos o m\'as procesadores a trav\'es de un bus de memoria.
 
-Es en este punto que el impacto del paralelismo en el comportamiento del programa puede ser tan fuerte como sutil. 
+Es en este punto que el impacto del paralelismo en el comportamiento del programa puede ser tan fuerte como sutil.
 Un fen\'omeno que ilustra esto es el de \textit{false sharing}, que sucede cuando una variable no compartida entre threads reside en la misma l\'inea de cache con una que s\'i. En ese caso, la variable es pasada de lado a lado entre cores aunque nunca fuese necesario, decrementando la escalabilidad del algoritmo y siendo dif\'icil de detectar al depender intr\'insecamente del sistema en el que se corre.
 
 Los desaf\'ios generados por la adici\'on de cores influencian fuertemente los dise\~nos de una arquitectura, no solo en procesadores est\'andar sino tambi\'en en aceleradores como las GPGPUs y coprocesadores num\'ericos.
@@ -159,24 +159,24 @@ Los desaf\'ios generados por la adici\'on de cores influencian fuertemente los d
 Una de las arquitectura analizadas en este trabajo es la arquitectura GPGPU desarrollada por \nvidia{}, conocida como CUDA por las siglas en ingles de \textit{Compute Unified Device Architecture}.
 CUDA surge naturalmente de la aplicaci\'on del hardware desarrollado para problemas gr\'aficos, pero aplicados al c\'omputo cient\'ifico.
 
-Las placas de v\'ideo aparecen en 1978 con la introducci\'on de \texttt{Intel del iSBX 275}, permitiendo dibujar l\'ineas, arcos y bitmaps y comunicada por DMA al procesador principal. En 1985, la Commodore Amiga inclu\'ia un coprocesador gr\'afico que pod\'ia ejecutar instrucciones independientemente del CPU, un paso importante en la separaci\'on y especializaci\'on de las tareas. 
-En la d\'ecada del 90, m\'ultiples avances surgieron en la aceleraci\'on 2D para dibujar las interfaces gr\'aficas de los sistemas operativos y, para mediados de la d\'ecada, muchos fabricantes estaban incursionando en las aceleradoras 3D como add-ons a las placas gr\'aficas tradicionales 2D. 
-A principios de la d\'ecada del 2000, se agregaron los \textit{shaders} a las placas, peque\~nos programas independientes que corr\'ian nativo en el GPU, y se pod\'ian encadenar entre s\'i, uno por pixel en la pantalla~\cite{CG}. 
+Las placas de v\'ideo aparecen en 1978 con la introducci\'on de \texttt{Intel del iSBX 275}, permitiendo dibujar l\'ineas, arcos y bitmaps y comunicada por DMA al procesador principal. En 1985, la Commodore Amiga inclu\'ia un coprocesador gr\'afico que pod\'ia ejecutar instrucciones independientemente del CPU, un paso importante en la separaci\'on y especializaci\'on de las tareas.
+En la d\'ecada del 90, m\'ultiples avances surgieron en la aceleraci\'on 2D para dibujar las interfaces gr\'aficas de los sistemas operativos y, para mediados de la d\'ecada, muchos fabricantes estaban incursionando en las aceleradoras 3D como add-ons a las placas gr\'aficas tradicionales 2D.
+A principios de la d\'ecada del 2000, se agregaron los \textit{shaders} a las placas, peque\~nos programas independientes que corr\'ian nativo en el GPU, y se pod\'ian encadenar entre s\'i, uno por pixel en la pantalla~\cite{CG}.
 Este paralelismo es el desarrollo fundamental que llev\'o a las GPU a poder procesar operaciones gr\'aficas \'ordenes de magnitud m\'as r\'apido que el CPU.
 
-En el 2006, \nvidia{} introduce la arquitectura G80, que es el primer GPU que deja de resolver \'unicamente problemas de gr\'aficos para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los tipos de operaciones que realiza (geometr\'ia, vertex y pixel shaders)~\cite{cudaHandbook}. 
-Como subproducto de esto, la GPU deja de tener pipelines especializados y pasa a tener procesadores sim\'etricos m\'as sencillos y m\'as f\'aciles de construir. 
+En el 2006, \nvidia{} introduce la arquitectura G80, que es el primer GPU que deja de resolver \'unicamente problemas de gr\'aficos para pasar a un motor gen\'erico donde cuenta con un set de instrucciones consistente para todos los tipos de operaciones que realiza (geometr\'ia, vertex y pixel shaders)~\cite{cudaHandbook}.
+Como subproducto de esto, la GPU deja de tener pipelines especializados y pasa a tener procesadores sim\'etricos m\'as sencillos y m\'as f\'aciles de construir.
 Esta arquitectura es la que se ha mantenido y mejorado en el tiempo, permitiendo a las GPU escalar masivamente en procesadores simples, de un bajo clock de una disipaci\'on t\'ermica
 manejable.
 
 Los puntos fuertes de las GPGPU\todo{GPGPU se refiere m\'as bien al uso de las placas, no tiene mucho sentido \emph{modernas}} modernas consisten en poder atacar los problemas de paralelismo de manera pseudo-explicita, y con esto poder escalar ``f\'acilmente'' si solamente se corre en una placa m\'as r\'apida~\cite{}.\todo{CITA!!}
 T\'ecnicamente, esta arquitectura cuenta con entre cientos y miles de procesadores especializados en c\'alculo de punto flotante, procesando cada uno un \textit{thread} distinto pero
-trabajando de manera sincr\'onica agrupados en bloques. 
+trabajando de manera sincr\'onica agrupados en bloques.
 Cada procesador a su vez cuenta con entre $64$ a $256$ registros~\cite{NvidiaFermi,NvidiaKepler}, como porci\'on de un register file de $64$KB.
-Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de su dise\~no fundamental para gr\'aficos). 
-Estos no poseen instrucciones SIMD, ya que su dise\~no primario esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los bloques sincr\'onicos de procesadores. 
+Las placas cuentas con m\'ultiples niveles de cach\'e y memorias especializadas (subproducto de su dise\~no fundamental para gr\'aficos).
+Estos no poseen instrucciones SIMD, ya que su dise\~no primario esta basado en cambio, en SIMT (\textit{Single Instruction Multiple Thread}), las cuales se ejecutan en los bloques sincr\'onicos de procesadores.
 De este modo, las placas modernas como la K40 alcanzan poder de c\'omputo de 4.3 TFLOPs en c\'alculos de precisi\'on simple, 1.7 TFLOPs en precisi\'on doble y 288GB/seg de
-transferencia, usando $2880$ CUDA Cores~\cite{NvidiaKeplerDatasheet}. 
+transferencia, usando $2880$ CUDA Cores~\cite{NvidiaKeplerDatasheet}.
 Para poner en escala la concentraci\'on de poder de calculo, estas prestaciones har\'ian de una computadora usando solo dos de estas placas la supercomputadora m\'as potente del mundo en Noviembre 2001~\cite{Top500November2001}.
 
 \begin{figure}[htbp]
@@ -446,7 +446,7 @@ performance, empleando as\'i todos los recursos con los que cuentan estas arquit
 
 \subsection{Diferencias entre Tesla, Fermi, Kepler}
 
-Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda arquitectura GPGPU dise\~nada por \nvidia{}. 
+Hasta ahora enunciamos la arquitectura vista desde el punto de vista Fermi, la segunda arquitectura GPGPU dise\~nada por \nvidia{}.
 Fermi es la evoluci\'on de Tesla, construida para desacoplar a\'un mas los conceptos de gr\'aficos de modo de hacerla un procesador m\'as escalable y de prop\'osito general.
 
 
@@ -524,15 +524,15 @@ encarga de generar el c\'odigo PTX para las funciones marcadas como que se van a
 en los GPGPU. Este c\'odigo objeto despu\'es se linkea normalmente con el resto del c\'odigo que corre en CPU
 y se genera un binario ejecutable.
 
-\nvidia, adem\'as, provee herramientas de profiling para explorar como se est\'an utilizando los recursos durante la ejecuci\'on. 
-Estas son esenciales para optimizar, puesto que los limitantes de GPU son sumamente distintos a los de CPU, presentando dificultades incluso para programadores experimentados. 
+\nvidia, adem\'as, provee herramientas de profiling para explorar como se est\'an utilizando los recursos durante la ejecuci\'on.
+Estas son esenciales para optimizar, puesto que los limitantes de GPU son sumamente distintos a los de CPU, presentando dificultades incluso para programadores experimentados.
 Las herramientas de profiling no solo muestran runtime, sino que sirven para ver donde hay accesos a memoria excesivos, puntos de sincronizaci\'on costosos, limitantes en los registros y como se superponen las llamadas asincr\'onicas.
 
 El uso de todas estas herramientas fue vital para poder entender como funciona la arquitectura por dentro, como medir performance y utilizaci\'on y como nuestros cambios impactan en las distintas generaciones de dispositivos.
 
 \subsection{Requerimientos de un problema para GPGPU}
 
-Dada la organizaci\'on de un procesador GPGPU, es posible ver como esta apuntado a ejecutar algoritmos de dominios muy espec\'ificos. 
+Dada la organizaci\'on de un procesador GPGPU, es posible ver como esta apuntado a ejecutar algoritmos de dominios muy espec\'ificos.
 Un problema debe exhibir al menos las siguientes caracter\'isticas para que valga la pena pensar en correrlo para GPGPU.
 \begin{enumerate}
   \item \label{req:paralelo} El problema debe tener una gran parte paralelizable.
@@ -641,7 +641,7 @@ les permiti\'o romper con el modelo de computo de CPU y definir nuevas estrategi
 que no siempre se adaptan bien a todos los problemas, pero para el subconjunto de los desaf\'ios que se
 presentan en el \'area de HPC y de v\'ideo juegos han probado ser un cambio paradigm\'atico.
 
-\subsection{Idoneidad para el problema}
+\subsection{Idoneidad para la tarea}
 El problema de QM/MM enfrentado en este trabajo cuenta con m\'ultiples operaciones matem\'aticas de gran
 volumen de c\'alculos. En particular, las operaciones matriciales son los cuellos de botella en esta aplicaci\'on.
 

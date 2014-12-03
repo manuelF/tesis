@@ -53,7 +53,7 @@ pr\'oximas de GPU y CPU, sin tener que reescribir estas secciones de c\'odigo ca
 Adem\'as de estas anteriores, pudimos observar al menos cinco categor\'ias de trabajos futuros que se
 desprenden para poder extender LIO y estudiar posibles mejoras performance considerando
 las arquitecturas disponibles en el mercado.
-\subsection{Versiones h\'ibridas}
+\subsection*{Versiones h\'ibridas}
 \begin{enumerate}
  \item Hacer una versi\'on h\'ibrida CPU-GPU-XeonPhi
   \item Probar implementar en FPGA los c\'alculos de SCF para poder resolverlos por hardware en procesadores
@@ -64,7 +64,7 @@ las arquitecturas disponibles en el mercado.
     de Kohn-Sham en GPU.
 \end{enumerate}
 
-\subsection{Balance de cargas}
+\subsection*{Balance de cargas}
 \begin{enumerate}
   \item Repensar el algoritmo de partici\'on de trabajos para hacer m\'as equitativas las cargas sin
     tener que recurrir al balanceo durante la iteraci\'on.
@@ -74,7 +74,7 @@ las arquitecturas disponibles en el mercado.
     como en GPU.
 \end{enumerate}
 
-\subsection{Explotar m\'as paralelismo}
+\subsection*{Explotar m\'as paralelismo}
 \begin{enumerate}
   \item Mejorar la estrategia de paralelizaci\'on para que emplee una cantidad de
   hilos de ejecuci\'on de acuerdo al problema (e.g. cubos medianos reciben m\'as
@@ -91,14 +91,14 @@ las arquitecturas disponibles en el mercado.
     de m\'ultiples grupos y cuando a nivel interno por grupo.
 \end{enumerate}
 
-\subsection{Estudio autom\'atico de par\'ametros}
+\subsection*{Estudio autom\'atico de par\'ametros}
 \begin{enumerate}
   \item Estudiar como paralelizar y vectorizar el calculo de funciones en CPU para poder escalar a m\'ultiples cores.
   \item Analizar el consumo energ\'etico de la aplicaci\'on e intentar buscar otras arquitecturas para maximizar
     la eficiencia por Watt.
 \end{enumerate}
 
-\subsection{Nuevas aplicaciones qu\'imicas}
+\subsection*{Nuevas aplicaciones qu\'imicas}
 \begin{enumerate}
   \item Experimentar el comportamiento de sistemas qu\'imicos muy grandes que no entren en memoria; como fraccionarlos.
   \item Integrar LIO a otros sistemas de MM como GROMACS y CHARMM.
