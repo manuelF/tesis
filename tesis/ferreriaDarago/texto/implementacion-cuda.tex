@@ -127,10 +127,10 @@ SM. Todos estos factores permitieron una gran aceleraci\'on.
 La otra modificaci\'on importante fue partir en problema en m\'as bloques para las grupos que tengan
 m\'as funciones significativas. Se decidi\'o agregar otra dimensi\'on a la grilla de bloques (\texttt{blockId.y}),
 para determinar cuantos grupos de threads van a hacer falta para procesar completamente
-todas las funciones de ese punto. Llamamos a este par\'ametro $altura\_bloques$. Se
+todas las funciones de ese punto. Se denomina este par\'ametro $altura\_bloques$ y se
 calcula para cada partici\'on como $altura\_bloques = {m}/{BLOCK\_SIZE}$.
 Para las particiones chicas, este valor no supera a 1. En los cubos y esferas m\'as
-grandes (de los sistemas probados), la altura puede ser hasta 6. Esto significa una gran
+grandes (de los sistemas probados), la altura puede ser hasta 6. Esto representa una gran
 cantidad de bloques adicionales con respecto al m\'etodo anterior.
 
 \begin{figure}[htbp]
@@ -196,8 +196,8 @@ La reorganizaci\'on de la paralelizaci\'on del kernel del c\'alculo de la densid
 de varios pasos de reducci\'on que antes se hac\'ian impl\'icitamente.
 
 El primer paso, al ya no haber un bloque por punto, habr\'a que totalizar el c\'alculo de la
-suma de todos los elementos de la columna que acabamos de procesar para obtenerlo. Para reducir,
-vamos a reutilizar la memoria shared que empleamos en el c\'alculo de la energ\'ia anterior. Cada
+suma de todos los elementos de la columna que se acaba de procesar para obtenerlo. Para reducir,
+se reutiliza la memoria shared que fue empleada en el c\'alculo de la densidad anterior. Cada
 thread va a poner el valor final del computo realizado en su posici\'on correspondiente en el
 la memoria compartida. Esto luego se ejecuta como una reducci\'on en \'arbol, donde cada
 thread suma el valor de la posici\'on $x$ con el valor en $2*x$, si fuera este valido. Esto
@@ -358,7 +358,7 @@ cuenta a la hora de profilear el c\'odigo. Para administrar los accesos a
 la memoria de textura, cada multiprocesador tiene m\'ultiples unidades de textura.
 Cuando dependemos de sobremanera de la memoria de textura para esconder la latencia,
 se presentan contenciones sobre el acceso a estas unidades. Esta cach\'e hay que usarla
-solamente en los accesos mas costosos \'unicamente, ya que si intentamos pasar todos
+solamente en los accesos mas costosos \'unicamente, ya que si se intentan pasar todos
 los accesos a trav\'es de este, no solo no se ver\'ian mejoras, sino que seria un retroceso
 completo de performance, como sucedi\'o cuando se intent\'o agregar adem\'as las matrices
 de funciones a este m\'etodo.
@@ -408,7 +408,7 @@ hacer m\'as r\'apido que en CPU, convirti\'endose entonces en una estrategia val
 
 Cuando la aplicaci\'on original se concibi\'o, no hab\'ia siquiera placas GPGPU apuntadas a HPC, con
 m\'as memoria disponible que los modelos de consumidores. Aprovechando estos recursos actuales,
-desarrollamos un m\'etodos para poder almacenar las matrices de los valores de funciones y sus derivadas
+se desarroll\'o un m\'etodos para poder almacenar las matrices de los valores de funciones y sus derivadas
 en cada punto para cada grupo durante la ejecuci\'on de la aplicaci\'on, de modo de poder aprovechar
 este recurso que originalmente era limitante pero ya no. Estas incluyen la matriz de funciones,
 con una cantidad de elementos $O(puntos \times funciones)$, y si se usa el m\'etodo GGA
@@ -421,7 +421,7 @@ que define el orden de las particiones a solucionar. Esta heur\'istica estima qu
 tener las matrices temporales a almacenar y ordena las particiones de menor a mayor. Esto
 esta basado en el criterio de que, si bien es proporcional el tiempo de computo de estas matrices
 temporales a la cantidad de funciones por grupo y cantidad de puntos (lo que determina el tama\~no
-de la partici\'on), la constante es elevada. Determinamos entonces que es m\'as conveniente
+de la partici\'on), la constante es elevada. Se determin\'o entonces que es m\'as conveniente
 aprovechar la memoria de la placa que almacena muchas matrices temporales de particiones chicas
 a que almacene solamente un par de las grandes.
 
@@ -454,7 +454,7 @@ m\'ultiples placas, que tambi\'en distribuyen el almacenamiento ademas del compu
    \label{fig:global-fullereno}
 \end{figure}
 
-Evaluamos el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
+Se evalu\'o el tiempo de ejecuci\'on de un sistema modelando un fullereno $C_{60}$, variando la
 cantidad de memoria disponible para el cacheo. Los resultados se pueden ver en la figura \ref{fig:global-fullereno}.
 Se puede observar que el almacenamiento de las matrices de funciones produce una mejora de casi el 25\% en el tiempo de ejecuci\'on
 de toda una iteraci\'on de XC. Es interesante notar que son los primeros grupos los que causan mayor
@@ -487,8 +487,8 @@ la ocupancia de los multiprocesadores. Como se pueden correr una cantidad de blo
 no superen los 48KB de memoria shared simult\'aneamente entre todos, es imprescindible minimizar
 el uso de la memoria shared de modo que no estemos subutilizando los SM.
 
-Una cosa que probamos, con un grado de \'exito variable, fue disminuir el tama\~no de los vectores
-donde almacenamos las derivadas direccionales. La manera de guardar las derivadas direccionales primeras
+Una cosa que se prob\'o, con un grado de \'exito variable, fue disminuir el tama\~no de los vectores
+donde se almacenan las derivadas direccionales. La manera de guardar las derivadas direccionales primeras
 de las funciones que estaba implementada es usando tipos que agrupen en un solo elemento las tres derivadas
 de cada punto, usando un cero al final para alinear en memoria, estrategia sugerida por la arquitectura CUDA para
 maximizar la alineaci\'on y disminuir la cantidad de transacciones necesarias.
@@ -580,14 +580,14 @@ en la compartida se debe tener la menor cantidad de overhead posible, dadas las 
 
 \subsection{Escalando m\'as all\'a de un GPU}
 Una vez que fueron solucionados muchos limitantes de performance en los kernels del computo
-de la densidad electr\'onica y del c\'alculo de la matriz de Kohn-Sham, nos encontramos en un punto donde
+de la densidad electr\'onica y del c\'alculo de la matriz de Kohn-Sham, se lleg\'o a un punto donde
 no fue posible determinar mejoras significativas en el c\'alculo para reducir tiempos.
 Se decidi\'o subir un nivel m\'as el paralelismo, de modo de poder solucionar m\'ultiples particiones
 simult\'aneamente. Dado que es independiente el computo de cada partici\'on (salvo la acumulaci\'on
 en la matriz de Kohn-Sham de salida y en la matriz de fuerzas interat\'omicas), nos pareci\'o que seria
 interesante ver como escala distribuir el computo a lo largo de m\'ultiples GPU.
 
-Para dividir el problema entre varios dispositivos usamos, al igual que en CPU, OpenMP. Se define
+Para dividir el problema entre varios dispositivos se usa, al igual que en CPU, OpenMP. Se define
 una secci\'on paralela dentro del loop principal donde se soluciona cada grupo de modo que se
 ejecutaran tantos threads como placas haya en la maquina. Cada
 uno de los threads en el host se configurar\'a para una placa solamente. Esto se realiza con
@@ -609,18 +609,18 @@ radicar\'ia en el uso de t\'ecnicas de estimaci\'on de poder de computo para pod
 distribuir el trabajo de manera equitativa entre modelos de placas heterog\'eneas, con distintas
 configuraciones de memoria, cantidad de SM y anchos de banda.
 
-Para distribuir las tareas utilizamos dos t\'ecnicas combinadas, una para distribuir las
+Para distribuir las tareas se utilizaron dos t\'ecnicas combinadas, una para distribuir las
 tareas est\'aticamente y otra para redistribuirlas din\'amicamente de acuerdo al runtime de
 cada tarea.
 
 
 \subsubsection{Estimaci\'on de cargas est\'aticas}
-Para la distribuci\'on est\'atica, usamos como estimador del runtime el tama\~no
+Para la distribuci\'on est\'atica, se usa como estimador del runtime el tama\~no
 de las matrices de funciones de un grupo. Esta heur\'istica resulta un acertado predictor
 del tiempo de computo de todos los
 kernels de un grupo confirmando que el problema actualmente es memory-bound. Esto se ve en la figura
 \ref{fig:runtime-predictor}, como el tiempo de resoluci\'on de un kernel escala linealmente con
-la cantidad de memoria necesaria para operar. Comparamos tambien contra el predictor usado
+la cantidad de memoria necesaria para operar. Se compar\'o tambien contra el predictor usado
 para estimar tiempo en CPU que se detallar\'a m\'as adelante en la secci\'on \ref{PredictorCPU}.
 
 \begin{figure}[htbp]
@@ -637,9 +637,9 @@ para estimar tiempo en CPU que se detallar\'a m\'as adelante en la secci\'on \re
    \label{fig:runtime-predictor}
 \end{figure}
 
-Como podemos apreciar, esta directamente relacionado el tiempo de resoluci\'on con el tama\~no
+Como podemos apreciar, se puede ver una relaci\'on entre  el tiempo de resoluci\'on con el tama\~no
 de los elementos con los que trabaja. Esto da una pauta de la complejidad computacional del problema
-que estamos resolviendo. Como al menos se necesita cada uno de los elementos de cada matriz de funciones
+que se esta resolviendo. Como al menos se necesita cada uno de los elementos de cada matriz de funciones
 para resolver un punto de cada grupo. Al menos se deben hacer una lectura de cada matriz. Estas lecturas
 son tan costosas que, incluso solo sabiendo el tama\~no de las matrices, podemos predecir aproximadamente
 el tiempo de ejecuci\'on que va a tener un grupo.
@@ -673,8 +673,8 @@ Inicialmente se defini\'o un orden para realizar toda la resoluci\'on del sistem
 se las distribuye de manera \textit{round-robin} entre todos los dispositivos, para generar la
 partici\'on inicial y cargando a cada placa con una cantidad similar de tareas. Esto no significa
 que todas tarden lo mismo, y es posible notarlo en las mediciones. Luego, utilizando el tama\~no
-de los dispositivos como proxy del tiempo de ejecuci\'on, aplicamos una ronda del algoritmo de balanceo din\'amico
-para terminar de balancear est\'aticamente. Esto lo podemos hacer ya que, como mostramos en la figura~\ref{fig:global-fullereno},
+de los dispositivos como proxy del tiempo de ejecuci\'on, se aplica una ronda del algoritmo de balanceo din\'amico
+para terminar de balancear est\'aticamente. Esto lo podemos hacer ya que, como se mostr\'o en la figura~\ref{fig:global-fullereno},
 existe una fuerte correlaci\'on entre el tama\~no de las matrices de funci\'on y el tiempo de ejecuci\'on, la m\'etrica que realmente
 nos interesa. El paso de balanceo din\'amico es necesario para solventar el problema de la distribuci\'on
 round-robin con grupos grandes, donde el thread que tenga que resolver el grupo con mas puntos va a tardar
@@ -694,11 +694,11 @@ o todas en precisi\'on simple, o todas en precisi\'on doble, es sumamente import
 sistema tomando todo esto en cuenta.
 
 El problema ejemplar elegido en este caso es realizar $10$ iteraciones del kernel de c\'omputo de la matriz de Kohn-Sham.
-Consideramos que realizar este c\'omputo nos da una evaluaci\'on
+Se considera que realizar este c\'omputo da una evaluaci\'on
 emp\'irica de los recursos necesarios para resolver este problema. Este kernel utiliza muchos
 de los recursos del dispositivo: realiza gran cantidad de accesos a memoria a trav\'es
 de la unidad de textura, usa principalmente instrucciones FMA, tiene una m\'axima ocupaci\'on de los SM
-y tiene un uso total de la memoria shared. No contabilizamos las copias de memoria desde y hacia la
+y tiene un uso total de la memoria shared. No se contabilizaron las copias de memoria desde y hacia la
 placa de los par\'ametros puesto que, al igual que en el c\'odigo de la simulaci\'on, casi la totalidad
 de los datos se construyen directamente en la placa y se recuperan las matrices reducidas solamente al final
 de la operaci\'on.
