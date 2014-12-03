@@ -173,13 +173,13 @@ Fermi y Kepler. Con solamente 32 threads, se pod\'ia maximizar la ocupaci\'on de
 muchos m\'as bloques. Finalmente, luego de disminuir un poco el uso de registros por thread mediante
 un reorden de las operaciones, se fij\'o este valor en 64 threads
 por bloque. Se muestra en la figura \ref{fig:dbs-runtime} que tener solo un warp es bueno, pero
-mejor a\'un es tener dos warps ejecutando simultáneamente, ya que
+mejor a\'un es tener dos warps ejecutando simult\'aneamente, ya que
 esto permite, con costo cero, hacer un cambio de contexto al otro warp para ocultar la latencia sin agrandar
 demasiado el costo de la sincronizaci\'on.
 
 Habiendo hechas todas las dem\'as optimizaciones detalladas en las secciones siguientes, se evalu\'o
 \'unicamente este par\'ametro. Se estudiaron bloques de 32, 64 y 128 threads por bloque,
-el m\'aximo valor posible todavia usando el modelo de memoria compartida.
+el m\'aximo valor posible todav\'ia usando el modelo de memoria compartida.
 
 \begin{figure}[htbp]
    \centering
@@ -212,7 +212,7 @@ minimizar a\'un mas el tiempo empleado en esta reducci\'on, pero considerando qu
 
 Como va a haber $altura\_bloque$ cantidad de escrituras para cada punto, va a entonces
 hacer falta guardar estas cuentas parciales en memoria global. Para eso se defini\'o una matriz
-por cada uno de los par\'ametros que debemos acumular, con tama\~no id\'entico a la cantidad de bloques
+por cada uno de los par\'ametros que se deben acumular, con tama\~no id\'entico a la cantidad de bloques
 del kernel del computo de densidad electr\'onica, para que cada uno de estos escriba \'unicamente en una posici\'on
 un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura\_bloque)$,
 menos de 1MB en el caso m\'as grande.
@@ -256,11 +256,9 @@ no se puede explotar para todos los kernels.
 %pero que dentro de estas puede haber pocos puntos.
 %
 
-
-
 \subsection{Cambios en los accesos globales}
 \label{GuardarFunctionsGPU}
-La arquitectura de las placas de v\'ideo est\'an pensadas entorno al poder de computo.
+La arquitectura de las placas de video est\'an pensadas entorno al poder de computo.
 Las decisiones tomadas por los dise\~nadores de las GPGPU se concentran alrededor
 de paralelismo a lo ancho, poniendo un gran \'enfasis en la cantidad de n\'ucleos. Luego,
 se dispone de menor cantidad de espacio disponible en el \textit{die} para las memorias.
@@ -286,8 +284,8 @@ se realizaba por columnas en vez de por filas. Esto ocasionaba que por cada acce
 un warp tuviera que realizar 32 accesos secuenciales a memoria, ya que no se pod\'ian alinear
 en una transacci\'on. Esto, ademas, se realizaba para las funciones, las derivadas y los
 hessianos, por lo cual los accesos eran sumamente costosos. En el kernel original este comportamiento
-no suced\'ia, ya que todos los threads realizaban cuentas para puntos independientes y no se compartian las
-lecturas de las matrices. Esto aprovechaba las dimensiones originales de las matrices y hacian que las lecturas de
+no suced\'ia, ya que todos los threads realizaban cuentas para puntos independientes y no se compart\'ian las
+lecturas de las matrices. Esto aprovechaba las dimensiones originales de las matrices y hac\'ian que las lecturas de
 funciones fueran menos costosas, ya que se las usaba en el sentido correcto de la memoria (por filas).
 Al haber cambiado la cuenta realizada para aprovechar mejor el threading (descripto en las secciones anteriores),
 los accesos pasaron a ser por columnas y no por filas, rompiendo la coalescencia de las matrices. El
@@ -297,7 +295,7 @@ con L1 y L2 muy peque\~nas, el costo de acceder desalineado sigue siendo elevado
 Esto se soluciona transponiendo las matrices de valores de funciones, gradientes y hessianos.
 La transposici\'on de matrices es un ejemplo sumamente estudiado por la literatura de CUDA
 ya que ataca un punto d\'ebil de la arquitectura, el ancho de banda de transferencia. En la figura
-\ref{fig:transpose} podemos ver que tanto en Fermi como en Kepler es muy notoria la diferencia
+\ref{fig:transpose} se puede observar que tanto en Fermi como en Kepler es muy notoria la diferencia
 de performance, simplemente repensando los accesos a memoria. Kepler, al contar con una cach\'e L2
 del doble de tama\~no que Fermi, lo mitiga un poco mas los accesos desalineados, pero todav\'ia recibe
 grandes mejoras.
@@ -312,7 +310,7 @@ grandes mejoras.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/transpose.png}
-   \caption{Aceleraci\'on en veces del kernel density de correr Hemoglobina en distintas arquitecturas habiendo transpuesto las matrices
+   \caption{Aceleraci\'on en veces del kernel de calculo de densidad corriendo Hemoglobina en distintas arquitecturas habiendo transpuesto las matrices
    de funci\'on (incluyendo el costo de transponerlas).}
    \label{fig:transpose}
 \end{figure}
@@ -322,7 +320,7 @@ es mediante el uso de memorias intermedias entre el procesador y la memoria glob
 la cach\'e de textura (siendo la otra la memoria constante). Esta es una cach\'e que
 esta focalizada alrededor de los accesos a memoria de varias dimensiones.
 Estas memorias reciben su nombre de su funci\'on principal, que es en el \'area de las
-aplicaci\'ones de render de video. Los mapas de textura suelen ser grandes matrices que definen
+aplicaciones de render de video. Los mapas de textura suelen ser grandes matrices que definen
 tanto los colores sobre las superficies de los pol\'igonos como los relieves.
 El detalle crucial de estas memorias es que un miss en estas cach\'e, provoca
 que se traigan datos no solo contiguos en memoria, como pasa en las caches de
@@ -347,16 +345,16 @@ y por columnas a la matriz.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/texture.png}
-   \caption{Aceleracion del c\'alculo de densidad corriendo Hemoglobina en Fermi y Kepler
+   \caption{Aceleraci\'on del c\'alculo de densidad corriendo Hemoglobina en Fermi y Kepler
    usando memoria de textura para leer la matriz densidad.}
    \label{fig:texture}
 \end{figure}
 
-Como podemos ver en la figura~\ref{fig:texture}, esta optimizaci\'on aprovecha este
-recurso \'unico de GPU. Sin embargo, esto agrega un factor mas que tenemos que tener en
+Como se puede ver en la figura~\ref{fig:texture}, esta optimizaci\'on aprovecha este
+recurso \'unico de GPU. Sin embargo, esto agrega un factor mas que se debe tener que tener en
 cuenta a la hora de profilear el c\'odigo. Para administrar los accesos a
 la memoria de textura, cada multiprocesador tiene m\'ultiples unidades de textura.
-Cuando dependemos de sobremanera de la memoria de textura para esconder la latencia,
+Cuando se depende de sobremanera de la memoria de textura para esconder la latencia,
 se presentan contenciones sobre el acceso a estas unidades. Esta cach\'e hay que usarla
 solamente en los accesos mas costosos \'unicamente, ya que si se intentan pasar todos
 los accesos a trav\'es de este, no solo no se ver\'ian mejoras, sino que seria un retroceso
@@ -402,7 +400,7 @@ normalmente entraban en la memoria principal de un CPU, no entraban completos en
 La decisi\'on tomada por muchas aplicaciones de entonces es compensar esto calculando
 datos intermedios y tir\'andolos al final; teniendo que ser recalculados en las pr\'oximas iteraciones.
 
-Esta estrategia es claramente impr\'actica en CPU, puesto que se cuenta con mucha m\'as memoria
+Esta estrategia es claramente pr\'actica en CPU, puesto que se cuenta con mucha m\'as memoria
 de uso general. En GPU era necesario por el faltante de memoria, pero puesto que estas cuentas se pueden
 hacer m\'as r\'apido que en CPU, convirti\'endose entonces en una estrategia valida.
 
@@ -476,16 +474,16 @@ casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
 \end{figure}
 
 Esta simple mejora permite explotar el hecho de que las placas hayan aumentado dram\'aticamente su
-capacidad de almacenamiento, un recurso que hasta recientemente venia siendo un limitante podemos
-convertirlo en una aceleraci\'on notoria.
+capacidad de almacenamiento, un recurso que hasta recientemente venia siendo un limitante se puede convertir
+en una aceleraci\'on notoria.
 
 \subsection{Cambios en las memorias compartidas}
 %Cambiar los vec\_type4 por 3 en los accesos a la shared es mucho mejor, no hace falta alinear ahi
-Otro de los problemas existentes del c\'odigo que se busc\'o autacar fue el mejor empleo de las
+Otro de los problemas existentes del c\'odigo que se busc\'o atacar fue el mejor empleo de las
 memorias shared. Estas son un recurso finito y muy importante, ya que son un limitante de
 la ocupancia de los multiprocesadores. Como se pueden correr una cantidad de bloques que, a lo sumo,
 no superen los 48KB de memoria shared simult\'aneamente entre todos, es imprescindible minimizar
-el uso de la memoria shared de modo que no estemos subutilizando los SM.
+el uso de la memoria shared de modo que no se est\'en subutilizando los SM.
 
 Una cosa que se prob\'o, con un grado de \'exito variable, fue disminuir el tama\~no de los vectores
 donde se almacenan las derivadas direccionales. La manera de guardar las derivadas direccionales primeras
@@ -597,7 +595,7 @@ thread, todas las llamadas a kernels se realicen autom\'aticamente al mismo disp
 CUDA permite que trabajar con m\'ultiples placas de esta manera sea bastante sencillo. Las variables
 definidas como \texttt{\_\_device\_\_}, que residen plenamente en la GPU, son autom\'aticamente instanciadas
 por cada dispositivo presente. De esta manera, es impl\'icito cual variable usa cada kernel; la que
-esta definida para su dispositivo actual. Esto puede ser un problema si queremos lograr comunicaciones entre placas,
+esta definida para su dispositivo actual. Esto puede ser un problema si se quiere lograr comunicaciones entre placas,
 pero si las cuentas son independientes, es paralelismo de costo cero.
 
 El principal problema que surge de uso de m\'ultiples dispositivos radica, al igual que en
@@ -620,7 +618,7 @@ de las matrices de funciones de un grupo. Esta heur\'istica resulta un acertado 
 del tiempo de computo de todos los
 kernels de un grupo confirmando que el problema actualmente es memory-bound. Esto se ve en la figura
 \ref{fig:runtime-predictor}, como el tiempo de resoluci\'on de un kernel escala linealmente con
-la cantidad de memoria necesaria para operar. Se compar\'o tambien contra el predictor usado
+la cantidad de memoria necesaria para operar. Se compar\'o tambi\'en contra el predictor usado
 para estimar tiempo en CPU que se detallar\'a m\'as adelante en la secci\'on \ref{PredictorCPU}.
 
 \begin{figure}[htbp]
@@ -637,16 +635,17 @@ para estimar tiempo en CPU que se detallar\'a m\'as adelante en la secci\'on \re
    \label{fig:runtime-predictor}
 \end{figure}
 
-Como podemos apreciar, se puede ver una relaci\'on entre  el tiempo de resoluci\'on con el tama\~no
+Como se puede apreciar, se puede ver una relaci\'on entre  el tiempo de resoluci\'on con el tama\~no
 de los elementos con los que trabaja. Esto da una pauta de la complejidad computacional del problema
 que se esta resolviendo. Como al menos se necesita cada uno de los elementos de cada matriz de funciones
 para resolver un punto de cada grupo. Al menos se deben hacer una lectura de cada matriz. Estas lecturas
-son tan costosas que, incluso solo sabiendo el tama\~no de las matrices, podemos predecir aproximadamente
+son tan costosas que, incluso solo sabiendo el tama\~no de las matrices, se puede predecir aproximadamente
 el tiempo de ejecuci\'on que va a tener un grupo.
+
 
 El predictor usando el tama\~no, si bien es posible observar que tiene una buena correlaci\'on con el tiempo de ejecuci\'on,
 no tiene la precisi\'on que tiene el predictor basado en la funci\'on de costo en CPU, visto en la figura~\ref{fig:comp-size-cost}.
-No se pudo encontrar par\'ametros que permitan ajustarlo para que funcione en GPU. Como \nvidia{} no publica toda la informaci\'on
+No se pudieron encontrar par\'ametros que permitan ajustarlo para que funcione en GPU. Como \nvidia{} no publica toda la informaci\'on
 interna de los procesadores GPU y dada la cantidad de lugares adicionales donde se puede incurrir en latencias
 imprevistas, al funcionar as\'incronos al CPU, no es posible predecir runtime con excesiva confianza dado \'unicamente
 las cuentas a realizar. Al tener ambos predictores performance similares, se decidi\'o usar el m\'as sencillo, el
@@ -674,7 +673,7 @@ se las distribuye de manera \textit{round-robin} entre todos los dispositivos, p
 partici\'on inicial y cargando a cada placa con una cantidad similar de tareas. Esto no significa
 que todas tarden lo mismo, y es posible notarlo en las mediciones. Luego, utilizando el tama\~no
 de los dispositivos como proxy del tiempo de ejecuci\'on, se aplica una ronda del algoritmo de balanceo din\'amico
-para terminar de balancear est\'aticamente. Esto lo podemos hacer ya que, como se mostr\'o en la figura~\ref{fig:global-fullereno},
+para terminar de balancear est\'aticamente. Esto se puede hacer ya que, como se mostr\'o en la figura~\ref{fig:global-fullereno},
 existe una fuerte correlaci\'on entre el tama\~no de las matrices de funci\'on y el tiempo de ejecuci\'on, la m\'etrica que realmente
 nos interesa. El paso de balanceo din\'amico es necesario para solventar el problema de la distribuci\'on
 round-robin con grupos grandes, donde el thread que tenga que resolver el grupo con mas puntos va a tardar
@@ -810,7 +809,7 @@ El c\'omputo utilizando precisi\'on doble tiene, sin embargo, ventajas en la esc
 Como los kernels en doble precisi\'on son \textit{compute-bound}, las copias de memoria son poco costosas
 en relaci\'on a la resoluci\'on de los grupos (el tama\~no de las copias se duplica pero la potencia de c\'alculo se divide
 por cuatro en Fermi y Kepler). Esto hace que haya poca contenci\'on en la memoria principal,
-dado que hay menor concurrencia sobre estas. Podemos observar en la figura \ref{fig:4placas-doble} una clara mejora en los tiempos
+dado que hay menor concurrencia sobre estas. Se puede observar en la figura \ref{fig:4placas-doble} una clara mejora en los tiempos
 de c\'alculo de los sistemas en doble precisi\'on entonces usando esta t\'ecnica de paralelismo, una mejora casi
 lineal en la cantidad de dispositivos usados.
 
