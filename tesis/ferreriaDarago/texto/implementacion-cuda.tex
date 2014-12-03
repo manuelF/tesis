@@ -14,7 +14,7 @@ A continuaci\'on detallaremos muchos de los cambios que fueron realizados para a
 la performance del c\'omputo de XC.
 
 \subsection{Subsaturaci\'on de los SM}
-La subsaturacion de los SM se da en los casos donde haya SM que est\'en listos para correr
+La subsaturaci\'on de los SM se da en los casos donde haya SM que est\'en listos para correr
 c\'odigo pero que no puedan hacerlo porque tienen contenci\'on en algunos de sus recursos.
 La m\'etrica usada para determinar esta saturaci\'on es la ocupancia de los SP.
 Esta es la proporci\'on de threads activos sobre el total de threads disponibles de un bloque.
@@ -29,7 +29,7 @@ Estos son:
 \end{itemize}
 
 El mecanismo de scheduling de los SM funciona asignando un bloque a cada SM, que
-va a correr sin preemption hasta que terminen todos sus threads asignados. Idealmente, cada
+va a correr sin desalojo hasta que terminen todos sus threads asignados. Idealmente, cada
 bloque cuenta con una cantidad de threads suficiente para poder esconder la latencia
 de las ejecuciones mediante un cambio de contexto. La arquitectura GPGPU esta dise\~nada
 para este fin, por lo cual se cuenta con un mecanismo de cambio de contexto de costo cero~\cite{NvidiaFermi} para
@@ -162,7 +162,7 @@ Por otra parte, la literatura~\cite{farberCuda} sugiere siempre que sea posible
 usar bloques grandes y con threads lo m\'as independientes posibles. Una gran cantidad de threads
 en un bloque permite tener muchos m\'as warps para ejecutar de modo de esconder las latencias de
 operaciones y de a accesos globales. Sin embargo, contar con muchos threads hace que las
-sincronizaciones sean mucho m\'as costosas. Ademas, como cada SM no cuenta con preemption
+sincronizaciones sean mucho m\'as costosas. Ademas, como cada SM no cuenta con desalojo
 de bloques, contar con muchos threads por bloque hace que los recursos se mantengan
 por largos periodos.
 
@@ -509,7 +509,7 @@ en particular realizar el alineamiento; ya est\'an alineadas porque los elemento
 son flotantes de precisi\'on simple o doble (4 y 8 bytes respectivamente). Adicionalmente, como el
 cuarto valor no tiene forma de marcarse como algo que no sea padding de alineaci\'on, todav\'ia se
 opera normalmente con el usando operaciones vectoriales definidas para estos tipos, por lo que
-eliminarlo ahorra una operaci\'on de c\'alculo. Mas a\'un, se presentan una disminuci\'on del 18\%
+eliminarlo ahorra una operaci\'on de c\'alculo. Mas a\'un, se observa una disminuci\'on del 18\%
 de la memoria compartida por thread (usando el esquema de compartir valores de funciones por punto
 como fue descripto en la secci\'on \ref{threading}), sin ninguna desventaja por alineaci\'on a la hora de acceder a estos.
 Principalmente esta mejora, en teor\'ia, permite
@@ -528,7 +528,7 @@ Como se puede observar en la figura~\ref{fig:shared4vs3}, se obtienen muy pocas 
 de 3 componentes con respecto a usar elementos de 4. Esto muestra que el limitante de concurrencia
 de este kernel no pasa por falta de memoria compartida. Adem\'as, se puede apreciar que los
 tiempos de acceso a los datos en estas memorias son realmente muy bajos, pudi\'endose ver
-como con incluso un 18\% mas de operaciones de lecto-escritura, el tiempo de ejecuci\'on casi no varia. Por
+como con incluso un 18\% m\'as de operaciones de lecto-escritura, el tiempo de ejecuci\'on casi no varia. Por
 otra parte, esto muestra tambi\'en que no hay diferencia en los tiempos de acceso a memoria compartida; buscar
 tres o cuatro elementos es equivalente. Esto da la pauta de que se debe tener alineada en la global, pero
 en la compartida se debe tener la menor cantidad de overhead posible, dadas las diferencias en los buses de acceso.
@@ -589,7 +589,7 @@ Para dividir el problema entre varios dispositivos se usa, al igual que en CPU, 
 una secci\'on paralela dentro del loop principal donde se soluciona cada grupo de modo que se
 ejecutaran tantos threads como placas haya en la maquina. Cada
 uno de los threads en el host se configurar\'a para una placa solamente. Esto se realiza con
-una instrucci\'on del driver de CUDA (CudaSetDevice) que permite que durante toda la vida del
+una instrucci\'on del driver de CUDA (\texttt{CudaSetDevice}) que permite que durante toda la vida del
 thread, todas las llamadas a kernels se realicen autom\'aticamente al mismo dispositivo.
 
 CUDA permite que trabajar con m\'ultiples placas de esta manera sea bastante sencillo. Las variables
