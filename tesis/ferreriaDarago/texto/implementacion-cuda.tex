@@ -113,7 +113,11 @@ a leer las funciones  de memoria global, sino de la compartida que ya cargaron l
 se traduce en que se realiza una lectura global y $BLOCK\_SIZE-1$ lecturas
 de memoria compartida por cada thread. Como la latencia de acceso a memoria compartida
 es, al menos, diez veces mas r\'apida que la memoria global~\cite{Demystifying}, esto incurre en grandes
-beneficios con respecto a la velocidad del c\'omputo.
+beneficios con respecto a la velocidad del c\'omputo. Los resultados de este cambio se pueden
+ver en la figura \ref{fig:threading}, detallando tanto para Fermi como para Kepler la diferencia
+de performance. Muchos factores intervienen en que en Kepler la diferencia sea tanto mayor que
+en Fermi: la cach\'e L2 es mayor, la cantidad de registros por thread es mayor y se pueden correr mas
+bloques concurrentemente.
 
 Este cambio solo es posible gracias al crecimiento de las memorias compartidas (16KB en la generaci\'on de
 dispositivos existentes en implementaci\'on original, actualmente 48KB). Finalmente
