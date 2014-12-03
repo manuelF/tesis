@@ -46,7 +46,7 @@ def itsPerDiaDouble():
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones SCF por día",
       'yvalues':measures,
-      'ylim':(0,120000),
+      'ylim':(0,130000),
       'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WS\nCPU',
         u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
       'filename':"its-dia-double.png"}
@@ -92,7 +92,7 @@ def itsPerDia():
       'xlabel':u"Configuración",
       'ylabel':u"Iteraciones SCF por día",
       'yvalues':measures,
-      'ylim':(0,120000),
+      'ylim':(0,130000),
       'ticks':(u'WS\n1xGPU', u'WS\n2xGPU', u'WS\nCPU',
         u'Server\n1xGPU' , u'Server *\n2xGPU',u'Server\nCPU'),
       'filename':"its-dia.png"}
