@@ -17,6 +17,14 @@ on-chip. Finalmente, se obtuvieran incluso mayores aceleraciones aplicando paral
 GPU, donde a pesar de no escalar linealmente con respecto a la cantidad de dispositivos, es una gran mejora
 si se cuentan ya con los recursos ociosos.
 
+En Xeon Phi no se consiguieron resultados que mejoraran los obtenidos en CPU o
+Cuda. La baja \textit{performance} de c\'odigo serial resulto un limitante muy
+fuerte que no se logr\'o compensar Determinamos sin embargo caracter\'sticas
+de la arquitectura clave para atacar el problema de optimizar una aplicac\'on.
+Identificamos la necesidad de lograr una escalabilidad muy alta en cantidad de
+procesadores y la importancia de vectorizar bien.  Los resultados obtenidos
+coinciden con los obtenidos en otros estudios~\cite{XeonPhiMatMult}.
+
 \section{Posible trabajo a futuro}
 
 El trabajo pendiente inmediato que se ve ac\'a, que brindar\'ia inicialmente la mayor aceleraci\'on
