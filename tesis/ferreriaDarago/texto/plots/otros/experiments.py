@@ -125,15 +125,15 @@ def itsPerDia():
 #
 def comparacionTiemposFinal():
 #xc iteration best params
-  cpu_caroteno=1.
+  cpu_caroteno=781.765
   gpu_caroteno=704.
   xp_caroteno=1.
 
-  cpu_hemo=746.
+  cpu_hemo=757.344
   gpu_hemo=522.
   xp_hemo=1.
 
-  cpu_fullereno=1.
+  cpu_fullereno=2658.2070
   gpu_fullereno=1.
   xp_fullereno=1.
 
