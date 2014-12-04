@@ -123,6 +123,37 @@ def itsPerDia():
 #        'filename':fname}
 #    lineGraph(**params)
 #
+def comparacionTiemposFinal():
+#xc iteration best params
+  cpu_caroteno=1.
+  gpu_caroteno=704.
+  xp_caroteno=1.
+
+  cpu_hemo=746.
+  gpu_hemo=522.
+  xp_hemo=1.
+
+  cpu_fullereno=1.
+  gpu_fullereno=1.
+  xp_fullereno=1.
+
+  labels = [u"Caroteno", u"Hemo", u"Fullereno"]
+  comparison = {
+      u"CPU 12 threads": [cpu_caroteno, cpu_hemo, cpu_fullereno ],
+      u"GPU": [gpu_caroteno, gpu_hemo, gpu_fullereno ],
+      u"Xeon Phi": [xp_caroteno, xp_hemo, xp_fullereno ],
+  }
+
+  params = {
+      'values': comparison,
+      'ticks': labels,
+      'filename': u'comparacion-tiempos-sistemas.png',
+      'ylabel': u'Tiempo de ejecución [ms]',
+  }
+
+  multiComparativeBarChart(**params)
+
+
 def tamParticion():
 #Runtime total por grupo vs sizeingpu vs cost en Fullereno k40 cecar
   cpu_chicos_3=254.975
@@ -170,3 +201,4 @@ if __name__ == '__main__':
   tamParticion()
   itsPerDiaDouble()
   itsXCPerDiaDouble()
+  comparacionTiemposFinal()
