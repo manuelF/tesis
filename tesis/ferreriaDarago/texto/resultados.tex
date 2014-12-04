@@ -1,6 +1,6 @@
 A continuaci\'on presentamos los resultados obtenidos en las distintas arquitecturas, tanto
 de tiempos como de escalabilidad para algunos casos de prueba usados. Las m\'aquinas de pruebas
-utilizadas se detallan en el Apéndice \ref{testbench}, junto con las opciones de compilaci\'on usadas.
+utilizadas se detallan en el Ap\'endice \ref{testbench}, junto con las opciones de compilaci\'on usadas.
 
 Los tiempos de ejecuci\'on se midieron utilizando el reloj est\'andar de alta
 precisi\'on para Linux (\texttt{clock\_gettime}~\cite{LinuxDocumentation}). Debido al
@@ -40,11 +40,11 @@ y Caroteno. Estos estan detallados en el Apendice \ref{detalle-grupos}
  \label{fig:cpu-scalability}
 \end{figure}
 
-Las figuras~~\ref{fig:cpu-scalability-caroteno}, \ref{fig:cpu-scalability-fullereno}, y
-~\ref{fig:cpu-scalability-hemo} muestran el \textit{speedup} conseguido en
+Las figuras~\ref{fig:cpu-scalability-caroteno}, \ref{fig:cpu-scalability-fullereno},
+y~\ref{fig:cpu-scalability-hemo} muestran el \textit{speedup} conseguido en
 el c\'odigo de CPU en las pruebas realizadas en el servidor Xeon para los grupos
 Hemo, Caroteno y Fullereno respectivamente. Se detalla el speedup para cada
-valor de threads intermedios entre 1 y 12 inclusive (la cantidad de núcleos de
+valor de threads intermedios entre 1 y 12 inclusive (la cantidad de n\'ucleos de
 procesador del sistema de prueba).
 
 Siendo un analisis de escalabilidad, se trat\'o de homogeneizar los procesadores
@@ -200,8 +200,8 @@ arquitecturas.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\plotwidth]{plots/xeonphi/final-scf-hemo-xeon-phi.png}
-   \caption{Tiempo para la iteraci\'on SCF separado entre la iteraci\'on de XC y el resto.}
+   \includegraphics[width=\plotwidthtres]{plots/xeonphi/final-scf-hemo-xeon-phi.png}
+   \caption{Tiempos parciales para la iteraci\'on SCF separado entre la iteraci\'on de XC y el resto.}
    \label{fig:group-times-scf-xeon-phi}
 \end{figure}
 
@@ -238,7 +238,7 @@ La figura \ref{fig:group-times} aclara el por que usar grupos chicos para CPU y 
 para GPU. El overhead que se ve en GPU al hacer grupos chicos es sumamente elevado, a pesar de que
 el costo computacional sea relativamente bajo. Esto se puede ver tanto en grupos de tama\~no
 3 como tama\~no 7. Este overhead, sin embargo, se vuelve despreciable cuando se analiza el costo
-de resolver los grupos de mayor tama\~no. Consistentemente el GPU obtiene un menor tiempo de ejecuci\'on
+de resolver los grupos de mayor tama\~no. Consistentemente la GPU obtiene un menor tiempo de ejecuci\'on
 con respecto al CPU usando la paralelizaci\'on interna. Esto indica que si la partici\'on genera demasiados
 grupos, GPU no va a poder superar el overhead de resolver cada uno, haciendo que el tiempo acumulado sea
 mayor que el de CPU que tiene una peor performance en particiones grandes.
@@ -294,7 +294,7 @@ distintas configuraciones de hardware sobre la cual correr mejor.
     \caption{Precisi\'on doble.}
   \end{subfigure}
   \caption{Cantidad de iteraciones de XC por d\'ia realizables usando distintas configuraciones corriendo Hemoglobina usando los
-            par\'ametros \'optimos correspondientes despues de todas las optimizaciones. El (*) marca resultados teoricos extrapolando
+            par\'ametros \'optimos correspondientes despu\'es de todas las optimizaciones. El (*) marca resultados te\'oricos extrapolando
             las aceleraciones alcanzadas en la secci\'on \ref{cuda-multiplaca}.}
   \label{fig:its-xc-dia}
 \end{figure}

@@ -1,52 +1,53 @@
 %En este trabajo se estudiaron multiples optimizaciones apuntadas a maximizar el uso de los
 %recursos de computo. Se pudieron observar grandes mejoras al tiempo de computo repensando los algoritmos
 %de calculo de DFT para minimizar la capacidad ociosa que habia en las arquitecturas paralelas estudiadas.
-En CPU se pudieron obtener mejoras de hasta 22 veces la performance original en el c\'alculo de intercambio-correlaci\'on,
-consiguiendo una escalabilidad lineal. Esto consigue entonces velocidades cercanas a las GPU de alta gama
-de la generaci\'on anterior y estar a menos de 1.5x. de la velocidad de la m\'as r\'apida de la generaci\'on actual.
-Esto se consigui\'o gracias a reestructuraciones algor\'itmicas, al uso de librer\'ias est\'andar de paralelizaci\'on,
+En CPU se pudieron obtener mejoras de hasta 22 veces sobre la performance original en el c\'alculo de intercambio-correlaci\'on,
+consiguiendo una escalabilidad lineal en la cantidad de procesadores disponibles. La velocidad final alcanzada es cercana a las de las GPU de alta gama
+de la generaci\'on anterior y estar a menos de 1.5x de la velocidad de la m\'as r\'apida de la generaci\'on actual.
+Esto se logr\'o gracias a reestructuraciones algor\'itmicas, al uso de librer\'ias est\'andar de paralelizaci\'on,
 a reorganizaci\'on de los datos en la memoria para facilitar la vectorizaci\'on y a un an\'alisis de partici\'on de trabajos.
 Es ademas importante se\~nalar que la implementaci\'on realizada solo requiere herramientas incorporadas al compilador,
-sin uso de bibliotecas externas, favoreciendo el uso del c\'odigo en m\'ultiples plataformas y abriendo la posibilidad
-de incorporar el uso de librer\'ias como ATLAS y MAGMA.
+sin uso de bibliotecas externas, favoreciendo la portabilidad del c\'odigo a m\'ultiples plataformas y abriendo la posibilidad
+de incorporar el uso de librer\'ias como ATLAS y MAGMA para acelerar c\'alculos puntuales.
 
 En GPU se consiguieron aceleraciones de hasta 8 veces en este c\'alculo con respecto a una versi\'on ya acelerada.
 Las mejoras pasaron por encontrar los limitantes de las distintas funciones del c\'omputo, reestructurando las paralelizaciones,
-cacheando mas resultados temporales y poder aprovechando los cambios en la arquitectura de las GPU con respecto a las memorias
+cacheando mas resultados temporales y poder aprovechar los cambios en la arquitectura de las GPU con respecto a las memorias
 on-chip. Finalmente, se obtuvieran incluso mayores aceleraciones aplicando paralelismo entre m\'ultiples
 GPU, donde a pesar de no escalar linealmente con respecto a la cantidad de dispositivos, es una gran mejora
 si se cuentan ya con los recursos ociosos.
 
-En Xeon Phi no se consiguieron resultados que mejoraran los obtenidos en CPU o
-Cuda. La baja \textit{performance} de c\'odigo serial resulto un limitante muy
-fuerte que no se logr\'o compensar Determinamos sin embargo caracter\'sticas
-de la arquitectura clave para atacar el problema de optimizar una aplicac\'on.
+En Xeon Phi no se consiguieron resultados que superaran los obtenidos en CPU o
+GPU. La baja \textit{performance} de c\'odigo serial resulto un fuerte limitante
+que no se logr\'o compensar. Determinamos, sin embargo, caracter\'isticas
+de la arquitectura MIC claves para atacar el problema de optimizar una aplicac\'on de esta indole.
 Identificamos la necesidad de lograr una escalabilidad muy alta en cantidad de
-procesadores y la importancia de vectorizar bien.  Los resultados obtenidos
-coinciden con los obtenidos en otros estudios~\cite{XeonPhiMatMult}.
+procesadores y la importancia de vectorizar apropiadamente el c\'odigo. Los resultados obtenidos
+coinciden con los obtenidos en otros estudios~\cite{Jeffers}.
 
 \section{Posible trabajo a futuro}
 
-El trabajo pendiente inmediato que se ve ac\'a, que brindar\'ia inicialmente la mayor aceleraci\'on
-es la realizaci\'on de una versi\'on h\'ibrida de LIO. Como pudimos observar, la resoluci\'on de grupos es
+El trabajo pendiente inmediato que se ve ac\'a, que brindar\'ia inicialmente la mayor aceleraci\'on,
+es la realizaci\'on de una versi\'on h\'ibrida CPU-GPU de LIO. Como pudimos observar, la resoluci\'on de grupos es
 totalmente independiente entre si (salvo una reducci\'on final). Esto se explot\'o en forma de paralelismo
 de m\'ultiples placas GPU y en m\'ultiples n\'ucleos de procesador. Nada, \textit{a priori}, previene
-que se pueda usar simult\'aneamente como recursos asim\'etricos para resolver de forma h\'ibrida los sistemas.
+que se puedan usar simult\'aneamente como recursos asim\'etricos para resolver de forma h\'ibrida los sistemas.
 Los resultados vistos en la secci\'on \ref{tamgrupos} muestran muy claramente que existe alg\'un criterio
 para poder separar grupos en CPU y GPU y que, al poder realizarse en paralelo, podr\'ian explotar
-todos los recursos disponibles y aprovechar grandes aceleraciones.
+todos los recursos disponibles y lograr grandes aceleraciones.
 
-La exploraci\'on preliminar que se realizo con el Xeon-Phi en este trabajo no trajo los resultados
+La exploraci\'on preliminar que se realizo con el Xeon Phi en este trabajo no trajo los resultados
 prometidos por las especificaciones del fabricante. La velocidad de los cores y la de la memoria
 presentaron cuellos de botella fundamentales que, al menos durante esta investigaci\'on, no se
-pudieron resolver. Una versi\'on h\'ibrida con offloading es prometedora, pero las aceleraciones m\'aximas
+pudieron resolver. Una versi\'on h\'ibrida CPU-Xeon Phi con offloading es prometedora, pero las aceleraciones m\'aximas
 estar\'an limitadas por los costos de transferencia de memoria entre CPU y el Xeon Phi.
 
 Un \'area de inter\'es para estudiar en la aplicaci\'on es la construcci\'on de las particiones
 con los mejores par\'ametros para cada configuraci\'on. Si la aplicaci\'on pudiera descubrirlos
 independientemente de tener que cargarlos a mano, seria un gran progreso para evitar mucho
 tiempo de ajuste fino manual. Esto tambi\'en se puede expandir para muchos de los par\'ametros
-que se optimizar en GPU (el tama\~no de los bloques de todos los kernels) y en CPU (TODO).
+que se optimizar en GPU (el tama\~no de los bloques de todos los kernels CUDA) y en CPU (el estimador de costos
+de grupos).
 Esto permitir\'ia que, simplemente con una recompilaci\'on del c\'odigo, se pueda correr en generaciones
 pr\'oximas de GPU y CPU, sin tener que reescribir estas secciones de c\'odigo cada 2 o 3 a\~nos.
 
