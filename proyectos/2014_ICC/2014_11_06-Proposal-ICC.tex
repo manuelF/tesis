@@ -1,5 +1,6 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts}
 \usepackage{graphicx}
 \usepackage{enumerate}
 \usepackage{setspace}
@@ -130,20 +131,35 @@ AMBER is available under a site-license agreement with a differential fee for co
 However AMBERTOOLS can be obtained freely without having to buy the full AMBER package.
 This enables using the LIO(QM)/sander(MM) solution completely free under GPL licence.
 
+On the other hand, LIO is developed as a library that can be dynamically linked to any other simulation tool, not only \texttt{Sander}.
+This allows to combine LIO with other open source molecular dynamics software, like GROMACS (\url{http://www.gromacs.org}), NAMD (\url{http://www.ks.uiuc.edu/Research/namd/}) or LAMMPS (\url{http://lammps.sandia.gov/}).
 
+As was already mentioned, the integration LIO/Sander is validated as can be seen in literature \todo{poner citas de amber y lio}. 
+However, we plan to integrate LIO to other molecular dynamics tools.
+In first place, Gromacs will be the target to combine with LIO, then NAMD and LAMMPS will be considered.
 
-GROMACS (\url{http://www.gromacs.org}) is a versatile package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles. It is primarily designed for biochemical molecules like proteins, lipids and nucleic acids that have a lot of complicated bonded interactions, but since GROMACS is extremely fast at calculating the nonbonded interactions (that usually dominate simulations) many groups are also using it for research on non-biological systems, e.g. polymers.
+The equations related with Quantum Chemistry are too complex to be explained in a few lines. 
+Even though, we show some elements that are necessary to understand the underlying computational details. 
+% For a complete and detailed description of these topics, the book by Levine~\cite{Levine2013} should be considered. 
+In an electronic structure computation using DFT, the most computational demanding routine (more than 90\%) is related with the \emph{exchange-correlation} terms.
 
-
-
-
-
-
+These terms can be computed in a mesh of points following the next equation:
+\begin{equation}
+    \label{eq:xc}
+    E_{XC} \approx \sum_k \omega_k \cdot \rho(r_k) \cdot \epsilon_{XC} \left(\rho(r_k),\nabla \rho(r_k)\right)
+\end{equation}
+where $k$ represents each point in the mesh, $r_k$ is the position of point $k$, $\omega_k$ is a weighting factor related with the irregular mesh, $\epsilon_{XC}$ is exchange-correlation functional depending of the density and its gradient. 
+Finally, $\rho$ is the electronic density that can be obtained using this expression:
+\begin{equation}
+  \label{eq:rho-xc}
+  \rho(r_k) = \sum^m_{i=1} \sum^i_{j=1} F_i(r_k) \cdot F_j(r_k) \cdot C_{i,j}
+\end{equation}
+where $F(r_k)$ is a set of $m$ gaussian functions used to expand the amount of base functions.
 
 
 %% jpdarago - Lo que hice yo esta a continuacion, contado como si lo fuera a hacer
 
-The current CPU implementation of the QM/MM application has several unexplored opportunities for exploiting parallelization, in order to take advantage of the facilities offered by Xeon and Xeon Phi architectures.
+The current CPU implementation of LIO has several unexplored opportunities for exposing parallelization, in order to take advantage of the facilities offered by Xeon and Xeon Phi architectures.
 
 One possibility is to restructure the most computational demanding calculations in order to utilize matrix operations in BLAS. That would allow the code to utilize a highly tuned implementation of this library, such as Intel MKL.
 
