@@ -116,22 +116,23 @@ LIO (\url{http://github.com/nanolebrero/lio}) is a highly efficient tool to solv
 Caracteristicas fundamentales de QM que se deben describir:
 1) Autoconsistencia
 2) + de 92\% del tiempo de cada iteracion autoconsistente se consume en el calculo en un solo termino, denominado exchange-correlation.
-3) Se acompla con Amber (entre los dos esta el QM/MM).
-4) Podr\'ia ser facilmente acoplable a gromacs.
+3) GPU 
+4) Poner que puede funcionar standalone o como biblioteca a linkear con otro programa.
 
 The AMBER (\url{http://www.ambermd.org}) software suite provides a set of programs for applying the AMBER forcefields to simulations of biomolecules. 
-The software is available under a site-license agreement, which includes full source, currently priced at US\$400 for non-commercial and US\$20,000 for commercial organizations.
 AMBER is used by large community in the field of simulation of biomolecules in the Acamedia but also in Industry: Chemistry, Biochemistry, Medicine, Pharmaceutics.
 
-AMBERTOOLS is a subset of programs used by AMBER which is distributed under different open source licences. 
-It can be obtained freely without any requirements without having to buy the full AMBER package.
-This package is being developed by a highly active community and a new full version is released every year.
+AMBERTOOLS is a subset of AMBER which includes \texttt{sander}, a molecular dynamics tool. 
+This toolkit is being developed by a highly active community and a new full version is released every year.
 
-AMBERTOOLS and LIO can be combined to create a powerful open source QM/MM simulation tool. 
+\texttt{Sander} and LIO are combined to create a powerful open source QM/MM simulation tool.\todo{quizas hace falta mencionar algo de que estan perfectamente acoplados}
+AMBER is available under a site-license agreement with a differential fee for commercial and non-commercial organizations.
+However AMBERTOOLS can be obtained freely without having to buy the full AMBER package.
+This enables using the LIO(QM)/sander(MM) solution completely free under GPL licence.
 
 
 
-
+GROMACS (\url{http://www.gromacs.org}) is a versatile package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles. It is primarily designed for biochemical molecules like proteins, lipids and nucleic acids that have a lot of complicated bonded interactions, but since GROMACS is extremely fast at calculating the nonbonded interactions (that usually dominate simulations) many groups are also using it for research on non-biological systems, e.g. polymers.
 
 
 
