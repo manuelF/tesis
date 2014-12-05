@@ -114,11 +114,7 @@ En consecuencia, resulta altamente relevante reducir u optimizar los tiempos de 
 
 LIO (\url{http://github.com/nanolebrero/lio}) is a highly efficient tool to solve electronic structure using Density Functional Theory (DFT) and Time Dependent DFT (TDDFT) frameworks.
 
-Caracteristicas fundamentales de QM que se deben describir:
-1) Autoconsistencia
-2) + de 92\% del tiempo de cada iteracion autoconsistente se consume en el calculo en un solo termino, denominado exchange-correlation.
-3) GPU 
-4) Poner que puede funcionar standalone o como biblioteca a linkear con otro programa.
+\todo{Poner que puede funcionar standalone o como biblioteca a linkear con otro programa.}
 
 The AMBER (\url{http://www.ambermd.org}) software suite provides a set of programs for applying the AMBER forcefields to simulations of biomolecules. 
 AMBER is used by large community in the field of simulation of biomolecules in the Acamedia but also in Industry: Chemistry, Biochemistry, Medicine, Pharmaceutics.
@@ -141,7 +137,7 @@ In first place, Gromacs will be the target to combine with LIO, then NAMD and LA
 The equations related with Quantum Chemistry are too complex to be explained in a few lines. 
 Even though, we show some elements that are necessary to understand the underlying computational details. 
 % For a complete and detailed description of these topics, the book by Levine~\cite{Levine2013} should be considered. 
-In an electronic structure computation using DFT, the most computational demanding routine (more than 90\%) is related with the \emph{exchange-correlation} terms.
+In an electronic structure computation using DFT, the most computational demanding routine (more than $90\%$) is related with the \emph{exchange-correlation} terms.
 
 These terms can be computed in a mesh of points following the next equation:
 \begin{equation}
@@ -154,22 +150,35 @@ Finally, $\rho$ is the electronic density that can be obtained using this expres
   \label{eq:rho-xc}
   \rho(r_k) = \sum^m_{i=1} \sum^i_{j=1} F_i(r_k) \cdot F_j(r_k) \cdot C_{i,j}
 \end{equation}
-where $F(r_k)$ is a set of $m$ gaussian functions used to expand the amount of base functions.
+where $F$ is a set of $m$ gaussian functions used to expand the \emph{molecular orbitals}, which define the electronic structure. $C_{i,j}$ are the elements of the \emph{density matrix}.
 
+The goal of the computation is to obtain the coefficients $C_{i,j}$ minimizing the total energy of the system respect these elements.
 
-%% jpdarago - Lo que hice yo esta a continuacion, contado como si lo fuera a hacer
+In the systems of interest, the number of points $k$ is in the range between thousands to a million and there are hundreds of functions $F$ ($m>100$). 
+Due to the data independence between the points and functions, this procedure is highly parallelizable.
+We showed that a highly efficient parallel implementation can be obtained using CUDA~\cite{Nitsche2014}, reaching a speedup of 20X compared with a CPU version.
 
-The current CPU implementation of LIO has several unexplored opportunities for exposing parallelization, in order to take advantage of the facilities offered by Xeon and Xeon Phi architectures.
+The current CPU implementation of LIO still has several unexplored opportunities for exposing parallelism, in order to take advantage of the facilities offered by Xeon and Xeon Phi architectures.
+There are two main paths to advance in the development of LIO:
+\begin{enumerate}
+\item One possibility is to restructure the most computational demanding calculations in order to use matrix operations in BLAS. 
+That would allow the code to utilize a highly tuned implementation of this library, such as Intel MKL.
 
-One possibility is to restructure the most computational demanding calculations in order to utilize matrix operations in BLAS. That would allow the code to utilize a highly tuned implementation of this library, such as Intel MKL.
+\item The other possibility is to focus on manually modiying the code exploiting the distictive characteristics of this computation to improve the parallelism and use of processor resources:
+\begin{itemize}
+\item \textbf{Vectorization}: The CPU LIO implementation is considered state-of-the-art at the moment of its development, as it used the vectorized architecture offered by processors of that time (i.e. SSE 4). 
+Modifying the code to better utilize compiler autovectorization and other advanced techniques present in Intel C++ compiler could also lead to a performance gain.
 
-The implementation was considered state-of-the-art in the moment of it's development, as it used the latest vectorized architecture offered by processors of the time, SSE 4. 
-Modifying the code to better utilize compiler autovectorization and other advanced techniques present in Intel C++ compiler could also lead to much better performance.
-
-Parallelization is another opportunity to explore, specially considering the multicore systems currently available. We have already pursued this road with the CUDA implementation of G2G, which showed that the problem benefitted from the resources of a highly parallel architecture such as GPGPUs. 
+\item \textbf{Parallelization}: Another opportunity to explore, specially considering the multicore systems currently available. We have already pursued this road with the CUDA implementation of G2G, which showed that the problem benefitted from the resources of a highly parallel architecture such as GPGPUs. 
 An algorithm for work distribution, specially tailored to the type of workloads in the problem, has been developed for the purpose of adapting the core routines to multicore CPUs.
 
-%% fin de lo que hice yo hasta ahora
+\end{itemize}
+
+
+\end{enumerate}
+
+
+
 
 \subsection{Schedule}
 
