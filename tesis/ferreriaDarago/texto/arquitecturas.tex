@@ -107,7 +107,10 @@ Su eficacia impuls\'o el establecimiento de una jerarqu\'ia en orden creciente d
 
 El tama\~no de una cache L1 moderna est\'a en el orden de los 64 KB, una cache L2 en el \'orden de los 2 MB y una L3 en el orden de 6 MB en adelante.
 
-Si bien la aparici\'on y utilizaci\'on de caches es transparente al programador en los procesadores de la l\'inea \texttt{x86\_64}, los accesos irregulares a la memoria pueden producir que la cache se cargue con datos que no volver\'an a ser utilizados, esto puede causar que datos que s\'i se vayan a utilizar sean desalojados y deban ser buscados nuevamente en la memoria principal (evento que se conoce como \textit{cache miss})\todo{Ojo esta definici\'on de cache miss es media tricky en este contexto, parecer\'ia ser que se refiere a la b\'usqueda de nuevo en la memoria y no a que el dato no est\'e en cache}.
+Si bien la aparici\'on y utilizaci\'on de caches es transparente al programador en los procesadores de la l\'inea \texttt{x86\_64}, los accesos irregulares a la memoria pueden
+producir que la cache se cargue con datos que no volver\'an a ser utilizados, causando que datos que s\'i se vayan a reutilizar sean desalojados y deban ser buscados
+nuevamente en la memoria principal (evento que se conoce como \textit{cache miss})
+\todo{Ojo esta definici\'on de cache miss es media tricky en este contexto, parecer\'ia ser que se refiere a la b\'usqueda de nuevo en la memoria y no a que el dato no est\'e en cache}.
 Por esto es que la regularidad de los accesos a memoria para hacer buen uso de caches es fundamental para obtener una buena performance.
 
 \subsection{Multiprocesadores}

@@ -1,16 +1,7 @@
 #! /bin/bash
-pushd plots/cuda
-python2 experiments.py
-popd
-
-pushd plots/cpu
-python2 experiments.py
-popd
-
-pushd plots/otros
-python2 experiments.py
-popd
-
-pushd plots/xeonphi
-python2 experiments.py
-popd
+set -euo pipefail
+for plotfile in $(find plots -name "*experiments.py")
+do
+    ( pushd $(dirname $plotfile); python2 experiments.py; popd )  &
+done
+wait
