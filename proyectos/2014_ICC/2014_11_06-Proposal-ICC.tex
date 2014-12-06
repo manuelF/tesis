@@ -98,23 +98,36 @@ Our code, properly accelerated, would be particularly suited to this kind of sim
 
 \subsection{Statement of Work}
 
-Para hacer simulaciones en quimicia y en bioquimica hay dos grandes familias de modelos que se diferencian en el nivel de detalle.
-Por un lado esta el grupo de modelos que se basan en la aplicacion de los postulados de la mecanica quantica (QM) y permiten obtener una descripcion detallada de la estructura electronica y molecular de los sistemas.
-El alto costo computacional asociado a la utilizacion de estos modelos lo vuelven muy limitado en cuanto al tamanio de los sistemas  que se pueden estudiar.
+% Para hacer simulaciones en quimicia y en bioquimica hay dos grandes familias de modelos que se diferencian en el nivel de detalle.
+To perform numerical simulations in Chemistry and Biochemistry, there are two main families of models that differ in the level of detail.
 
-Debida a esta restricciones, surgi\'o la familia de los modelos basados en Molecular Mechanics (MM) en el que los atomos son representados mediante esferas cargadas y las uniones quimicas mediante resortes, evitando los detalles de la estructura electronica.
-Estos modelos simplificados disminuyen notoriamente el costo computacional asociado, pero no pueden describir procesos reactivos, es decir aquellos en los cuales los cambios en la estructura electronica es importante (por ejemplo reaccion quimica, interaccion con luz, etc).
+% Por un lado esta el grupo de modelos que se basan en la aplicacion de los postulados de la mecanica quantica (QM) y permiten obtener una descripcion detallada de la estructura electronica y molecular de los sistemas.
+% El alto costo computacional asociado a la utilizacion de estos modelos lo vuelven muy limitado en cuanto al tamanio de los sistemas  que se pueden estudiar.
+On one hand, we can find the models based on the principles of Quantum Mechanics (QM), which allow obtaining a detailed description of the electronic and molecular structures of the systems under study.
+The high computational demand associated with the usage of these models, restricts the size of the systems that can be analyzed.
 
-El estudio de fenomenos reactivos en quimica, bioquimica y nuevos materiales requiere el modelado de sistemas de gran tama\~no (que incluyen miles de atomos) que no pueden ser tratados mediante modelos QM por su tama\~no ni por modelos MM por ser procesos reactivos.
-En este contexto, surgen los metodos QM/MM en los cuales una porcion del sistema (la porcion reactiva) es tratada usando un modelo cuantico y el resto mediante mecanica molecular.
+% Debida a esta restricciones, surgi\'o la familia de los modelos basados en Molecular Mechanics (MM) en el que los atomos son representados mediante esferas cargadas y las uniones quimicas mediante resortes, evitando los detalles de la estructura electronica.
+Due to these restrictions, a family of models based on Molecular Mechanics (MM) emerged. 
+In this kind of models, the atoms are represented using charged spheres and the chemical unions using springs, avoiding the details of electronic structure.
+% Estos modelos simplificados disminuyen notoriamente el costo computacional asociado, pero no pueden describir procesos reactivos, es decir aquellos en los cuales los cambios en la estructura electronica es importante (por ejemplo reaccion quimica, interaccion con luz, etc).
+These simplified models decrease the associated computational cost notoriously, but can not describe reactive processes in which the changes in the electronic structure is important (for example in a chemical reaction and interaction with light).
 
-De esta manera, se pueden simular procesos en sistemas de gran tamanio en los que el cambio de la estructura electronica resulta fundamental, pero con un costo computacional asociado que no resulta prohibitivo.
-Sin embargo, a pesar de la reducci\'on del tama\~no del sistema a tratar con t\'ecnicas QM, el costo computacional sigue estando dominado por esta porci\'on.
-En consecuencia, resulta altamente relevante reducir u optimizar los tiempos de ejecuci\'on permitiendo realizar simulaciones m\'as logradas de sistemas de mayor tama\~no.
+% El estudio de fenomenos reactivos en quimica, bioquimica y nuevos materiales requiere el modelado de sistemas de gran tama\~no (que incluyen miles de atomos) que no pueden ser tratados mediante modelos QM por su tama\~no ni por modelos MM por ser procesos reactivos.
+% En este contexto, surgen los metodos QM/MM en los cuales una porcion del sistema (la porcion reactiva) es tratada usando un modelo cuantico y el resto mediante mecanica molecular.
+The study of reactive phenomena in Chemistry, Biochemistry and Material Science requires modelling of large systems (including thousands of atoms) which can not be analyzed using QM models due to their size, but MM models become useless because of their intrisic reactive processes.
+In this context, hybrid QM/MM methods emerged. 
+In this kind of models, the reactive portion of the system is studied using a QM model and the rest of it with a MM model.
+
+% De esta manera, se pueden simular procesos en sistemas de gran tamanio en los que el cambio de la estructura electronica resulta fundamental, pero con un costo computacional asociado que no resulta prohibitivo.
+In this way, large systems in which the electronic structure plays a fundamental rol can be studied with a reasonable associated computational cost.
+% Sin embargo, a pesar de la reducci\'on del tama\~no del sistema a tratar con t\'ecnicas QM, el costo computacional sigue estando dominado por esta porci\'on.
+Despite the reduction of the system size to be analyzed using QM models, the total computational cost still is dominated by this part of the system.
+Consequently, results higly relevant the reduction and optimization of the execution times of QM models to broaden the range of systems that can be studied in a reasonable time.
+% En consecuencia, resulta altamente relevante reducir u optimizar los tiempos de ejecuci\'on permitiendo realizar simulaciones m\'as logradas de sistemas de mayor tama\~no.
 
 LIO (\url{http://github.com/nanolebrero/lio}) is a highly efficient tool to solve electronic structure using Density Functional Theory (DFT) and Time Dependent DFT (TDDFT) frameworks.
-
-\todo{Poner que puede funcionar standalone o como biblioteca a linkear con otro programa.}
+LIO is designed to be used as standalone application or as a library to be combined with other Molecular Dynamics package to create a QM/MM simulation tool.
+This versatilty constitutes a design advantage to broaden its possibilities of use.
 
 The AMBER (\url{http://www.ambermd.org}) software suite provides a set of programs for applying the AMBER forcefields to simulations of biomolecules. 
 AMBER is used by large community in the field of simulation of biomolecules in the Acamedia but also in Industry: Chemistry, Biochemistry, Medicine, Pharmaceutics.
