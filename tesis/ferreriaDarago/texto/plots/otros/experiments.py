@@ -127,15 +127,15 @@ def comparacionTiemposFinal():
 #xc iteration best params
   cpu_caroteno=781.765
   gpu_caroteno=704.000
-  xp_caroteno=1.
+  xp_caroteno=1433.830
 
   cpu_hemo=757.344
   gpu_hemo=522.000
-  xp_hemo=1.
+  xp_hemo=1306.812
 
   cpu_fullereno=2658.2070
   gpu_fullereno=1512.538
-  xp_fullereno=1.
+  xp_fullereno=6844.3030
 
   labels = [u"Caroteno", u"Hemo", u"Fullereno"]
   comparison = {

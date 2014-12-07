@@ -187,3 +187,35 @@ threads disponibles.
 
 Finalmente entonces, utilizamos solamente paralelizaci\'on dentro de cada grupo
 para el Xeon Phi con estas razones, en base a los \textit{trade-offs} presentados.
+
+Por \'ultimo, un problema que requiere soluci\'on para el Xeon Phi es la limitada
+cantidad de memoria. Siendo la cantidad de memoria libre del Xeon Phi 8 GB, y no
+pudiendo expandirse f\'acilmente (al contrario del \textit{host}), es necesario
+tener en cuenta que todas las matrices utilizadas para todos los grupos pueden
+no entrar en la memoria principal.
+
+En el caso particular del grupo hemoglobina, todas las funciones son cacheadas
+efectivamente. Sin embargo, grupos m\'as grandes (como el grupo fullereno, que
+analizamos en los resultados) no cumplen esto.
+
+Para resolver este problema, se usa una estragia similar a la de GPU, utilizando
+un \textit{pool} ajustable de memoria, seg\'un la cantidad disponible en el sistema.
+Tambi\'en se ordenan los cubos y esferas por su costo en memoria (que no es el
+
+Adicionalmente se hicieron una serie de \textit{refactors} del c\'odigo de
+c\'alculo de matrices para paralelizar la misma de manera m\'as efectiva.
+
+Como patr\'on de los resultados, la figura~\ref{fig:xeon-phi-free-memory} muestra
+la iteraci\'on XC para el grupo hemoglobina seg\'un el porcentaje de memoria
+disponible, usando 240 \textit{threads} internos. Como se puede ver,
+poca memoria es necesaria para cachear gran parte de las funciones, pero el
+costo de no hacerlo es alto.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidth]{plots/xeonphi/xeon-phi-functions-memory.png}
+   \caption{Tiempo de recomputo en milisegundos por iteraci\'on de XC para el
+   caso de hemoglobina en Xeon Phi con 240 hilos de ejecuci\'on, seg\'un la
+   cantidad de memoria utilizada.}
+   \label{fig:xeon-phi-free-memory}
+\end{figure}

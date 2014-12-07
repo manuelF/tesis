@@ -257,6 +257,24 @@ def xeon_xeon_phi_groups_comparison():
     }
     comparativeScatter(**params)
 
+def xeon_phi_memory_experiments():
+    values = [
+        (0.00, 854459),
+        (0.10, 748460),
+        (0.15, 451197),
+        (0.20, 217386),
+        (0.25, 81811),
+    ]
+
+    params = {
+        'yvalues': [v for u,v in values],
+        'xvalues': ["%d%%" % (u * 100) for u,v in values],
+        'xlabel': 'Porcentaje de memoria a usar',
+        'ylabel': 'Tiempo de calculo de funciones [ms]',
+        'filename': 'xeon-phi-functions-memory.png'
+    }
+
+    comparisonBarGraph(**params)
 
 if __name__ == '__main__':
     xeon_phi_single_core()
@@ -270,3 +288,4 @@ if __name__ == '__main__':
     xeon_xeon_phi_final_comparison()
     xeon_xeon_phi_groups_comparison()
     xeon_phi_scf_parts()
+    xeon_phi_memory_experiments()
