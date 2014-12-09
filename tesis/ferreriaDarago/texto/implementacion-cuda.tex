@@ -42,7 +42,7 @@ para sincronizar los threads de todo un bloque en un punto espec\'ifico antes de
 (un barrier) sean excesivamente costosas.
 
 La arquitectura GPGPU de \nvidia organiza los registros de todos los threads en un \'unico
-register file, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
+register file por SM, com\'un a todos los bloques. Como cada thread usa decenas de registros para guardar
 los c\'omputos intermedios, \nvidia decidi\'o unificarlos, ya que es muy variable la cantidad que va a usar
 cada kernel de ejecuci\'on. Una de las grandes diferencias entre Fermi y Kepler es la cantidad m\'axima de
 registros por thread. Mientras que Fermi permit\'ia hasta 63 registros, Kepler permite hasta 255. Esto
@@ -50,7 +50,7 @@ es positivo para poder correr bloques de pocos threads pero gran cantidad de reg
 aumenta la presi\'on sobre el register file. Cuando se lanzan muchos threads
 que puedan estar corriendo paralelamente entre todos los SM de la GPU, es posible que se supere
 la cantidad m\'axima de registros presentes en el register file. Esto fuerza a que el scheduler
-no pueda poner a ejecutar m\'as bloques que los que pueda soportar este recurso, dejando SP ociosos.
+no pueda ejecutar concurrentemente m\'as bloques que los que pueda soportar este recurso, dejando SPs ociosos.
 
 Finalmente, al igual que con los registros, la memoria compartida es un recurso limitado. Como
 solamente se cuenta con hasta 48KB (Fermi-Kepler) de memoria de este tipo para ser repartida entre
@@ -73,8 +73,8 @@ esta funci\'on resultaba vital para poder disminuir el tiempo de iteraci\'on de 
 
 El cuello de botella fundamental en la ejecuci\'on radicaba en como se distribu\'ia el trabajo de computo
 entre los kernels. La estrategia de paralelizaci\'on original determinaba la partici\'on
-del grupo a resolver instanciando un bloque por cada punto ({$blockId.x < m$})
-con una cantidad fija de threads (usando $threadId.x < BLOCK\_SIZE$)
+del grupo a resolver instanciando un bloque por cada punto ({$blockId.x < puntos$})
+con una cantidad fija de threads (usando $threadId.x < BLOCK\_SIZE$).
 Los threads serv\'ian para reutilizar la memoria compartida; cada thread le\'ia un
 elemento de la matriz densidad ($C_{i,j})$) y luego lo compart\'ian con los
 dem\'as threads.
@@ -92,7 +92,7 @@ la estrategia de paralelizaci\'on. La grilla con un bloque por punto con una can
 fija de threads tiene el problema de que, con bases con numerosas funciones, tiene que realizar
 mucho trabajo por bloque. Esto causa que los SM est\'en ocupados constantemente
 por kernels de larga duraci\'on. Lo que se busca es que los bloques realicen
-menos trabajo por llamada, de modo que se puedan despachar a mas SM a medida
+menos trabajo por llamada, de modo que se puedan despachar a m\'as SM a medida
 que estos terminen. En definitiva, lo que se busca es incrementar el throughput
 de la placa. Esta estrategia se observa en la parte superior de la figura
 \ref{fig:cuda-xc-parallelism}.
@@ -113,14 +113,18 @@ a leer las funciones  de memoria global, sino de la compartida que ya cargaron l
 se traduce en que se realiza una lectura global y $BLOCK\_SIZE-1$ lecturas
 de memoria compartida por cada thread. Como la latencia de acceso a memoria compartida
 es, al menos, diez veces mas r\'apida que la memoria global~\cite{Demystifying}, esto incurre en grandes
-beneficios con respecto a la velocidad del c\'omputo.
+beneficios con respecto a la velocidad del c\'omputo. Los resultados de este cambio se pueden
+ver en la figura \ref{fig:threading}, detallando tanto para Fermi como para Kepler la diferencia
+de performance. Muchos factores intervienen en que en Kepler la diferencia sea tanto mayor que
+en Fermi: la cach\'e L2 es mayor, la cantidad de registros por thread es mayor y se pueden correr mas
+bloques concurrentemente.
 
 Este cambio solo es posible gracias al crecimiento de las memorias compartidas (16KB en la generaci\'on de
 dispositivos existentes en implementaci\'on original, actualmente 48KB). Finalmente
 esto tambi\'en se beneficia del incremento en tanto la cantidad de SM y la de SP por
 SM. Todos estos factores permitieron una gran aceleraci\'on.
 
-El otro cambio importantes fue partir en problema en m\'as bloques para las grupos que tengan
+La otra modificaci\'on importante fue partir en problema en m\'as bloques para las grupos que tengan
 m\'as funciones significativas. Se decidi\'o agregar otra dimensi\'on a la grilla de bloques (\texttt{blockId.y}),
 para determinar cuantos grupos de threads van a hacer falta para procesar completamente
 todas las funciones de ese punto. Llamamos a este par\'ametro $altura\_bloques$. Se
@@ -132,33 +136,31 @@ cantidad de bloques adicionales con respecto al m\'etodo anterior.
 \begin{figure}[htbp]
    \centering
    \includegraphics[width=\plotwidth]{plots/cuda/threading.png}
-   \caption{Aceleraci\'on en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia.}
+   \caption{Aceleraci\'on en veces de correr Hemoglobina en distintas arquitecturas con el cambio de estrategia. Otros casos
+   de prueba exhiben comportamientos similares.}
    \label{fig:threading}
 \end{figure}
 
-%%
-%%
-
-Despu\'es de haber hecho el cambio de la paralelizaci\'on, estudiamos realizar
-m\'as de un punto por thread. Esto sirve para aprovechar un par de lecturas que son comunes
-entre dos funciones. Con este cambio, se instancian menos bloques (la mitad de la dimensi\'on $y$
-definida para esto) y se pueden ocultar algunas latencias de acceso, pero
-cada grupo de threads lleva m\'as tiempo y usan m\'as registros. Esta estrategia es similar
-a un loop unrolling manual, aplicado a la arquitectura GPU.
+%Despu\'es de haber hecho el cambio de la paralelizaci\'on, estudiamos realizar
+%m\'as de un punto por thread. Esto sirve para aprovechar un par de lecturas que son comunes
+%entre dos funciones. Con este cambio, se instancian menos bloques (la mitad de la dimensi\'on $y$
+%definida para esto) y se pueden ocultar algunas latencias de acceso, pero
+%cada grupo de threads lleva m\'as tiempo y usan m\'as registros. Esta estrategia es similar
+%a un loop unrolling manual, aplicado a la arquitectura GPU.
 
 Un punto de intensa discusi\'on durante estos cambios es el valor de \textit{BLOCK\_SIZE}.
-Para nuestro problema, decidimos utilizar un numero de threads por bloque m\'ultiplo del
+Para nuestro problema, se decidi\'o utilizar un numero de threads por bloque m\'ultiplo del
 tama\~no de un warp (32 threads). Esto permite estudiar como afectan en el tiempo de
 procesamiento contar con uno o m\'as warps por bloque. Una ventaja de usar bloques de
 32 threads, es que el costo de la sincronizaci\'on es exactamente cero. No se precisa
-sincronizar nada puesto que los threads trabajan en lock-step sincronizados por warp.
+sincronizar nada puesto que en CUDA los threads trabajan en lock-step sincronizados por warp.
 Un bloque chico ademas nos permite usar mas memoria compartida por thread, dado que hay una
 cantidad fija de memoria por bloque (entre 32KB y 64KB). Cuando se cuentan con muchos m\'as
 threads, se debe reducir este uso por thread de modo que todos puedan ejecutar concurrentemente.
 
-Dicho esto, la literatura~\cite{farberCuda} sugiere siempre que sea posible
+Por otra parte, la literatura~\cite{farberCuda} sugiere siempre que sea posible
 usar bloques grandes y con threads lo m\'as independientes posibles. Una gran cantidad de threads
-en un bloque permite tener muchos m\'as warps para schedulear de modo de esconder las latencias de
+en un bloque permite tener muchos m\'as warps para ejecutar de modo de esconder las latencias de
 operaciones y de a accesos globales. Sin embargo, contar con muchos threads hace que las
 sincronizaciones sean mucho m\'as costosas. Ademas, como cada SM no cuenta con preemption
 de bloques, contar con muchos threads por bloque hace que los recursos se mantengan
@@ -168,16 +170,16 @@ Inicialmente, este tama\~no se hab\'ia fijado en 128 threads por bloque, 4 warps
 mas memoria compartida en el esquema de paralelizaci\'on para disminuir accesos a memoria global,
 este valor resulto demasiado elevado y disminu\'ia la posibilidad de ocupar todos los SM en dispositivos
 Fermi y Kepler. Con solamente 32 threads, se pod\'ia maximizar la ocupaci\'on de los SM, pero hab\'ia
-muchos m\'as bloques. Finalmente, luego de disminuir un poco el uso de memoria compartida por
-bloque, usando algunas ideas descriptas a continuaci\'on, pudimos fijar este valor en 64 threads
+muchos m\'as bloques. Finalmente, luego de disminuir un poco el uso de registros por thread mediante
+un reorden de las operaciones, se fij\'o este valor en 64 threads
 por bloque. Se muestra en la figura \ref{fig:dbs-runtime} que tener solo un warp es bueno, pero
-mejor a\'un es tener dos warps corriendo simultaneamente, porque
-esto permite, con costo cero, poner a correr el otro para ocultar la latencia sin agrandar
+mejor a\'un es tener dos warps ejecutando simultáneamente, ya que
+esto permite, con costo cero, hacer un cambio de contexto al otro warp para ocultar la latencia sin agrandar
 demasiado el costo de la sincronizaci\'on.
 
-Habiendo hechas todas las dem\'as optimizaciones detalladas en las secciones siguientes, evaluamos
-\'unicamente este par\'ametro. Evaluamos un bloque de 32 threads hasta 128 threads por bloque,
-el m\'aximo valor posible de modo que entre nuestro uso de memoria compartida.
+Habiendo hechas todas las dem\'as optimizaciones detalladas en las secciones siguientes, se evalu\'o
+\'unicamente este par\'ametro. Se estudiaron bloques de 32, 64 y 128 threads por bloque,
+el m\'aximo valor posible todavia usando el modelo de memoria compartida.
 
 \begin{figure}[htbp]
    \centering
@@ -209,7 +211,7 @@ minimizar a\'un mas el tiempo empleado en esta reducci\'on, pero considerando qu
 6 operaciones, no hay necesidad de mejorar esto mas.
 
 Como va a haber $altura\_bloque$ cantidad de escrituras para cada punto, va a entonces
-hacer falta guardar estas cuentas parciales en memoria global. Para eso definimos una matriz
+hacer falta guardar estas cuentas parciales en memoria global. Para eso se defini\'o una matriz
 por cada uno de los par\'ametros que debemos acumular, con tama\~no id\'entico a la cantidad de bloques
 del kernel del computo de densidad electr\'onica, para que cada uno de estos escriba \'unicamente en una posici\'on
 un\'ivocamente identificada de este. Estas matrices luego son de tama\~no $O(\#_{puntos} * altura\_bloque)$,
@@ -461,7 +463,7 @@ fullereno $C_{60}$; de ah\'i en m\'as, el impacto de la mejora decae. Esto suced
 chicos el overhead del c\'alculo usando kernel de funciones es muy elevado en comparaci\'on a las
 cuentas (se desperdician muchos threads). Este comportamiento se puede ver
 bien en en la figura~\ref{fig:runtime-functions-fullereno}, donde se puede apreciar el importante
-peso de los grupos chicos en el tiempo total del c\'alculo de las funciones. Decidimos no intentar
+peso de los grupos chicos en el tiempo total del c\'alculo de las funciones. Se decidi\'o no intentar
 optimizar el c\'alculo ya que al almacenar las matrices este costo directamente se hace cero para
 casi todos los grupos (dependiendo si el sistema entra entero o no en memoria).
 
@@ -479,7 +481,7 @@ convertirlo en una aceleraci\'on notoria.
 
 \subsection{Cambios en las memorias compartidas}
 %Cambiar los vec\_type4 por 3 en los accesos a la shared es mucho mejor, no hace falta alinear ahi
-Otro de los problemas existentes del c\'odigo que quisimos atacar fue el mejor empleo de las
+Otro de los problemas existentes del c\'odigo que se busc\'o autacar fue el mejor empleo de las
 memorias shared. Estas son un recurso finito y muy importante, ya que son un limitante de
 la ocupancia de los multiprocesadores. Como se pueden correr una cantidad de bloques que, a lo sumo,
 no superen los 48KB de memoria shared simult\'aneamente entre todos, es imprescindible minimizar
@@ -501,7 +503,7 @@ Un cambio que se intent\'o entonces fue llevarlos las derivadas de las funciones
 su uso real de memoria.  En las memorias globales, traer de a cuatro  valores consecutivos fuerza
 al compilador a alinearlos a 16/32 bytes (simple y doble precisi\'on respectivamente). Esto presenta
 grandes ventajas a la hora de hacer transferencias de memoria global en los accesos, por lo cual
-decidimos dejarlo como estaban.
+se dejaron como estaban sin modificaciones.
 
 Sin embargo, este mismo criterio no aplica a las memorias shared de la GPGPU. Como los accesos
 a estas memorias se realizan de a 4 bytes y no de a 16/32, entonces no tiene ninguna ventaja
@@ -580,12 +582,12 @@ en la compartida se debe tener la menor cantidad de overhead posible, dadas las 
 Una vez que fueron solucionados muchos limitantes de performance en los kernels del computo
 de la densidad electr\'onica y del c\'alculo de la matriz de Kohn-Sham, nos encontramos en un punto donde
 no fue posible determinar mejoras significativas en el c\'alculo para reducir tiempos.
-Decidimos subir un nivel m\'as el paralelismo, de modo de poder solucionar m\'ultiples particiones
+Se decidi\'o subir un nivel m\'as el paralelismo, de modo de poder solucionar m\'ultiples particiones
 simult\'aneamente. Dado que es independiente el computo de cada partici\'on (salvo la acumulaci\'on
 en la matriz de Kohn-Sham de salida y en la matriz de fuerzas interat\'omicas), nos pareci\'o que seria
 interesante ver como escala distribuir el computo a lo largo de m\'ultiples GPU.
 
-Para dividir el problema entre varios dispositivos usamos, al igual que en CPU, OpenMP. Definimos
+Para dividir el problema entre varios dispositivos usamos, al igual que en CPU, OpenMP. Se define
 una secci\'on paralela dentro del loop principal donde se soluciona cada grupo de modo que se
 ejecutaran tantos threads como placas haya en la maquina. Cada
 uno de los threads en el host se configurar\'a para una placa solamente. Esto se realiza con
@@ -661,13 +663,13 @@ de este algoritmo puede ser elevado en sistemas con cientos de particiones de mi
 La principal desventaja de usar \'unicamente este algoritmo es que no contempla, o no al menos
 en sus versiones m\'as directas, el uso de recursos asim\'etricos. Es decir, resolver la partici\'on
 optima del problema de particiones cuando se sabe que el costo de resolver $P_i$ en el dispositivo
-$A$ es distinto a resolverlo en el dispositivo $B$. Por este motivo, no podemos particionarlo completamente
+$A$ es distinto a resolverlo en el dispositivo $B$. Por este motivo, no se puede particionarlo completamente
 de manera est\'aticamente
-usando este algoritmo y decidimos agregar usar una soluci\'on h\'ibrida est\'atica y din\'amica, reutilizando
+usando este algoritmo y se agrega usar una soluci\'on h\'ibrida est\'atica y din\'amica, reutilizando
 la informaci\'on de runtime para decidir como rebalancear las particiones entre iteraciones de XC, luego
 de haber hecho una aproximaci\'on inicial usando el predictor est\'atico antes mencionado.
 
-Inicialmente definimos un orden para realizar toda la resoluci\'on del sistema y
+Inicialmente se defini\'o un orden para realizar toda la resoluci\'on del sistema y
 se las distribuye de manera \textit{round-robin} entre todos los dispositivos, para generar la
 partici\'on inicial y cargando a cada placa con una cantidad similar de tareas. Esto no significa
 que todas tarden lo mismo, y es posible notarlo en las mediciones. Luego, utilizando el tama\~no

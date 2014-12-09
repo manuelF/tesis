@@ -13,9 +13,9 @@ Existen tres categor\'ias de paralelismo que hoy en d\'ia una arquitectura puede
     Optimizaciones de este estilo incluyen:
     \begin{itemize}
       \item \textit{pipelines} de procesador: se separan las instrucciones en distintas etapas para ejecutar m\'ultiples instrucciones de manera solapada.
-      
+
       \item ejecuci\'on superescalar fuera de orden: para ejecutar m\'ultiples instrucciones que utilizan unidades del procesador distintas o que no dependen una de la otra.
-      
+
       \item ejecuci\'on especulativa: se basa en la predicci\'on de resultados todav\'ia no finalizados de procesar.
     \end{itemize}
 
@@ -66,14 +66,24 @@ Sin embargo, ocurre habitualmente que existe una dependencia entre instrucciones
 Esta t\'ecnica llevada a su conclusi\'on l\'ogica se conoce como ejecuci\'on fuera de orden (\textit{Out of Order Execution}).
 Mediante el uso de algoritmos y circuitos complejos, un procesador puede detectar las dependencias entre las instrucciones y cambiar el orden de ejecuci\'on para minimizar la aparici\'on de pipe stalls y, de esta manera, lograr que la mayor parte de las unidades del procesador esten ocupadas el mayor tiempo posible.
 
-Mejoras en este nivel eran usualmente \todo{dejaron de ser invisible?} invisibles al programador, dependiendo de los compiladores optimizantes, pero sus ventajas fueron disminuyendo a partir del a\~no 2000.
+%\todo{dejaron de ser invisible?}
+Mejoras en este nivel eran usualmente invisibles al programador de un lenguaje de alto nivel como C++, dejando la tarea de aprovechar estos \textit{features} a los compiladores optimizantes. Sin embargo, las ventajas de estas t\'ecnicas fueron disminuyendo a partir del a\~no 2000.
 
 \subsection{Extensiones vectoriales}
 
 Si bien las t\'ecnicas SIMD fueron desarrolladas por las supercomputadoras de los a\~nos 70 y 80, su aparici\'on en los microprocesadores x86 modernos ocurre en 1996 con el nombre MMX (\textit{MultiMedia eXtensions}), con refuerzos luego en las extensiones SSE y AVX.
 AVX y AVX2 representan la \'ultima versi\'on de las instrucciones de vectorizaci\'on y est\'an presentes en la l\'inea Intel Xeon de procesadores de alta gama y en las m\'as recientes generaciones de procesadores disponible para los consumidores.
 
-El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones \todo{Hay una figura en la p\'agina de intel que muestra esto, recomiendo ponerlo porque sino no se entiende} independientes que pueden ser realizadas en simult\'aneo, dividiendo la cantidad de instrucciones totales que tiene que realizar un procesador.
+%\todo{Hay una figura en la p\'agina de intel que muestra esto, recomiendo ponerlo porque sino no se entiende}
+El paralelismo de datos puede ser explotado por el compilador, que analiza los ciclos de programa y detecta cuando hay operaciones independientes que pueden ser realizadas en simult\'aneo, dividiendo la cantidad de instrucciones totales que tiene que realizar un procesador. Un ejemplo de operaci\'on vectorial puede verse en la figura~\ref{fig:simd-example}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\plotwidth]{images/simd.png}
+    \caption{Ejemplo de operaci\'on de suma simult\'anea de 16 elementos de 8 bits. En SSE 4, el procesador puede hacer estas 16
+    sumas en simult\'aneo usando un registro de 128 bits. En cambio, un procesador escalar solo puede hacerlas de a una por vez.}
+    \label{fig:simd-example}
+\end{figure}
 
 El uso de operaciones sobre m\'ultiples valores ha tomado importancia como uno de los m\'etodos de incrementar la performance de ejecuci\'on.
 La longitud de registros SIMD de las extensiones ($128$ bits para SSE, $256$ para AVX) se ha duplicado cada cuatro a\~nos, con lo cual es importante para una aplicaci\'on que sus operaciones sean lo m\'as vectorizables posible~\cite{HennessyPatterson}.
@@ -88,7 +98,6 @@ A diferencia de los procesadores, la velocidad de acceso de las memorias princip
     \includegraphics[width=\plotwidth]{images/cpu_vs_memory.jpg}
     \caption{Comparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, la diferencia de entre ellos se denomina \textit{memory gap}. Tomado de~\cite{HennessyPatterson}.}
     \label{fig:cpu_vs_mem}
-
 \end{figure}
 
 El concepto de \textit{localidad espacial} corresponde con la la observaci\'on de que los datos con los que opera una secci\'on de un programa suelen estar \emph{cerca} en memoria.
@@ -444,7 +453,7 @@ puede haber deadlock.
 
 El paralelismo de stream es una herramienta empleada para hacer trabajos concurrentes usando una
 sola placa. Esta t\'ecnica permite que m\'ultiples kerneles o copias de memoria independientes est\'en
-encolados, para que el driver pueda schedulearlas simult\'aneamente si se est\'an subutilizando
+encolados, para que el driver pueda ejecutarlas simult\'aneamente si se est\'an subutilizando
 los recursos de forma de minimizar tiempo ocioso del dispositivo. Los streams permiten kernels
 concurrentes pero cuentan con importantes restricciones que generan sincronizaci\'on impl\'icita,
 lo cual hay que tener presente si se desea mantener el trabajo de forma paralela.
