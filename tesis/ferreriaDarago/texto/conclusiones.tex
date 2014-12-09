@@ -3,7 +3,7 @@
 %de calculo de DFT para minimizar la capacidad ociosa que habia en las arquitecturas paralelas estudiadas.
 En CPU se pudieron obtener mejoras de hasta 22 veces sobre la performance original en el c\'alculo de intercambio-correlaci\'on,
 consiguiendo una escalabilidad lineal en la cantidad de procesadores disponibles. La velocidad final alcanzada es cercana a las de las GPU de alta gama
-de la generaci\'on anterior y estar a menos de 1.5x de la velocidad de la m\'as r\'apida de la generaci\'on actual.
+de la generaci\'on anterior y esta a menos de 1.5x de la velocidad de la m\'as r\'apida de la generaci\'on actual.
 Esto se logr\'o gracias a reestructuraciones algor\'itmicas, al uso de librer\'ias est\'andar de paralelizaci\'on,
 a reorganizaci\'on de los datos en la memoria para facilitar la vectorizaci\'on y a un an\'alisis de partici\'on de trabajos.
 Es ademas importante se\~nalar que la implementaci\'on realizada solo requiere herramientas incorporadas al compilador,
@@ -27,7 +27,7 @@ coinciden con los obtenidos en otros estudios~\cite{Jeffers}.
 
 \section{Posible trabajo a futuro}
 
-El trabajo pendiente inmediato que se ve ac\'a, que brindar\'ia inicialmente la mayor aceleraci\'on,
+El trabajo pendiente inmediato que se observa y brindar\'ia inicialmente una gran aceleraci\'on,
 es la realizaci\'on de una versi\'on h\'ibrida CPU-GPU de LIO. Como pudimos observar, la resoluci\'on de grupos es
 totalmente independiente entre si (salvo una reducci\'on final). Esto se explot\'o en forma de paralelismo
 de m\'ultiples placas GPU y en m\'ultiples n\'ucleos de procesador. Nada, \textit{a priori}, previene
@@ -40,7 +40,7 @@ La exploraci\'on preliminar que se realizo con el Xeon Phi en este trabajo no tr
 prometidos por las especificaciones del fabricante. La velocidad de los cores y la de la memoria
 presentaron cuellos de botella fundamentales que, al menos durante esta investigaci\'on, no se
 pudieron resolver. Una versi\'on h\'ibrida CPU-Xeon Phi con offloading es prometedora, pero las aceleraciones m\'aximas
-estar\'an limitadas por los costos de transferencia de memoria entre CPU y el Xeon Phi.
+alcanzables estar\'an limitadas por los costos de transferencia de memoria entre CPU y el Xeon Phi.
 
 Un \'area de inter\'es para estudiar en la aplicaci\'on es la construcci\'on de las particiones
 con los mejores par\'ametros para cada configuraci\'on. Si la aplicaci\'on pudiera descubrirlos
@@ -69,7 +69,7 @@ las arquitecturas disponibles en el mercado.
 \begin{enumerate}
   \item Repensar el algoritmo de partici\'on de trabajos para hacer m\'as equitativas las cargas sin
     tener que recurrir al balanceo durante la iteraci\'on.
-  \item Modificar el algoritmo de generaci\'on de grilla que genere grupos m\'as equitativos para poder
+  \item Modificar el algoritmo de generaci\'on de grilla que genere grupos de tama\~nos variable para poder
     distribuir mejor las cargas.
   \item Estudiar el problema de partici\'on y sus funciones de costos para sean acertadas tanto en CPU
     como en GPU.
