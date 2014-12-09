@@ -14,7 +14,7 @@ corridas, no se incluyen estos datos en los resultados presentados (pues no prov
 informac\'on adicional).
 
 Los casos de prueba utilizados corresponden a mol\'eculas de Hemoglobina, Fullereno $C_{60}$,
-y Caroteno. Estos estan detallados en el Apendice \ref{detalle-grupos}
+y Caroteno. Estos estan detallados en el Ap\'endice \ref{detalle-grupos}.
 
 \section{Aceleraciones alcanzadas en CPU}
 
@@ -159,8 +159,7 @@ resto de los c\'alculos.
    \label{fig:cuda-final}
 \end{figure}
 
-
-\section{Resultados alcanzados en Xeon Phi}
+\section{Aceleraciones alcanzadas en Xeon Phi}
 
 Los resultados de la escalabilidad del c\'odigo conseguido en Xeon Phi se pueden ver
 en la figura~\ref{fig:xeon-final-scalability} para el caso de estudio de la Hemoglobina.
@@ -205,9 +204,39 @@ arquitecturas.
    \label{fig:group-times-scf-xeon-phi}
 \end{figure}
 
+\section{Comparaci\'on entre arquitecturas}
+
+A continuaci\'on detallamos la comparaci\'on entre arquitecturas para los tres
+casos estudiados: grupo hemoglobina, grupo caroteno y grupo fullereno. Se estudia
+la iteraci\'on XC para los mismos, usando los mejores par\'ametros para cada
+arquitectura (tama\~no 8 de los cubos para GPU, tama\~no 3 de los cubos para CPU
+y Xeon Phi).
+
+El CPU utilizado es el servidor Xeon que usamos para los dem\'as resultados, y
+la GPU utilizada es una Tesla K40. En el caso de GPU todas las matrices entran
+en la memoria RAM, con lo cual no hay tiempo de recomputo por iteraci\'on. En el
+Xeon Phi esto no ocurre. En ese caso se uso toda la memoria que estuviese
+disponible para cachear matrices (considerando que se requiere memoria en cada
+iteraci\'on para arreglos temporales) sin provocar que el programa dejara de
+funcionar por \textit{Out of Memory}.
+
+Los resultados se encuentran en la figura~\ref{fig:final-comparison}. Como puede
+verse la implementaci\'on en GPU es la m\'as r\'apida, aunque la versi\'on de
+CPU resulta comparable (menos que 2x). El Xeon Phi esta dentro de un rango de 2-3x de GPU excepto
+en el caso de fullereno donde se incurre un costo adicional de recalculo de las
+matrices.
+
+\begin{figure}[htbp]
+   \centering
+   \includegraphics[width=\plotwidthtres]{plots/otros/comparacion-tiempos-sistemas.png}
+   \caption{Comparaci\'on entre arquitecturas con respecto al tiempo de iteraci\'on de
+   XC para los tres casos de estudio analizados.}
+   \label{fig:final-comparison}
+\end{figure}
 
 \section{Tama\~no de los grupos}
 \label{tamgrupos}
+
 Un par\'ametro que se experimento durante el desarrollo del trabajo fue el tama\~no de las particiones.
 Los cubos y las esferas que agrupan los puntos fueron descriptos en la secci\'on \ref{implementacion}. El par\'ametro
 del tama\~no de los cubos siempre se considero que deb\'ia ser ``grande'' para GPU mientras que deb\'ia ser

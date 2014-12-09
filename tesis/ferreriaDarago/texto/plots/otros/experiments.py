@@ -133,7 +133,7 @@ def comparacionTiemposFinal():
   gpu_hemo=522.000
   xp_hemo=1306.812
 
-  cpu_fullereno=2658.2070
+  cpu_fullereno=2500.2070
   gpu_fullereno=1512.538
   xp_fullereno=6844.3030
 
