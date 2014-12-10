@@ -149,6 +149,7 @@ def comparacionTiemposFinal():
       'ticks': labels,
       'filename': u'comparacion-tiempos-sistemas.png',
       'ylabel': u'Tiempo de ejecución [ms]',
+      'loc': 'left'
   }
 
   multiComparativeBarChart(**params)

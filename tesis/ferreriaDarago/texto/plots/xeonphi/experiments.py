@@ -257,24 +257,32 @@ def xeon_xeon_phi_groups_comparison():
     }
     comparativeScatter(**params)
 
+def gigabyte(v):
+    return v * 1024
+
 def xeon_phi_memory_experiments():
     values = [
-        (0.00, 854459),
-        (0.10, 748460),
-        (0.15, 451197),
-        (0.20, 217386),
-        (0.25, 81811),
+        (0.00, time2milis("2s. 551590us")),
+        (0.10, time2milis("2s. 408528us")),
+        (0.15, time2milis("2s. 39581us")),
+        (0.20, time2milis("1s. 650440us")),
+        (0.22, time2milis("1s. 549273us")),
+        (0.25, time2milis("1s. 333010us")),
+        (0.3, time2milis("1s. 333010us")),
     ]
 
+    maxi = max(v for u,v in values)
+
     params = {
-        'yvalues': [v for u,v in values],
-        'xvalues': ["%d%%" % (u * 100) for u,v in values],
-        'xlabel': 'Porcentaje de memoria a usar',
-        'ylabel': 'Tiempo de calculo de funciones [ms]',
+        'yvalues': tuple([maxi / v for u,v in values]),
+        'ticks': ["%d" % (u * gigabyte(7)) for u,v in values],
+        'xlabel': 'Cantidad de memoria a usar [MB]',
+        'ylegend': u'Aceleración XC en veces',
+        'ylabel': u'Aceleración XC en veces',
         'filename': 'xeon-phi-functions-memory.png'
     }
 
-    comparisonBarGraph(**params)
+    lineGraph(**params)
 
 if __name__ == '__main__':
     xeon_phi_single_core()

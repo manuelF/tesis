@@ -80,7 +80,7 @@ El paralelismo de datos puede ser explotado por el compilador, que analiza los c
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\plotwidth]{images/simd.png}
+    \includegraphics[width=\plotwidth]{images/simd_ES.pdf}
     \caption{Ejemplo de operaci\'on de suma simult\'anea de 8 elementos. En SSE 4, el procesador puede hacer estas 16
     sumas en simult\'aneo usando un registro de 128 bits. En cambio, un procesador escalar solo puede hacerlas de a una por vez.}
     \label{fig:simd-example}
@@ -96,7 +96,7 @@ A diferencia de los procesadores, la velocidad de acceso de las memorias princip
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\plotwidth]{images/cpu_vs_memory.jpg}
+    \includegraphics[width=\plotwidth]{images/cpu_vs_memory_ES.pdf}
     \caption{Comparaci\'on entre la \textit{performance} de CPU y memoria seg\'un el a\~no, la diferencia de entre ellos se denomina \textit{memory gap}. Tomado de~\cite{HennessyPatterson}.}
     \label{fig:cpu_vs_mem}
 \end{figure}
@@ -186,7 +186,7 @@ Para poner en escala la concentraci\'on de poder de calculo, estas prestaciones 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\plotwidth]{images/cuda-gflops.png}
+    \includegraphics[width=\plotwidth]{images/cuda-gflops_ES.pdf}
     \caption{Picos te\'oricos de performance en GFLOPS/s. Tomado de~\cite{cudaProgrammingGuide}.}
     \label{cuda-gflops}
 \end{figure}
@@ -250,7 +250,7 @@ compartida com\'un a todos los threads como cach\'e L1 para todos los accesos a 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\plotwidthsmaller]{images/fermi-gpu-block.png}
+    \includegraphics[width=\plotwidthsmaller]{images/fermi-gpu-block.pdf}
     \caption{Diagrama de bloques de GF100 Fermi. Tomado de~\cite{NvidiaFermi}.}
     \label{fermi_gpu_block}
 \end{figure}
@@ -402,7 +402,7 @@ accesos a memoria globales podr\'ia servir, as\'i que hay que usarla juiciosamen
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=250px]{images/cuda-memories.png}
+    \includegraphics[width=250px]{images/cuda-memories_ES.pdf}
     \caption{Jerarqu\'ia de memorias en GPU. Tomado de~\cite{farberCuda}.}
     \label{fig:cuda-memories}
 \end{figure}
@@ -709,7 +709,7 @@ arquitectura de \textit{pipeline} se puede obtener un \textit{throughput} te\'or
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\plotwidth]{images/xeon-phi-pipeline.png}
+   \includegraphics[width=\plotwidth]{images/xeon-phi-pipeline.pdf}
    \caption{Pipeline del procesador Intel Xeon Phi, tomado de~\cite{BookXeonPhi} }
    \label{fig::xeon_phi_pipeline}
 \end{figure}
@@ -751,7 +751,7 @@ no se produce un \textit{flush} del pipeline en los dem\'as threads.
 
 \begin{figure}[htbp]
    \centering
-   \includegraphics[width=\plotwidth]{images/xeon-phi-ring.jpg}
+   \includegraphics[width=\plotwidth]{images/xeon-phi-ring.pdf}
    \caption{Detalle de la estructura de anillo del Xeon Phi, tomado de~\cite{XeonPhiArchArticle}}
    \label{fig::xeon_phi_arch_ring}
 \end{figure}
